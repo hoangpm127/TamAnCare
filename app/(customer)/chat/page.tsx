@@ -2,7 +2,7 @@ import { ChatClient } from "./chat-client";
 import { getPublicCatalog } from "@/lib/server/public-catalog";
 
 export const metadata = {
-  title: "Chat với cơ sở | Tâm An Care",
+  title: "Chat với cơ sở | Tâm An Center",
 };
 
 export const dynamic = "force-dynamic";

@@ -30,7 +30,7 @@ async function responseForScope(session: NonNullable<Awaited<ReturnType<typeof g
       mode: resolved.enabled ? "AUTO" as const : "MANUAL" as const,
       source: resolved.source,
       branchId: branch.id,
-      scopeLabel: branch.name.replace(/^Tâm An Care · /, ""),
+      scopeLabel: branch.name.replace(/^Tâm An Center · /, ""),
       canManage: ["OWNER", "BRANCH_MANAGER"].includes(session.role),
     };
   }

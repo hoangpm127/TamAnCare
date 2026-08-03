@@ -197,7 +197,7 @@ export function AdminDashboardClient() {
           <div className="text-center">
             <p className="flex items-center justify-center gap-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-[#f5d982]">{isOwner ? <ShieldCheck size={14} /> : <Building2 size={14} />} {session.title}</p>
             <h1 className="mt-1.5 text-xl font-semibold">Vận hành theo phạm vi</h1>
-            <p className="mx-auto mt-1 max-w-xl text-xs leading-5 text-white/75">{isOwner ? "Dưới đây là báo cáo tổng quát toàn hệ thống Tâm An Care" : `Dưới đây là báo cáo vận hành của ${session.branchLabel}`}</p>
+            <p className="mx-auto mt-1 max-w-xl text-xs leading-5 text-white/75">{isOwner ? "Dưới đây là báo cáo tổng quát toàn hệ thống Tâm An Center" : `Dưới đây là báo cáo vận hành của ${session.branchLabel}`}</p>
           </div>
           <div className="mt-4 border-t border-white/15 pt-3">
             <div className="scrollbar-hide flex gap-1.5 overflow-x-auto">

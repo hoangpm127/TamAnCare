@@ -12,7 +12,7 @@ export async function notifyInvestorsAboutOpportunity(
     data: investors.map((investor) => ({
       userId: investor.id,
       type: "FINANCE" as const,
-      title: "Cơ hội đầu tư mới từ Tâm An Care",
+      title: "Cơ hội đầu tư mới từ Tâm An Center",
       body: `${opportunity.name} · ${opportunity.area}. Hồ sơ đang được cập nhật tại Trung tâm Nhà đầu tư.`,
       actionUrl: "/admin#opportunities",
     })),

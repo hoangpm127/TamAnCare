@@ -12,7 +12,7 @@ export const dynamic = "force-dynamic";
 // Avoid a second concurrent database read from generateMetadata. The local
 // PGlite demo database uses one connection, while the page itself provides the
 // authoritative therapist name and all public details.
-export const metadata: Metadata = { title: "Hồ sơ KTV | Tâm An Care" };
+export const metadata: Metadata = { title: "Hồ sơ KTV | Tâm An Center" };
 
 export default async function TherapistProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -39,7 +39,7 @@ export default async function TherapistProfilePage({ params }: { params: Promise
     ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length
     : therapist.ratingAvg;
   const repeatRate = therapist.servedCount > 0 ? Math.round((therapist.repeatCount / therapist.servedCount) * 100) : 0;
-  const branchName = branch.name.replace(/^Tâm An Care · /, "");
+  const branchName = branch.name.replace(/^Tâm An Center · /, "");
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-6 pb-28 text-[#191414] sm:px-6">
@@ -97,7 +97,7 @@ export default async function TherapistProfilePage({ params }: { params: Promise
           <Award size={15} className="text-[#d13f1f]" /> Chứng chỉ & đào tạo
         </h2>
         <ul className="mt-2.5 space-y-2">
-          {["Đào tạo quy trình chăm sóc và an toàn Tâm An Care", "Tái kiểm định tay nghề định kỳ", "Chỉ nhận dịch vụ nằm trong kỹ năng đã được cấu hình"].map((cert) => (
+          {["Đào tạo quy trình chăm sóc và an toàn Tâm An Center", "Tái kiểm định tay nghề định kỳ", "Chỉ nhận dịch vụ nằm trong kỹ năng đã được cấu hình"].map((cert) => (
             <li key={cert} className="flex items-start gap-2 text-xs leading-5 text-[#665b55]">
               <ShieldCheck size={14} className="mt-0.5 shrink-0 text-[#1d8f55]" /> {cert}
             </li>

@@ -96,7 +96,7 @@ export async function GET(request: Request) {
     const branchPlatformFees = scoped.filter((item) => item.category === "PLATFORM_FEE").reduce((sum, item) => sum + item.amount, 0);
     const branchExpenses = branchOperatingExpenses + branchPlatformFees;
     const branchTips = scoped.filter((item) => item.category === "TIP_PAYABLE").reduce((sum, item) => sum + item.amount, 0);
-    return { branchId: branch.id, label: branch.name.replace(/^Tâm An Care · /, ""), grossRevenue: revenue, refunds: branchRefunds, revenue: netRevenue, partnerRevenue: Math.max(0, netRevenue - branchPlatformFees), operatingExpenses: branchOperatingExpenses, platformFees: branchPlatformFees, expenses: branchExpenses, tips: branchTips, profit: netRevenue - branchExpenses };
+    return { branchId: branch.id, label: branch.name.replace(/^Tâm An Center · /, ""), grossRevenue: revenue, refunds: branchRefunds, revenue: netRevenue, partnerRevenue: Math.max(0, netRevenue - branchPlatformFees), operatingExpenses: branchOperatingExpenses, platformFees: branchPlatformFees, expenses: branchExpenses, tips: branchTips, profit: netRevenue - branchExpenses };
   });
 
   const platformFeeItems = entries
@@ -107,7 +107,7 @@ export async function GET(request: Request) {
       category: "Phí nền tảng Xgroup",
       description: item.description,
       amount: item.amount,
-      vendor: "Xgroup · Nền tảng Tâm An Care",
+      vendor: "Xgroup · Nền tảng Tâm An Center",
       evidenceUrl: null,
       occurredAt: item.occurredAt,
     }));

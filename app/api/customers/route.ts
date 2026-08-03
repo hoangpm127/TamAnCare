@@ -75,7 +75,7 @@ export async function POST(request: Request) {
     await notifyCustomer(tx, created.id, {
       branchId: input.branchId,
       type: "SYSTEM",
-      title: `${branch.name.replace(/^Tâm An Care · /, "")} đã tiếp nhận hồ sơ của bạn`,
+      title: `${branch.name.replace(/^Tâm An Center · /, "")} đã tiếp nhận hồ sơ của bạn`,
       body: input.note ? "Ghi chú chăm sóc đã được chuyển tới đội ngũ vận hành." : "Đội ngũ đã sẵn sàng hỗ trợ bạn đặt lịch phù hợp.",
       actionUrl: "/booking",
     });

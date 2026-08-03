@@ -102,7 +102,7 @@ function userToAccount(user: {
       ? "Toàn hệ thống"
       : role === "INVESTOR"
         ? "Danh mục đầu tư"
-        : user.branch?.name.replace(/^Tâm An Care · /, "") ?? "Cơ sở",
+        : user.branch?.name.replace(/^Tâm An Center · /, "") ?? "Cơ sở",
     permissions: permissionsForAdminRole(role),
     mustChangePassword: !user.passwordChangedAt,
     mfaEnabled: Boolean(user.mfaEnabledAt),

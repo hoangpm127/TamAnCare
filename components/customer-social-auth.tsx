@@ -160,7 +160,7 @@ export function CustomerSocialCompletion({
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="text-xs font-bold uppercase tracking-[0.15em] text-[#f5d982]">Đã xác thực qua {providerLabel}</p>
-              <h1 className="mt-2 text-2xl font-semibold">Hoàn tất tài khoản Tâm An Care</h1>
+              <h1 className="mt-2 text-2xl font-semibold">Hoàn tất tài khoản Tâm An Center</h1>
             </div>
             <button type="button" onClick={() => void cancel()} aria-label="Hủy đăng nhập mạng xã hội" className="rounded-full bg-white/10 p-2 text-white/80"><X size={18} /></button>
           </div>

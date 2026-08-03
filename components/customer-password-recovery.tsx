@@ -27,7 +27,7 @@ export function CustomerPasswordRecovery({ initialPhone, onClose }: { initialPho
       setDeliveryConfigured(payload.deliveryConfigured !== false);
       if (!response.ok) throw new Error(payload.error ?? "Không thể gửi yêu cầu khôi phục.");
       if (payload.deliveryConfigured === false) {
-        setMessage("Kênh khôi phục mật khẩu đang tạm bảo trì. Vui lòng liên hệ Tâm An Care để được hỗ trợ.");
+        setMessage("Kênh khôi phục mật khẩu đang tạm bảo trì. Vui lòng liên hệ Tâm An Center để được hỗ trợ.");
         return;
       }
       setMessage(payload.message ?? "Nếu tài khoản tồn tại, mã khôi phục sẽ được gửi.");

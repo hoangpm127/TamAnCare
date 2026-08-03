@@ -5,7 +5,7 @@ import { verifyTherapistQrToken } from "@/lib/server/therapist-qr";
 import { verifyVenueQrToken } from "@/lib/server/venue-qr";
 
 export const metadata = {
-  title: "Check-in tại cơ sở | Tâm An Care",
+  title: "Check-in tại cơ sở | Tâm An Center",
 };
 
 export const dynamic = "force-dynamic";
@@ -13,7 +13,7 @@ export const dynamic = "force-dynamic";
 export default async function CheckInPage({ searchParams }: { searchParams: Promise<{ bookingCode?: string; ktv?: string; venue?: string }> }) {
   const query = await searchParams;
   const branchRecords = await db.branch.findMany({ orderBy: { id: "asc" } });
-  const branches = branchRecords.map((item) => ({ id: item.id, label: item.name.replace(/^Tâm An Care · /, "") }));
+  const branches = branchRecords.map((item) => ({ id: item.id, label: item.name.replace(/^Tâm An Center · /, "") }));
 
   const therapistPayload = query.ktv ? verifyTherapistQrToken(query.ktv) : null;
   const therapistRecord = therapistPayload

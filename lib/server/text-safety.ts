@@ -3,7 +3,7 @@ import "server-only";
 const LEGACY_TEXT_REPLACEMENTS: Array<[RegExp, string]> = [
   [/Ch\?\s*Tu\?\s*T\?m\s*\?\s*UAT/gi, "Admin Tâm An"],
   [/Admin\s+Tu\?\s*T\?m/gi, "Admin Tâm An"],
-  [/Tu\?\s*T\?m\s+Care/gi, "Tâm An Care"],
+  [/Tu\?\s*T\?m\s+Care/gi, "Tâm An Center"],
   [/Kh�ch\s+ki\?m\s+th\?\s+WELCOME/gi, "Khách kiểm thử WELCOME"],
   [/Kh\?ch\s+ki\?m\s+th\?\s+WELCOME/gi, "Khách kiểm thử WELCOME"],
   [/TAC-DEMO-(\d+)/gi, "Bill #$1"],

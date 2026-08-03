@@ -86,7 +86,7 @@ export async function GET(request: Request) {
       therapistName: item.therapist?.fullName ?? "Cơ sở sắp xếp",
       roomName: item.room?.name ?? "Chờ xếp",
       branchId: item.branchId,
-      branchLabel: item.branch.name.replace(/^Tâm An Care · /, ""),
+      branchLabel: item.branch.name.replace(/^Tâm An Center · /, ""),
       startTime: item.startTime.toISOString(),
       status: item.status,
       totalAmount: item.totalAmount,

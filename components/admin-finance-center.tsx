@@ -240,7 +240,7 @@ export function AdminFinanceCenter() {
         <div className="pointer-events-none absolute -right-14 -top-14 h-48 w-48 rounded-full bg-[#e3b23c]/20 blur-3xl" />
         <div className="relative px-10 text-center">
           <h1 className="whitespace-nowrap text-lg font-semibold leading-6">Trung tâm tài chính</h1>
-          <p className="text-[10px] leading-3.5 text-white/75">Toàn bộ diễn biến tài chính Tâm An Care</p>
+          <p className="text-[10px] leading-3.5 text-white/75">Toàn bộ diễn biến tài chính Tâm An Center</p>
           <p className="text-[10px] italic leading-3.5 text-white/60">Bấm vào các Card để xem thêm chi tiết</p>
           {session.role === "OWNER" || session.role === "BRANCH_MANAGER" ? <Link href="/admin/refunds" aria-label="Mở trung tâm hoàn tiền" className="absolute right-0 top-0 flex h-8 w-8 items-center justify-center rounded-full border border-white/20 bg-white/10 text-[#f5d982] transition hover:bg-white/15"><RotateCcw size={13} /></Link> : null}
         </div>

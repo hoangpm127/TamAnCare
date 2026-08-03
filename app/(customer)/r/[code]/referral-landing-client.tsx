@@ -31,7 +31,7 @@ export function ReferralLandingClient({ code, offer }: { code: string; offer: Re
               <Gift size={25} />
             </span>
             <p className="relative mt-3 text-[11px] font-bold uppercase tracking-[0.16em] text-[#ffe3a8]">Một người bạn đã gửi tặng bạn</p>
-            <h1 className="relative mt-1 text-2xl font-semibold tracking-tight">Lời mời trải nghiệm Tâm An Care</h1>
+            <h1 className="relative mt-1 text-2xl font-semibold tracking-tight">Lời mời trải nghiệm Tâm An Center</h1>
             <span className="relative mt-3 inline-flex items-center gap-1.5 rounded-full bg-black/15 px-3 py-1.5 font-mono text-xs ring-1 ring-white/15">
               <BadgeCheck size={14} /> Mã {code}
             </span>

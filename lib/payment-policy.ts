@@ -6,7 +6,7 @@ type PaymentBreakdownInput = {
 };
 
 /**
- * Quy tắc thanh toán thống nhất của Tâm An Care:
+ * Quy tắc thanh toán thống nhất của Tâm An Center:
  * - cọc = tỷ lệ trên giá trị Bill ban đầu, trước ưu đãi;
  * - còn lại = giá trị sau ưu đãi trừ tiền cọc;
  * - lượt gói đã trả trước không phát sinh cọc hoặc công nợ.

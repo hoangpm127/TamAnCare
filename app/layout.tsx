@@ -16,39 +16,39 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: siteUrl(),
-  title: "Tâm An Care",
-  description: "Booking, CRM và hệ thống vận hành cho Tâm An Spa - Foot & Body",
+  title: "Tâm An Center",
+  description: "Đặt lịch massage và chăm sóc cơ thể tại Tâm An Center, mở cửa hằng ngày từ 08:00 đến 22:00.",
   manifest: "/manifest.webmanifest",
-  applicationName: "Tâm An Care",
+  applicationName: "Tâm An Center",
   alternates: { canonical: "/" },
   appleWebApp: {
     capable: true,
-    title: "Tâm An Care",
+    title: "Tâm An Center",
     statusBarStyle: "default",
   },
   openGraph: {
     type: "website",
     locale: "vi_VN",
-    siteName: "Tâm An Care",
-    title: "Tâm An Care",
-    description: "Đặt lịch Foot, Body, gội đầu dưỡng sinh và theo dõi quyền lợi trên web.",
-    images: [{ url: "/tam-an-hero.png", alt: "Không gian Tâm An Care" }],
+    siteName: "Tâm An Center",
+    title: "Tâm An Center",
+    description: "Đặt lịch massage, chăm sóc cơ thể và theo dõi quyền lợi trực tuyến.",
+    images: [{ url: "/tam-an-center-brand.jpg", alt: "Logo Tâm An Center" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Tâm An Care",
-    description: "Đặt lịch và theo dõi quyền lợi trực tuyến tại Tâm An Care.",
-    images: ["/tam-an-hero.png"],
+    title: "Tâm An Center",
+    description: "Đặt lịch và theo dõi quyền lợi trực tuyến tại Tâm An Center.",
+    images: ["/tam-an-center-brand.jpg"],
   },
   icons: {
-    icon: "/icon.svg",
-    shortcut: "/icon.svg",
+    icon: "/favicon.png",
+    shortcut: "/favicon.png",
     apple: "/icon-192.png",
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#d13f1f",
+  themeColor: "#0b5747",
   colorScheme: "light",
 };
 

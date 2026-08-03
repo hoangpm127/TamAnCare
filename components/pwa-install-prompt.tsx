@@ -96,7 +96,7 @@ export function PwaInstallPrompt() {
     return (
       <div className="flex items-center gap-2 rounded-2xl bg-emerald-50 px-3.5 py-3 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-200">
         <CheckCircle2 size={17} className="shrink-0" />
-        Tâm An Care đã ở trên màn hình chính của bạn.
+        Tâm An Center đã ở trên màn hình chính của bạn.
       </div>
     );
   }
@@ -106,11 +106,11 @@ export function PwaInstallPrompt() {
       <section className="overflow-hidden rounded-2xl border border-[#eadbd1] bg-gradient-to-br from-white to-[#fff6ef] shadow-sm">
         <div className="flex items-start gap-3 p-4">
           <span className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-[#211716] shadow-md ring-1 ring-[#d8b86a]">
-            <Image src="/icon-192.png" alt="Biểu tượng Tâm An Care" width={48} height={48} className="h-full w-full object-cover" />
+            <Image src="/icon-192.png" alt="Biểu tượng Tâm An Center" width={48} height={48} className="h-full w-full object-cover" />
           </span>
           <div className="min-w-0 flex-1">
             <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#d13f1f]">Webapp trên điện thoại</p>
-            <h2 className="mt-1 text-base font-semibold tracking-tight">Cài Tâm An Care để mở lại trong một chạm</h2>
+            <h2 className="mt-1 text-base font-semibold tracking-tight">Cài Tâm An Center để mở lại trong một chạm</h2>
             <p className="mt-1 text-xs leading-5 text-[#6f625c]">Không cần App Store hay CH Play. Mã giới thiệu đã lưu trên thiết bị và vẫn tự áp dụng khi bạn đặt lịch.</p>
           </div>
         </div>
@@ -161,13 +161,13 @@ export function PwaInstallPrompt() {
                   {!isSafari ? <p className="rounded-xl bg-[#fff2d9] p-3 text-xs leading-5 text-[#79520d]">Trước tiên, mở link này bằng <strong>Safari</strong>. Trình duyệt bên trong Facebook/Zalo không cài được webapp.</p> : null}
                   <InstallStep number="1" icon={<Share size={16} />} title="Chạm nút Chia sẻ" detail="Biểu tượng ô vuông có mũi tên hướng lên trong Safari." />
                   <InstallStep number="2" icon={<Smartphone size={16} />} title="Chọn Thêm vào Màn hình chính" detail="Nếu chưa thấy, kéo xuống cuối danh sách tác vụ." />
-                  <InstallStep number="3" icon={<Check size={16} />} title="Bật Mở dưới dạng ứng dụng rồi nhấn Thêm" detail="Biểu tượng Tâm An Care sẽ xuất hiện cùng các ứng dụng khác." />
+                  <InstallStep number="3" icon={<Check size={16} />} title="Bật Mở dưới dạng ứng dụng rồi nhấn Thêm" detail="Biểu tượng Tâm An Center sẽ xuất hiện cùng các ứng dụng khác." />
                 </>
               ) : (
                 <>
                   <InstallStep number="1" icon={<MoreVertical size={16} />} title="Mở menu Chrome" detail="Chạm dấu ba chấm ở góc trình duyệt." />
                   <InstallStep number="2" icon={<Download size={16} />} title="Chọn Cài đặt ứng dụng" detail="Một số máy hiển thị Thêm vào màn hình chính." />
-                  <InstallStep number="3" icon={<Check size={16} />} title="Nhấn Cài đặt" detail="Sau đó mở Tâm An Care từ màn hình chính." />
+                  <InstallStep number="3" icon={<Check size={16} />} title="Nhấn Cài đặt" detail="Sau đó mở Tâm An Center từ màn hình chính." />
                 </>
               )}
 

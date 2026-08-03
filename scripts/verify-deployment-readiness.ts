@@ -357,7 +357,7 @@ async function databaseChecks() {
 
 function printReport() {
   const icons: Record<Status, string> = { PASS: "✓", WARN: "!", FAIL: "×" };
-  console.log(`\nTâm An Care · kiểm tra sẵn sàng ${mode.toUpperCase()}\n`);
+  console.log(`\nTâm An Center · kiểm tra sẵn sàng ${mode.toUpperCase()}\n`);
   let currentGroup = "";
   for (const check of checks) {
     if (check.group !== currentGroup) {

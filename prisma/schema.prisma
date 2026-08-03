@@ -282,6 +282,11 @@ enum CustomerOAuthProvider {
   FACEBOOK
 }
 
+enum FreeConsultationDecision {
+  INTERESTED
+  DECLINED
+}
+
 enum RefundRequestStatus {
   REQUESTED
   APPROVED
@@ -995,20 +1000,24 @@ model TipPayout {
 }
 
 model CustomerAccount {
-  id                      String                   @id @default(cuid())
-  customerId              String                   @unique
-  phone                   String                   @unique
-  passwordHash            String?
-  phoneVerifiedAt         DateTime?
-  creditBalance           Int                      @default(100000)
-  welcomeCreditGrantedAt  DateTime?                @default(now())
-  bookingReminders        Boolean                  @default(true)
-  createdAt               DateTime                 @default(now())
-  updatedAt               DateTime                 @updatedAt
-  customer                Customer                 @relation(fields: [customerId], references: [id])
-  sessions                CustomerSession[]
-  passwordResetChallenges PasswordResetChallenge[]
-  phoneOtpChallenges      PhoneOtpChallenge[]
+  id                            String                    @id @default(cuid())
+  customerId                    String                    @unique
+  phone                         String                    @unique
+  passwordHash                  String?
+  phoneVerifiedAt               DateTime?
+  creditBalance                 Int                       @default(100000)
+  welcomeCreditGrantedAt        DateTime?                 @default(now())
+  bookingReminders              Boolean                   @default(true)
+  freeConsultationEligible      Boolean                   @default(false)
+  freeConsultationDecision      FreeConsultationDecision?
+  freeConsultationPreferredTime String?
+  freeConsultationRespondedAt   DateTime?
+  createdAt                     DateTime                  @default(now())
+  updatedAt                     DateTime                  @updatedAt
+  customer                      Customer                  @relation(fields: [customerId], references: [id])
+  sessions                      CustomerSession[]
+  passwordResetChallenges       PasswordResetChallenge[]
+  phoneOtpChallenges            PhoneOtpChallenge[]
 }
 
 model CustomerOAuthIdentity {

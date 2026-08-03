@@ -798,7 +798,7 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
                 </div>
               )}
               <p className="mt-2 text-center text-[10px] leading-4 text-[#7b6c65]">
-                KTV và giường được giữ trọn thời lượng dịch vụ: 10:00 + 90 phút → bận đến 11:30. Ca {selectedBranch?.lastBookingTime ?? "23:00"} chỉ nhận dịch vụ 60 phút.
+                KTV và giường được giữ trọn thời lượng dịch vụ: 10:00 + 90 phút → bận đến 11:30. Ca cuối {selectedBranch?.lastBookingTime ?? "21:00"} chỉ hiện khi toàn bộ dịch vụ kết thúc trước giờ đóng cửa.
               </p>
             </div>
           </div>

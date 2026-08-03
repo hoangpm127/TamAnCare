@@ -240,7 +240,7 @@ export function AdminBookingOperations() {
   const [actionError, setActionError] = useState("");
   const [collecting, setCollecting] = useState<AdminBookingRequest | null>(null);
   const [rejectingBusiness, setRejectingBusiness] = useState<AdminBusinessRequest | null>(null);
-  const [businessReason, setBusinessReason] = useState("Tâm An Care chưa thể bảo đảm đủ đội ngũ triển khai trong khung giờ đã chọn. Chúng tôi sẽ liên hệ để ưu tiên một lịch phù hợp gần nhất.");
+  const [businessReason, setBusinessReason] = useState("Tâm An Center chưa thể bảo đảm đủ đội ngũ triển khai trong khung giờ đã chọn. Chúng tôi sẽ liên hệ để ưu tiên một lịch phù hợp gần nhất.");
   const [selectedDay, setSelectedDay] = useState(() => startOfDay(new Date()));
   const [calendarBranchId, setCalendarBranchId] = useState(session?.branchId ?? "all");
   const bookingDetailRef = useRef<HTMLDivElement>(null);
@@ -366,7 +366,7 @@ export function AdminBookingOperations() {
                     <p className="text-xs font-semibold">{request.serviceLabel}{request.packageTier ? ` · ${request.packageTier}` : ""}</p>
                     <div className="mt-2.5 grid grid-cols-3 gap-1.5 text-center"><div className="rounded-xl border border-[#f0e3da] p-2"><span className="block text-[9px] text-[#8a7a72]">Tổng Bill</span><strong className="mt-0.5 block text-xs">{formatMoney(request.totalAmount)}</strong></div><div className="rounded-xl border border-[#d5eadc] bg-[#f3fbf6] p-2"><span className="block text-[9px] text-[#56806a]">Đã cọc</span><strong className="mt-0.5 block text-xs text-[#16784a]">{formatMoney(request.paidAmount)}</strong></div><div className="rounded-xl border border-[#f0e3da] p-2"><span className="block text-[9px] text-[#8a7a72]">Còn lại</span><strong className="mt-0.5 block text-xs">{formatMoney(remaining)}</strong></div></div>
                     <div className="mt-3 grid grid-cols-2 gap-2">
-                      {actionable ? <button type="button" onClick={() => { setRejectingBusiness(request); setBusinessReason("Tâm An Care chưa thể bảo đảm đủ đội ngũ triển khai trong khung giờ đã chọn. Chúng tôi sẽ liên hệ để ưu tiên một lịch phù hợp gần nhất."); }} className="inline-flex items-center justify-center gap-1 rounded-full border border-[#d13f1f] px-3 py-2.5 text-xs font-semibold text-[#d13f1f]"><XCircle size={13} /> Từ chối & lý do</button> : <span />}
+                      {actionable ? <button type="button" onClick={() => { setRejectingBusiness(request); setBusinessReason("Tâm An Center chưa thể bảo đảm đủ đội ngũ triển khai trong khung giờ đã chọn. Chúng tôi sẽ liên hệ để ưu tiên một lịch phù hợp gần nhất."); }} className="inline-flex items-center justify-center gap-1 rounded-full border border-[#d13f1f] px-3 py-2.5 text-xs font-semibold text-[#d13f1f]"><XCircle size={13} /> Từ chối & lý do</button> : <span />}
                       <Link href={`/admin/business/${request.eventCode}`} className="inline-flex items-center justify-center gap-1 rounded-full bg-[#1d8f55] px-3 py-2.5 text-xs font-semibold text-white">{request.status === "DEPOSIT_CONFIRMED" ? "Xác nhận & phân công" : "Xem hồ sơ"}<ChevronRight size={13} /></Link>
                     </div>
                   </div>

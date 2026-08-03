@@ -20,7 +20,7 @@ import { AccountRoleMenu } from "@/components/account-role-menu";
 import { appVersion } from "@/lib/server/app-version";
 
 export const metadata = {
-  title: "Tôi | Tâm An Care",
+  title: "Tôi | Tâm An Center",
 };
 
 type MenuItem = {

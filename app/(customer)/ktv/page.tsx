@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 import { TherapistAvatar } from "@/components/therapist-avatar";
 
 export const metadata = {
-  title: "Đội ngũ KTV | Tâm An Care",
+  title: "Đội ngũ KTV | Tâm An Center",
 };
 
 export const dynamic = "force-dynamic";
@@ -36,7 +36,7 @@ export default async function TherapistListPage() {
               <p className="text-sm font-semibold tracking-tight">{therapist.fullName}</p>
               <p className="mt-0.5 flex items-center gap-1 text-xs text-[#8a7a72]">
                 <Star size={12} className="fill-[#d13f1f] text-[#d13f1f]" /> {therapist.ratingAvg.toFixed(1)} · {therapist.servedCount} buổi ·{" "}
-                {therapist.branch.name.replace(/^Tâm An Care · /, "")} · {therapist.shiftLabel}
+                {therapist.branch.name.replace(/^Tâm An Center · /, "")} · {therapist.shiftLabel}
               </p>
               <p className="mt-1.5 line-clamp-2 text-xs leading-5 text-[#665b55]">{therapist.publicBio ?? `Chuyên ${(therapist.publicStrengths.length ? therapist.publicStrengths : therapist.skills).join(" · ")}`}</p>
             </div>

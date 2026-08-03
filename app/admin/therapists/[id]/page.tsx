@@ -48,7 +48,7 @@ export default async function TherapistProfilePage({ params }: { params: Promise
         </div>
       </section>
 
-      <div className="mt-4"><TherapistQrCard dataUrl={qrDataUrl} therapistName={therapist.fullName} branchLabel={therapist.branch.name.replace(/^Tâm An Care · /, "")} /></div>
+      <div className="mt-4"><TherapistQrCard dataUrl={qrDataUrl} therapistName={therapist.fullName} branchLabel={therapist.branch.name.replace(/^Tâm An Center · /, "")} /></div>
 
       <section className="mt-4 rounded-xl border border-[#eadbd1] bg-white p-4 shadow-sm sm:p-5">
         <div className="flex items-center justify-between gap-3">

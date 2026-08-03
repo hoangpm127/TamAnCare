@@ -207,7 +207,7 @@ export function CorporateClient() {
 
           <div className="px-6 py-6">
             <p className="text-sm leading-6 text-[#665b55]">
-              Đội ngũ Tâm An Care sẽ điều phối <strong className="text-[#191414]">{requiredTherapists} KTV</strong> và gọi số{" "}
+              Đội ngũ Tâm An Center sẽ điều phối <strong className="text-[#191414]">{requiredTherapists} KTV</strong> và gọi số{" "}
               <strong className="text-[#191414]">{contactPhone}</strong> trước giờ hẹn 2 tiếng để xác nhận lần cuối trước khi triển khai
               dịch vụ tận nơi cho {companyName}.
             </p>
@@ -222,7 +222,7 @@ export function CorporateClient() {
                   1
                 </span>
                 <p className="mt-0.5 text-xs leading-5 text-[#4d403a]">
-                  Đội ngũ Tâm An Care xác nhận đầu người thực tế trước giờ hẹn 2 tiếng.
+                  Đội ngũ Tâm An Center xác nhận đầu người thực tế trước giờ hẹn 2 tiếng.
                 </p>
               </div>
               <div className="flex items-start gap-3">
@@ -298,7 +298,7 @@ export function CorporateClient() {
             </p>
             <h1 className="mt-1.5 text-lg font-semibold tracking-tight">Yêu cầu {inquiryCode}</h1>
             <p className="mt-1.5 text-sm leading-6 text-[#665b55]">
-              Tâm An Care đã tự động lên báo giá cho {companyName}. Bạn chỉ cần đặt cọc {depositPolicy.percent}% giá trị ban đầu để giữ lịch, đội ngũ
+              Tâm An Center đã tự động lên báo giá cho {companyName}. Bạn chỉ cần đặt cọc {depositPolicy.percent}% giá trị ban đầu để giữ lịch, đội ngũ
               chúng tôi sẽ xác nhận & triển khai dịch vụ tận nơi.
             </p>
 
@@ -405,7 +405,7 @@ export function CorporateClient() {
               <Sparkles size={16} />
             </span>
             <p className="text-xs leading-5 text-white/75">
-              <strong className="font-semibold">Tâm An Care sẽ tự động lên báo giá</strong> — bạn chỉ cần đặt cọc{" "}
+              <strong className="font-semibold">Tâm An Center sẽ tự động lên báo giá</strong> — bạn chỉ cần đặt cọc{" "}
               {depositPolicy.percent}% giá trị ban đầu trước ưu đãi để xác nhận, đội ngũ chúng tôi sẽ xác nhận & triển khai dịch vụ tận nơi.
             </p>
           </div>
@@ -653,7 +653,7 @@ export function CorporateClient() {
             <span className="text-xl font-semibold text-[#d13f1f]">{formatMoney(total)}</span>
           </div>
           <p className="mt-1.5 text-[11px] text-[#8a7a72]">
-            Báo giá tự động theo thông tin bạn nhập. Đặt cọc {depositPolicy.percent}% giá trị ban đầu trước ưu đãi để giữ lịch, đội ngũ Tâm An Care sẽ xác nhận đầu
+            Báo giá tự động theo thông tin bạn nhập. Đặt cọc {depositPolicy.percent}% giá trị ban đầu trước ưu đãi để giữ lịch, đội ngũ Tâm An Center sẽ xác nhận đầu
             người thực tế trước khi triển khai.
           </p>
 

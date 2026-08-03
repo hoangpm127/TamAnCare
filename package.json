@@ -1,6 +1,6 @@
 {
-  "name": "tam-an-care",
-  "version": "1.0.1",
+  "name": "tam-an-center",
+  "version": "1.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",

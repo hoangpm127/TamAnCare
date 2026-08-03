@@ -26,7 +26,7 @@ export async function GET() {
       referenceCode: booking.group?.referenceCode ?? booking.bookingCode,
       customerName: booking.customer.fullName,
       serviceName: booking.service.name,
-      branchLabel: booking.branch.name.replace(/^Tâm An Care · /, ""),
+      branchLabel: booking.branch.name.replace(/^Tâm An Center · /, ""),
       startedAt: booking.checkedInAt!.toISOString(),
       durationMin: booking.durationMin,
       plannedEndAt: new Date(booking.checkedInAt!.getTime() + booking.durationMin * 60_000).toISOString(),

@@ -12,7 +12,7 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
       <body className="m-0 bg-[#fffaf6] font-sans text-[#191414]">
         <main className="flex min-h-screen items-center justify-center px-5">
           <section className="w-full max-w-md rounded-3xl border border-[#eadbd1] bg-white p-6 text-center shadow-xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#d13f1f]">Tâm An Care</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#d13f1f]">Tâm An Center</p>
             <h1 className="mt-2 text-xl font-semibold">Màn hình vừa gặp sự cố</h1>
             <p className="mt-2 text-sm leading-6 text-[#665b55]">
               Dữ liệu giao dịch chưa được tự động thay đổi. Bạn có thể thử tải lại; nếu lỗi lặp lại, hãy báo lễ tân hoặc quản lý.

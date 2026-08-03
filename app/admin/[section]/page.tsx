@@ -205,7 +205,7 @@ export default async function AdminSectionPage({ params }: { params: Promise<{ s
     ]);
     return <AdminSettingsCenter
       initialSettings={settings.map((item) => ({ ...item, updatedAt: item.updatedAt.toISOString() }))}
-      branches={settingBranches.map((branch) => ({ id: branch.id, label: branch.name.replace(/^Tâm An Care · /, "") }))}
+      branches={settingBranches.map((branch) => ({ id: branch.id, label: branch.name.replace(/^Tâm An Center · /, "") }))}
       role={session.role as "OWNER" | "BRANCH_MANAGER"}
       activeBranchId={session.branchId}
     />;
@@ -225,7 +225,7 @@ export default async function AdminSectionPage({ params }: { params: Promise<{ s
       section={slug}
       title={adminSections[slug]}
       rows={rows}
-      branches={branches.map((branch) => ({ id: branch.id, label: branch.name.replace(/^Tâm An Care · /, "") }))}
+      branches={branches.map((branch) => ({ id: branch.id, label: branch.name.replace(/^Tâm An Center · /, "") }))}
     />
   );
 }

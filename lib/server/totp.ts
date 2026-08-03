@@ -109,7 +109,7 @@ export function verifyTotpCode(secret: string, input: string, now = Date.now()) 
 }
 
 export function totpProvisioningUri(secret: string, username: string) {
-  const issuer = "Tâm An Care";
+  const issuer = "Tâm An Center";
   const label = `${issuer}:${username}`;
   const params = new URLSearchParams({ secret, issuer, algorithm: "SHA1", digits: String(TOTP_DIGITS), period: String(TOTP_STEP_SECONDS) });
   return `otpauth://totp/${encodeURIComponent(label)}?${params.toString()}`;

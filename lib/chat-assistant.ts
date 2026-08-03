@@ -54,7 +54,7 @@ export function classifyAndReply(rawText: string, branches: CatalogBranch[]): Ch
 
   if (GREETING_KEYWORDS.some((keyword) => text.includes(keyword)) || rawText.trim().length <= 12) {
     return {
-      reply: "Xin chào! Mình là trợ lý tự động của Tâm An Care. Mình có thể hướng dẫn bạn xem dịch vụ, lịch trống, địa chỉ và hotline; đây không phải cuộc chat trực tiếp với lễ tân.",
+      reply: "Xin chào! Mình là trợ lý tự động của Tâm An Center. Mình có thể hướng dẫn bạn xem dịch vụ, lịch trống, địa chỉ và hotline; đây không phải cuộc chat trực tiếp với lễ tân.",
     };
   }
 

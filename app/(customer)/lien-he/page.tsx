@@ -2,7 +2,7 @@ import { Clock, MapPin, Navigation, Phone } from "lucide-react";
 import { getPublicCatalog } from "@/lib/server/public-catalog";
 
 export const metadata = {
-  title: "Liên hệ | Tâm An Care",
+  title: "Liên hệ | Tâm An Center",
 };
 
 export const dynamic = "force-dynamic";
@@ -12,18 +12,18 @@ export default async function ContactPage() {
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-6 text-[#191414] sm:px-6">
-      <h1 className="text-xl font-semibold tracking-tight">Liên hệ Tâm An Care</h1>
+      <h1 className="text-xl font-semibold tracking-tight">Liên hệ Tâm An Center</h1>
       <p className="mt-2 text-sm leading-6 text-[#665b55]">
         Chọn đúng cơ sở để gọi hotline hoặc mở chỉ đường. Thông tin bên dưới được lấy trực tiếp từ hệ thống vận hành.
       </p>
 
       <div className="mt-5 space-y-4">
         {branches.map((branch) => {
-          const mapsHref = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`Tâm An Care ${branch.label}, ${branch.address}`)}`;
+          const mapsHref = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`Tâm An Center ${branch.label}, ${branch.address}`)}`;
           return (
             <section key={branch.id} className="overflow-hidden rounded-2xl border border-[#eadbd1] bg-white shadow-sm">
               <div className="border-b border-[#f1e5dd] bg-[#fff8f3] px-4 py-3">
-                <h2 className="font-semibold">Tâm An Care · {branch.label}</h2>
+                <h2 className="font-semibold">Tâm An Center · {branch.label}</h2>
               </div>
               <div className="space-y-3 px-4 py-4 text-sm">
                 <p className="flex items-start gap-3"><MapPin className="mt-0.5 shrink-0 text-[#d13f1f]" size={17} /><span>{branch.address}</span></p>

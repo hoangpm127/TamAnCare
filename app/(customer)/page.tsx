@@ -61,15 +61,16 @@ export default async function Home() {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#170b0a]/92 via-[#170b0a]/45 to-transparent" />
           <div className="relative z-10 flex min-h-[300px] flex-col items-center justify-end px-4 py-5 text-center sm:min-h-[340px] sm:px-6 sm:py-6">
+            <Image src="/tam-an-center-mark.png" alt="Biểu tượng Tâm An Center" width={58} height={58} className="mb-2 h-[58px] w-[58px] rounded-2xl object-cover shadow-lg ring-1 ring-[#f0d371]/45" />
             <p className="mb-2 inline-flex w-fit items-center gap-1.5 rounded-full border border-white/25 bg-white/10 px-3 py-1 text-[11px] font-medium">
               <Sparkles size={12} /> Chăm sóc chỉn chu · đặt lịch minh bạch
             </p>
             <h1 className="max-w-md text-xl font-semibold leading-tight tracking-tight sm:text-2xl lg:text-3xl">
-              <span className="block">TÂM AN CARE</span>
+              <span className="block">TÂM AN CENTER</span>
               <span className="block">GIÚP BẠN VUI KHỎE MỖI NGÀY</span>
             </h1>
             <p className="mt-2 max-w-md text-xs leading-5 text-white/80 sm:text-sm">
-              Đặt trước Foot, Body, gội đầu dưỡng sinh, giác hơi và trị liệu chuyên sâu trong dưới 60 giây.
+              Đặt trước massage Body, cổ vai gáy, chân, lưng hông và các liệu trình chăm sóc chuyên sâu trong dưới 60 giây.
             </p>
             <BookingHeroCta />
             <div className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 border-t border-white/15 pt-3 text-[11px] text-white/85 sm:text-xs">
@@ -89,9 +90,9 @@ export default async function Home() {
       </section>
 
       <section className="mx-auto max-w-7xl px-4 pt-3 sm:px-6 lg:px-10">
-        <Link href="/tai-khoan" className="flex items-center justify-between gap-3 rounded-2xl bg-gradient-to-r from-[#351912] via-[#7c2c1a] to-[#b83a20] px-4 py-3.5 text-white shadow-md">
+        <Link href="/tai-khoan" className="flex items-center justify-between gap-3 rounded-2xl bg-gradient-to-r from-[#06372e] via-[#0b5747] to-[#16725e] px-4 py-3.5 text-white shadow-md">
           <span className="flex min-w-0 items-center gap-3">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#f5d982] text-[#5c2718]"><Gift size={19} /></span>
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#f5dc8f] text-[#0a493c]"><Gift size={19} /></span>
             <span className="min-w-0"><strong className="block text-sm">Tạo tài khoản nhận ưu đãi 100K</strong><small className="mt-0.5 block text-[11px] text-white/70">Đặt lịch không cần đăng nhập · đăng ký để giữ quyền lợi riêng</small></span>
           </span>
           <ArrowRight className="shrink-0 text-[#f5d982]" size={18} />
@@ -127,7 +128,7 @@ export default async function Home() {
 
       <section className="mx-auto max-w-7xl px-4 pb-4 pt-3 sm:px-6 lg:px-10">
         <div className="mb-2.5">
-          <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">Ưu điểm tại Tâm An Care</h2>
+          <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">Ưu điểm tại Tâm An Center</h2>
         </div>
         <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
           {[
@@ -138,7 +139,7 @@ export default async function Home() {
           ].map(({ title, body, accent }) => (
             <div
               key={title}
-              className="flex flex-col overflow-hidden rounded-2xl border bg-gradient-to-br from-[#281816] via-[#3d2018] to-[#5c2718] text-white shadow-md transition hover:-translate-y-0.5 hover:shadow-xl"
+              className="flex flex-col overflow-hidden rounded-2xl border bg-gradient-to-br from-[#073d33] via-[#0b4b3e] to-[#116956] text-white shadow-md transition hover:-translate-y-0.5 hover:shadow-xl"
               style={{ borderColor: `${accent}30` }}
             >
               <div className="border-b border-white/10 px-3.5 py-2.5" style={{ backgroundColor: `${accent}28` }}>

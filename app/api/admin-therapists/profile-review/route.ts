@@ -41,7 +41,7 @@ export async function PATCH(request: Request) {
         publicStrengths: therapist.proposedStrengths,
         profileApprovalStatus: "APPROVED",
         profileReviewedAt: new Date(),
-        profileReviewNote: parsed.data.note || "Hồ sơ đạt tiêu chuẩn công khai của Tâm An Care.",
+        profileReviewNote: parsed.data.note || "Hồ sơ đạt tiêu chuẩn công khai của Tâm An Center.",
       } : {
         profileApprovalStatus: "CHANGES_REQUESTED",
         profileReviewedAt: new Date(),

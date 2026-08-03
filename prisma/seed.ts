@@ -52,14 +52,14 @@ function validateSeedPasswords() {
 const branchConfig = [
   {
     id: "cs1",
-    name: "Tâm An Care · Cơ sở 1",
+    name: "Tâm An Center · Cơ sở 1",
     address: branches.find((item) => item.id === "cs1")?.address ?? "Cơ sở 1",
     phone: branches.find((item) => item.id === "cs1")?.phone,
     seatCapacity: branches.find((item) => item.id === "cs1")?.seatCapacity ?? 18,
   },
   {
     id: "cs2",
-    name: "Tâm An Care · Cơ sở 2",
+    name: "Tâm An Center · Cơ sở 2",
     address: branches.find((item) => item.id === "cs2")?.address ?? "Cơ sở 2",
     phone: branches.find((item) => item.id === "cs2")?.phone,
     seatCapacity: branches.find((item) => item.id === "cs2")?.seatCapacity ?? 18,
@@ -333,7 +333,7 @@ async function seedCatalog() {
           branchId: branchItem.id,
           fullName: demo?.fullName ?? `KTV ${branchItem.id.toUpperCase()} ${String(index + 1).padStart(2, "0")}`,
           skills: demo?.skills ?? ["Foot", "Body", "Chăm sóc thư giãn"],
-          publicBio: "KTV được đào tạo theo tiêu chuẩn Tâm An Care, chú trọng sự chỉn chu, an toàn và trải nghiệm riêng của từng khách.",
+          publicBio: "KTV được đào tạo theo tiêu chuẩn Tâm An Center, chú trọng sự chỉn chu, an toàn và trải nghiệm riêng của từng khách.",
           publicStrengths: demo?.skills ?? ["Foot", "Body", "Chăm sóc thư giãn"],
           profileApprovalStatus: "APPROVED",
           shiftLabel: "09:00-24:00",

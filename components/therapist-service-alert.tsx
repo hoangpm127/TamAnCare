@@ -130,7 +130,7 @@ export function TherapistServiceAlert() {
           <section className="w-full max-w-lg rounded-t-[2rem] bg-[#fffaf6] p-5 pb-[calc(env(safe-area-inset-bottom)+1.25rem)] text-center shadow-2xl sm:rounded-[2rem]">
             <button type="button" onClick={() => setDismissedEnd(service.bookingCode)} className="ml-auto flex h-8 w-8 items-center justify-center rounded-full bg-white text-[#8a7a72]" aria-label="Thu gọn thông báo"><X size={15} /></button>
             <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#fff2ef] text-[#d13f1f]"><Volume2 size={25} /></span>
-            <p className="mt-3 text-[10px] font-bold uppercase tracking-[0.16em] text-[#d13f1f]">Tâm An Care</p>
+            <p className="mt-3 text-[10px] font-bold uppercase tracking-[0.16em] text-[#d13f1f]">Tâm An Center</p>
             <h2 className="mt-1 text-xl font-semibold">Đã đủ thời lượng phục vụ</h2>
             <p className="mt-2 text-sm leading-6 text-[#665b55]">Ca của <strong>{service.customerName}</strong> đã đủ {service.durationMin} phút. Mời KTV khéo léo kết thúc liệu trình, hỗ trợ khách chuẩn bị và hướng dẫn đối soát Bill tại quầy.</p>
             <div className="mt-4 grid grid-cols-3 gap-2 rounded-2xl bg-white p-3 text-center text-[9px] text-[#8a7a72]"><span>Tổng Bill<strong className="mt-1 block text-xs text-[#191414]">{formatMoney(service.totalAmount)}</strong></span><span>Đã cọc/thu<strong className="mt-1 block text-xs text-[#16784a]">{formatMoney(service.paidAmount)}</strong></span><span>Còn lại<strong className="mt-1 block text-xs text-[#d13f1f]">{service.usedPackage ? "Lượt gói" : formatMoney(service.dueAmount)}</strong></span></div>

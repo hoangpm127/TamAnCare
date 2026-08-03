@@ -1,4 +1,4 @@
-# Kịch bản UAT thực địa Tâm An Care
+# Kịch bản UAT thực địa Tâm An Center
 
 ## Mục tiêu và nguyên tắc
 

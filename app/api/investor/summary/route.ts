@@ -266,7 +266,7 @@ export async function GET(request: Request) {
     const profit = branchRevenue - branchExpenses;
     return {
       branchId: allocation.branchId,
-      label: allocation.branch.name.replace(/^Tâm An Care · /, ""),
+      label: allocation.branch.name.replace(/^Tâm An Center · /, ""),
       allocatedCapital: allocation.allocatedCapital,
       ownershipPercent: allocation.ownershipPercent,
       grossRevenue: branchGrossRevenue,
@@ -326,7 +326,7 @@ export async function GET(request: Request) {
       branchId: selectedBranchId,
       availableBranches: profile.allocations.map((item) => ({
         branchId: item.branchId,
-        label: item.branch.name.replace(/^Tâm An Care · /, ""),
+        label: item.branch.name.replace(/^Tâm An Center · /, ""),
         allocatedCapital: item.allocatedCapital,
       })),
     },

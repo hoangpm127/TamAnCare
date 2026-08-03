@@ -53,7 +53,7 @@ export function TherapistNav({ qrDataUrl, therapistName, branchLabel }: Props) {
       <header className="sticky top-0 z-40 border-b border-[#eadbd1] bg-white/95 shadow-sm backdrop-blur">
         <div className="mx-auto flex h-14 max-w-4xl items-center justify-between px-3 sm:px-6">
           <Link href="/therapist" className="tap-feedback relative min-w-0 rounded-xl">
-            <span className="block truncate text-sm font-semibold tracking-wide">KTV Tâm An Care</span>
+            <span className="block truncate text-sm font-semibold tracking-wide">KTV Tâm An Center</span>
             <span className="block truncate text-[8px] text-[#8a7a72]">{branchLabel}</span>
             <NavigationPendingIndicator />
           </Link>

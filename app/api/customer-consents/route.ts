@@ -81,7 +81,7 @@ export async function PATCH(request: Request) {
       type: "SYSTEM",
       title: "Đã cập nhật lựa chọn riêng tư",
       body: parsed.data.marketingOptIn
-        ? "Bạn đã chọn nhận thông tin ưu đãi và gợi ý chăm sóc từ Tâm An Care."
+        ? "Bạn đã chọn nhận thông tin ưu đãi và gợi ý chăm sóc từ Tâm An Center."
         : "Bạn đã rút lựa chọn nhận thông tin tiếp thị không thiết yếu.",
       actionUrl: "/tai-khoan",
     });

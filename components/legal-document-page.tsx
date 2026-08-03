@@ -11,7 +11,7 @@ export function LegalDocumentPage({ document }: { document: LegalDocument }) {
             <ArrowLeft size={14} /> Về Trang chủ
           </Link>
           <p className="mt-5 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-[#f4d87e]">
-            <FileCheck2 size={16} /> Tâm An Care · {document.version}
+            <FileCheck2 size={16} /> Tâm An Center · {document.version}
           </p>
           <h1 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">{document.title}</h1>
           <p className="mt-3 max-w-2xl text-sm leading-6 text-white/75">{document.summary}</p>

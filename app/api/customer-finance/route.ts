@@ -113,13 +113,13 @@ export async function GET() {
       checkoutRequestedAt: first?.checkoutRequestedAt?.toISOString(),
       serviceDurationMin: Math.max(...group.bookings.map((item) => item.durationMin), 0),
       therapistName: group.bookings.map((item) => item.therapist?.fullName).filter(Boolean).join(", ") || undefined,
-      branchLabel: group.branch.name.replace(/^Tâm An Care · /, ""),
+      branchLabel: group.branch.name.replace(/^Tâm An Center · /, ""),
       items: group.bookings.map((item) => ({ name: item.service.name, qty: 1, amount: item.basePrice + item.therapistFee })),
       bookingCode: group.referenceCode,
       note: customerPackage
         ? `${completed ? "Đã hoàn tất" : "Đã giữ"} lượt trong ${customerPackage.packagePlan.name}`
         : completed
-          ? "Đã thanh toán đầy đủ tại Tâm An Care"
+          ? "Đã thanh toán đầy đủ tại Tâm An Center"
           : group.status === "CANCELLED"
             ? "Lịch đã hủy; khoản đã thu cần được bảo lưu hoặc hoàn theo xử lý của cơ sở."
             : group.status === "NO_SHOW"
@@ -169,13 +169,13 @@ export async function GET() {
       checkoutRequestedAt: booking.checkoutRequestedAt?.toISOString(),
       serviceDurationMin: booking.durationMin,
       therapistName: booking.therapist?.fullName,
-      branchLabel: booking.branch.name.replace(/^Tâm An Care · /, ""),
+      branchLabel: booking.branch.name.replace(/^Tâm An Center · /, ""),
       items: [{ name: booking.service.name, qty: 1, amount: booking.basePrice + booking.therapistFee }],
       bookingCode: booking.bookingCode,
       note: customerPackage
         ? `${completed ? "Đã hoàn tất" : "Đã giữ"} lượt trong ${customerPackage.packagePlan.name}`
         : completed
-          ? "Đã thanh toán đầy đủ tại Tâm An Care"
+          ? "Đã thanh toán đầy đủ tại Tâm An Center"
           : booking.status === "CANCELLED"
             ? "Lịch đã hủy; khoản đã thu cần được bảo lưu hoặc hoàn theo xử lý của cơ sở."
             : booking.status === "NO_SHOW"
@@ -205,7 +205,7 @@ export async function GET() {
       totalAmount: payment.amount,
       date: parts.date,
       time: parts.time,
-      branchLabel: payment.branch.name.replace(/^Tâm An Care · /, ""),
+      branchLabel: payment.branch.name.replace(/^Tâm An Center · /, ""),
       bookingCode,
       note: payment.note,
       paymentStatus: "PACKAGE_PURCHASE" as const,
@@ -232,7 +232,7 @@ export async function GET() {
       actualCheckinTime: event.actualStartedAt?.toISOString(),
       serviceDurationMin: actualMinutes,
       therapistName: event.leadTherapist?.fullName,
-      branchLabel: event.branch.name.replace(/^Tâm An Care · /, ""),
+      branchLabel: event.branch.name.replace(/^Tâm An Center · /, ""),
       items: [
         { name: event.serviceLabel ?? "Chăm sóc sức khỏe doanh nghiệp", qty: event.headcount, amount: Math.max(0, event.subtotalAmount - event.discountAmount) },
         ...(event.transportFee > 0 ? [{ name: "Điều phối & di chuyển", qty: event.requiredTherapists, amount: event.transportFee }] : []),
@@ -254,12 +254,12 @@ export async function GET() {
     const referenceCode = payment.bookingGroup?.referenceCode ?? payment.booking?.bookingCode ?? payment.paymentCode ?? "";
     return {
       id: payment.id,
-      label: "Hoàn tiền từ Tâm An Care",
+      label: "Hoàn tiền từ Tâm An Center",
       amount: -payment.amount,
       totalAmount: payment.amount,
       date: parts.date,
       time: parts.time,
-      branchLabel: payment.branch.name.replace(/^Tâm An Care · /, ""),
+      branchLabel: payment.branch.name.replace(/^Tâm An Center · /, ""),
       bookingCode: referenceCode,
       note: `${payment.refundRequestPayment?.reason ?? "Hoàn tiền dịch vụ"}${payment.refundRequestPayment?.bankReference ? ` · Mã ngân hàng ${payment.refundRequestPayment.bankReference}` : ""}`,
       paymentStatus: "REFUND" as const,

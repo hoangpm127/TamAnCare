@@ -56,20 +56,20 @@ export type DemoBooking = {
 
 export const branch = {
   id: "branch-tam-an",
-  name: "Tâm An Spa - Foot & Body",
+  name: "Tâm An Center",
   tagline: "Thả lỏng cơ thể - Đánh thức năng lượng",
-  address: FACILITY_BRANCHES[1].address,
-  phone: "0973 557 500",
-  zalo: "0973 557 500",
-  facebook: "facebook.com/tamancare",
-  openTime: "09:00",
-  closeTime: "24:00",
-  lastBookingTime: "23:00",
+  address: "Số 34 Khu phố An Sinh, O16-CT2 Khu đô thị mới Tây Hồ, phường Nghĩa Đô, TP. Hà Nội",
+  phone: "0963 039 273",
+  zalo: "0963 039 273",
+  facebook: "facebook.com/tamancenter.official",
+  openTime: "08:00",
+  closeTime: "22:00",
+  lastBookingTime: "21:00",
   bufferMinutes: 15,
   ratingAvg: 4.9,
   reviewCount: 512,
   priceNote: "Giá trên chưa bao gồm tip cho KTV",
-  description: "Foot & Body massage, gội đầu dưỡng sinh, giác hơi và trị liệu chuyên sâu đắp thuốc.",
+  description: "Massage Body, cổ vai gáy, chân, lưng hông và các liệu trình chăm sóc chuyên sâu.",
 };
 
 export const branches = FACILITY_BRANCHES.map((item) => ({ ...item }));
@@ -480,7 +480,7 @@ export const bookings: DemoBooking[] = [
     endTime: at(11),
     status: "COMPLETED",
     totalAmount: 250000,
-    source: "Google Tâm An Spa",
+    source: "Google Tâm An Center",
   },
   {
     id: "bk-4",
@@ -523,7 +523,7 @@ export const bookings: DemoBooking[] = [
     endTime: at(14, 30),
     status: "CONFIRMED",
     totalAmount: 350000,
-    source: "Facebook Tâm An Spa",
+    source: "Facebook Tâm An Center",
   },
   {
     id: "bk-3",
@@ -625,7 +625,7 @@ export const notifications: DemoNotification[] = [
     id: "noti-4",
     type: "SYSTEM",
     title: "Cập nhật giờ mở cửa dịp lễ",
-    body: "Tâm An Spa mở cửa 09:00 - 23:00 xuyên các ngày lễ.",
+    body: "Tâm An Center mở cửa 08:00 - 22:00 hằng ngày.",
     createdAt: addDays(today, -6),
     read: true,
   },
@@ -1194,7 +1194,7 @@ export const vouchers = [
   {
     code: "WELCOME100",
     name: "Thành viên mới nhận 100K",
-    description: "Tạo tài khoản để nhận 100.000đ cho lần đặt dịch vụ đầu tiên tại Tâm An Care.",
+    description: "Tạo tài khoản để nhận 100.000đ cho lần đặt dịch vụ đầu tiên tại Tâm An Center.",
     type: "FIXED" as const,
     value: 100000,
     usage: "0/500",
@@ -1207,7 +1207,7 @@ export const vouchers = [
   {
     code: "FIRST60",
     name: "Ưu đãi khách mới 60 phút",
-    description: "Dành cho khách đặt lịch lần đầu tại Tâm An Care, áp dụng cho dịch vụ từ 60 phút trở lên.",
+    description: "Dành cho khách đặt lịch lần đầu tại Tâm An Center, áp dụng cho dịch vụ từ 60 phút trở lên.",
     type: "FIXED" as const,
     value: 50000,
     usage: "18/100",
@@ -1272,9 +1272,9 @@ export const vouchers = [
 ];
 
 export const campaigns = [
-  { code: "FB-TT-BODY60", name: "Facebook Tâm An Spa", source: "Facebook Ads", bookings: 32, completed: 21, revenue: 6300000, cost: 1800000 },
+  { code: "FB-TT-BODY60", name: "Facebook Tâm An Center", source: "Facebook Ads", bookings: 32, completed: 21, revenue: 6300000, cost: 1800000 },
   { code: "TT-VAIGAY-OFFICE", name: "TikTok Vai Gáy Dân Văn Phòng", source: "TikTok Ads", bookings: 26, completed: 17, revenue: 5100000, cost: 1300000 },
-  { code: "GG-TAMAN", name: "Google Tâm An Spa", source: "Google", bookings: 19, completed: 15, revenue: 4800000, cost: 950000 },
+  { code: "GG-TAMAN", name: "Google Tâm An Center", source: "Google", bookings: 19, completed: 15, revenue: 4800000, cost: 950000 },
   { code: "OFFICE-CMC", name: "Office CMC Business", source: "Office QR", bookings: 44, completed: 28, revenue: 3920000, cost: 600000 },
   { code: "KOC-LOCAL", name: "KOC Local Review", source: "KOC", bookings: 11, completed: 8, revenue: 2600000, cost: 500000 },
 ];

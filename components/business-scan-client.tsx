@@ -136,7 +136,7 @@ export function BusinessScanClient({ token }: { token: string }) {
         <div className="p-5">
           <div className="grid grid-cols-2 gap-2.5">
             <Info icon={<UserRoundCheck size={16} />} label="KTV Business trưởng" value={event.leadTherapist ?? "Chưa phân công"} />
-            <Info icon={<Building2 size={16} />} label="Cơ sở phụ trách" value={event.branchName.replace("Tâm An Care · ", "")} />
+            <Info icon={<Building2 size={16} />} label="Cơ sở phụ trách" value={event.branchName.replace("Tâm An Center · ", "")} />
             <Info icon={<MapPin size={16} />} label="Địa điểm triển khai" value={event.location} wide />
           </div>
 

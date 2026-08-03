@@ -30,7 +30,7 @@ function createInitialMessages(branchLabel: string): Message[] {
 export function ChatClient({ branches }: { branches: CatalogBranch[] }) {
   const router = useRouter();
   const primaryBranch = branches[0];
-  const branchLabel = primaryBranch ? `Tâm An Care · ${primaryBranch.label}` : "Tâm An Care";
+  const branchLabel = primaryBranch ? `Tâm An Center · ${primaryBranch.label}` : "Tâm An Center";
   const [messages, setMessages] = useState<Message[]>(() => createInitialMessages(branchLabel));
   const [draft, setDraft] = useState("");
   const [typing, setTyping] = useState(false);

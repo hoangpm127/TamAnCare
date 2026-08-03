@@ -120,7 +120,7 @@ export async function POST(request: Request) {
           data: {
             status: "REVIEW",
             errorCode: "ACCOUNT_MISMATCH",
-            errorMessage: "Giao dịch đến tài khoản chưa được cấu hình cho Tâm An Care.",
+            errorMessage: "Giao dịch đến tài khoản chưa được cấu hình cho Tâm An Center.",
             processedAt: new Date(),
           },
         });

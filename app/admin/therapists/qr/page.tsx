@@ -41,7 +41,7 @@ export default async function TherapistQrCollectionPage() {
         <p className="mt-1 text-xs leading-5 text-white/75">Tải để in, hoặc KTV mở trực tiếp trên điện thoại. Khách quét đúng QR sẽ vào Bill đã phân công cho KTV đó.</p>
       </header>
       <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-        {cards.map(({ therapist, dataUrl }) => <TherapistQrCard key={therapist.id} compact dataUrl={dataUrl} therapistName={therapist.fullName} branchLabel={therapist.branch.name.replace(/^Tâm An Care · /, "")} />)}
+        {cards.map(({ therapist, dataUrl }) => <TherapistQrCard key={therapist.id} compact dataUrl={dataUrl} therapistName={therapist.fullName} branchLabel={therapist.branch.name.replace(/^Tâm An Center · /, "")} />)}
       </div>
     </main>
   );

@@ -122,7 +122,7 @@ export function BankTransferDetails({
       const fileName = `TamAnCare-${transferContent}.png`;
       const file = new File([blob], fileName, { type: "image/png" });
       if (navigator.share && navigator.canShare?.({ files: [file] })) {
-        await navigator.share({ files: [file], title: "VietQR Tâm An Care" });
+        await navigator.share({ files: [file], title: "VietQR Tâm An Center" });
         setSaveNotice("Đã mở bảng lưu/chia sẻ. Trên iPhone, chọn “Lưu hình ảnh”.");
       } else {
         const objectUrl = URL.createObjectURL(blob);
@@ -166,7 +166,7 @@ export function BankTransferDetails({
   }
 
   if (!bankAccount.configured) {
-    return <p className="text-xs leading-5 text-[#4d403a]">Tâm An Care đang cập nhật thông tin nhận chuyển khoản. Vui lòng liên hệ lễ tân.</p>;
+    return <p className="text-xs leading-5 text-[#4d403a]">Tâm An Center đang cập nhật thông tin nhận chuyển khoản. Vui lòng liên hệ lễ tân.</p>;
   }
 
   return (

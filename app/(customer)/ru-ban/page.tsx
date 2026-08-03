@@ -34,7 +34,7 @@ export default function ReferralPage() {
   const [qrLoading, setQrLoading] = useState(false);
 
   const referralPath = `/r/${referral.code}`;
-  const shareText = "Mình gửi bạn lời mời Tâm An Care: nhận ưu đãi cho lần trải nghiệm đầu tiên, đặt lịch ngay trên web và có thể cài lên màn hình điện thoại.";
+  const shareText = "Mình gửi bạn lời mời Tâm An Center: nhận ưu đãi cho lần trải nghiệm đầu tiên, đặt lịch ngay trên web và có thể cài lên màn hình điện thoại.";
 
   const invitedCount = referral.invited.length;
   const completedCount = referral.invited.filter((friend) => friend.status === "COMPLETED").length;
@@ -98,7 +98,7 @@ export default function ReferralPage() {
     const referralLink = `${window.location.origin}${referralPath}`;
     if (navigator.share) {
       try {
-        await navigator.share({ title: "Tâm An Care", text: shareText, url: referralLink });
+        await navigator.share({ title: "Tâm An Center", text: shareText, url: referralLink });
         return;
       } catch {
         // người dùng huỷ chia sẻ, rơi xuống copy bên dưới

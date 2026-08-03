@@ -39,7 +39,7 @@ export async function POST(request: Request) {
   if (!ipLimit.allowed || !phoneLimit.allowed) {
     const retryAfter = Math.max(ipLimit.retryAfterSeconds, phoneLimit.retryAfterSeconds);
     return NextResponse.json(
-      { error: "Đã có quá nhiều yêu cầu đăng ký. Vui lòng thử lại sau hoặc liên hệ Tâm An Care." },
+      { error: "Đã có quá nhiều yêu cầu đăng ký. Vui lòng thử lại sau hoặc liên hệ Tâm An Center." },
       { status: 429, headers: { "Retry-After": String(retryAfter) } },
     );
   }

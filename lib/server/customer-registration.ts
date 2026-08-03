@@ -50,6 +50,7 @@ export async function createCustomerMembership(tx: Prisma.TransactionClient, inp
       passwordHash: input.passwordHash,
       phoneVerifiedAt: input.phoneVerifiedAt,
       creditBalance: 100000,
+      freeConsultationEligible: true,
     },
     include: { customer: { include: { oauthIdentities: true } } },
   });

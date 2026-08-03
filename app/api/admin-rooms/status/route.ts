@@ -65,7 +65,7 @@ export async function GET(request: Request) {
     selectedAt: selectedAt.toISOString(),
     branches: branches.map((branch) => ({
       id: branch.id,
-      label: branch.name.replace(/^Tâm An Care · /, ""),
+      label: branch.name.replace(/^Tâm An Center · /, ""),
       seatCapacity: branch.seatCapacity,
     })),
     rooms: rooms.map((room) => {

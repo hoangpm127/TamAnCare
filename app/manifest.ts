@@ -2,16 +2,16 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Tâm An Care",
-    short_name: "Tâm An Care",
-    description: "Booking, CRM và dashboard vận hành cho Tâm An Spa - Foot & Body",
+    name: "Tâm An Center",
+    short_name: "Tâm An Center",
+    description: "Đặt lịch và quản lý quyền lợi chăm sóc tại Tâm An Center",
     id: "/",
     start_url: "/",
     scope: "/",
     display: "standalone",
     orientation: "portrait-primary",
-    background_color: "#fffaf6",
-    theme_color: "#d13f1f",
+    background_color: "#fffdf7",
+    theme_color: "#0b5747",
     lang: "vi",
     categories: ["health", "lifestyle"],
     prefer_related_applications: false,
@@ -34,9 +34,9 @@ export default function manifest(): MetadataRoute.Manifest {
         purpose: "any",
       },
       {
-        src: "/favicon.ico",
+        src: "/favicon.png",
         sizes: "48x48",
-        type: "image/x-icon",
+        type: "image/png",
       },
     ],
   };

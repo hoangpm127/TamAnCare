@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { OrdersClient } from "./orders-client";
 
 export const metadata = {
-  title: "Đơn của tôi | Tâm An Care",
+  title: "Đơn của tôi | Tâm An Center",
 };
 
 export default function OrdersPage() {

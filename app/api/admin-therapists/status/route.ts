@@ -130,7 +130,7 @@ export async function GET(request: Request) {
 
   return NextResponse.json({
     generatedAt: now.toISOString(),
-    branches: branches.map((branch) => ({ id: branch.id, label: branch.name.replace(/^Tâm An Care · /, "") })),
+    branches: branches.map((branch) => ({ id: branch.id, label: branch.name.replace(/^Tâm An Center · /, "") })),
     therapists: rows,
     businessStaffing: businessEvents.filter((event) => event.status === "IN_SERVICE").map((event) => ({
       eventCode: event.eventCode,

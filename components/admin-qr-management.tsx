@@ -46,7 +46,7 @@ export function AdminQrManagement({ items, role }: { items: QrItem[]; role: "OWN
       return;
     }
     try {
-      await navigator.share({ title: `QR Tâm An Care · ${item.title}`, text: `Mã QR vận hành ${item.title}`, url: item.link });
+      await navigator.share({ title: `QR Tâm An Center · ${item.title}`, text: `Mã QR vận hành ${item.title}`, url: item.link });
       setMessage(`Đã mở chia sẻ QR ${item.title}.`);
     } catch (reason) {
       if (reason instanceof DOMException && reason.name === "AbortError") return;

@@ -25,7 +25,7 @@ export async function PATCH(request: Request) {
       const branch = await tx.branch.findUnique({ where: { id: targetId } });
       if (!branch) throw new Error("NOT_FOUND");
       branchId = branch.id;
-      label = branch.name.replace(/^Tâm An Care · /, "");
+      label = branch.name.replace(/^Tâm An Center · /, "");
       await tx.branch.update({ where: { id: branch.id }, data: { qrVersion: { increment: 1 } } });
     } else if (targetType === "THERAPIST") {
       const therapist = await tx.therapist.findUnique({ where: { id: targetId } });

@@ -48,7 +48,7 @@ export function ActiveServiceBanner() {
             {active.length > 1 ? `${active.length} dịch vụ đang chạy` : "Dịch vụ đang chạy"}
             <span className="font-mono text-[10px] font-semibold text-[#e6ffef]">· {countdown(primary.actualCheckinTime, primary.serviceDurationMin, now)}</span>
           </span>
-          <span className="block truncate text-[9px] text-white/75">{primary.label} · {primary.therapistName ?? primary.branchLabel ?? "Tâm An Care"}</span>
+          <span className="block truncate text-[9px] text-white/75">{primary.label} · {primary.therapistName ?? primary.branchLabel ?? "Tâm An Center"}</span>
         </span>
         <ChevronRight size={16} className="shrink-0" />
       </Link>

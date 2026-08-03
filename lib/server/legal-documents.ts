@@ -18,14 +18,14 @@ export type LegalDocument = {
 };
 
 export const LEGAL_APPROVAL_REQUIRED =
-  "Bản dự thảo vận hành. Tâm An Care phải bổ sung thông tin pháp nhân, đầu mối liên hệ và được người có thẩm quyền cùng tư vấn pháp lý phê duyệt trước khi mở bán thật.";
+  "Bản dự thảo vận hành. Tâm An Center phải bổ sung thông tin pháp nhân, đầu mối liên hệ và được người có thẩm quyền cùng tư vấn pháp lý phê duyệt trước khi mở bán thật.";
 
 const TERMS: LegalDocument = {
   type: "TERMS",
   title: "Điều khoản sử dụng",
   version: "2026-07-22-draft.1",
   effectiveDate: "22/07/2026 (dự thảo)",
-  summary: "Quy định cách khách hàng truy cập, đặt dịch vụ và sử dụng nền tảng Tâm An Care.",
+  summary: "Quy định cách khách hàng truy cập, đặt dịch vụ và sử dụng nền tảng Tâm An Center.",
   sections: [
     {
       heading: "1. Chủ thể cung cấp dịch vụ",
@@ -36,7 +36,7 @@ const TERMS: LegalDocument = {
     {
       heading: "2. Phạm vi nền tảng",
       paragraphs: [
-        "Tâm An Care hỗ trợ xem thông tin, đặt lịch chăm sóc sức khỏe, thanh toán/đối soát, quản lý quyền lợi thành viên, Affiliate và trao đổi với cơ sở. Dịch vụ chăm sóc không thay thế việc khám, chẩn đoán hoặc điều trị y khoa.",
+        "Tâm An Center hỗ trợ xem thông tin, đặt lịch chăm sóc sức khỏe, thanh toán/đối soát, quản lý quyền lợi thành viên, Affiliate và trao đổi với cơ sở. Dịch vụ chăm sóc không thay thế việc khám, chẩn đoán hoặc điều trị y khoa.",
       ],
     },
     {
@@ -59,7 +59,7 @@ const TERMS: LegalDocument = {
       bullets: [
         "Không giả mạo danh tính, can thiệp hệ thống, chiếm quyền booking, lạm dụng mã ưu đãi hoặc sử dụng nền tảng cho hoạt động trái pháp luật.",
         "Khách cần cung cấp trung thực thông tin sức khỏe có liên quan và tuân thủ hướng dẫn an toàn tại cơ sở.",
-        "Tâm An Care có thể tạm dừng tài khoản hoặc giao dịch có dấu hiệu gian lận nhưng phải lưu vết, xem xét và có kênh tiếp nhận phản hồi.",
+        "Tâm An Center có thể tạm dừng tài khoản hoặc giao dịch có dấu hiệu gian lận nhưng phải lưu vết, xem xét và có kênh tiếp nhận phản hồi.",
       ],
     },
     {
@@ -82,7 +82,7 @@ const PRIVACY: LegalDocument = {
     {
       heading: "1. Bên kiểm soát dữ liệu và đầu mối liên hệ",
       paragraphs: [
-        "Đơn vị vận hành Tâm An Care dự kiến là bên quyết định mục đích và phương thức xử lý dữ liệu trên nền tảng. Tên pháp lý, địa chỉ, email bảo vệ dữ liệu và số điện thoại tiếp nhận yêu cầu đang chờ Chủ doanh nghiệp phê duyệt; chưa được phép mở bán thật khi thiếu các thông tin này.",
+        "Đơn vị vận hành Tâm An Center dự kiến là bên quyết định mục đích và phương thức xử lý dữ liệu trên nền tảng. Tên pháp lý, địa chỉ, email bảo vệ dữ liệu và số điện thoại tiếp nhận yêu cầu đang chờ Chủ doanh nghiệp phê duyệt; chưa được phép mở bán thật khi thiếu các thông tin này.",
       ],
     },
     {
@@ -146,8 +146,8 @@ const BOOKING_POLICY: LegalDocument = {
     {
       heading: "1. Khung giờ phục vụ",
       bullets: [
-        "Cơ sở mở cửa từ 09:00 đến 24:00.",
-        "Giờ nhận khách cuối là 23:00 và chỉ nhận dịch vụ có thời lượng đúng 60 phút ở khung giờ này.",
+        "Cơ sở mở cửa từ 08:00 đến 22:00 hằng ngày.",
+        "Giờ nhận lịch cuối dự kiến là 21:00; hệ thống chỉ hiển thị khung giờ phù hợp với thời lượng dịch vụ và năng lực còn trống.",
         "Khung giờ hiển thị phụ thuộc đồng thời vào ghế/phòng, KTV, thời gian đệm và trạng thái booking đang giữ chỗ.",
       ],
     },
@@ -161,7 +161,7 @@ const BOOKING_POLICY: LegalDocument = {
     {
       heading: "3. Đổi lịch và khách không đến",
       bullets: [
-        "Mỗi khách được đổi lịch một lần trong một tháng mà không bị mất khoản cọc, với điều kiện thực hiện theo thời hạn thông báo được Tâm An Care công bố.",
+        "Mỗi khách được đổi lịch một lần trong một tháng mà không bị mất khoản cọc, với điều kiện thực hiện theo thời hạn thông báo được Tâm An Center công bố.",
         "Từ lần đổi thứ hai trong cùng tháng, khoản cọc trước có thể bị khấu trừ và khách cần đặt cọc lại cho lịch mới.",
         "Khách không đến được áp dụng nguyên tắc tương tự; hệ thống gửi một lời nhắc hỗ trợ đặt lại trong tháng và nhắc lịch tiếp theo theo cách phù hợp.",
         "Nếu khách đến đúng lịch thì không áp dụng phạt cọc theo quy tắc đổi lịch/no-show. Trường hợp lỗi từ cơ sở, bất khả kháng, sức khỏe khẩn cấp hoặc tình huống đặc biệt phải có quy trình xem xét công bằng trước khi khấu trừ.",
@@ -198,7 +198,7 @@ const MARKETING: LegalDocument = {
     {
       heading: "Phạm vi lựa chọn",
       paragraphs: [
-        "Nếu chọn nhận thông tin, Tâm An Care có thể gửi ưu đãi, chương trình thành viên và gợi ý chăm sóc qua kênh liên hệ đã cung cấp. Lựa chọn này không phải điều kiện để tạo tài khoản hoặc đặt dịch vụ và có thể rút lại bất kỳ lúc nào.",
+        "Nếu chọn nhận thông tin, Tâm An Center có thể gửi ưu đãi, chương trình thành viên và gợi ý chăm sóc qua kênh liên hệ đã cung cấp. Lựa chọn này không phải điều kiện để tạo tài khoản hoặc đặt dịch vụ và có thể rút lại bất kỳ lúc nào.",
       ],
     },
   ],

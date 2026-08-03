@@ -1,6 +1,6 @@
-# Tâm An Care
+# Tâm An Center
 
-Web app/PWA quản lý xuyên suốt khách hàng, đặt lịch, check-in QR, vận hành cơ sở và tài chính Tâm An Care.
+Web app/PWA quản lý xuyên suốt khách hàng, đặt lịch, check-in QR, vận hành cơ sở và tài chính Tâm An Center.
 
 ## Môi trường triển khai Tâm An
 
@@ -37,7 +37,7 @@ Mật khẩu không được lưu trong mã nguồn. Với CSDL demo cục bộ,
 
 ## Quy tắc nghiệp vụ đã nối
 
-- Mở cửa 09:00–24:00; ca bắt đầu lúc 23:00 chỉ nhận dịch vụ 60 phút.
+- Tâm An Center mở cửa 08:00–22:00 hằng ngày; khung nhận lịch cuối dự kiến 21:00 và còn phụ thuộc thời lượng dịch vụ.
 - Mỗi cơ sở có 18 giường gồm 3 giường gội, 6 giường Foot và 9 giường Body; mỗi cơ sở đang cấu hình 8 KTV.
 - Cọc bằng 10% tổng bill sau ưu đãi.
 - Mỗi khách được đổi lịch miễn phí một lần/tháng; lần sau mất cọc cũ và cần cọc lại.

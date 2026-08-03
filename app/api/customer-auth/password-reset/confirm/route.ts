@@ -72,7 +72,7 @@ export async function POST(request: Request) {
     await notifyCustomer(tx, challenge.customerId!, {
       type: "SYSTEM",
       title: "Mật khẩu đã được đặt lại",
-      body: "Tất cả phiên đăng nhập cũ đã bị thu hồi. Nếu không phải bạn thực hiện, hãy liên hệ Tâm An Care ngay.",
+      body: "Tất cả phiên đăng nhập cũ đã bị thu hồi. Nếu không phải bạn thực hiện, hãy liên hệ Tâm An Center ngay.",
       actionUrl: "/tai-khoan",
     });
   });

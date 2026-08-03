@@ -43,7 +43,7 @@ async function loadPublicCatalog(): Promise<PublicCatalog> {
   return {
     branches: branches.map((item) => ({
       id: item.id,
-      label: item.name.replace(/^Tâm An Care · /, ""),
+      label: item.name.replace(/^Tâm An Center · /, ""),
       address: item.address,
       phone: item.phone ?? "",
       seatCapacity: item.seatCapacity,

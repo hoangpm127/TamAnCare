@@ -280,7 +280,7 @@ export function CheckinFlow({
     } catch {
       // Hiển thị thông báo thống nhất phía dưới khi dữ liệu không phải URL hợp lệ.
     }
-    setScanError("Mã QR chưa được nhận diện. Vui lòng đưa đúng mã QR Tâm An Care vào giữa khung.");
+    setScanError("Mã QR chưa được nhận diện. Vui lòng đưa đúng mã QR Tâm An Center vào giữa khung.");
   }
 
   const startService = useCallback(async () => {

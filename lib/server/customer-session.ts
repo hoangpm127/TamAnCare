@@ -71,6 +71,9 @@ type CustomerAccountDtoInput = {
   phone: string;
   phoneVerifiedAt: Date | null;
   creditBalance: number;
+  freeConsultationEligible: boolean;
+  freeConsultationDecision: "INTERESTED" | "DECLINED" | null;
+  freeConsultationRespondedAt: Date | null;
   customer: {
     fullName: string;
     totalVisits: number;
@@ -88,5 +91,10 @@ export function customerAccountDto(account: CustomerAccountDtoInput) {
     creditBalance: account.creditBalance,
     welcomeCreditAvailable: account.creditBalance > 0 && (Boolean(account.phoneVerifiedAt) || !phoneVerificationRequired()),
     oauthProviders: account.customer.oauthIdentities?.map((identity) => identity.provider) ?? [],
+    freeConsultationPrompt: {
+      eligible: account.freeConsultationEligible && account.freeConsultationDecision === null,
+      decision: account.freeConsultationDecision,
+      respondedAt: account.freeConsultationRespondedAt?.toISOString() ?? null,
+    },
   };
 }

@@ -62,7 +62,7 @@ export function AdminLoginClient() {
               <div className="flex items-center gap-3">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/icon-64.png" alt="Logo Tâm An" className="h-10 w-10 rounded-full ring-1 ring-[#e3b23c]" />
-                <div><p className="text-sm font-semibold">Tâm An Care</p><p className="text-[10px] text-white/65">Vận hành & đầu tư</p></div>
+                <div><p className="text-sm font-semibold">Tâm An Center</p><p className="text-[10px] text-white/65">Vận hành & đầu tư</p></div>
               </div>
               <p className="mt-6 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#f5d982]">Khu vực được bảo vệ</p>
               <h1 className="mt-1 text-2xl font-semibold leading-tight">Đăng nhập theo tài khoản được cấp</h1>

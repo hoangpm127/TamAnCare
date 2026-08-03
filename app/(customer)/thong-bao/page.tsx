@@ -2,7 +2,7 @@ import { Bell } from "lucide-react";
 import { NotificationsList } from "./notifications-list";
 
 export const metadata = {
-  title: "Thông báo | Tâm An Care",
+  title: "Thông báo | Tâm An Center",
 };
 
 export default function NotificationsPage() {

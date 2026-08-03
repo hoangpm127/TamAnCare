@@ -2,7 +2,7 @@ import Link from "next/link";
 import { RefreshCw, WifiOff } from "lucide-react";
 
 export const metadata = {
-  title: "Mất kết nối | Tâm An Care",
+  title: "Mất kết nối | Tâm An Center",
 };
 
 export default function OfflinePage() {

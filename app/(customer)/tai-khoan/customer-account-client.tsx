@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { CheckCircle2, Eye, EyeOff, Gift, Loader2, LockKeyhole, LogOut, Phone, ShieldCheck, UserRound } from "lucide-react";
 import { DEFAULT_CUSTOMER_PROFILE, refreshCustomerProfile } from "@/lib/customer-profile-store";
 import { formatMoney } from "@/lib/utils";
-import type { CustomerAccountView } from "@/lib/customer-account";
+import { signalCustomerAccountChanged, type CustomerAccountView } from "@/lib/customer-account";
 import { CustomerPasswordRecovery } from "@/components/customer-password-recovery";
 import { CustomerPhoneVerification } from "@/components/customer-phone-verification";
 import { CustomerSocialAuthButtons, CustomerSocialCompletion } from "@/components/customer-social-auth";
@@ -110,6 +110,7 @@ export function CustomerAccountClient({
       const data = await response.json();
       if (!response.ok) throw new Error(data.error ?? "Không thể hoàn tất yêu cầu.");
       setAccount(data.account);
+      signalCustomerAccountChanged();
       void refreshCustomerProfile();
       if (returnTo !== "/tai-khoan") window.location.assign(returnTo);
     } catch (caught) {
@@ -141,7 +142,7 @@ export function CustomerAccountClient({
   }
 
   if (oauthCompletionOpen && !account) {
-    return <CustomerSocialCompletion provider={oauthProvider} returnTo={returnTo} onComplete={(nextAccount) => { setAccount(nextAccount); setOauthCompletionOpen(false); void refreshCustomerProfile(); if (returnTo !== "/tai-khoan") window.location.assign(returnTo); else clearOauthQuery(); }} onCancel={() => { setOauthCompletionOpen(false); clearOauthQuery(); }} />;
+    return <CustomerSocialCompletion provider={oauthProvider} returnTo={returnTo} onComplete={(nextAccount) => { setAccount(nextAccount); signalCustomerAccountChanged(); setOauthCompletionOpen(false); void refreshCustomerProfile(); if (returnTo !== "/tai-khoan") window.location.assign(returnTo); else clearOauthQuery(); }} onCancel={() => { setOauthCompletionOpen(false); clearOauthQuery(); }} />;
   }
 
   if (account) {
@@ -150,7 +151,7 @@ export function CustomerAccountClient({
         <section className="overflow-hidden rounded-3xl bg-white shadow-xl ring-1 ring-[#eadbd1]">
           <div className="bg-gradient-to-br from-[#2b1815] via-[#5c2718] to-[#8f241d] p-6 text-center text-white">
             <CheckCircle2 className="mx-auto text-[#f5d982]" size={36} />
-            <p className="mt-3 text-xs font-bold uppercase tracking-[0.16em] text-[#f5d982]">Thành viên Tâm An Care</p>
+            <p className="mt-3 text-xs font-bold uppercase tracking-[0.16em] text-[#f5d982]">Thành viên Tâm An Center</p>
             <h1 className="mt-1 text-xl font-semibold">Xin chào {account.fullName}</h1>
             <p className="mt-1 text-xs text-white/70">{account.phone}</p>
           </div>

@@ -11,7 +11,18 @@ export type CustomerAccountView = {
   creditBalance: number;
   welcomeCreditAvailable: boolean;
   oauthProviders: Array<"GOOGLE" | "FACEBOOK">;
+  freeConsultationPrompt: {
+    eligible: boolean;
+    decision: "INTERESTED" | "DECLINED" | null;
+    respondedAt: string | null;
+  };
 };
+
+export const CUSTOMER_ACCOUNT_CHANGED_EVENT = "tam-an-customer-account-changed";
+
+export function signalCustomerAccountChanged() {
+  window.dispatchEvent(new Event(CUSTOMER_ACCOUNT_CHANGED_EVENT));
+}
 
 export function useCustomerAccount() {
   const [account, setAccount] = useState<CustomerAccountView | null>(null);
