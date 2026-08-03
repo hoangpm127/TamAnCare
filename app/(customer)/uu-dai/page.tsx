@@ -217,7 +217,12 @@ function OffersContent() {
               </p>
               <div className="mt-2.5 space-y-1.5 rounded-xl border border-[#eadbd1] bg-white p-3 text-[11px] leading-5 text-[#665b55]">
                 <p><strong className="text-[#4a2d16]">Dịch vụ:</strong> {selectedPlanService?.name ?? "Theo dịch vụ ghi trên thẻ"}</p>
-                <p><strong className="text-[#4a2d16]">Quyền lợi:</strong> {selectedPlan.paidSessions} buổi mua + {selectedPlan.bonusSessions} buổi tặng · tổng {selectedPlan.sessions} buổi.</p>
+                <p>
+                  <strong className="text-[#4a2d16]">Quyền lợi:</strong>{" "}
+                  {selectedPlan.bonusSessions > 0
+                    ? `${selectedPlan.paidSessions} buổi mua + ${selectedPlan.bonusSessions} buổi tặng · tổng ${selectedPlan.sessions} buổi.`
+                    : `${selectedPlan.sessions} buổi theo liệu trình.`}
+                </p>
                 <p><strong className="text-[#4a2d16]">Sử dụng:</strong> {selectedPlan.shareable ? "Chủ thẻ có thể đặt nhóm trong cùng booking." : "Chỉ dùng cho chủ thẻ, không chuyển nhượng."}</p>
                 <p><strong className="text-[#4a2d16]">Hiệu lực:</strong> {selectedPlan.validityDays} ngày tính từ lúc ngân hàng xác nhận thanh toán.</p>
               </div>

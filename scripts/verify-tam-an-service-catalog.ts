@@ -16,19 +16,34 @@ const expectedServices = new Map<string, number>([
 ]);
 
 const retiredServiceIds = ["svc-body-90", "svc-body-120", "svc-neck-90", "svc-foot-90", "svc-back-90"];
+const expectedPackages = new Map([
+  ["pkg-3", { serviceId: "svc-neck-60", sessions: 3, paidSessions: 3, bonusSessions: 0, price: 1050000 }],
+  ["pkg-foot-5", { serviceId: "svc-foot-60", sessions: 5, paidSessions: 5, bonusSessions: 0, price: 1575000 }],
+  ["pkg-5", { serviceId: "svc-body-60", sessions: 5, paidSessions: 5, bonusSessions: 0, price: 2000000 }],
+  ["pkg-9", { serviceId: "svc-neck-60", sessions: 10, paidSessions: 9, bonusSessions: 1, price: 3510000 }],
+  ["pkg-body-9", { serviceId: "svc-body-60", sessions: 10, paidSessions: 9, bonusSessions: 1, price: 4050000 }],
+]);
+const retiredPackageIds = ["pkg-19", "pkg-29", "pkg-49"];
 
 async function main() {
-  const [activeServices, retiredServices, activePackages] = await Promise.all([
-    db.service.findMany({
-      where: { isActive: true, isOnline: true },
-      select: { id: true, basePrice: true },
-    }),
-    db.service.findMany({
-      where: { id: { in: retiredServiceIds } },
-      select: { id: true, isActive: true, isOnline: true },
-    }),
-    db.packagePlan.findMany({ where: { isActive: true }, select: { id: true, serviceId: true } }),
-  ]);
+  // PGlite, used for isolated migration tests, shares one database socket.
+  // Keep these reads sequential so the same verification also runs there.
+  const activeServices = await db.service.findMany({
+    where: { isActive: true, isOnline: true },
+    select: { id: true, basePrice: true },
+  });
+  const retiredServices = await db.service.findMany({
+    where: { id: { in: retiredServiceIds } },
+    select: { id: true, isActive: true, isOnline: true },
+  });
+  const activePackages = await db.packagePlan.findMany({
+    where: { isActive: true },
+    select: { id: true, serviceId: true, sessions: true, paidSessions: true, bonusSessions: true, price: true },
+  });
+  const retiredPackages = await db.packagePlan.findMany({
+    where: { id: { in: retiredPackageIds } },
+    select: { id: true, isActive: true },
+  });
 
   assert.equal(activeServices.length, expectedServices.size, "Danh mục online phải có đúng 11 dịch vụ trong bảng giá.");
   for (const service of activeServices) {
@@ -40,8 +55,24 @@ async function main() {
     activePackages.every((plan) => !plan.serviceId || expectedServices.has(plan.serviceId)),
     "Gói liệu trình đang trỏ tới dịch vụ đã ngừng bán.",
   );
+  assert.equal(activePackages.length, expectedPackages.size, "Danh mục phải có đúng 5 gói dài hạn đang bán.");
+  for (const plan of activePackages) {
+    assert.deepEqual(
+      {
+        serviceId: plan.serviceId,
+        sessions: plan.sessions,
+        paidSessions: plan.paidSessions,
+        bonusSessions: plan.bonusSessions,
+        price: plan.price,
+      },
+      expectedPackages.get(plan.id),
+      `Gói ${plan.id} không khớp bảng giá dài hạn mới.`,
+    );
+  }
+  assert.equal(retiredPackages.length, retiredPackageIds.length, "Thiếu gói cũ cần lưu lịch sử.");
+  assert.ok(retiredPackages.every((plan) => !plan.isActive), "Gói giá cao cũ vẫn còn được bán.");
 
-  console.log("✓ Danh mục Tâm An Center chỉ còn 11 dịch vụ đúng bảng giá; 5 bản thời lượng cao đã được ẩn.");
+  console.log("✓ Danh mục Tâm An Center có đúng 11 dịch vụ và 5 gói dài hạn mới; các dịch vụ, gói giá cao cũ chỉ còn lưu lịch sử.");
 }
 
 main()

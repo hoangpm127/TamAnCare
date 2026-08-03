@@ -46,7 +46,7 @@ export default async function Home() {
     .filter((therapist) => therapist.status === "ACTIVE")
     .sort((a, b) => b.ratingAvg - a.ratingAvg);
   const activeTherapistCount = therapists.filter((therapist) => therapist.status === "ACTIVE").length;
-  const bestPackage = packagePlans.find((plan) => plan.id === "pkg-29") ?? packagePlans[0];
+  const bestPackage = packagePlans.find((plan) => plan.id === "pkg-body-9") ?? packagePlans[0];
 
   return (
     <main className="bg-[#fffaf6] text-[#191414]">
@@ -180,21 +180,21 @@ export default async function Home() {
       {bestPackage ? <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-10">
         <Link
           href="/uu-dai"
-          className="flex items-center gap-4 overflow-hidden rounded-xl bg-gradient-to-r from-[#5c3a1e] to-[#231514] p-4 text-white shadow-md transition hover:opacity-95 sm:p-5"
+          className="flex items-center gap-4 overflow-hidden rounded-xl border border-[#e8c45f]/45 bg-gradient-to-r from-[#6f0f14] via-[#901719] to-[#c14422] p-4 text-white shadow-md transition hover:opacity-95 sm:p-5"
         >
-          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white/10">
-            <Gem size={22} className="text-[#e3b23c]" />
+          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-[#f5d982]/30 bg-[#4d0c10]/30">
+            <Gem size={22} className="text-[#f5d982]" />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="flex items-center gap-1.5 text-[10px] font-semibold uppercase leading-4 tracking-[0.12em] text-[#e3b23c]">
-              <PackagePlus size={13} className="shrink-0" /> Gói tiết kiệm nhất
+            <span className="flex items-center gap-1.5 text-[10px] font-semibold uppercase leading-4 tracking-[0.12em] text-[#f5d982]">
+              <PackagePlus size={13} className="shrink-0" /> Gói dài hạn nổi bật
             </span>
             <span className="mt-0.5 block text-sm font-semibold leading-5 tracking-tight sm:text-base">{bestPackage.name}</span>
             <span className="block text-[11px] leading-4 text-white/75 sm:text-xs">
               {bestPackage.badge} · chỉ {formatMoney(Math.round(bestPackage.price / (bestPackage.paidSessions + bestPackage.bonusSessions)))}/buổi
             </span>
           </span>
-          <ArrowRight size={18} className="shrink-0 text-[#e3b23c]" />
+          <ArrowRight size={18} className="shrink-0 text-[#f5d982]" />
         </Link>
       </section> : null}
 
@@ -226,7 +226,7 @@ export default async function Home() {
       </section>
 
       <section className="mx-auto max-w-7xl px-4 pb-4 pt-2 sm:px-6 lg:px-10">
-        <div className="relative overflow-hidden rounded-2xl border border-[#e3b23c]/45 bg-gradient-to-br from-[#231514] via-[#3d1f12] to-[#5c1014] text-white shadow-xl">
+        <div className="relative overflow-hidden rounded-2xl border border-[#e8c45f]/45 bg-gradient-to-br from-[#680d13] via-[#8f1719] to-[#bd3b21] text-white shadow-xl">
           <div className="pointer-events-none absolute -right-12 -top-12 h-48 w-48 rounded-full bg-[#e3b23c]/15 blur-3xl" />
           <div className="relative grid gap-5 p-5 sm:p-7 lg:grid-cols-[1.05fr_0.95fr] lg:gap-8">
             <div className="text-center">
@@ -261,7 +261,7 @@ export default async function Home() {
                   "Tâm An xác nhận, phục vụ và báo cáo cho HR",
                 ].map((item, index) => (
                   <div key={item} className="flex items-start gap-3">
-                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#e3b23c] text-[11px] font-bold text-[#3d1f12]">{index + 1}</span>
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#f5d982] text-[11px] font-bold text-[#741016]">{index + 1}</span>
                     <p className="pt-0.5 text-xs leading-5 text-white/80">{item}</p>
                   </div>
                 ))}
@@ -275,7 +275,7 @@ export default async function Home() {
       </section>
 
       <section className="mx-auto max-w-7xl px-4 pb-8 pt-2 sm:px-6 lg:px-10">
-        <div className="overflow-hidden rounded-2xl bg-gradient-to-br from-[#231514] to-[#3d1f12] text-white shadow-lg">
+        <div className="overflow-hidden rounded-2xl border border-[#e8c45f]/40 bg-gradient-to-br from-[#6a0e14] via-[#8d1718] to-[#b93421] text-white shadow-lg">
           <div className="px-5 pt-5 sm:px-7 sm:pt-7">
             <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-[#e3b23c]">
               <ShieldCheck size={13} /> Vận hành minh bạch
@@ -283,7 +283,7 @@ export default async function Home() {
           </div>
           <div className="grid gap-5 p-5 sm:p-7 md:grid-cols-2">
             <div>
-              <p className="flex items-center gap-2 text-sm font-semibold text-[#f4c2b6]">
+              <p className="flex items-center gap-2 text-sm font-semibold text-[#ffe6da]">
                 <ShieldCheck size={15} /> Cam kết vận hành
               </p>
               <ul className="mt-2.5 space-y-1.5 text-xs leading-5 text-white/75">
@@ -294,19 +294,19 @@ export default async function Home() {
             </div>
             <div className="space-y-3.5 border-t border-white/10 pt-4 text-xs md:border-t-0 md:border-l md:pl-5 md:pt-0">
               <div>
-                <p className="flex items-center gap-1.5 font-semibold text-[#f4c2b6]">
+                <p className="flex items-center gap-1.5 font-semibold text-[#ffe6da]">
                   <CalendarCheck size={13} /> Quy trình
                 </p>
                 <p className="mt-1 text-white/70">Chọn dịch vụ → đặt lịch → đến đúng giờ.</p>
               </div>
               <div>
-                <p className="flex items-center gap-1.5 font-semibold text-[#f4c2b6]">
+                <p className="flex items-center gap-1.5 font-semibold text-[#ffe6da]">
                   <QrCode size={13} /> Voucher đang chạy
                 </p>
                 <p className="mt-1 text-white/70">{vouchers.map((voucher) => voucher.code).join(" · ")}</p>
               </div>
               <div>
-                <p className="flex items-center gap-1.5 font-semibold text-[#f4c2b6]">
+                <p className="flex items-center gap-1.5 font-semibold text-[#ffe6da]">
                   <MapPin size={13} /> Địa chỉ
                 </p>
                 <div className="mt-1.5 space-y-1.5">

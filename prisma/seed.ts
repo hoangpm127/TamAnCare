@@ -438,6 +438,7 @@ async function seedCatalog() {
       data: {
         id: plan.id,
         name: plan.name,
+        serviceId: plan.serviceId,
         sessions: plan.sessions,
         paidSessions: plan.paidSessions,
         bonusSessions: plan.bonusSessions,
@@ -445,7 +446,7 @@ async function seedCatalog() {
         validityDays: plan.validityDays,
         badge: plan.badge,
         isHighlighted: plan.highlight,
-        shareable: plan.id === "pkg-19",
+        shareable: false,
       },
     });
   }
