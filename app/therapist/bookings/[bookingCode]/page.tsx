@@ -23,7 +23,7 @@ export default async function TherapistBookingPage({ params }: { params: Promise
   return (
     <div className="mx-auto max-w-2xl px-4 py-6 sm:px-6">
       <section className="rounded-lg border border-[#eadbd1] bg-white p-4 shadow-sm sm:p-5">
-        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#9f1d20]">Chi tiết booking</p>
+        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#d13f1f]">Chi tiết booking</p>
         <h1 className="mt-1 text-2xl font-semibold">{booking.customer.fullName}</h1>
         <div className="mt-5 space-y-3 text-sm text-[#665b55]">
           <p>Dịch vụ: {booking.service.name}</p>
@@ -34,7 +34,7 @@ export default async function TherapistBookingPage({ params }: { params: Promise
           <p>Ghi chú dịch vụ: {booking.note ?? "Không có"}</p>
         </div>
         <TherapistBookingActions bookingCode={booking.bookingCode} initialStatus={booking.status} />
-        <Link href="/therapist" className="mt-5 inline-block text-sm font-semibold text-[#9f1d20]">
+        <Link href="/therapist" className="mt-5 inline-block text-sm font-semibold text-[#d13f1f]">
           Quay lại lịch ca
         </Link>
       </section>

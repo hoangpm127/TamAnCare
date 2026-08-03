@@ -137,7 +137,7 @@ export function CustomerAccountClient({
   }
 
   if (loading) {
-    return <main className="flex min-h-[60vh] items-center justify-center bg-[#fffaf6]"><Loader2 className="animate-spin text-[#9f1d20]" /></main>;
+    return <main className="flex min-h-[60vh] items-center justify-center bg-[#fffaf6]"><Loader2 className="animate-spin text-[#d13f1f]" /></main>;
   }
 
   if (oauthCompletionOpen && !account) {
@@ -169,12 +169,12 @@ export function CustomerAccountClient({
               </div>
             ) : null}
             <div className="rounded-2xl bg-[#fff7df] p-4 text-center ring-1 ring-[#e3b23c]/45">
-              <Gift className="mx-auto text-[#9f1d20]" size={24} />
+              <Gift className="mx-auto text-[#d13f1f]" size={24} />
               <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-[#805914]">Ưu đãi đang có</p>
-              <p className="mt-1 text-2xl font-bold text-[#9f1d20]">{formatMoney(account.creditBalance)}</p>
+              <p className="mt-1 text-2xl font-bold text-[#d13f1f]">{formatMoney(account.creditBalance)}</p>
               <p className="mt-1 text-xs leading-5 text-[#715943]">Hệ thống tự ưu tiên WELCOME100 cho lần đặt dịch vụ đầu tiên đủ điều kiện.</p>
             </div>
-            <Link href="/booking" className="mt-4 flex w-full items-center justify-center rounded-full bg-[#9f1d20] px-5 py-3 text-sm font-semibold text-white">Đặt lịch và dùng ưu đãi</Link>
+            <Link href="/booking" className="mt-4 flex w-full items-center justify-center rounded-full bg-[#d13f1f] px-5 py-3 text-sm font-semibold text-white">Đặt lịch và dùng ưu đãi</Link>
             <button type="button" onClick={() => void logout()} className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-full border border-[#eadbd1] px-5 py-2.5 text-xs font-semibold text-[#665b55]"><LogOut size={14} /> Đăng xuất</button>
           </div>
         </section>
@@ -186,7 +186,7 @@ export function CustomerAccountClient({
           </div>
           <div className="mb-5 border-t border-[#eee1d8]" />
           <div className="flex items-start gap-3">
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#fff2ef] text-[#9f1d20]"><ShieldCheck size={17} /></span>
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#fff2ef] text-[#d13f1f]"><ShieldCheck size={17} /></span>
             <div className="min-w-0 flex-1">
               <h2 className="text-sm font-semibold">Quyền riêng tư và liên lạc</h2>
               <p className="mt-1 text-xs leading-5 text-[#786a63]">Ưu đãi tiếp thị là tùy chọn, không ảnh hưởng tài khoản hoặc booking.</p>
@@ -199,11 +199,11 @@ export function CustomerAccountClient({
               disabled={consentSaving || marketingSaved === null}
               checked={Boolean(marketingSaved)}
               onChange={(event) => void updateMarketing(event.target.checked)}
-              className="h-4 w-4 shrink-0 accent-[#9f1d20] disabled:opacity-50"
+              className="h-4 w-4 shrink-0 accent-[#d13f1f] disabled:opacity-50"
             />
           </label>
           {consentMessage ? <p className="mt-2 text-[11px] leading-5 text-[#786a63]">{consentMessage}</p> : null}
-          <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-[11px] font-semibold text-[#9f1d20]">
+          <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-[11px] font-semibold text-[#d13f1f]">
             <Link href="/chinh-sach-rieng-tu">Xem chính sách bảo vệ dữ liệu</Link>
             <Link href="/dieu-khoan">Xem điều khoản</Link>
           </div>
@@ -223,20 +223,20 @@ export function CustomerAccountClient({
         <div className="p-5">
           {oauthMessage ? <p className="mb-4 rounded-2xl bg-amber-50 p-3 text-center text-xs font-semibold text-amber-800">{oauthMessage}</p> : null}
           <div className="grid grid-cols-2 rounded-full bg-[#f6eee8] p-1">
-            <button type="button" onClick={() => selectMode("register")} className={`rounded-full py-2.5 text-sm font-semibold ${mode === "register" ? "bg-white text-[#9f1d20] shadow-sm" : "text-[#665b55]"}`}>Tạo tài khoản</button>
-            <button type="button" onClick={() => selectMode("login")} className={`rounded-full py-2.5 text-sm font-semibold ${mode === "login" ? "bg-white text-[#9f1d20] shadow-sm" : "text-[#665b55]"}`}>Đăng nhập</button>
+            <button type="button" onClick={() => selectMode("register")} className={`rounded-full py-2.5 text-sm font-semibold ${mode === "register" ? "bg-white text-[#d13f1f] shadow-sm" : "text-[#665b55]"}`}>Tạo tài khoản</button>
+            <button type="button" onClick={() => selectMode("login")} className={`rounded-full py-2.5 text-sm font-semibold ${mode === "login" ? "bg-white text-[#d13f1f] shadow-sm" : "text-[#665b55]"}`}>Đăng nhập</button>
           </div>
           <div className="mt-4">
             <CustomerSocialAuthButtons availableProviders={availableSocialProviders} returnTo={returnTo} />
             <div className="my-4 flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#9b8c84]"><span className="h-px flex-1 bg-[#eadbd1]" /><span>Hoặc dùng số điện thoại</span><span className="h-px flex-1 bg-[#eadbd1]" /></div>
           </div>
           <form onSubmit={submit} className="mt-4 space-y-3">
-            {mode === "register" ? <label className="block text-xs font-semibold">Họ tên<span className="mt-1.5 flex items-center gap-2 rounded-xl border border-[#eadbd1] px-3"><UserRound size={15} className="text-[#9f1d20]" /><input required value={fullName} onChange={(event) => setFullName(event.target.value)} className="min-w-0 flex-1 py-3 text-sm outline-none" /></span></label> : null}
-            <label className="block text-xs font-semibold">Số điện thoại<span className="mt-1.5 flex items-center gap-2 rounded-xl border border-[#eadbd1] px-3"><Phone size={15} className="text-[#9f1d20]" /><input required inputMode="tel" autoComplete="tel" value={phone} onChange={(event) => { setPhone(event.target.value); setPhoneVerificationToken(null); }} className="min-w-0 flex-1 py-3 text-sm outline-none" /></span></label>
-            <label className="block text-xs font-semibold">{mode === "register" ? "Mật khẩu từ 15 ký tự" : "Mật khẩu"}<span className="mt-1.5 flex items-center gap-2 rounded-xl border border-[#eadbd1] px-3"><LockKeyhole size={15} className="shrink-0 text-[#9f1d20]" /><input required minLength={mode === "register" ? 15 : 6} maxLength={72} autoComplete={mode === "register" ? "new-password" : "current-password"} type={showPassword ? "text" : "password"} value={password} onChange={(event) => setPassword(event.target.value)} className="min-w-0 flex-1 py-3 text-sm outline-none" /><button type="button" onClick={() => setShowPassword((current) => !current)} aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"} aria-pressed={showPassword} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[#786a63] hover:bg-[#fff2ef] hover:text-[#9f1d20]">{showPassword ? <EyeOff size={17} /> : <Eye size={17} />}</button></span></label>
+            {mode === "register" ? <label className="block text-xs font-semibold">Họ tên<span className="mt-1.5 flex items-center gap-2 rounded-xl border border-[#eadbd1] px-3"><UserRound size={15} className="text-[#d13f1f]" /><input required value={fullName} onChange={(event) => setFullName(event.target.value)} className="min-w-0 flex-1 py-3 text-sm outline-none" /></span></label> : null}
+            <label className="block text-xs font-semibold">Số điện thoại<span className="mt-1.5 flex items-center gap-2 rounded-xl border border-[#eadbd1] px-3"><Phone size={15} className="text-[#d13f1f]" /><input required inputMode="tel" autoComplete="tel" value={phone} onChange={(event) => { setPhone(event.target.value); setPhoneVerificationToken(null); }} className="min-w-0 flex-1 py-3 text-sm outline-none" /></span></label>
+            <label className="block text-xs font-semibold">{mode === "register" ? "Mật khẩu từ 15 ký tự" : "Mật khẩu"}<span className="mt-1.5 flex items-center gap-2 rounded-xl border border-[#eadbd1] px-3"><LockKeyhole size={15} className="shrink-0 text-[#d13f1f]" /><input required minLength={mode === "register" ? 15 : 6} maxLength={72} autoComplete={mode === "register" ? "new-password" : "current-password"} type={showPassword ? "text" : "password"} value={password} onChange={(event) => setPassword(event.target.value)} className="min-w-0 flex-1 py-3 text-sm outline-none" /><button type="button" onClick={() => setShowPassword((current) => !current)} aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"} aria-pressed={showPassword} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[#786a63] hover:bg-[#fff2ef] hover:text-[#d13f1f]">{showPassword ? <EyeOff size={17} /> : <Eye size={17} />}</button></span></label>
             {mode === "register" ? (
               <>
-              <label className="block text-xs font-semibold">Nhập lại mật khẩu<span className={`mt-1.5 flex items-center gap-2 rounded-xl border px-3 ${passwordConfirmation && passwordConfirmation !== password ? "border-red-300 bg-red-50/40" : "border-[#eadbd1]"}`}><LockKeyhole size={15} className="shrink-0 text-[#9f1d20]" /><input required minLength={15} maxLength={72} autoComplete="new-password" type={showPasswordConfirmation ? "text" : "password"} value={passwordConfirmation} onChange={(event) => setPasswordConfirmation(event.target.value)} aria-invalid={Boolean(passwordConfirmation && passwordConfirmation !== password)} className="min-w-0 flex-1 bg-transparent py-3 text-sm outline-none" /><button type="button" onClick={() => setShowPasswordConfirmation((current) => !current)} aria-label={showPasswordConfirmation ? "Ẩn mật khẩu nhập lại" : "Hiện mật khẩu nhập lại"} aria-pressed={showPasswordConfirmation} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[#786a63] hover:bg-[#fff2ef] hover:text-[#9f1d20]">{showPasswordConfirmation ? <EyeOff size={17} /> : <Eye size={17} />}</button></span>{passwordConfirmation && passwordConfirmation !== password ? <span className="mt-1.5 block text-[11px] font-medium text-red-700">Hai mật khẩu chưa trùng khớp.</span> : null}</label>
+              <label className="block text-xs font-semibold">Nhập lại mật khẩu<span className={`mt-1.5 flex items-center gap-2 rounded-xl border px-3 ${passwordConfirmation && passwordConfirmation !== password ? "border-red-300 bg-red-50/40" : "border-[#eadbd1]"}`}><LockKeyhole size={15} className="shrink-0 text-[#d13f1f]" /><input required minLength={15} maxLength={72} autoComplete="new-password" type={showPasswordConfirmation ? "text" : "password"} value={passwordConfirmation} onChange={(event) => setPasswordConfirmation(event.target.value)} aria-invalid={Boolean(passwordConfirmation && passwordConfirmation !== password)} className="min-w-0 flex-1 bg-transparent py-3 text-sm outline-none" /><button type="button" onClick={() => setShowPasswordConfirmation((current) => !current)} aria-label={showPasswordConfirmation ? "Ẩn mật khẩu nhập lại" : "Hiện mật khẩu nhập lại"} aria-pressed={showPasswordConfirmation} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[#786a63] hover:bg-[#fff2ef] hover:text-[#d13f1f]">{showPasswordConfirmation ? <EyeOff size={17} /> : <Eye size={17} />}</button></span>{passwordConfirmation && passwordConfirmation !== password ? <span className="mt-1.5 block text-[11px] font-medium text-red-700">Hai mật khẩu chưa trùng khớp.</span> : null}</label>
               <CustomerPhoneVerification
                 key={`signup:${phone}`}
                 phone={phone}
@@ -251,11 +251,11 @@ export function CustomerAccountClient({
                     type="checkbox"
                     checked={acceptRequired}
                     onChange={(event) => setAcceptRequired(event.target.checked)}
-                    className="mt-1 h-4 w-4 shrink-0 accent-[#9f1d20]"
+                    className="mt-1 h-4 w-4 shrink-0 accent-[#d13f1f]"
                   />
                   <span>
-                    Tôi đã đọc và đồng ý với <Link href="/dieu-khoan" target="_blank" className="font-semibold text-[#9f1d20] underline">Điều khoản sử dụng</Link> và{" "}
-                    <Link href="/chinh-sach-rieng-tu" target="_blank" className="font-semibold text-[#9f1d20] underline">Chính sách bảo vệ dữ liệu</Link>.
+                    Tôi đã đọc và đồng ý với <Link href="/dieu-khoan" target="_blank" className="font-semibold text-[#d13f1f] underline">Điều khoản sử dụng</Link> và{" "}
+                    <Link href="/chinh-sach-rieng-tu" target="_blank" className="font-semibold text-[#d13f1f] underline">Chính sách bảo vệ dữ liệu</Link>.
                   </span>
                 </label>
                 <label className="flex cursor-pointer items-start gap-2.5 text-xs leading-5 text-[#6f625c]">
@@ -263,7 +263,7 @@ export function CustomerAccountClient({
                     type="checkbox"
                     checked={marketingOptIn}
                     onChange={(event) => setMarketingOptIn(event.target.checked)}
-                    className="mt-1 h-4 w-4 shrink-0 accent-[#9f1d20]"
+                    className="mt-1 h-4 w-4 shrink-0 accent-[#d13f1f]"
                   />
                   <span>Nhận ưu đãi và gợi ý chăm sóc. Không bắt buộc và có thể rút lại sau.</span>
                 </label>
@@ -271,12 +271,12 @@ export function CustomerAccountClient({
               </>
             ) : null}
             {error ? <p role="alert" aria-live="polite" className="rounded-xl bg-red-50 p-3 text-xs font-medium text-red-700">{error}</p> : null}
-            <button disabled={submitting || (mode === "register" && (password !== passwordConfirmation || (phoneVerificationRequired && !phoneVerificationToken)))} className="flex w-full items-center justify-center gap-2 rounded-full bg-[#9f1d20] px-5 py-3 text-sm font-semibold text-white disabled:opacity-60">{submitting ? <Loader2 className="animate-spin" size={16} /> : <ShieldCheck size={16} />}{mode === "register" ? "Tạo tài khoản & nhận 100K" : "Đăng nhập"}</button>
+            <button disabled={submitting || (mode === "register" && (password !== passwordConfirmation || (phoneVerificationRequired && !phoneVerificationToken)))} className="flex w-full items-center justify-center gap-2 rounded-full bg-[#d13f1f] px-5 py-3 text-sm font-semibold text-white disabled:opacity-60">{submitting ? <Loader2 className="animate-spin" size={16} /> : <ShieldCheck size={16} />}{mode === "register" ? "Tạo tài khoản & nhận 100K" : "Đăng nhập"}</button>
           </form>
           {mode === "login" ? (
             recoveryOpen
               ? <CustomerPasswordRecovery initialPhone={phone} onClose={() => setRecoveryOpen(false)} />
-              : <button type="button" onClick={() => setRecoveryOpen(true)} className="mt-3 w-full text-center text-xs font-semibold text-[#9f1d20]">Quên mật khẩu?</button>
+              : <button type="button" onClick={() => setRecoveryOpen(true)} className="mt-3 w-full text-center text-xs font-semibold text-[#d13f1f]">Quên mật khẩu?</button>
           ) : null}
           <p className="mt-3 text-center text-[11px] leading-5 text-[#8a7a72]">Không bắt buộc tạo tài khoản để đặt lịch.</p>
         </div>

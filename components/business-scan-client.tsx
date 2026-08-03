@@ -114,7 +114,7 @@ export function BusinessScanClient({ token }: { token: string }) {
   }
 
   if (error && !event) return <div className="mx-auto mt-10 max-w-md rounded-3xl border border-red-200 bg-white p-6 text-center text-sm text-red-700 shadow-xl">{error}</div>;
-  if (!event) return <div className="flex min-h-[55vh] items-center justify-center"><Loader2 className="animate-spin text-[#9f1d20]" /></div>;
+  if (!event) return <div className="flex min-h-[55vh] items-center justify-center"><Loader2 className="animate-spin text-[#d13f1f]" /></div>;
 
   const canStart = ["DEPOSIT_CONFIRMED", "READY"].includes(event.status);
   const canEnd = event.status === "IN_SERVICE";
@@ -160,15 +160,15 @@ export function BusinessScanClient({ token }: { token: string }) {
 
           {canEnd ? (
             <div className="mt-4 rounded-3xl border border-[#ead6a9] bg-[#fffaf0] p-4">
-              <p className="flex items-center gap-2 text-sm font-semibold"><StopCircle size={17} className="text-[#9f1d20]" /> Kết thúc và chốt công nợ</p>
+              <p className="flex items-center gap-2 text-sm font-semibold"><StopCircle size={17} className="text-[#d13f1f]" /> Kết thúc và chốt công nợ</p>
               <p className="mt-1 text-xs leading-5 text-[#76665d]">Sau khi xác nhận kết thúc, VietQR sẽ hiện ngay số tiền còn lại {formatMoney(event.dueAmount)} cùng lựa chọn mở ứng dụng ngân hàng.</p>
-              <button disabled={busy} onClick={() => void act("END")} className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#9f1d20] px-4 py-3 text-sm font-semibold text-white disabled:opacity-50">{busy ? <Loader2 size={16} className="animate-spin" /> : <StopCircle size={16} />} Kết thúc dịch vụ · mở VietQR</button>
+              <button disabled={busy} onClick={() => void act("END")} className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#d13f1f] px-4 py-3 text-sm font-semibold text-white disabled:opacity-50">{busy ? <Loader2 size={16} className="animate-spin" /> : <StopCircle size={16} />} Kết thúc dịch vụ · mở VietQR</button>
             </div>
           ) : null}
 
           {waitingPayment && payment?.paymentCode ? (
             <div className="mt-4">
-              <div className="rounded-2xl bg-[#fff3e0] p-3 text-center"><p className="text-xs text-[#7c684e]">Phần còn lại cần đối soát</p><p className="mt-1 text-2xl font-bold text-[#9f1d20]">{formatMoney(payment.amount)}</p></div>
+              <div className="rounded-2xl bg-[#fff3e0] p-3 text-center"><p className="text-xs text-[#7c684e]">Phần còn lại cần đối soát</p><p className="mt-1 text-2xl font-bold text-[#d13f1f]">{formatMoney(payment.amount)}</p></div>
               <BankTransferDetails amount={payment.amount} transferContent={payment.paymentCode} helperText="Bill chỉ hoàn tất sau khi ngân hàng xác nhận đúng số tiền. Tip tùy tâm được trao trực tiếp cho KTV và không chuyển chung với Bill." />
             </div>
           ) : null}
@@ -191,5 +191,5 @@ export function BusinessScanClient({ token }: { token: string }) {
 }
 
 function Info({ icon, label, value, wide }: { icon: React.ReactNode; label: string; value: string; wide?: boolean }) {
-  return <div className={`${wide ? "col-span-2" : ""} rounded-2xl border border-[#eee1d8] bg-[#fffaf6] p-3`}><p className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide text-[#9f1d20]">{icon}{label}</p><p className="mt-1 text-xs font-semibold leading-5">{value}</p></div>;
+  return <div className={`${wide ? "col-span-2" : ""} rounded-2xl border border-[#eee1d8] bg-[#fffaf6] p-3`}><p className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide text-[#d13f1f]">{icon}{label}</p><p className="mt-1 text-xs font-semibold leading-5">{value}</p></div>;
 }

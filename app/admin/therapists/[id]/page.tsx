@@ -36,9 +36,9 @@ export default async function TherapistProfilePage({ params }: { params: Promise
   return (
     <div className="mx-auto max-w-5xl px-4 py-4 sm:px-6 sm:py-6 lg:px-10">
       <section className="rounded-lg border border-[#eadbd1] bg-white p-4 shadow-sm sm:p-5">
-        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#9f1d20]">Hồ sơ KTV</p>
+        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#d13f1f]">Hồ sơ KTV</p>
         <h1 className="mt-1 text-2xl font-semibold">{therapist.fullName}</h1>
-        <p className="mt-1 text-xs font-semibold text-[#9f1d20]">{therapist.branch.name}</p>
+        <p className="mt-1 text-xs font-semibold text-[#d13f1f]">{therapist.branch.name}</p>
         <p className="mt-2 text-[#665b55]">{therapist.skills.join(", ")}</p>
         <div className="mt-5 grid gap-4 sm:grid-cols-4">
           <Metric label="Rating" value={`${therapist.ratingAvg.toFixed(1)} sao`} />
@@ -53,7 +53,7 @@ export default async function TherapistProfilePage({ params }: { params: Promise
       <section className="mt-4 rounded-xl border border-[#eadbd1] bg-white p-4 shadow-sm sm:p-5">
         <div className="flex items-center justify-between gap-3">
           <div>
-            <h2 className="flex items-center gap-2 text-lg font-semibold"><MessageSquareText size={18} className="text-[#9f1d20]" /> Lịch sử đánh giá</h2>
+            <h2 className="flex items-center gap-2 text-lg font-semibold"><MessageSquareText size={18} className="text-[#d13f1f]" /> Lịch sử đánh giá</h2>
             <p className="mt-1 text-xs text-[#8a7a72]">Lưu theo khách hàng và ngày trải nghiệm, không ghi đè đánh giá cũ.</p>
           </div>
           <span className="rounded-full bg-[#fff7ec] px-3 py-1.5 text-xs font-bold text-[#8a5a12]">{therapist.ratingAvg.toFixed(1)} ★ · {therapist.reviews.length} đánh giá</span>

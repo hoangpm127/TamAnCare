@@ -72,7 +72,7 @@ function monthTitle(value: Date) {
 
 function statusView(rawStatus: string) {
   if (rawStatus === "PENDING") return { label: "Chờ xác nhận", badge: "bg-[#fff0c9] text-[#805914]", dot: "bg-[#d99a22]" };
-  if (["CHECKED_IN", "IN_SERVICE"].includes(rawStatus)) return { label: "Đang phục vụ", badge: "bg-[#ffe0de] text-[#9f1d20]", dot: "bg-[#c33838]" };
+  if (["CHECKED_IN", "IN_SERVICE"].includes(rawStatus)) return { label: "Đang phục vụ", badge: "bg-[#ffe0de] text-[#d13f1f]", dot: "bg-[#c33838]" };
   if (rawStatus === "COMPLETED") return { label: "Hoàn thành", badge: "bg-[#dff5e8] text-[#12683f]", dot: "bg-[#1d9a60]" };
   if (["CANCELLED", "NO_SHOW"].includes(rawStatus)) return { label: rawStatus === "NO_SHOW" ? "Khách không đến" : "Đã hủy", badge: "bg-[#eee9e5] text-[#6f625b]", dot: "bg-[#9b8d84]" };
   return { label: "Đã xác nhận", badge: "bg-[#e6f0ff] text-[#2452b8]", dot: "bg-[#3b72d9]" };
@@ -142,7 +142,7 @@ export function AdminCalendarOperations() {
   return (
     <div className="mx-auto max-w-7xl px-3 py-3 sm:px-6 sm:py-5 lg:px-10">
       <section className="relative overflow-hidden rounded-2xl border border-[#d8b46a]/60 bg-white shadow-[0_12px_32px_rgba(74,44,28,0.08)]">
-        <div className="bg-gradient-to-r from-[#291714] via-[#63291d] to-[#9f1d20] px-3.5 py-3 text-white sm:px-5">
+        <div className="bg-gradient-to-r from-[#291714] via-[#63291d] to-[#d13f1f] px-3.5 py-3 text-white sm:px-5">
           <div className="flex items-center justify-between gap-3">
             <div className="flex min-w-0 items-center gap-2.5">
               <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/10 text-[#f5d982] ring-1 ring-white/15"><CalendarDays size={17} /></span>
@@ -156,7 +156,7 @@ export function AdminCalendarOperations() {
           <div className="mt-2.5 flex flex-wrap items-center gap-1.5 text-[9px] font-semibold">
             <span className="rounded-full bg-white/12 px-2.5 py-1">{monthEvents.length} Booking</span>
             <span className="rounded-full bg-[#fff0c9] px-2.5 py-1 text-[#805914]">{waitingCount} chờ xác nhận</span>
-            {activeCount ? <span className="rounded-full bg-[#ffe0de] px-2.5 py-1 text-[#9f1d20]">{activeCount} đang phục vụ</span> : null}
+            {activeCount ? <span className="rounded-full bg-[#ffe0de] px-2.5 py-1 text-[#d13f1f]">{activeCount} đang phục vụ</span> : null}
             <span className="rounded-full bg-[#e7f7ed] px-2.5 py-1 text-[#12683f]">Dự kiến {formatMoney(expectedRevenue)}</span>
           </div>
         </div>
@@ -177,7 +177,7 @@ export function AdminCalendarOperations() {
               {visibleBranches.map((branch) => {
                 const count = timeFiltered.filter((event) => event.branchId === branch.id && isWithinInterval(event.start, monthRange)).length;
                 const active = allowedBranch === branch.id;
-                return <button key={branch.id} type="button" onClick={() => session.role === "OWNER" && setBranchId(branch.id)} className={cn("flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-2 text-[10px] font-semibold", active ? "bg-[#9f1d20] text-white shadow-sm" : "text-[#665b55]")}><i className={cn("h-1.5 w-1.5 rounded-full", active ? "bg-[#f5d982]" : "bg-[#b9862c]")} />{branch.label}<span className={cn("rounded-full px-1.5 text-[8px]", active ? "bg-white/15" : "bg-white")}>{count}</span></button>;
+                return <button key={branch.id} type="button" onClick={() => session.role === "OWNER" && setBranchId(branch.id)} className={cn("flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-2 text-[10px] font-semibold", active ? "bg-[#d13f1f] text-white shadow-sm" : "text-[#665b55]")}><i className={cn("h-1.5 w-1.5 rounded-full", active ? "bg-[#f5d982]" : "bg-[#b9862c]")} />{branch.label}<span className={cn("rounded-full px-1.5 text-[8px]", active ? "bg-white/15" : "bg-white")}>{count}</span></button>;
               })}
             </div>
             <CompactSelect value={dayPart} onValueChange={(value) => setDayPart(value as DayPart)} dialogTitle="Lọc lịch theo ca" triggerClassName="min-h-10 rounded-xl py-2" options={DAY_PARTS} />
@@ -189,7 +189,7 @@ export function AdminCalendarOperations() {
             {Array.from({ length: 7 }, (_, index) => <span key={index} className="h-5 w-2 rounded-full border border-[#7b5129] bg-gradient-to-b from-[#f6d989] via-[#a8752e] to-[#f5d982] shadow-sm" />)}
           </div>
           <div className="grid grid-cols-7 border-b border-[#eadbd1] pb-1.5 text-center text-[9px] font-bold uppercase tracking-[0.08em] text-[#8a6a58]">
-            {WEEKDAYS.map((day) => <span key={day} className={day === "CN" ? "text-[#9f1d20]" : ""}>{day}</span>)}
+            {WEEKDAYS.map((day) => <span key={day} className={day === "CN" ? "text-[#d13f1f]" : ""}>{day}</span>)}
           </div>
           <div className="mt-1 grid grid-cols-7 gap-1 sm:gap-1.5">
             {calendarDays.map((day) => {
@@ -207,11 +207,11 @@ export function AdminCalendarOperations() {
                   onClick={() => selectCalendarDay(day)}
                   className={cn(
                     "relative min-h-[66px] rounded-xl border px-1 py-1.5 text-left transition sm:min-h-[88px] sm:px-2",
-                    selected ? "border-[#9f1d20] bg-[#fff0ed] shadow-[0_5px_15px_rgba(159,29,32,0.13)] ring-1 ring-[#9f1d20]/20" : "border-[#eee4dd] bg-white hover:border-[#d8b46a]",
+                    selected ? "border-[#d13f1f] bg-[#fff0ed] shadow-[0_5px_15px_rgba(159,29,32,0.13)] ring-1 ring-[#d13f1f]/20" : "border-[#eee4dd] bg-white hover:border-[#d8b46a]",
                     !currentMonth && "opacity-40",
                   )}
                 >
-                  <span className={cn("flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-bold", isToday(day) ? "bg-[#9f1d20] text-white" : selected ? "text-[#9f1d20]" : "text-[#3c2d27]")}>{format(day, "d")}</span>
+                  <span className={cn("flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-bold", isToday(day) ? "bg-[#d13f1f] text-white" : selected ? "text-[#d13f1f]" : "text-[#3c2d27]")}>{format(day, "d")}</span>
                   {dayEvents.length ? <div className="mt-1 flex items-center justify-center gap-1 sm:mt-2"><strong className="text-[11px] text-[#7a2318] sm:text-xs">{dayEvents.length}</strong><i className="h-2 w-2 rounded-full bg-[#1d9a60]" /><span className="sr-only">lịch</span>{pending ? <i title={`${pending} chờ xác nhận`} className="h-1.5 w-1.5 rounded-full bg-[#d99a22]" /> : null}{serving ? <i title={`${serving} đang phục vụ`} className="h-1.5 w-1.5 rounded-full bg-[#c33838]" /> : null}</div> : <span className="mt-2 block text-center text-[8px] text-[#c1b5ae]">—</span>}
                 </button>
               );
@@ -224,7 +224,7 @@ export function AdminCalendarOperations() {
       <section ref={detailRef} className="mt-3 scroll-mt-28 overflow-hidden rounded-2xl border border-[#d8b46a]/60 bg-white shadow-sm">
         <div className="flex items-center justify-between gap-3 border-b border-[#eadbd1] bg-[#fffaf4] px-3.5 py-3">
           <div className="min-w-0">
-            <p className="text-[9px] font-bold uppercase tracking-[0.12em] text-[#9f1d20]">Chi tiết trong ngày</p>
+            <p className="text-[9px] font-bold uppercase tracking-[0.12em] text-[#d13f1f]">Chi tiết trong ngày</p>
             <h2 className="mt-0.5 truncate text-sm font-semibold capitalize">{new Intl.DateTimeFormat("vi-VN", { weekday: "long", day: "2-digit", month: "2-digit", year: "numeric" }).format(selectedDay)}</h2>
           </div>
           <span className="shrink-0 rounded-full bg-[#291714] px-2.5 py-1 text-[9px] font-semibold text-white">{selectedEvents.length} lịch</span>
@@ -241,7 +241,7 @@ export function AdminCalendarOperations() {
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-1.5"><p className="truncate text-xs font-semibold">{event.customer}</p><span className={cn("rounded-full px-2 py-1 text-[8px] font-semibold", status.badge)}>{status.label}</span></div>
                   <p className="mt-1 truncate text-[10px] font-medium text-[#4b3b34]">{event.service}</p>
-                  <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1 text-[9px] text-[#7d6e66]"><span className="flex items-center gap-1"><UserRound size={10} className="text-[#9f1d20]" />{event.therapist}</span><span className="flex items-center gap-1"><MapPin size={10} className="text-[#9f1d20]" />{branch?.label} · {event.room}</span><span className="flex items-center gap-1"><Clock3 size={10} className="text-[#9f1d20]" />{event.phone} · {displayBookingCode(event.code)}</span></div>
+                  <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1 text-[9px] text-[#7d6e66]"><span className="flex items-center gap-1"><UserRound size={10} className="text-[#d13f1f]" />{event.therapist}</span><span className="flex items-center gap-1"><MapPin size={10} className="text-[#d13f1f]" />{branch?.label} · {event.room}</span><span className="flex items-center gap-1"><Clock3 size={10} className="text-[#d13f1f]" />{event.phone} · {displayBookingCode(event.code)}</span></div>
                 </div>
                 <div className="col-start-2 flex items-center justify-between gap-3 rounded-lg bg-[#fff7ec] px-2.5 py-2 text-[9px] sm:col-auto sm:min-w-[170px] sm:flex-col sm:items-end sm:bg-transparent sm:p-0"><span>Đã cọc <strong className="text-[#16784a]">{formatMoney(event.deposit)}</strong></span><strong className="text-[11px]">{formatMoney(event.amount)}</strong></div>
               </article>;

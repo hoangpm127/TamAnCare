@@ -203,7 +203,7 @@ export function ExpenseSection({ detailed }: { detailed: boolean }) {
 
       <div>
         <p className="mb-2.5 flex items-center gap-1.5 text-sm font-semibold">
-          <Receipt size={15} className="text-[#9f1d20]" /> Đã thanh toán & hoàn tất
+          <Receipt size={15} className="text-[#d13f1f]" /> Đã thanh toán & hoàn tất
         </p>
         <div className="space-y-2.5">
           {completedBills.map((bill) => (
@@ -298,7 +298,7 @@ export function BillCard({ data, expanded, onToggle }: { data: BillCardData; exp
         </span>
         <span className="flex shrink-0 flex-col items-end gap-0.5">
           <span className="flex items-center gap-1.5">
-            <span className={cn("text-sm font-semibold", data.status === "COMPLETED" ? "text-[#9f1d20]" : "text-[#191414]")}>
+            <span className={cn("text-sm font-semibold", data.status === "COMPLETED" ? "text-[#d13f1f]" : "text-[#191414]")}>
               {packageSession ? `${data.items?.length ?? 1} lượt` : <>{data.status === "COMPLETED" || depositOnly ? "-" : ""}{formatMoney(depositOnly ? (data.depositAmount ?? data.amount) : data.status === "COMPLETED" ? (data.totalAmount ?? data.amount) : data.amount)}</>}
             </span>
             <ChevronDown size={14} className={cn("text-[#8a7a72] transition", expanded && "rotate-180")} />
@@ -361,7 +361,7 @@ export function BillCard({ data, expanded, onToggle }: { data: BillCardData; exp
           {(depositOnly || data.status === "IN_SERVICE") && data.totalAmount ? (
             <div className="flex items-center justify-between gap-3">
               <span>Còn thanh toán sau dịch vụ</span>
-              <span className="font-semibold text-[#9f1d20]">{formatMoney(Math.max(0, data.totalAmount - (data.depositAmount ?? 0)))}</span>
+              <span className="font-semibold text-[#d13f1f]">{formatMoney(Math.max(0, data.totalAmount - (data.depositAmount ?? 0)))}</span>
             </div>
           ) : null}
           {paidInFull ? (
@@ -423,7 +423,7 @@ export function BillCard({ data, expanded, onToggle }: { data: BillCardData; exp
           <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 pt-1">
             <span className="min-w-0 justify-self-start">
               {data.note ? (
-                <span className="inline-flex rounded-full bg-[#fff2ef] px-2 py-0.5 text-[10px] font-semibold text-[#9f1d20]">
+                <span className="inline-flex rounded-full bg-[#fff2ef] px-2 py-0.5 text-[10px] font-semibold text-[#d13f1f]">
                   {data.note}
                 </span>
               ) : null}
@@ -433,7 +433,7 @@ export function BillCard({ data, expanded, onToggle }: { data: BillCardData; exp
                 <span
                   className={cn(
                     "inline-flex rounded-full px-2 py-0.5 text-[10px] font-semibold",
-                    durationStatusGood ? "bg-[#eafaf1] text-[#1d8f55]" : "bg-[#fff2ef] text-[#9f1d20]"
+                    durationStatusGood ? "bg-[#eafaf1] text-[#1d8f55]" : "bg-[#fff2ef] text-[#d13f1f]"
                   )}
                 >
                   {durationStatusLabel}
@@ -452,7 +452,7 @@ export function BillCard({ data, expanded, onToggle }: { data: BillCardData; exp
           ) : data.status === "UNUSED" ? (
             <Link
               href={`/check-in?bookingCode=${data.bookingCode}`}
-              className="mt-2 inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-[#9f1d20] px-4 py-2.5 text-xs font-semibold text-white"
+              className="mt-2 inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-[#d13f1f] px-4 py-2.5 text-xs font-semibold text-white"
             >
               <QrCode size={13} /> Quét QR sử dụng dịch vụ
             </Link>

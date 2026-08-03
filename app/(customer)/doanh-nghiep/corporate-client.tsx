@@ -263,7 +263,7 @@ export function CorporateClient() {
               ) : null}
               <div className="flex items-center justify-between border-t border-dashed border-[#e8d3ab] pt-2">
                 <span className="text-xs text-[#8a7a72]">Đã đặt cọc</span>
-                <span className="text-base font-bold text-[#9f1d20]">{formatMoney(depositAmount)}</span>
+                <span className="text-base font-bold text-[#d13f1f]">{formatMoney(depositAmount)}</span>
               </div>
               <div className="flex items-center justify-between text-xs text-[#8a7a72]">
                 <span>Còn lại tại cơ sở · đã trừ ưu đãi</span>
@@ -274,11 +274,11 @@ export function CorporateClient() {
             <div className="mt-5 flex flex-col gap-2 sm:flex-row">
               <Link
                 href="/thong-bao"
-                className="flex-1 rounded-full border border-[#9f1d20] px-4 py-2.5 text-center text-sm font-semibold text-[#9f1d20]"
+                className="flex-1 rounded-full border border-[#d13f1f] px-4 py-2.5 text-center text-sm font-semibold text-[#d13f1f]"
               >
                 Xem thông báo
               </Link>
-              <Link href="/" className="flex-1 rounded-full bg-[#9f1d20] px-4 py-2.5 text-center text-sm font-semibold text-white">
+              <Link href="/" className="flex-1 rounded-full bg-[#d13f1f] px-4 py-2.5 text-center text-sm font-semibold text-white">
                 Về trang chủ
               </Link>
             </div>
@@ -293,7 +293,7 @@ export function CorporateClient() {
       <main className="min-h-screen bg-[radial-gradient(circle_at_top,#ecd2b4_0,#fffaf6_42%,#f7ede5_100%)] px-4 py-8 text-[#191414] sm:px-6">
         <section className="mx-auto max-w-xl space-y-4">
           <div className="rounded-2xl border border-[#eadbd1] bg-white p-5 shadow-sm">
-            <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-[#9f1d20]">
+            <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-[#d13f1f]">
               <Sparkles size={13} /> Báo giá tự động
             </p>
             <h1 className="mt-1.5 text-lg font-semibold tracking-tight">Yêu cầu {inquiryCode}</h1>
@@ -325,15 +325,15 @@ export function CorporateClient() {
               </div>
               <div className="flex items-center justify-between border-t border-dashed border-[#eadbd1] pt-1.5 text-base font-semibold">
                 <span>Tổng ước tính</span>
-                <span className="text-[#9f1d20]">{formatMoney(total)}</span>
+                <span className="text-[#d13f1f]">{formatMoney(total)}</span>
               </div>
             </div>
 
-            <div className="mt-3.5 flex items-start gap-3 rounded-xl border border-[#9f1d20] bg-[#fff2ef] p-3.5">
-              <ShieldCheck size={18} className="mt-0.5 shrink-0 text-[#9f1d20]" />
+            <div className="mt-3.5 flex items-start gap-3 rounded-xl border border-[#d13f1f] bg-[#fff2ef] p-3.5">
+              <ShieldCheck size={18} className="mt-0.5 shrink-0 text-[#d13f1f]" />
               <span className="min-w-0">
                 <span className="block text-sm font-semibold">Cọc nền tảng để giữ lịch</span>
-                <span className="mt-0.5 block text-base font-bold text-[#9f1d20]">
+                <span className="mt-0.5 block text-base font-bold text-[#d13f1f]">
                   {formatMoney(depositAmount)} <span className="text-xs font-normal text-[#8a7a72]">({depositPolicy.percent}% giá trị ban đầu)</span>
                 </span>
                 <span className="mt-1 block text-xs text-[#8a7a72]">
@@ -365,9 +365,9 @@ export function CorporateClient() {
             <p className="mt-1 text-xs leading-5 text-white/70">Số tiền cọc chuyển vào tài khoản nền tảng đã được khóa bằng 10% giá trị ban đầu: <strong className="text-white">{formatMoney(depositAmount)}</strong>.</p>
           </div>
           <div className="p-5">
-            <div className="mb-4 grid grid-cols-3 rounded-2xl bg-[#fff7ec] p-3 text-center"><span className="text-[9px] text-[#8a7a72]">Sau ưu đãi<strong className="mt-1 block text-xs text-[#191414]">{formatMoney(total)}</strong></span><span className="border-x border-[#eadbd1] text-[9px] text-[#8a7a72]">Cọc nền tảng<strong className="mt-1 block text-xs text-[#9f1d20]">{formatMoney(depositAmount)}</strong></span><span className="text-[9px] text-[#8a7a72]">Còn lại<strong className="mt-1 block text-xs text-[#191414]">{formatMoney(amountDueOnsite)}</strong></span></div>
-            <p className="mb-2.5 flex items-center gap-2 text-sm font-semibold"><Wallet size={16} className="text-[#9f1d20]" /> VietQR đặt cọc Tâm An Business</p>
-            {pendingPayment?.paymentCode ? <BankTransferDetails amount={depositAmount} transferContent={pendingPayment.paymentCode} onConfirm={confirmDeposit} helperText="Đây là tài khoản nhận cọc của nền tảng. SePay tự động đối soát đúng 10% giá trị ban đầu và đưa giao dịch vào sổ liên quan." /> : <div className="rounded-2xl bg-[#f7f3ef] p-5 text-center"><Loader2 className="mx-auto animate-spin text-[#9f1d20]" size={24} /><p className="mt-2 text-sm font-semibold">Đang tạo VietQR đặt cọc…</p></div>}
+            <div className="mb-4 grid grid-cols-3 rounded-2xl bg-[#fff7ec] p-3 text-center"><span className="text-[9px] text-[#8a7a72]">Sau ưu đãi<strong className="mt-1 block text-xs text-[#191414]">{formatMoney(total)}</strong></span><span className="border-x border-[#eadbd1] text-[9px] text-[#8a7a72]">Cọc nền tảng<strong className="mt-1 block text-xs text-[#d13f1f]">{formatMoney(depositAmount)}</strong></span><span className="text-[9px] text-[#8a7a72]">Còn lại<strong className="mt-1 block text-xs text-[#191414]">{formatMoney(amountDueOnsite)}</strong></span></div>
+            <p className="mb-2.5 flex items-center gap-2 text-sm font-semibold"><Wallet size={16} className="text-[#d13f1f]" /> VietQR đặt cọc Tâm An Business</p>
+            {pendingPayment?.paymentCode ? <BankTransferDetails amount={depositAmount} transferContent={pendingPayment.paymentCode} onConfirm={confirmDeposit} helperText="Đây là tài khoản nhận cọc của nền tảng. SePay tự động đối soát đúng 10% giá trị ban đầu và đưa giao dịch vào sổ liên quan." /> : <div className="rounded-2xl bg-[#f7f3ef] p-5 text-center"><Loader2 className="mx-auto animate-spin text-[#d13f1f]" size={24} /><p className="mt-2 text-sm font-semibold">Đang tạo VietQR đặt cọc…</p></div>}
             {submitError ? <p className="mt-3 rounded-xl bg-red-50 p-3 text-xs font-medium text-red-700">{submitError}</p> : null}
             <button type="button" onClick={() => setStage("deposit")} className="mt-3 w-full py-2 text-xs font-semibold text-[#8a7a72]">Quay lại xem báo giá</button>
           </div>
@@ -380,7 +380,7 @@ export function CorporateClient() {
     return (
       <main className="min-h-screen bg-[radial-gradient(circle_at_top,#ecd2b4_0,#fffaf6_42%,#f7ede5_100%)] px-4 py-8 text-[#191414] sm:px-6">
         <section className="mx-auto flex max-w-xl flex-col items-center gap-2.5 rounded-2xl border border-[#e3b23c] bg-[#fff7ec] p-10 text-center">
-          <Loader2 className="animate-spin text-[#9f1d20]" size={28} />
+          <Loader2 className="animate-spin text-[#d13f1f]" size={28} />
           <p className="text-sm font-semibold text-[#5c3a1e]">Đang chờ ngân hàng đối soát qua SePay...</p>
           <p className="text-xs text-[#8a7a72]">Yêu cầu chỉ chuyển sang thành công sau khi webhook xác nhận giao dịch.</p>
         </section>
@@ -491,7 +491,7 @@ export function CorporateClient() {
           </div>
           <div className="mt-3 flex items-center justify-between rounded-lg border border-[#eadbd1] bg-[#fdf8f5] px-3.5 py-2.5">
             <span className="flex items-center gap-1.5 text-sm font-semibold">
-              <Users size={15} className="text-[#9f1d20]" /> Số lượng nhân sự
+              <Users size={15} className="text-[#d13f1f]" /> Số lượng nhân sự
             </span>
             <div className="flex items-center gap-3">
               <button
@@ -530,10 +530,10 @@ export function CorporateClient() {
                 onClick={() => setTrialId(item.id)}
                 className={cn(
                   "rounded-xl border p-3 text-left transition",
-                  trialId === item.id ? "border-[#9f1d20] bg-[#fff2ef]" : "border-[#eadbd1] bg-white hover:border-[#c9a59a]"
+                  trialId === item.id ? "border-[#d13f1f] bg-[#fff2ef]" : "border-[#eadbd1] bg-white hover:border-[#c9a59a]"
                 )}
               >
-                <span className="flex items-center gap-1 text-xs font-semibold text-[#9f1d20]">
+                <span className="flex items-center gap-1 text-xs font-semibold text-[#d13f1f]">
                   <Clock size={12} /> {item.durationMin} phút/người
                 </span>
                 <span className="mt-1.5 block text-sm font-semibold">{formatMoney(item.pricePerPerson)}</span>
@@ -558,7 +558,7 @@ export function CorporateClient() {
               className={cn(
                 "mt-0.5 flex h-6 w-11 shrink-0 select-none items-center overflow-hidden rounded-full p-0.5 transition-colors",
                 wantsCorporatePackage ? "justify-end" : "justify-start",
-                wantsCorporatePackage ? "bg-[#9f1d20]" : "bg-[#eadbd1]"
+                wantsCorporatePackage ? "bg-[#d13f1f]" : "bg-[#eadbd1]"
               )}
               style={{ width: 44, minWidth: 44, maxWidth: 44 }}
               role="switch"
@@ -582,16 +582,16 @@ export function CorporateClient() {
                   onClick={() => setTierId(item.id)}
                   className={cn(
                     "relative rounded-xl border p-3.5 text-left transition",
-                    tierId === item.id ? "border-[#9f1d20] bg-[#fff2ef]" : "border-[#eadbd1] bg-white hover:border-[#c9a59a]"
+                    tierId === item.id ? "border-[#d13f1f] bg-[#fff2ef]" : "border-[#eadbd1] bg-white hover:border-[#c9a59a]"
                   )}
                 >
                   {item.highlight ? (
-                    <span className="absolute -top-2.5 right-3 rounded-full bg-[#9f1d20] px-2 py-0.5 text-[10px] font-semibold text-white">
+                    <span className="absolute -top-2.5 right-3 rounded-full bg-[#d13f1f] px-2 py-0.5 text-[10px] font-semibold text-white">
                       Phổ biến nhất
                     </span>
                   ) : null}
                   <span className="block text-sm font-semibold">{item.name}</span>
-                  <span className="mt-1 flex items-center gap-1 text-xs font-semibold text-[#9f1d20]">
+                  <span className="mt-1 flex items-center gap-1 text-xs font-semibold text-[#d13f1f]">
                     <Percent size={12} /> Giảm {item.discountPercent}%
                     {item.bonusSessions > 0 ? ` · tặng ${item.bonusSessions} buổi` : ""}
                   </span>
@@ -611,19 +611,19 @@ export function CorporateClient() {
           ) : null}
 
           {headcountTooLow ? (
-            <p className="mt-2.5 text-[11px] font-semibold text-[#9f1d20]">
+            <p className="mt-2.5 text-[11px] font-semibold text-[#d13f1f]">
               {tier.name} cần tối thiểu {tier.minHeadcountPerSession} người/buổi — hãy tăng số lượng nhân sự ở bước 2.
             </p>
           ) : null}
           {headcountTooHigh ? (
-            <p className="mt-2.5 text-[11px] font-semibold text-[#9f1d20]">
+            <p className="mt-2.5 text-[11px] font-semibold text-[#d13f1f]">
               {tier.name} phục vụ tối đa {tier.maxHeadcountPerSession} người/buổi — hãy giảm số lượng hoặc chọn gói cao hơn.
             </p>
           ) : null}
         </div>
 
         <div className="rounded-2xl border border-[#f0d9b5] bg-[#fdf8f5] p-4 shadow-sm">
-          <h2 className="mb-2.5 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-[#9f1d20]">
+          <h2 className="mb-2.5 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-[#d13f1f]">
             <Gift size={15} /> Ước tính chi phí
           </h2>
           <div className="space-y-1.5 text-sm">
@@ -650,7 +650,7 @@ export function CorporateClient() {
           </div>
           <div className="mt-2.5 flex items-center justify-between border-t border-dashed border-[#eadbd1] pt-2.5">
             <span className="text-sm font-semibold uppercase tracking-wide text-[#665b55]">Tổng ước tính</span>
-            <span className="text-xl font-semibold text-[#9f1d20]">{formatMoney(total)}</span>
+            <span className="text-xl font-semibold text-[#d13f1f]">{formatMoney(total)}</span>
           </div>
           <p className="mt-1.5 text-[11px] text-[#8a7a72]">
             Báo giá tự động theo thông tin bạn nhập. Đặt cọc {depositPolicy.percent}% giá trị ban đầu trước ưu đãi để giữ lịch, đội ngũ Tâm An Care sẽ xác nhận đầu
@@ -661,7 +661,7 @@ export function CorporateClient() {
             type="button"
             onClick={goToQuote}
             disabled={!canSubmit}
-            className="mt-4 w-full rounded-full bg-[#9f1d20] px-5 py-3 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-40"
+            className="mt-4 w-full rounded-full bg-[#d13f1f] px-5 py-3 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-40"
           >
             Xem báo giá & đặt cọc giữ lịch
           </button>

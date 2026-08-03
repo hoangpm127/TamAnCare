@@ -33,7 +33,7 @@ export function AccountProfileCard() {
   return (
     <section className="rounded-xl border border-[#eadbd1] bg-white p-4 shadow-sm">
       <div className="flex items-center gap-3">
-        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#9f1d20] text-base font-semibold text-white">
+        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#d13f1f] text-base font-semibold text-white">
           {hasIdentity ? initials(displayName) : <UserRound size={22} />}
         </span>
         <div className="min-w-0">
@@ -43,7 +43,7 @@ export function AccountProfileCard() {
         <Link
           href={account ? "/toi/cai-dat" : "/tai-khoan"}
           aria-label="Cài đặt thông tin cá nhân"
-          className="ml-auto flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#fff2ef] text-[#9f1d20] transition hover:bg-[#f9ddd7]"
+          className="ml-auto flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#fff2ef] text-[#d13f1f] transition hover:bg-[#f9ddd7]"
         >
           <Settings size={19} />
         </Link>
@@ -67,9 +67,9 @@ export function AccountProfileCard() {
       <div className="mt-3 border-t border-[#f1e5dd] pt-3">
         <div className="flex items-center justify-between text-xs text-[#8a7a72]"><span>Tiến độ hạng thành viên</span><span>VIP</span></div>
         <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-[#f1e5dd]">
-          <div className="h-full rounded-full bg-[#9f1d20]" style={{ width: `${tierProgress}%` }} />
+          <div className="h-full rounded-full bg-[#d13f1f]" style={{ width: `${tierProgress}%` }} />
         </div>
-        <p className="mt-1.5 text-xs text-[#8a7a72]">Thêm <strong className="text-[#9f1d20]">{formatMoney(remainingToVip)}</strong> để lên hạng VIP.</p>
+        <p className="mt-1.5 text-xs text-[#8a7a72]">Thêm <strong className="text-[#d13f1f]">{formatMoney(remainingToVip)}</strong> để lên hạng VIP.</p>
       </div>
     </section>
   );

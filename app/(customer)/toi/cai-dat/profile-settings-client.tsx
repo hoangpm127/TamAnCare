@@ -42,18 +42,18 @@ export function ProfileSettingsClient() {
   return (
     <main className="mx-auto max-w-3xl px-4 pb-8 pt-3 text-[#191414] sm:px-6">
       <div className="mb-3 flex items-center gap-3">
-        <Link href="/toi" aria-label="Quay lại trang Tôi" className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-[#9f1d20] shadow-sm ring-1 ring-[#eadbd1]">
+        <Link href="/toi" aria-label="Quay lại trang Tôi" className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-[#d13f1f] shadow-sm ring-1 ring-[#eadbd1]">
           <ChevronLeft size={19} />
         </Link>
         <div>
-          <h1 className="flex items-center gap-2 text-xl font-semibold tracking-tight"><Settings2 size={20} className="text-[#9f1d20]" /> Cài đặt tài khoản</h1>
+          <h1 className="flex items-center gap-2 text-xl font-semibold tracking-tight"><Settings2 size={20} className="text-[#d13f1f]" /> Cài đặt tài khoản</h1>
           <p className="mt-0.5 text-xs text-[#8a7a72]">Thông tin dùng để đặt lịch và cá nhân hóa dịch vụ.</p>
         </div>
       </div>
 
       <form onSubmit={submit} className="space-y-4">
         <section className="rounded-2xl border border-[#eadbd1] bg-white p-4 shadow-sm">
-          <h2 className="flex items-center gap-2 text-sm font-semibold"><UserRound size={17} className="text-[#9f1d20]" /> Thông tin cá nhân</h2>
+          <h2 className="flex items-center gap-2 text-sm font-semibold"><UserRound size={17} className="text-[#d13f1f]" /> Thông tin cá nhân</h2>
           <div className="mt-3 grid gap-3 sm:grid-cols-2">
             <label className="text-xs font-medium text-[#665b55]">Họ và tên
               <input required value={form.fullName} onChange={(event) => update("fullName", event.target.value)} className="mt-1.5 w-full rounded-xl border border-[#eadbd1] px-3 py-2.5 text-sm text-[#191414]" />
@@ -72,12 +72,12 @@ export function ProfileSettingsClient() {
         </section>
 
         <section className="rounded-2xl border border-[#eadbd1] bg-white p-4 shadow-sm">
-          <h2 className="flex items-center gap-2 text-sm font-semibold"><HeartPulse size={17} className="text-[#9f1d20]" /> Sở thích & lưu ý dịch vụ</h2>
+          <h2 className="flex items-center gap-2 text-sm font-semibold"><HeartPulse size={17} className="text-[#d13f1f]" /> Sở thích & lưu ý dịch vụ</h2>
           <div className="mt-3">
             <p className="text-xs font-medium text-[#665b55]">Lực massage ưa thích</p>
             <div className="mt-2 grid grid-cols-3 gap-2">
               {(["NHẸ", "VỪA", "MẠNH"] as const).map((pressure) => (
-                <button key={pressure} type="button" onClick={() => update("preferredPressure", pressure)} className={cn("rounded-xl border px-3 py-2.5 text-xs font-semibold", form.preferredPressure === pressure ? "border-[#9f1d20] bg-[#fff2ef] text-[#9f1d20]" : "border-[#eadbd1] text-[#665b55]")}>{pressure.charAt(0) + pressure.slice(1).toLowerCase()}</button>
+                <button key={pressure} type="button" onClick={() => update("preferredPressure", pressure)} className={cn("rounded-xl border px-3 py-2.5 text-xs font-semibold", form.preferredPressure === pressure ? "border-[#d13f1f] bg-[#fff2ef] text-[#d13f1f]" : "border-[#eadbd1] text-[#665b55]")}>{pressure.charAt(0) + pressure.slice(1).toLowerCase()}</button>
               ))}
             </div>
           </div>
@@ -87,7 +87,7 @@ export function ProfileSettingsClient() {
         </section>
 
         <section className="rounded-2xl border border-[#eadbd1] bg-white p-4 shadow-sm">
-          <h2 className="flex items-center gap-2 text-sm font-semibold"><Bell size={17} className="text-[#9f1d20]" /> Thông báo</h2>
+          <h2 className="flex items-center gap-2 text-sm font-semibold"><Bell size={17} className="text-[#d13f1f]" /> Thông báo</h2>
           <div className="mt-3 space-y-3">
             <SettingSwitch label="Nhắc lịch hẹn" description="Nhận thông báo trước giờ massage." checked={form.bookingReminders} onChange={(value) => update("bookingReminders", value)} />
             <SettingSwitch label="Ưu đãi phù hợp" description="Nhận voucher theo lịch sử sử dụng." checked={form.promotionUpdates} onChange={(value) => update("promotionUpdates", value)} />
@@ -106,7 +106,7 @@ function SettingSwitch({ label, description, checked, onChange }: { label: strin
   return (
     <div className="flex items-center gap-3">
       <div className="min-w-0 flex-1"><p className="text-sm font-semibold">{label}</p><p className="text-xs text-[#8a7a72]">{description}</p></div>
-      <button type="button" role="switch" aria-checked={checked} onClick={() => onChange(!checked)} className={cn("flex h-6 w-11 shrink-0 items-center rounded-full p-0.5 transition", checked ? "justify-end bg-[#9f1d20]" : "justify-start bg-[#d9ccc5]")}>
+      <button type="button" role="switch" aria-checked={checked} onClick={() => onChange(!checked)} className={cn("flex h-6 w-11 shrink-0 items-center rounded-full p-0.5 transition", checked ? "justify-end bg-[#d13f1f]" : "justify-start bg-[#d9ccc5]")}>
         <span className="h-5 w-5 rounded-full bg-white shadow-sm" />
       </button>
     </div>

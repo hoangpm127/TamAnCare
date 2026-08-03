@@ -109,7 +109,7 @@ export function PwaInstallPrompt() {
             <Image src="/icon-192.png" alt="Biểu tượng Tâm An Care" width={48} height={48} className="h-full w-full object-cover" />
           </span>
           <div className="min-w-0 flex-1">
-            <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#9f1d20]">Webapp trên điện thoại</p>
+            <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#d13f1f]">Webapp trên điện thoại</p>
             <h2 className="mt-1 text-base font-semibold tracking-tight">Cài Tâm An Care để mở lại trong một chạm</h2>
             <p className="mt-1 text-xs leading-5 text-[#6f625c]">Không cần App Store hay CH Play. Mã giới thiệu đã lưu trên thiết bị và vẫn tự áp dụng khi bạn đặt lịch.</p>
           </div>
@@ -125,7 +125,7 @@ export function PwaInstallPrompt() {
           <button
             type="button"
             onClick={() => setGuide("ios")}
-            className={`flex min-h-12 items-center justify-between gap-2 rounded-xl border px-3 py-2.5 text-left transition ${platform === "ios" ? "border-[#9f1d20] bg-[#fff2ef] text-[#8b1b1e]" : "border-[#eadbd1] bg-white text-[#433a36]"}`}
+            className={`flex min-h-12 items-center justify-between gap-2 rounded-xl border px-3 py-2.5 text-left transition ${platform === "ios" ? "border-[#d13f1f] bg-[#fff2ef] text-[#8b1b1e]" : "border-[#eadbd1] bg-white text-[#433a36]"}`}
           >
             <span><span className="block text-xs font-semibold">Cài trên iPhone</span><span className="mt-0.5 block text-[10px] opacity-70">Qua Safari</span></span>
             <ChevronRight size={15} className="shrink-0" />
@@ -133,7 +133,7 @@ export function PwaInstallPrompt() {
           <button
             type="button"
             onClick={() => void installOnAndroid()}
-            className={`flex min-h-12 items-center justify-between gap-2 rounded-xl border px-3 py-2.5 text-left transition ${platform === "android" ? "border-[#9f1d20] bg-[#9f1d20] text-white" : "border-[#eadbd1] bg-white text-[#433a36]"}`}
+            className={`flex min-h-12 items-center justify-between gap-2 rounded-xl border px-3 py-2.5 text-left transition ${platform === "android" ? "border-[#d13f1f] bg-[#d13f1f] text-white" : "border-[#eadbd1] bg-white text-[#433a36]"}`}
           >
             <span><span className="block text-xs font-semibold">Cài trên Android</span><span className="mt-0.5 block text-[10px] opacity-70">{installPrompt ? "Cài ngay" : "Qua Chrome"}</span></span>
             <Download size={15} className="shrink-0" />
@@ -185,8 +185,8 @@ export function PwaInstallPrompt() {
 function InstallStep({ number, icon, title, detail }: { number: string; icon: ReactNode; title: string; detail: string }) {
   return (
     <div className="flex items-start gap-3 rounded-xl bg-[#fffaf6] p-3 ring-1 ring-[#eee1d8]">
-      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#9f1d20] text-xs font-bold text-white">{number}</span>
-      <span className="mt-0.5 text-[#9f1d20]">{icon}</span>
+      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#d13f1f] text-xs font-bold text-white">{number}</span>
+      <span className="mt-0.5 text-[#d13f1f]">{icon}</span>
       <span className="min-w-0"><strong className="block text-xs">{title}</strong><span className="mt-0.5 block text-[11px] leading-5 text-[#786a63]">{detail}</span></span>
     </div>
   );

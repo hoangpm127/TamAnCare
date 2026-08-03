@@ -53,17 +53,17 @@ export function TherapistNotificationList() {
     <>
       <div className="flex items-center justify-between gap-3">
         <div>
-          <h2 className="flex items-center gap-1.5 font-semibold"><Bell size={16} className="text-[#9f1d20]" /> Thông báo công việc</h2>
+          <h2 className="flex items-center gap-1.5 font-semibold"><Bell size={16} className="text-[#d13f1f]" /> Thông báo công việc</h2>
           <p className="mt-0.5 text-[10px] text-[#8a7a72]">{unread} thông báo chưa đọc</p>
         </div>
-        <button type="button" onClick={markAllRead} disabled={!unread} className="inline-flex items-center gap-1 rounded-full bg-[#fff2ef] px-3 py-2 text-[10px] font-semibold text-[#9f1d20] disabled:opacity-40"><CheckCheck size={13} /> Đọc tất cả</button>
+        <button type="button" onClick={markAllRead} disabled={!unread} className="inline-flex items-center gap-1 rounded-full bg-[#fff2ef] px-3 py-2 text-[10px] font-semibold text-[#d13f1f] disabled:opacity-40"><CheckCheck size={13} /> Đọc tất cả</button>
       </div>
       <div className="mt-3 space-y-2">
         {items.slice(0, 20).map((item) => (
           <article key={item.id} className={cn("rounded-lg border p-3", item.read ? "border-[#f2e7df] bg-[#fffaf6]" : "border-[#e7bbb2] bg-[#fff2ef]") }>
             <div className="flex items-start gap-2">
-              <div className="min-w-0 flex-1">{item.href ? <Link href={item.href} onClick={() => markRead(item.id)} className="text-sm font-semibold text-[#9f1d20]">{item.title}</Link> : <p className="text-sm font-semibold">{item.title}</p>}<p className="mt-1 text-xs leading-5 text-[#665b55]">{item.body}</p><p className="mt-1 text-[9px] text-[#8a7a72]">{new Date(item.createdAt).toLocaleString("vi-VN")}</p></div>
-              {!item.read ? <button type="button" onClick={() => markRead(item.id)} className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white text-[#9f1d20]" aria-label="Đánh dấu đã đọc"><Check size={13} /></button> : null}
+              <div className="min-w-0 flex-1">{item.href ? <Link href={item.href} onClick={() => markRead(item.id)} className="text-sm font-semibold text-[#d13f1f]">{item.title}</Link> : <p className="text-sm font-semibold">{item.title}</p>}<p className="mt-1 text-xs leading-5 text-[#665b55]">{item.body}</p><p className="mt-1 text-[9px] text-[#8a7a72]">{new Date(item.createdAt).toLocaleString("vi-VN")}</p></div>
+              {!item.read ? <button type="button" onClick={() => markRead(item.id)} className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white text-[#d13f1f]" aria-label="Đánh dấu đã đọc"><Check size={13} /></button> : null}
             </div>
           </article>
         ))}

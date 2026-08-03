@@ -32,7 +32,7 @@ export function AdminAiChatToggle() {
   return (
     <div className="mb-4 flex items-start justify-between gap-4 rounded-lg border border-[#eadbd1] bg-white p-4 shadow-sm sm:p-5">
       <div className="flex items-start gap-3">
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#fff2ef] text-[#9f1d20]">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#fff2ef] text-[#d13f1f]">
           <MessageCircle size={18} />
         </span>
         <div>

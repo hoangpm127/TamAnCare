@@ -18,7 +18,7 @@ export function CampaignChart() {
           <XAxis dataKey="name" tick={{ fontSize: 12 }} />
           <YAxis tick={{ fontSize: 12 }} />
           <Tooltip />
-          <Bar dataKey="bookings" fill="#9f1d20" radius={[4, 4, 0, 0]} />
+          <Bar dataKey="bookings" fill="#d13f1f" radius={[4, 4, 0, 0]} />
           <Bar dataKey="completed" fill="#d9a441" radius={[4, 4, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>

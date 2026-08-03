@@ -37,7 +37,7 @@ export default async function CustomerProfilePage({ params }: { params: Promise<
   return (
     <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6 lg:px-10">
       <section className="rounded-lg border border-[#eadbd1] bg-white p-4 shadow-sm sm:p-5">
-        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#9f1d20]">CRM profile</p>
+        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#d13f1f]">CRM profile</p>
         <h1 className="mt-1 text-2xl font-semibold">{customer.fullName}</h1>
         <p className="mt-2 text-[#665b55]">{customer.phone}</p>
         <div className="mt-5 grid gap-4 sm:grid-cols-4">
@@ -60,7 +60,7 @@ export default async function CustomerProfilePage({ params }: { params: Promise<
                   <p className="font-semibold">{booking.service.name}</p>
                   <p className="text-sm text-[#665b55]">{booking.therapist?.fullName ?? "Cơ sở sắp xếp"} · {booking.branch.name} · {formatMoney(booking.totalAmount)}</p>
                 </div>
-                <span className="w-fit rounded-full bg-[#fff2ef] px-3 py-1 text-xs font-semibold text-[#9f1d20]">{bookingStatusLabel(booking.status)}</span>
+                <span className="w-fit rounded-full bg-[#fff2ef] px-3 py-1 text-xs font-semibold text-[#d13f1f]">{bookingStatusLabel(booking.status)}</span>
               </div>
             </div>
           ))}

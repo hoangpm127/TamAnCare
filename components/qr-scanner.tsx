@@ -73,7 +73,7 @@ export function QrScanner({ onScanned }: { onScanned: (value: string) => void })
         <span className="absolute bottom-0 left-0 h-9 w-9 rounded-bl-2xl border-b-[3px] border-l-[3px] border-white" />
         <span className="absolute bottom-0 right-0 h-9 w-9 rounded-br-2xl border-b-[3px] border-r-[3px] border-white" />
         <span className="absolute left-[10%] right-[10%] top-1/2 h-0.5 -translate-y-1/2 bg-gradient-to-r from-transparent via-[#f5d982] to-transparent shadow-[0_0_10px_rgba(245,217,130,0.9)]" />
-        <span className="absolute left-1/2 top-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-[#9f1d20] shadow-[0_0_0_5px_rgba(255,255,255,0.12)]" />
+        <span className="absolute left-1/2 top-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-[#d13f1f] shadow-[0_0_0_5px_rgba(255,255,255,0.12)]" />
       </div>
       {status === "starting" ? (
         <div className="absolute inset-0 flex items-center justify-center bg-black/70 text-xs text-white">Đang mở camera...</div>

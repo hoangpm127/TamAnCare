@@ -17,7 +17,7 @@ export function WalletTeaserCard() {
       href="/vi"
       className="mt-4 flex items-center gap-3 rounded-xl border border-[#eadbd1] bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
     >
-      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#fff2ef] text-[#9f1d20]">
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#fff2ef] text-[#d13f1f]">
         <CircleDollarSign size={20} />
       </span>
       <span className="flex flex-1 items-center justify-between gap-3">
@@ -26,7 +26,7 @@ export function WalletTeaserCard() {
           <span className="mt-0.5 flex items-center gap-2 text-xs">
             <span className="text-[#1d8f55]">Thu {formatMoney(referral.totalEarned)}</span>
             <span className="text-[#8a7a72]">·</span>
-            <span className={cn(walletNet >= 0 ? "text-[#1d8f55]" : "text-[#9f1d20]")}>
+            <span className={cn(walletNet >= 0 ? "text-[#1d8f55]" : "text-[#d13f1f]")}>
               {walletNet >= 0 ? "+" : ""}
               {formatMoney(walletNet)}
             </span>

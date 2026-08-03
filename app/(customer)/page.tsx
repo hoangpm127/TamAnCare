@@ -65,7 +65,7 @@ export default async function Home() {
               <Sparkles size={12} /> Chăm sóc chỉn chu · đặt lịch minh bạch
             </p>
             <h1 className="max-w-md text-xl font-semibold leading-tight tracking-tight sm:text-2xl lg:text-3xl">
-              <span className="block">TUỆ TÂM CARE</span>
+              <span className="block">TÂM AN CARE</span>
               <span className="block">GIÚP BẠN VUI KHỎE MỖI NGÀY</span>
             </h1>
             <p className="mt-2 max-w-md text-xs leading-5 text-white/80 sm:text-sm">
@@ -89,7 +89,7 @@ export default async function Home() {
       </section>
 
       <section className="mx-auto max-w-7xl px-4 pt-3 sm:px-6 lg:px-10">
-        <Link href="/tai-khoan" className="flex items-center justify-between gap-3 rounded-2xl bg-gradient-to-r from-[#2b1815] via-[#5c2718] to-[#8f241d] px-4 py-3.5 text-white shadow-md">
+        <Link href="/tai-khoan" className="flex items-center justify-between gap-3 rounded-2xl bg-gradient-to-r from-[#351912] via-[#7c2c1a] to-[#b83a20] px-4 py-3.5 text-white shadow-md">
           <span className="flex min-w-0 items-center gap-3">
             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#f5d982] text-[#5c2718]"><Gift size={19} /></span>
             <span className="min-w-0"><strong className="block text-sm">Tạo tài khoản nhận ưu đãi 100K</strong><small className="mt-0.5 block text-[11px] text-white/70">Đặt lịch không cần đăng nhập · đăng ký để giữ quyền lợi riêng</small></span>
@@ -102,7 +102,7 @@ export default async function Home() {
         <div className="grid grid-cols-4 gap-2 rounded-xl border border-[#eadbd1] bg-white p-3 shadow-sm sm:gap-4 sm:p-4">
           {QUICK_ACTIONS.map(({ href, label, icon: Icon }) => (
             <Link key={href} href={href} className="flex flex-col items-center gap-2 rounded-xl py-1 text-center transition hover:bg-[#fff7f3]">
-              <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#fff2ef] text-[#9f1d20]">
+              <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#fff2ef] text-[#d13f1f]">
                 <Icon size={20} />
               </span>
               <span className="text-[11px] font-medium leading-tight text-[#4d403a] sm:text-xs">{label}</span>
@@ -114,7 +114,7 @@ export default async function Home() {
       <section className="mx-auto max-w-7xl px-4 pb-3 pt-4 sm:px-6 lg:px-10">
         <div className="mb-2.5 flex items-end justify-between gap-4">
           <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">Ưu đãi dành cho bạn</h2>
-          <Link href="/uu-dai" className="hidden font-semibold text-[#9f1d20] sm:inline-flex">
+          <Link href="/uu-dai" className="hidden font-semibold text-[#d13f1f] sm:inline-flex">
             Xem tất cả
           </Link>
         </div>
@@ -131,7 +131,7 @@ export default async function Home() {
         </div>
         <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
           {[
-            { title: "Giá rõ ràng", body: "Hiển thị đúng giá dịch vụ trước khi đặt, không phát sinh.", accent: "#9f1d20" },
+            { title: "Giá rõ ràng", body: "Hiển thị đúng giá dịch vụ trước khi đặt, không phát sinh.", accent: "#d13f1f" },
             { title: "Chọn KTV", body: "Chọn KTV yêu thích hoặc để hệ thống gợi ý người còn slot.", accent: "#b9862c" },
             { title: "Không trùng lịch", body: "Kiểm tra KTV và phòng/giường với buffer 15 phút.", accent: "#0f766e" },
             { title: "Không làm phiền", body: "Chỉ nhắc lịch đúng lúc theo cài đặt của bạn, không gọi quảng cáo.", accent: "#7c3fae" },
@@ -155,7 +155,7 @@ export default async function Home() {
       <section className="mx-auto max-w-7xl px-4 pb-6 pt-2 sm:px-6 lg:px-10">
         <div className="mb-2.5 flex items-end justify-between gap-4">
           <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">Chọn nhanh gói phù hợp</h2>
-          <Link href="/booking" className="hidden font-semibold text-[#9f1d20] sm:inline-flex">
+          <Link href="/booking" className="hidden font-semibold text-[#d13f1f] sm:inline-flex">
             Xem lịch trống
           </Link>
         </div>
@@ -166,7 +166,7 @@ export default async function Home() {
               href={`/booking?service=${service.id}`}
               className="w-40 shrink-0 snap-start rounded-xl border border-[#eadbd1] bg-white p-3.5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md sm:w-auto"
             >
-              <div className="inline-flex items-center gap-1 rounded-full bg-[#fff0ed] px-2.5 py-1 text-[11px] font-semibold text-[#9f1d20]">
+              <div className="inline-flex items-center gap-1 rounded-full bg-[#fff0ed] px-2.5 py-1 text-[11px] font-semibold text-[#d13f1f]">
                 <Clock size={11} /> {service.durationMin} phút
               </div>
               <h3 className="mt-2 line-clamp-2 text-sm font-semibold leading-tight tracking-tight">{stripDurationFromName(service.name)}</h3>
@@ -200,7 +200,7 @@ export default async function Home() {
       <section className="mx-auto max-w-7xl px-4 pb-3 pt-4 sm:px-6 lg:px-10">
         <div className="mb-2.5 flex items-end justify-between gap-4">
           <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">KTV được yêu thích nhất</h2>
-          <Link href="/ktv" className="hidden font-semibold text-[#9f1d20] sm:inline-flex">
+          <Link href="/ktv" className="hidden font-semibold text-[#d13f1f] sm:inline-flex">
             Xem hồ sơ KTV
           </Link>
         </div>
@@ -214,7 +214,7 @@ export default async function Home() {
               <TherapistAvatar id={therapist.id} src={therapist.avatarUrl} size={56} className="mx-auto shrink-0 rounded-full" />
               <p className="mt-3 text-sm font-semibold tracking-tight">{therapist.fullName}</p>
               <p className="mt-1 flex items-center justify-center gap-1 text-xs text-[#8a7a72]">
-                <Star size={12} className="fill-[#9f1d20] text-[#9f1d20]" /> {therapist.ratingAvg.toFixed(1)} · {therapist.servedCount} buổi
+                <Star size={12} className="fill-[#d13f1f] text-[#d13f1f]" /> {therapist.ratingAvg.toFixed(1)} · {therapist.servedCount} buổi
               </p>
               <p className="mt-2 line-clamp-1 text-[11px] text-[#8a7a72]">{(therapist.publicStrengths.length ? therapist.publicStrengths : therapist.skills).join(" · ")}</p>
             </Link>

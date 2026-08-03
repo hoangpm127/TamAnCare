@@ -47,7 +47,7 @@ export function AdminGuard({ children }: { children: React.ReactNode }) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-[#fffaf6] px-4 text-[#191414]">
         <div className="flex items-center gap-3 rounded-2xl border border-[#eadbd1] bg-white px-5 py-4 shadow-sm">
-          <span className="h-5 w-5 animate-spin rounded-full border-2 border-[#eadbd1] border-t-[#9f1d20]" />
+          <span className="h-5 w-5 animate-spin rounded-full border-2 border-[#eadbd1] border-t-[#d13f1f]" />
           <span className="text-sm font-semibold">Phiên quản trị đã kết thúc…</span>
         </div>
       </main>

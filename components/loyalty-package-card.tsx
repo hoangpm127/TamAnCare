@@ -24,10 +24,10 @@ export function LoyaltyPackageCard({ className, compact = false }: { className?:
             <span className="block truncate text-sm font-bold text-[#4a2d16]">Combo 19+3</span>
             <span className="mt-0.5 block truncate text-[9px] text-[#715943]">1 người mua · cùng dùng</span>
           </span>
-          <ArrowRight size={15} className="shrink-0 text-[#9f1d20] transition group-hover:translate-x-0.5" />
+          <ArrowRight size={15} className="shrink-0 text-[#d13f1f] transition group-hover:translate-x-0.5" />
         </div>
         <div className="mt-2 flex items-center justify-between gap-2 border-t border-[#e3b23c]/35 pt-2">
-          <span className="whitespace-nowrap text-sm font-bold text-[#9f1d20]">{formatMoney(plan.price)}</span>
+          <span className="whitespace-nowrap text-sm font-bold text-[#d13f1f]">{formatMoney(plan.price)}</span>
           <span className="flex shrink-0 items-center gap-1 rounded-full bg-white px-1.5 py-1 text-[9px] text-[#8a7a72]"><UsersRound size={10} /> {totalSessions} lượt</span>
         </div>
       </Link>
@@ -53,12 +53,12 @@ export function LoyaltyPackageCard({ className, compact = false }: { className?:
       <p className="relative mt-1 text-xs leading-5 text-[#715943]">1 người mua, gia đình hoặc tập thể cùng dùng · tự trừ buổi khi check-in.</p>
       <div className="relative mt-3 flex items-end justify-between gap-3 border-t border-[#e3b23c]/35 pt-2.5">
         <span>
-          <span className="block text-base font-bold text-[#9f1d20]">{formatMoney(plan.price)}</span>
+          <span className="block text-base font-bold text-[#d13f1f]">{formatMoney(plan.price)}</span>
           <span className="flex items-center gap-1 text-[10px] text-[#8a7a72]">
             <UsersRound size={11} /> {totalSessions} lượt dùng chung
           </span>
         </span>
-        <ArrowRight size={16} className="mb-1 shrink-0 text-[#9f1d20] transition group-hover:translate-x-0.5" />
+        <ArrowRight size={16} className="mb-1 shrink-0 text-[#d13f1f] transition group-hover:translate-x-0.5" />
       </div>
     </Link>
   );

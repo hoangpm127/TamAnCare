@@ -33,9 +33,9 @@ export default function WalletPage() {
   return (
     <main className="mx-auto max-w-3xl px-4 pb-6 pt-3 text-[#191414] sm:px-6">
       <div className="mb-2.5 flex items-center gap-2">
-        <CircleDollarSign className="shrink-0 text-[#9f1d20]" size={22} />
+        <CircleDollarSign className="shrink-0 text-[#d13f1f]" size={22} />
         <h1 className="min-w-0 flex-1 text-xl font-semibold tracking-tight">Thu - Chi của tôi</h1>
-        <Link href="/don-cua-toi?tab=upcoming" className="inline-flex shrink-0 items-center gap-1 rounded-full bg-[#fff2ef] px-3 py-2 text-xs font-semibold text-[#9f1d20] ring-1 ring-[#eadbd1]">
+        <Link href="/don-cua-toi?tab=upcoming" className="inline-flex shrink-0 items-center gap-1 rounded-full bg-[#fff2ef] px-3 py-2 text-xs font-semibold text-[#d13f1f] ring-1 ring-[#eadbd1]">
           <CalendarCheck2 size={14} /> Đơn của tôi{pendingCount > 0 ? ` · ${pendingCount}` : ""} <ChevronRight size={13} />
         </Link>
       </div>
@@ -58,8 +58,8 @@ export default function WalletPage() {
         {pendingCount > 0 || inServiceCount > 0 ? (
           <div className="flex flex-col items-center justify-center gap-1.5 px-4 pb-3.5 pt-3 sm:px-5">
             {inServiceCount > 0 ? (
-              <span className="inline-flex items-center gap-1 whitespace-nowrap rounded-full bg-white px-2.5 py-1 text-[10px] font-bold text-[#9f1d20] shadow-sm">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#9f1d20]" /> {inServiceCount} đang phục vụ
+              <span className="inline-flex items-center gap-1 whitespace-nowrap rounded-full bg-white px-2.5 py-1 text-[10px] font-bold text-[#d13f1f] shadow-sm">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#d13f1f]" /> {inServiceCount} đang phục vụ
               </span>
             ) : null}
             {pendingCount > 0 ? (
@@ -146,7 +146,7 @@ export default function WalletPage() {
             onClick={() => setTab("chi")}
             className={cn(
               "flex items-center justify-center gap-1.5 rounded-xl py-3 text-sm font-semibold transition",
-              tab === "chi" ? "bg-[#9f1d20] text-white shadow-sm" : "bg-[#fdf8f5] text-[#4d403a]"
+              tab === "chi" ? "bg-[#d13f1f] text-white shadow-sm" : "bg-[#fdf8f5] text-[#4d403a]"
             )}
           >
             <TrendingDown size={16} /> Chi tiêu

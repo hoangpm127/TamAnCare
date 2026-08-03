@@ -19,7 +19,7 @@ export default async function TherapistListPage() {
   return (
     <main className="mx-auto max-w-3xl px-4 pb-6 pt-3 text-[#191414] sm:px-6">
       <div className="mb-1 flex items-center gap-2">
-        <Users className="text-[#9f1d20]" size={20} />
+        <Users className="text-[#d13f1f]" size={20} />
         <h1 className="text-xl font-semibold tracking-tight">Đội ngũ KTV</h1>
       </div>
       <p className="mb-2.5 text-sm text-[#665b55]">Xem hồ sơ, tay nghề và đánh giá thật trước khi đặt lịch.</p>
@@ -35,7 +35,7 @@ export default async function TherapistListPage() {
             <div className="min-w-0">
               <p className="text-sm font-semibold tracking-tight">{therapist.fullName}</p>
               <p className="mt-0.5 flex items-center gap-1 text-xs text-[#8a7a72]">
-                <Star size={12} className="fill-[#9f1d20] text-[#9f1d20]" /> {therapist.ratingAvg.toFixed(1)} · {therapist.servedCount} buổi ·{" "}
+                <Star size={12} className="fill-[#d13f1f] text-[#d13f1f]" /> {therapist.ratingAvg.toFixed(1)} · {therapist.servedCount} buổi ·{" "}
                 {therapist.branch.name.replace(/^Tâm An Care · /, "")} · {therapist.shiftLabel}
               </p>
               <p className="mt-1.5 line-clamp-2 text-xs leading-5 text-[#665b55]">{therapist.publicBio ?? `Chuyên ${(therapist.publicStrengths.length ? therapist.publicStrengths : therapist.skills).join(" · ")}`}</p>

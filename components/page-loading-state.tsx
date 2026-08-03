@@ -58,7 +58,7 @@ export function PageLoadingState({ context }: Props) {
         </div>
 
         <p className="mt-4 flex items-center justify-center gap-2 text-xs font-medium text-[#8a7a72]">
-          <LoaderCircle size={14} className="animate-spin text-[#9f1d20]" />
+          <LoaderCircle size={14} className="animate-spin text-[#d13f1f]" />
           {COPY[context]}
         </p>
       </div>

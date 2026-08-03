@@ -123,7 +123,7 @@ function OffersContent() {
   return (
     <main className="mx-auto max-w-3xl px-4 pb-6 pt-3 text-[#191414] sm:px-6">
       <div className="mb-2.5 flex items-center gap-2">
-        <Gift className="text-[#9f1d20]" size={20} />
+        <Gift className="text-[#d13f1f]" size={20} />
         <h1 className="text-xl font-semibold tracking-tight">Ưu đãi dành cho bạn</h1>
       </div>
 
@@ -149,7 +149,7 @@ function OffersContent() {
       ) : null}
 
       <p className="mb-2.5 flex items-center gap-1.5 text-sm font-semibold">
-        <PackagePlus size={16} className="text-[#9f1d20]" /> Gói dài hạn — càng mua nhiều, càng tiết kiệm
+        <PackagePlus size={16} className="text-[#d13f1f]" /> Gói dài hạn — càng mua nhiều, càng tiết kiệm
       </p>
       <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
         {recommendedPlans.map((plan) => {
@@ -164,7 +164,7 @@ function OffersContent() {
               className={cn(
                 "relative flex aspect-square min-h-0 flex-col items-center justify-center overflow-hidden rounded-xl border p-2.5 text-center transition",
                 selected
-                  ? "border-[#9f1d20] bg-[#fff2ef]"
+                  ? "border-[#d13f1f] bg-[#fff2ef]"
                   : plan.highlight
                     ? "border-[#e3b23c] bg-gradient-to-br from-[#fff7ec] to-white"
                     : "border-[#eadbd1] bg-white"
@@ -179,7 +179,7 @@ function OffersContent() {
                 <span><strong className="block text-xs text-[#4a2d16]">{plan.validityDays}</strong> Ngày hiệu lực</span>
               </div>
               <div className="mt-1.5">
-                <p className="text-sm font-bold text-[#9f1d20]">{formatMoney(plan.price)}</p>
+                <p className="text-sm font-bold text-[#d13f1f]">{formatMoney(plan.price)}</p>
                 <p className="text-[9px] text-[#8a7a72]">~{formatMoney(pricePerSession)}/buổi</p>
               </div>
             </button>
@@ -200,7 +200,7 @@ function OffersContent() {
               </p>
               <div className="mt-2.5 flex items-center justify-between rounded-lg bg-white px-3 py-2">
                 <span className="text-xs text-[#8a7a72]">Số tiền kích hoạt</span>
-                <span className="text-base font-bold text-[#9f1d20]">{formatMoney(selectedPlan.price)}</span>
+                <span className="text-base font-bold text-[#d13f1f]">{formatMoney(selectedPlan.price)}</span>
               </div>
               <button
                 type="button"
@@ -214,7 +214,7 @@ function OffersContent() {
 
           {step === "bank" ? (
             <div className="flex flex-col items-center gap-2.5 p-8 text-center">
-              <Loader2 className="animate-spin text-[#9f1d20]" size={28} />
+              <Loader2 className="animate-spin text-[#d13f1f]" size={28} />
               <p className="text-sm font-semibold text-[#5c3a1e]">Đang tạo VietQR thanh toán…</p>
               <p className="text-xs text-[#8a7a72]">Mã sẽ có sẵn số tiền và nội dung đối soát SePay.</p>
             </div>
@@ -237,7 +237,7 @@ function OffersContent() {
 
           {step === "confirming" ? (
             <div className="flex flex-col items-center gap-2.5 p-8 text-center">
-              <Loader2 className="animate-spin text-[#9f1d20]" size={28} />
+              <Loader2 className="animate-spin text-[#d13f1f]" size={28} />
               <p className="text-sm font-semibold text-[#5c3a1e]">Đang chờ ngân hàng đối soát qua SePay...</p>
               <p className="text-xs text-[#8a7a72]">Thẻ chưa được kích hoạt chỉ dựa trên thao tác bấm nút.</p>
             </div>
@@ -252,10 +252,10 @@ function OffersContent() {
                 thống sẽ tự động trừ buổi mỗi lần bạn check-in tại quán.
               </p>
               <div className="mt-1.5 flex gap-2">
-                <Link href="/toi" className="rounded-full border border-[#9f1d20] px-4 py-2 text-xs font-semibold text-[#9f1d20]">
+                <Link href="/toi" className="rounded-full border border-[#d13f1f] px-4 py-2 text-xs font-semibold text-[#d13f1f]">
                   Xem thẻ trong Tôi
                 </Link>
-                <Link href="/check-in" className="rounded-full bg-[#9f1d20] px-4 py-2 text-xs font-semibold text-white">
+                <Link href="/check-in" className="rounded-full bg-[#d13f1f] px-4 py-2 text-xs font-semibold text-white">
                   Mở QR Check-in
                 </Link>
               </div>

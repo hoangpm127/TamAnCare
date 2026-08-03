@@ -70,7 +70,7 @@ function CustomerTopbar({ pathname }: { pathname: string }) {
         <div className="flex items-center gap-1.5 sm:gap-2">
           <Link
             href="/check-in"
-            className="tap-feedback relative inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#fff2ef] text-[#9f1d20] sm:h-9 sm:w-9"
+            className="tap-feedback relative inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#fff2ef] text-[#d13f1f] sm:h-9 sm:w-9"
             aria-label="Check-in tại cơ sở"
           >
             <QrCode size={16} />
@@ -78,7 +78,7 @@ function CustomerTopbar({ pathname }: { pathname: string }) {
           </Link>
           <Link
             href="/chat"
-            className="tap-feedback relative inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#fff2ef] text-[#9f1d20] sm:h-9 sm:w-9"
+            className="tap-feedback relative inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#fff2ef] text-[#d13f1f] sm:h-9 sm:w-9"
             aria-label="Chat với cơ sở"
           >
             <MessageCircle size={16} />
@@ -86,7 +86,7 @@ function CustomerTopbar({ pathname }: { pathname: string }) {
           </Link>
           <Link
             href="/vi"
-            className="tap-feedback relative inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#fff2ef] text-[#9f1d20] sm:h-9 sm:w-9"
+            className="tap-feedback relative inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#fff2ef] text-[#d13f1f] sm:h-9 sm:w-9"
             aria-label="Thu - Chi của tôi"
           >
             <CircleDollarSign size={16} />
@@ -94,7 +94,7 @@ function CustomerTopbar({ pathname }: { pathname: string }) {
           </Link>
           <Link
             href="/thong-bao"
-            className="tap-feedback relative inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#fff2ef] text-[#9f1d20] sm:h-9 sm:w-9"
+            className="tap-feedback relative inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#fff2ef] text-[#d13f1f] sm:h-9 sm:w-9"
             aria-label="Thông báo"
           >
             <Bell size={16} />
@@ -129,12 +129,12 @@ function CustomerBottomNav({ pathname }: { pathname: string }) {
               <span
                 className={cn(
                   "flex h-9 w-9 items-center justify-center rounded-full transition-all",
-                  active ? "bg-[#9f1d20] shadow-sm shadow-[#9f1d20]/30" : ""
+                  active ? "bg-[#d13f1f] shadow-sm shadow-[#d13f1f]/30" : ""
                 )}
               >
                 <Icon size={19} className={active ? "text-white" : "text-[#8a7a72]"} />
               </span>
-              <span className={cn("text-[11px] transition-colors", active ? "font-semibold text-[#9f1d20]" : "font-medium text-[#8a7a72]")}>
+              <span className={cn("text-[11px] transition-colors", active ? "font-semibold text-[#d13f1f]" : "font-medium text-[#8a7a72]")}>
                 {item.label}
               </span>
               <NavigationPendingIndicator className="rounded-none" />

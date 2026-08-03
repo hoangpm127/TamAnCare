@@ -64,13 +64,13 @@ export function OfficeRegistrationForm({ event }: { event: OfficeEventRegistrati
       <section className="mx-auto max-w-3xl rounded-xl border border-[#eadbd1] bg-white p-5 shadow-sm sm:p-6">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#9f1d20]">Tâm An Business</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#d13f1f]">Tâm An Business</p>
             <h1 className="mt-2 text-xl font-semibold tracking-tight sm:text-2xl">{event.companyName}</h1>
             <p className="mt-2 text-sm text-[#665b55]">{event.location}</p>
             <p className="mt-1 text-xs text-[#8a7a72]">Đã đăng ký {event.registered}/{event.headcount} người</p>
           </div>
           <div className="rounded-xl border border-[#eadbd1] p-3">
-            <QrCode className="text-[#9f1d20]" />
+            <QrCode className="text-[#d13f1f]" />
           </div>
         </div>
 
@@ -94,7 +94,7 @@ export function OfficeRegistrationForm({ event }: { event: OfficeEventRegistrati
               <CompactSelect className="mt-2" value={slotTime} onValueChange={setSlotTime} dialogTitle="Chọn giờ chăm sóc" triggerClassName="py-3 text-sm font-normal" options={slots.map((slot) => ({ value: slot.toISOString(), label: format(slot, "HH:mm dd/MM") }))} />
             </div>
             {error ? <p className="rounded-xl bg-red-50 p-3 text-xs text-red-700">{error}</p> : null}
-            <button type="button" disabled={submitting || !["DEPOSIT_CONFIRMED", "READY"].includes(event.status)} onClick={submit} className="w-full rounded-full bg-[#9f1d20] px-5 py-3 font-semibold text-white disabled:opacity-50">
+            <button type="button" disabled={submitting || !["DEPOSIT_CONFIRMED", "READY"].includes(event.status)} onClick={submit} className="w-full rounded-full bg-[#d13f1f] px-5 py-3 font-semibold text-white disabled:opacity-50">
               {submitting ? "Đang ghi nhận…" : "Đăng ký slot"}
             </button>
             {!["DEPOSIT_CONFIRMED", "READY"].includes(event.status) ? <p className="text-center text-xs text-[#8a7a72]">Đoàn chưa mở đăng ký hoặc đã kết thúc.</p> : null}

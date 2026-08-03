@@ -59,9 +59,9 @@ export function TherapistNav({ qrDataUrl, therapistName, branchLabel }: Props) {
           </Link>
           <div className="flex items-center gap-1.5">
             <button type="button" onClick={() => setPanel("qr")} disabled={!qrDataUrl} className="flex h-9 w-9 items-center justify-center rounded-full bg-[#edf9f2] text-[#16784a] disabled:opacity-40" aria-label="Mở QR KTV"><QrCode size={17} /></button>
-            <button type="button" onClick={() => { setPanel("notifications"); setUnread(0); }} className="relative flex h-9 w-9 items-center justify-center rounded-full bg-[#fff2ef] text-[#9f1d20]" aria-label="Mở thông báo">
+            <button type="button" onClick={() => { setPanel("notifications"); setUnread(0); }} className="relative flex h-9 w-9 items-center justify-center rounded-full bg-[#fff2ef] text-[#d13f1f]" aria-label="Mở thông báo">
               <Bell size={17} />
-              {unread ? <span className="absolute -right-0.5 -top-0.5 flex min-h-4 min-w-4 items-center justify-center rounded-full bg-[#9f1d20] px-1 text-[7px] font-bold text-white">{Math.min(99, unread)}</span> : null}
+              {unread ? <span className="absolute -right-0.5 -top-0.5 flex min-h-4 min-w-4 items-center justify-center rounded-full bg-[#d13f1f] px-1 text-[7px] font-bold text-white">{Math.min(99, unread)}</span> : null}
             </button>
             <button type="button" onClick={() => void logout()} className="flex h-9 w-9 items-center justify-center rounded-full border border-[#eadbd1] text-[#8a7a72]" aria-label="Đăng xuất tài khoản KTV"><LogOut size={15} /></button>
           </div>
@@ -74,7 +74,7 @@ export function TherapistNav({ qrDataUrl, therapistName, branchLabel }: Props) {
           {NAV_ITEMS.map((item) => {
             const active = item.exact ? pathname === item.href : pathname.startsWith(item.href);
             const Icon = item.icon;
-            return <Link key={item.href} href={item.href} onClick={() => setPanel(null)} className="tap-feedback relative flex min-w-0 flex-1 flex-col items-center justify-center gap-0.5 py-2"><span className={cn("flex h-7 w-7 items-center justify-center rounded-full", active && "bg-[#9f1d20]")}><Icon size={16} className={active ? "text-white" : "text-[#8a7a72]"} /></span><span className={cn("truncate text-[8px] font-medium", active ? "text-[#9f1d20]" : "text-[#8a7a72]")}>{item.label}</span><NavigationPendingIndicator className="rounded-none" /></Link>;
+            return <Link key={item.href} href={item.href} onClick={() => setPanel(null)} className="tap-feedback relative flex min-w-0 flex-1 flex-col items-center justify-center gap-0.5 py-2"><span className={cn("flex h-7 w-7 items-center justify-center rounded-full", active && "bg-[#d13f1f]")}><Icon size={16} className={active ? "text-white" : "text-[#8a7a72]"} /></span><span className={cn("truncate text-[8px] font-medium", active ? "text-[#d13f1f]" : "text-[#8a7a72]")}>{item.label}</span><NavigationPendingIndicator className="rounded-none" /></Link>;
           })}
         </div>
       </nav>
@@ -82,7 +82,7 @@ export function TherapistNav({ qrDataUrl, therapistName, branchLabel }: Props) {
       {panel ? <div className="fixed inset-0 z-[70] flex items-end justify-center bg-black/45 p-0 backdrop-blur-[2px] sm:items-center sm:p-5" role="dialog" aria-modal="true">
         <button type="button" className="absolute inset-0" onClick={() => setPanel(null)} aria-label="Đóng" />
         <section className="relative max-h-[88dvh] w-full max-w-lg overflow-y-auto rounded-t-[1.75rem] bg-white p-4 shadow-2xl sm:rounded-[1.75rem] sm:p-5">
-          <div className="mb-3 flex items-center justify-between"><div><p className="text-[9px] font-bold uppercase tracking-[0.14em] text-[#9f1d20]">Cổng KTV</p><h2 className="text-base font-semibold">{panel === "qr" ? "QR phục vụ của tôi" : "Thông báo công việc"}</h2></div><button type="button" onClick={() => setPanel(null)} className="flex h-9 w-9 items-center justify-center rounded-full bg-[#f6efeb] text-[#756861]" aria-label="Đóng cửa sổ"><X size={17} /></button></div>
+          <div className="mb-3 flex items-center justify-between"><div><p className="text-[9px] font-bold uppercase tracking-[0.14em] text-[#d13f1f]">Cổng KTV</p><h2 className="text-base font-semibold">{panel === "qr" ? "QR phục vụ của tôi" : "Thông báo công việc"}</h2></div><button type="button" onClick={() => setPanel(null)} className="flex h-9 w-9 items-center justify-center rounded-full bg-[#f6efeb] text-[#756861]" aria-label="Đóng cửa sổ"><X size={17} /></button></div>
           {panel === "qr" && qrDataUrl ? <TherapistQrCard dataUrl={qrDataUrl} therapistName={therapistName} branchLabel={branchLabel} compact /> : null}
           {panel === "notifications" ? <TherapistNotificationList /> : null}
         </section>

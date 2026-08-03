@@ -230,7 +230,7 @@ export function AdminNav() {
               <span className="hidden rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[10px] text-white/60 sm:inline-flex">{session.displayName}</span>
               <button type="button" onClick={() => setNotificationsOpen(true)} className="relative flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-white/65 transition hover:border-[#e8c665]/35 hover:text-[#e8c665]" aria-label="Mở thông báo nhà đầu tư">
                 <Bell size={16} />
-                {unreadInvestorNotifications > 0 ? <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#9f1d20] px-1 text-[9px] font-bold text-white ring-2 ring-[#160f0e]">{unreadInvestorNotifications}</span> : null}
+                {unreadInvestorNotifications > 0 ? <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#d13f1f] px-1 text-[9px] font-bold text-white ring-2 ring-[#160f0e]">{unreadInvestorNotifications}</span> : null}
               </button>
               <button type="button" onClick={() => void logout()} className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-white/60 hover:border-[#e8c665]/30 hover:text-[#e8c665]" aria-label="Đăng xuất"><LogOut size={16} /></button>
             </div>
@@ -340,7 +340,7 @@ export function AdminNav() {
             <img src="/icon-64.png" alt="" className="h-9 w-9 shrink-0 rounded-full" />
             <span className="min-w-0">
               <span className="block truncate text-sm font-semibold">Tâm An Operations</span>
-              <span className="block truncate text-[10px] font-medium text-[#9f1d20]">{session.branchLabel}</span>
+              <span className="block truncate text-[10px] font-medium text-[#d13f1f]">{session.branchLabel}</span>
             </span>
             <NavigationPendingIndicator />
           </Link>
@@ -349,13 +349,13 @@ export function AdminNav() {
             <AdminExpenseAction />
             <Link href="/admin/qr-management" className={cn("tap-feedback relative flex h-9 w-9 items-center justify-center rounded-full border", pathname.startsWith("/admin/qr-management") ? "border-[#16784a] bg-[#16784a] text-white" : "border-[#eadbd1] text-[#16784a]")} aria-label="Trung tâm quản lý QR" title="Quản lý QR"><QrCode size={17} /><NavigationPendingIndicator /></Link>
             {session.role === "OWNER" ? <Link href="/admin/investment-opportunities" className={cn("tap-feedback relative flex h-9 w-9 items-center justify-center rounded-full border", pathname.startsWith("/admin/investment-opportunities") ? "border-[#276c75] bg-[#276c75] text-white" : "border-[#eadbd1] text-[#276c75]")} aria-label="Quản lý cơ hội đầu tư" title="Cơ hội đầu tư"><Rocket size={17} /><NavigationPendingIndicator /></Link> : null}
-            <Link href="/admin/finance" className={cn("tap-feedback relative flex h-9 w-9 items-center justify-center rounded-full border", pathname.startsWith("/admin/finance") ? "border-[#9f1d20] bg-[#9f1d20] text-white" : "border-[#eadbd1] text-[#7a3e1d]")} aria-label="Trung tâm Bill và tài chính" title="Bill & tài chính">
+            <Link href="/admin/finance" className={cn("tap-feedback relative flex h-9 w-9 items-center justify-center rounded-full border", pathname.startsWith("/admin/finance") ? "border-[#d13f1f] bg-[#d13f1f] text-white" : "border-[#eadbd1] text-[#7a3e1d]")} aria-label="Trung tâm Bill và tài chính" title="Bill & tài chính">
               <CircleDollarSign size={18} />
               <NavigationPendingIndicator />
             </Link>
             <div className="relative hidden sm:block">
               <button type="button" onClick={() => setRoleOpen((value) => !value)} className="flex items-center gap-2 rounded-full border border-[#eadbd1] bg-[#fffaf6] py-1.5 pl-2 pr-3 text-left">
-                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#9f1d20] text-white">
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#d13f1f] text-white">
                   {session.role === "OWNER" ? <ShieldCheck size={14} /> : <Building2 size={14} />}
                 </span>
                 <span>
@@ -375,7 +375,7 @@ export function AdminNav() {
                   </Link>
                   {session.role === "OWNER" || session.role === "BRANCH_MANAGER" ? <Link href="/bao-mat-quan-tri" className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium hover:bg-[#fff7f3]"><KeyRound size={14} /> Bảo mật hai lớp</Link> : null}
                   {session.role === "OWNER" ? <Link href="/admin/investment-opportunities" className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium hover:bg-[#edf7fc]"><Rocket size={14} /> Hồ sơ cơ hội đầu tư</Link> : null}
-                  <button type="button" onClick={() => void logout()} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium text-[#9f1d20] hover:bg-[#fff2ef]">
+                  <button type="button" onClick={() => void logout()} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium text-[#d13f1f] hover:bg-[#fff2ef]">
                     <LogOut size={14} /> Đăng xuất về trang chủ
                   </button>
                 </div>
@@ -383,18 +383,18 @@ export function AdminNav() {
             </div>
             <button type="button" onClick={() => setNotificationsOpen(true)} className="relative flex h-9 w-9 items-center justify-center rounded-full border border-[#eadbd1] text-[#7a3e1d]" aria-label="Mở thông báo quản trị">
               <Bell size={17} />
-              {unreadNotificationCount > 0 ? <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#9f1d20] px-1 text-[9px] font-bold text-white">{unreadNotificationCount}</span> : null}
+              {unreadNotificationCount > 0 ? <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#d13f1f] px-1 text-[9px] font-bold text-white">{unreadNotificationCount}</span> : null}
             </button>
           </div>
         </div>
 
         <nav className="scrollbar-hide mx-auto hidden max-w-7xl gap-2 overflow-x-auto px-4 pb-2.5 sm:px-6 md:flex lg:px-10">
-          <Link href="/admin" className={cn("tap-feedback relative shrink-0 rounded-full border px-3 py-1.5 text-xs font-semibold", pathname === "/admin" ? "border-[#9f1d20] bg-[#9f1d20] text-white" : "border-[#eadbd1] text-[#4d403a]")}>Tổng quan<NavigationPendingIndicator light={pathname === "/admin"} /></Link>
+          <Link href="/admin" className={cn("tap-feedback relative shrink-0 rounded-full border px-3 py-1.5 text-xs font-semibold", pathname === "/admin" ? "border-[#d13f1f] bg-[#d13f1f] text-white" : "border-[#eadbd1] text-[#4d403a]")}>Tổng quan<NavigationPendingIndicator light={pathname === "/admin"} /></Link>
           {allowedSections.map((slug) => {
             const meta = ADMIN_SECTION_META[slug];
             const Icon = meta.icon;
             return (
-              <Link key={slug} href={`/admin/${slug}`} className={cn("tap-feedback relative inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold", pathname.startsWith(`/admin/${slug}`) ? "border-[#9f1d20] bg-[#9f1d20] text-white" : "border-[#eadbd1] text-[#4d403a] hover:border-[#9f1d20] hover:text-[#9f1d20]")}>
+              <Link key={slug} href={`/admin/${slug}`} className={cn("tap-feedback relative inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold", pathname.startsWith(`/admin/${slug}`) ? "border-[#d13f1f] bg-[#d13f1f] text-white" : "border-[#eadbd1] text-[#4d403a] hover:border-[#d13f1f] hover:text-[#d13f1f]")}>
                 <Icon size={13} /> {meta.label}<NavigationPendingIndicator light={pathname.startsWith(`/admin/${slug}`)} />
               </Link>
             );
@@ -411,19 +411,19 @@ export function AdminNav() {
             const Icon = item.icon;
             return (
               <Link key={item.slug} href={item.href} className="tap-feedback relative flex flex-1 flex-col items-center justify-center gap-1 py-2.5">
-                <span className={cn("relative flex h-8 w-8 items-center justify-center rounded-full", active && "bg-[#9f1d20]")}>
+                <span className={cn("relative flex h-8 w-8 items-center justify-center rounded-full", active && "bg-[#d13f1f]")}>
                   <Icon size={18} className={active ? "text-white" : "text-[#8a7a72]"} />
                   {item.slug === "bookings" && regularBookingCount > 0 ? <span className="absolute -right-2 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#e3b23c] px-1 text-[9px] font-bold text-[#3d1f12] ring-2 ring-white">{regularBookingCount}</span> : null}
                   {item.slug === "bookings" && bookingCounts.business > 0 ? <span className="absolute -left-2 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#29a064] px-1 text-[9px] font-bold text-white ring-2 ring-white">{bookingCounts.business}</span> : null}
                 </span>
-                <span className={cn("text-[10px] font-medium", active ? "text-[#9f1d20]" : "text-[#8a7a72]")}>{item.label}</span>
+                <span className={cn("text-[10px] font-medium", active ? "text-[#d13f1f]" : "text-[#8a7a72]")}>{item.label}</span>
                 <NavigationPendingIndicator className="rounded-none" />
               </Link>
             );
           })}
           <button type="button" onClick={() => setMoreOpen(true)} className="tap-feedback flex flex-1 flex-col items-center justify-center gap-1 py-2.5">
-            <span className={cn("flex h-8 w-8 items-center justify-center rounded-full", moreActive && "bg-[#9f1d20]")}><BrainCircuit size={18} className={moreActive ? "text-white" : "text-[#8a7a72]"} /></span>
-            <span className={cn("text-[10px] font-medium", moreActive ? "text-[#9f1d20]" : "text-[#8a7a72]")}>IQ Care</span>
+            <span className={cn("flex h-8 w-8 items-center justify-center rounded-full", moreActive && "bg-[#d13f1f]")}><BrainCircuit size={18} className={moreActive ? "text-white" : "text-[#8a7a72]"} /></span>
+            <span className={cn("text-[10px] font-medium", moreActive ? "text-[#d13f1f]" : "text-[#8a7a72]")}>IQ Care</span>
           </button>
         </div>
       </nav>
@@ -432,25 +432,25 @@ export function AdminNav() {
         <div className="fixed inset-0 z-50 overflow-y-auto bg-[#fffaf6] text-[#191414]">
           <header className="sticky top-0 z-10 border-b border-[#eadbd1] bg-white/95 shadow-[0_1px_12px_rgba(159,29,32,0.06)] backdrop-blur">
             <div className="mx-auto flex h-14 max-w-3xl items-center justify-between px-4 sm:px-6">
-              <div className="flex min-w-0 items-center gap-1.5"><button type="button" onClick={() => setNotificationsOpen(false)} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[#191414] hover:bg-[#fff2ef]" aria-label="Quay lại"><ChevronLeft size={20} /></button><span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#fff2ef] text-[#9f1d20]"><Bell size={16} /></span><div className="min-w-0"><p className="truncate text-sm font-semibold">Thông báo quản trị</p><p className="truncate text-[9px] font-medium text-[#9f1d20]">{session.branchLabel}</p></div></div>
-              <button type="button" onClick={() => setNotificationsOpen(false)} className="flex h-9 w-9 items-center justify-center rounded-full bg-[#fff2ef] text-[#9f1d20]" aria-label="Đóng"><X size={17} /></button>
+              <div className="flex min-w-0 items-center gap-1.5"><button type="button" onClick={() => setNotificationsOpen(false)} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[#191414] hover:bg-[#fff2ef]" aria-label="Quay lại"><ChevronLeft size={20} /></button><span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#fff2ef] text-[#d13f1f]"><Bell size={16} /></span><div className="min-w-0"><p className="truncate text-sm font-semibold">Thông báo quản trị</p><p className="truncate text-[9px] font-medium text-[#d13f1f]">{session.branchLabel}</p></div></div>
+              <button type="button" onClick={() => setNotificationsOpen(false)} className="flex h-9 w-9 items-center justify-center rounded-full bg-[#fff2ef] text-[#d13f1f]" aria-label="Đóng"><X size={17} /></button>
             </div>
           </header>
 
           <main className="mx-auto max-w-3xl px-4 py-5 pb-[calc(env(safe-area-inset-bottom)+1.5rem)] sm:px-6">
-            <div className="mb-4 flex items-center gap-2"><Bell className="text-[#9f1d20]" size={20} /><div><h1 className="text-xl font-semibold tracking-tight">Thông báo</h1><p className="mt-0.5 text-[10px] text-[#8a7a72]">Booking, cơ sở, tài chính và mối quan hệ khách hàng.</p></div></div>
+            <div className="mb-4 flex items-center gap-2"><Bell className="text-[#d13f1f]" size={20} /><div><h1 className="text-xl font-semibold tracking-tight">Thông báo</h1><p className="mt-0.5 text-[10px] text-[#8a7a72]">Booking, cơ sở, tài chính và mối quan hệ khách hàng.</p></div></div>
 
             <section className="rounded-2xl border border-[#eadbd1] bg-white p-3 shadow-sm">
               <div className="flex items-center justify-between gap-3">
                 <div><p className="text-xs font-semibold">Trung tâm thông báo</p><p className="mt-0.5 text-[10px] text-[#8a7a72]">{unreadNotificationCount} thông báo chưa đọc</p></div>
-                <button type="button" onClick={markAllAdminNotificationsRead} disabled={unreadNotificationCount === 0} className="inline-flex items-center gap-1.5 rounded-full bg-[#fff2ef] px-3 py-2 text-[11px] font-semibold text-[#9f1d20] disabled:opacity-45"><CheckCheck size={14} /> Đọc tất cả</button>
+                <button type="button" onClick={markAllAdminNotificationsRead} disabled={unreadNotificationCount === 0} className="inline-flex items-center gap-1.5 rounded-full bg-[#fff2ef] px-3 py-2 text-[11px] font-semibold text-[#d13f1f] disabled:opacity-45"><CheckCheck size={14} /> Đọc tất cả</button>
               </div>
               <div className="scrollbar-hide -mx-1 mt-2 flex gap-2 overflow-x-auto px-1 py-1">
                 {([
                   ["ALL", "Tất cả", Bell], ["UNREAD", "Chưa đọc", Check], ["BOOKING", "Booking", CalendarCheck], ["BRANCH", "Cơ sở", Building2], ["VIP", "MQH · VIP", Crown], ["FINANCE", "Tài chính", ReceiptText],
-                ] as const).map(([value, label, Icon]) => <button key={value} type="button" onClick={() => setNotificationFilter(value)} className={cn("inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-semibold", notificationFilter === value ? "border-[#9f1d20] bg-[#9f1d20] text-white" : "border-[#eadbd1] text-[#665b55]")}><Icon size={13} /> {label}</button>)}
+                ] as const).map(([value, label, Icon]) => <button key={value} type="button" onClick={() => setNotificationFilter(value)} className={cn("inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-semibold", notificationFilter === value ? "border-[#d13f1f] bg-[#d13f1f] text-white" : "border-[#eadbd1] text-[#665b55]")}><Icon size={13} /> {label}</button>)}
               </div>
-              {session.role === "OWNER" ? <div className="scrollbar-hide -mx-1 mt-1 flex gap-1.5 overflow-x-auto px-1 py-1">{[{ id: "all", label: "Toàn hệ thống" }, ...branches.map((item) => ({ id: item.id, label: item.label })), { id: "system", label: "Chi hệ thống" }].map((item) => <button key={item.id} type="button" onClick={() => setNotificationBranch(item.id)} className={cn("shrink-0 rounded-full border px-2.5 py-1.5 text-[10px] font-semibold", notificationBranch === item.id ? "border-[#dca9a2] bg-[#fff0ed] text-[#9f1d20] shadow-sm shadow-[#9f1d20]/8" : "border-transparent bg-[#f5f0ec] text-[#786962]")}>{item.label}</button>)}</div> : null}
+              {session.role === "OWNER" ? <div className="scrollbar-hide -mx-1 mt-1 flex gap-1.5 overflow-x-auto px-1 py-1">{[{ id: "all", label: "Toàn hệ thống" }, ...branches.map((item) => ({ id: item.id, label: item.label })), { id: "system", label: "Chi hệ thống" }].map((item) => <button key={item.id} type="button" onClick={() => setNotificationBranch(item.id)} className={cn("shrink-0 rounded-full border px-2.5 py-1.5 text-[10px] font-semibold", notificationBranch === item.id ? "border-[#dca9a2] bg-[#fff0ed] text-[#d13f1f] shadow-sm shadow-[#d13f1f]/8" : "border-transparent bg-[#f5f0ec] text-[#786962]")}>{item.label}</button>)}</div> : null}
             </section>
 
             <div className="mt-3 overflow-hidden rounded-2xl border border-[#eadbd1] bg-white shadow-sm">
@@ -458,13 +458,13 @@ export function AdminNav() {
                 const unread = isNotificationUnread(item);
                 const Icon = item.kind === "booking" ? CalendarCheck : item.kind === "vip" ? Crown : item.kind === "finance" ? ReceiptText : item.kind === "branch" ? Building2 : item.kind === "system" ? Sparkles : UsersRound;
                 return <article key={item.id} className={cn("flex gap-3 border-b border-[#f1e5dd] px-4 py-3 last:border-b-0", unread && "bg-gradient-to-r from-[#fff3ee] to-white")}>
-                  <span className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-xl", item.kind === "vip" ? "bg-[#fff7df] text-[#805914]" : item.kind === "finance" || item.kind === "system" ? "bg-[#edf9f2] text-[#16784a]" : "bg-[#fff2ef] text-[#9f1d20]")}><Icon size={17} /></span>
+                  <span className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-xl", item.kind === "vip" ? "bg-[#fff7df] text-[#805914]" : item.kind === "finance" || item.kind === "system" ? "bg-[#edf9f2] text-[#16784a]" : "bg-[#fff2ef] text-[#d13f1f]")}><Icon size={17} /></span>
                   <div className="min-w-0 flex-1">
                     <Link href={item.href} onClick={() => { markNotificationRead(item.id); setNotificationsOpen(false); }} className="block">
                       <div className="flex items-start gap-1.5"><p className="min-w-0 flex-1 text-sm font-semibold leading-5">{item.title}</p>{unread ? <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[#b51f24]" /> : null}<ChevronRight size={14} className="mt-1 shrink-0 text-[#b9862c]" /></div>
                       <p className="mt-1 text-xs leading-5 text-[#665b55]">{item.body}</p>
                     </Link>
-                    <div className="mt-2 flex items-center justify-between gap-2"><p className="text-[10px] text-[#8a7a72]">{item.branchId === "system" ? "Toàn hệ thống" : branches.find((branch) => branch.id === item.branchId)?.label} · {notificationTime(item.createdAt)}</p>{unread ? <button type="button" onClick={() => markNotificationRead(item.id)} className="inline-flex shrink-0 items-center gap-1 rounded-full border border-[#eadbd1] px-2 py-1 text-[10px] font-semibold text-[#9f1d20]"><Check size={11} /> Đánh dấu đã đọc</button> : <span className="inline-flex items-center gap-1 text-[10px] text-[#8a7a72]"><CheckCheck size={11} /> Đã đọc</span>}</div>
+                    <div className="mt-2 flex items-center justify-between gap-2"><p className="text-[10px] text-[#8a7a72]">{item.branchId === "system" ? "Toàn hệ thống" : branches.find((branch) => branch.id === item.branchId)?.label} · {notificationTime(item.createdAt)}</p>{unread ? <button type="button" onClick={() => markNotificationRead(item.id)} className="inline-flex shrink-0 items-center gap-1 rounded-full border border-[#eadbd1] px-2 py-1 text-[10px] font-semibold text-[#d13f1f]"><Check size={11} /> Đánh dấu đã đọc</button> : <span className="inline-flex items-center gap-1 text-[10px] text-[#8a7a72]"><CheckCheck size={11} /> Đã đọc</span>}</div>
                   </div>
                 </article>;
               })}
@@ -485,8 +485,8 @@ export function AdminNav() {
               <button type="button" onClick={() => setMoreOpen(false)} className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-white/10" aria-label="Đóng"><X size={18} /></button>
             </div>
             <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-[#8a7a72]">Chức năng được cấp</p>
-            <Link href="/admin" onClick={() => setMoreOpen(false)} className={cn("mb-3 flex items-center gap-2.5 rounded-xl border p-2.5", pathname === "/admin" ? "border-[#9f1d20] bg-[#fff2ef] text-[#9f1d20]" : "border-[#eadbd1] text-[#4d403a]")}>
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#9f1d20] text-white"><LayoutDashboard size={17} /></span>
+            <Link href="/admin" onClick={() => setMoreOpen(false)} className={cn("mb-3 flex items-center gap-2.5 rounded-xl border p-2.5", pathname === "/admin" ? "border-[#d13f1f] bg-[#fff2ef] text-[#d13f1f]" : "border-[#eadbd1] text-[#4d403a]")}>
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#d13f1f] text-white"><LayoutDashboard size={17} /></span>
               <span><span className="block text-xs font-semibold">Tổng quan vận hành</span><span className="block text-[10px] text-[#8a7a72]">KPI, lịch và cảnh báo hôm nay</span></span>
             </Link>
             <div className="space-y-3">
@@ -495,14 +495,14 @@ export function AdminNav() {
                 if (groupSections.length === 0) return null;
                 return (
                   <section key={group.label}>
-                    <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#9f1d20]">{group.label}</p>
+                    <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#d13f1f]">{group.label}</p>
                     <div className="grid grid-cols-2 gap-2">
                       {groupSections.map((slug) => {
                         const meta = ADMIN_SECTION_META[slug];
                         const Icon = meta.icon;
                         return (
-                          <Link key={slug} href={`/admin/${slug}`} onClick={() => setMoreOpen(false)} className={cn("flex min-w-0 items-center gap-2 rounded-xl border p-2.5", pathname.startsWith(`/admin/${slug}`) ? "border-[#9f1d20] bg-[#fff2ef]" : "border-[#eadbd1] bg-white")}>
-                            <span className={cn("flex h-8 w-8 shrink-0 items-center justify-center rounded-full", pathname.startsWith(`/admin/${slug}`) ? "bg-[#9f1d20] text-white" : "bg-[#fff7ec] text-[#7a3e1d]")}><Icon size={15} /></span>
+                          <Link key={slug} href={`/admin/${slug}`} onClick={() => setMoreOpen(false)} className={cn("flex min-w-0 items-center gap-2 rounded-xl border p-2.5", pathname.startsWith(`/admin/${slug}`) ? "border-[#d13f1f] bg-[#fff2ef]" : "border-[#eadbd1] bg-white")}>
+                            <span className={cn("flex h-8 w-8 shrink-0 items-center justify-center rounded-full", pathname.startsWith(`/admin/${slug}`) ? "bg-[#d13f1f] text-white" : "bg-[#fff7ec] text-[#7a3e1d]")}><Icon size={15} /></span>
                             <span className="min-w-0"><span className="block truncate text-[11px] font-semibold">{meta.label}</span><span className="block truncate text-[9px] text-[#8a7a72]">{meta.shortDescription}</span></span>
                           </Link>
                         );
@@ -514,10 +514,10 @@ export function AdminNav() {
             </div>
             {session.role === "OWNER" ? <Link href="/admin/investment-opportunities" onClick={() => setMoreOpen(false)} className="mt-4 flex items-center gap-2.5 rounded-xl border border-[#c9dfe6] bg-[#f4fbfd] p-3"><span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#276c75] text-white"><Rocket size={16} /></span><span><span className="block text-xs font-semibold">Cơ hội đầu tư</span><span className="block text-[10px] text-[#6c7c84]">Tạo, thẩm định, công bố và gửi bản tin</span></span></Link> : null}
             {session.role === "OWNER" || session.role === "BRANCH_MANAGER" ? <Link href="/admin/qr-management" onClick={() => setMoreOpen(false)} className="mt-4 flex items-center gap-2.5 rounded-xl border border-[#b8dfc9] bg-[#f2fbf6] p-3"><span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#16784a] text-white"><QrCode size={16} /></span><span><span className="block text-xs font-semibold">Trung tâm quản lý QR</span><span className="block text-[10px] text-[#607a6b]">Cơ sở, KTV và Business · cấp lại an toàn</span></span></Link> : null}
-            {session.role === "OWNER" || session.role === "BRANCH_MANAGER" ? <Link href="/bao-mat-quan-tri" onClick={() => setMoreOpen(false)} className="mt-4 flex items-center gap-2.5 rounded-xl border border-[#eadbd1] bg-white p-3"><span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#fff2ef] text-[#9f1d20]"><KeyRound size={16} /></span><span><span className="block text-xs font-semibold">Bảo mật hai lớp</span><span className="block text-[10px] text-[#8a7a72]">Authenticator và mã khôi phục</span></span></Link> : null}
+            {session.role === "OWNER" || session.role === "BRANCH_MANAGER" ? <Link href="/bao-mat-quan-tri" onClick={() => setMoreOpen(false)} className="mt-4 flex items-center gap-2.5 rounded-xl border border-[#eadbd1] bg-white p-3"><span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#fff2ef] text-[#d13f1f]"><KeyRound size={16} /></span><span><span className="block text-xs font-semibold">Bảo mật hai lớp</span><span className="block text-[10px] text-[#8a7a72]">Authenticator và mã khôi phục</span></span></Link> : null}
             <div className="mt-4 grid grid-cols-2 gap-2 border-t border-[#eadbd1] pt-4">
-              <Link href="/dang-nhap-quan-tri" className="flex items-center justify-center gap-1.5 rounded-full border border-[#9f1d20] px-3 py-2.5 text-xs font-semibold text-[#9f1d20]"><ShieldCheck size={14} /> Đổi vai trò</Link>
-              <button type="button" onClick={() => void logout()} className="flex items-center justify-center gap-1.5 rounded-full bg-[#9f1d20] px-3 py-2.5 text-xs font-semibold text-white"><LogOut size={14} /> Đăng xuất</button>
+              <Link href="/dang-nhap-quan-tri" className="flex items-center justify-center gap-1.5 rounded-full border border-[#d13f1f] px-3 py-2.5 text-xs font-semibold text-[#d13f1f]"><ShieldCheck size={14} /> Đổi vai trò</Link>
+              <button type="button" onClick={() => void logout()} className="flex items-center justify-center gap-1.5 rounded-full bg-[#d13f1f] px-3 py-2.5 text-xs font-semibold text-white"><LogOut size={14} /> Đăng xuất</button>
             </div>
           </div>
         </div>

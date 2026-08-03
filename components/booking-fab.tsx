@@ -129,7 +129,7 @@ function BookingChoice({ trigger }: { trigger: "fab" | "hero" }) {
             onPointerCancel={finishFabDrag}
             aria-label="Đặt dịch vụ; giữ và kéo để di chuyển nút"
             title="Chạm để đặt lịch · Giữ và kéo để di chuyển"
-            className="relative flex h-12 w-12 touch-none select-none items-center justify-center rounded-full bg-[#9f1d20] text-white shadow-lg shadow-[#9f1d20]/40 transition active:cursor-grabbing active:scale-95"
+            className="relative flex h-12 w-12 touch-none select-none items-center justify-center rounded-full bg-[#d13f1f] text-white shadow-lg shadow-[#d13f1f]/40 transition active:cursor-grabbing active:scale-95"
           >
             <span className="absolute top-1.5 flex gap-0.5" aria-hidden="true"><i className="h-0.5 w-0.5 rounded-full bg-white/55" /><i className="h-0.5 w-0.5 rounded-full bg-white/55" /><i className="h-0.5 w-0.5 rounded-full bg-white/55" /></span>
             <Plus size={19} />
@@ -139,7 +139,7 @@ function BookingChoice({ trigger }: { trigger: "fab" | "hero" }) {
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="mt-4 inline-flex items-center justify-center gap-1.5 rounded-full bg-gradient-to-b from-[#c22630] to-[#8f151a] px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-black/30 ring-1 ring-white/10"
+          className="mt-4 inline-flex items-center justify-center gap-1.5 rounded-full bg-gradient-to-b from-[#d13f1f] to-[#a92f18] px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-black/30 ring-1 ring-white/10"
         >
           Đặt lịch ngay <ArrowRight size={15} />
         </button>
@@ -151,7 +151,7 @@ function BookingChoice({ trigger }: { trigger: "fab" | "hero" }) {
           <div className="relative max-h-[92dvh] w-full max-w-sm overflow-y-auto rounded-[2rem] border border-[#d8b46a]/55 bg-gradient-to-b from-[#fffdf9] to-[#fff8f2] px-4 pb-5 pt-5 shadow-[0_24px_70px_rgba(44,24,19,0.38)] ring-1 ring-white/70">
             {navigatingTo ? (
               <div className="absolute inset-0 z-30 flex flex-col items-center justify-center gap-2 bg-[#fffaf6]/90 text-center backdrop-blur-sm" role="status" aria-live="polite">
-                <Loader2 className="animate-spin text-[#9f1d20]" size={27} />
+                <Loader2 className="animate-spin text-[#d13f1f]" size={27} />
                 <p className="text-sm font-semibold text-[#4d2922]">Đang mở hình thức đặt lịch…</p>
               </div>
             ) : null}
@@ -179,8 +179,8 @@ function BookingChoice({ trigger }: { trigger: "fab" | "hero" }) {
                   <span className="pointer-events-none absolute bottom-10 right-9 h-2.5 w-2.5 rounded-full bg-[#b9862c]/35" />
                   <span className="relative flex h-full flex-col">
                     <span className="flex items-start justify-between gap-2">
-                      <span className="flex h-12 w-12 -rotate-3 items-center justify-center rounded-[18px_12px_18px_12px] bg-white text-[#9f1d20] shadow-sm ring-1 ring-[#9f1d20]/10 transition group-hover:rotate-0"><UserRound size={21} /></span>
-                      <span className="rounded-full bg-white/65 px-2 py-1 text-[8px] font-bold uppercase tracking-[0.12em] text-[#9f1d20]">Riêng tư</span>
+                      <span className="flex h-12 w-12 -rotate-3 items-center justify-center rounded-[18px_12px_18px_12px] bg-white text-[#d13f1f] shadow-sm ring-1 ring-[#d13f1f]/10 transition group-hover:rotate-0"><UserRound size={21} /></span>
+                      <span className="rounded-full bg-white/65 px-2 py-1 text-[8px] font-bold uppercase tracking-[0.12em] text-[#d13f1f]">Riêng tư</span>
                     </span>
                     <span className="my-auto space-y-1.5 py-3">
                       <span className="block rounded-full bg-white/55 px-2.5 py-1.5 text-[9px] font-semibold text-[#6f3a2f]">Tự chọn dịch vụ & KTV</span>
@@ -189,7 +189,7 @@ function BookingChoice({ trigger }: { trigger: "fab" | "hero" }) {
                     <span className="mt-auto">
                       <strong className="block text-lg font-bold tracking-tight">Cá nhân</strong>
                       <small className="mt-1 block text-[10px] leading-4 text-[#745c51]">Đặt lịch theo đúng nhu cầu và nhịp nghỉ ngơi của riêng bạn.</small>
-                      <span className="mt-3 inline-flex items-center gap-1 text-[10px] font-semibold text-[#9f1d20]">Chọn lịch <ArrowRight size={12} /></span>
+                      <span className="mt-3 inline-flex items-center gap-1 text-[10px] font-semibold text-[#d13f1f]">Chọn lịch <ArrowRight size={12} /></span>
                     </span>
                   </span>
                 </button>
@@ -222,7 +222,7 @@ function BookingChoice({ trigger }: { trigger: "fab" | "hero" }) {
             </div>
 
             <div className="mt-4 flex items-center justify-center gap-1.5 text-center text-[11px] text-[#8a7a72]">
-              <Users size={12} className="shrink-0 text-[#9f1d20]" /> Hơn 500 khách hàng & doanh nghiệp đã tin dùng.
+              <Users size={12} className="shrink-0 text-[#d13f1f]" /> Hơn 500 khách hàng & doanh nghiệp đã tin dùng.
             </div>
           </div>
         </div>

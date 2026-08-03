@@ -52,7 +52,7 @@ export function BusinessLeadConsole({ initialEvent, qrDataUrl }: { initialEvent:
       </section>
 
       <section className="rounded-[2rem] border border-[#eadbd1] bg-white p-5 shadow-xl">
-        <div className="flex items-center justify-between gap-3"><div><p className="text-xs font-bold uppercase tracking-[0.14em] text-[#9f1d20]">Bảng điều phối trực tiếp</p><h2 className="mt-1 text-xl font-semibold">Trạng thái buổi phục vụ</h2></div><RefreshCw size={20} className="text-[#9f1d20]" /></div>
+        <div className="flex items-center justify-between gap-3"><div><p className="text-xs font-bold uppercase tracking-[0.14em] text-[#d13f1f]">Bảng điều phối trực tiếp</p><h2 className="mt-1 text-xl font-semibold">Trạng thái buổi phục vụ</h2></div><RefreshCw size={20} className="text-[#d13f1f]" /></div>
         <div className="mt-4 grid grid-cols-2 gap-2.5">
           <Info icon={<MapPin size={15} />} label="Địa điểm" value={event.location} wide />
           <Info icon={<Users size={15} />} label="Quy mô" value={`${event.headcount} người`} />
@@ -69,9 +69,9 @@ export function BusinessLeadConsole({ initialEvent, qrDataUrl }: { initialEvent:
 }
 
 function Info({ icon, label, value, wide }: { icon: React.ReactNode; label: string; value: string; wide?: boolean }) {
-  return <div className={`${wide ? "col-span-2" : ""} rounded-2xl bg-[#fffaf6] p-3`}><p className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wide text-[#9f1d20]">{icon}{label}</p><p className="mt-1 text-xs font-semibold leading-5">{value}</p></div>;
+  return <div className={`${wide ? "col-span-2" : ""} rounded-2xl bg-[#fffaf6] p-3`}><p className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wide text-[#d13f1f]">{icon}{label}</p><p className="mt-1 text-xs font-semibold leading-5">{value}</p></div>;
 }
 
 function State({ icon, title, body }: { icon: React.ReactNode; title: string; body: string }) {
-  return <div className="mt-4 rounded-3xl border border-[#ead6a9] bg-[#fffaf0] p-5 text-center text-[#684c27]"><span className="inline-flex text-[#9f1d20]">{icon}</span><p className="mt-2 text-lg font-semibold text-[#211817]">{title}</p><p className="mt-1 text-xs leading-5">{body}</p></div>;
+  return <div className="mt-4 rounded-3xl border border-[#ead6a9] bg-[#fffaf0] p-5 text-center text-[#684c27]"><span className="inline-flex text-[#d13f1f]">{icon}</span><p className="mt-2 text-lg font-semibold text-[#211817]">{title}</p><p className="mt-1 text-xs leading-5">{body}</p></div>;
 }

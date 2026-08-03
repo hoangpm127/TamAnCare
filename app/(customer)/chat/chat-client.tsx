@@ -88,7 +88,7 @@ export function ChatClient({ branches }: { branches: CatalogBranch[] }) {
         </div>
         {primaryBranch?.phone ? <a
           href={`tel:${primaryBranch.phone.replace(/\s/g, "")}`}
-          className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#fff2ef] text-[#9f1d20]"
+          className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#fff2ef] text-[#d13f1f]"
           aria-label="Gọi hotline"
         >
           <Phone size={16} />
@@ -101,7 +101,7 @@ export function ChatClient({ branches }: { branches: CatalogBranch[] }) {
             <div
               className={cn(
                 "max-w-[78%] rounded-2xl px-4 py-2.5 text-sm leading-6",
-                message.from === "customer" ? "bg-[#9f1d20] text-white" : "border border-[#eadbd1] bg-white text-[#191414]"
+                message.from === "customer" ? "bg-[#d13f1f] text-white" : "border border-[#eadbd1] bg-white text-[#191414]"
               )}
             >
               <p>{message.text}</p>
@@ -155,7 +155,7 @@ export function ChatClient({ branches }: { branches: CatalogBranch[] }) {
           <button
             type="submit"
             disabled={!draft.trim()}
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#9f1d20] text-white disabled:opacity-50"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#d13f1f] text-white disabled:opacity-50"
             aria-label="Gửi"
           >
             <Send size={18} />

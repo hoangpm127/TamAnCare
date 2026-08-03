@@ -11,7 +11,7 @@ export default function FacebookDataDeletionPage() {
   return (
     <main className="bg-[#fffaf6] px-4 py-6 text-[#231b18] sm:px-6 sm:py-10">
       <article className="mx-auto max-w-3xl overflow-hidden rounded-3xl bg-white shadow-xl ring-1 ring-[#eadbd1]">
-        <header className="bg-gradient-to-br from-[#2d1815] via-[#63281c] to-[#9f1d20] px-5 py-7 text-white sm:px-8 sm:py-9">
+        <header className="bg-gradient-to-br from-[#2d1815] via-[#63281c] to-[#d13f1f] px-5 py-7 text-white sm:px-8 sm:py-9">
           <Link href="/" className="inline-flex items-center gap-1.5 text-xs font-semibold text-white/75 hover:text-white">
             <ArrowLeft size={14} /> Về Trang chủ
           </Link>
@@ -27,7 +27,7 @@ export default function FacebookDataDeletionPage() {
         <div className="space-y-7 px-5 py-6 text-sm leading-7 text-[#554842] sm:px-8 sm:py-8">
           <section>
             <h2 className="text-base font-semibold text-[#7e201b] sm:text-lg">1. Thu hồi quyền Facebook</h2>
-            <ol className="mt-3 space-y-2 pl-5 marker:font-semibold marker:text-[#9f1d20]">
+            <ol className="mt-3 space-y-2 pl-5 marker:font-semibold marker:text-[#d13f1f]">
               <li className="list-decimal pl-1">Mở phần Cài đặt và quyền riêng tư trong tài khoản Facebook của bạn.</li>
               <li className="list-decimal pl-1">Chọn Cài đặt, sau đó mở Ứng dụng và trang web.</li>
               <li className="list-decimal pl-1">Chọn Tâm An Care và gỡ ứng dụng để thu hồi quyền truy cập. Việc gỡ ứng dụng không tự động xóa lịch sử booking hoặc giao dịch cần lưu theo nghĩa vụ pháp lý.</li>

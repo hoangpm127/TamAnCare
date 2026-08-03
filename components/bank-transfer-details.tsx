@@ -182,17 +182,17 @@ export function BankTransferDetails({
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={qrUrl} alt={`VietQR chuyển ${formatMoney(amount)}`} className="h-44 w-44 object-contain sm:h-48 sm:w-48" />
           </div>
-          <p className="mt-3 text-xl font-bold text-[#9f1d20]">{formatMoney(amount)}</p>
+          <p className="mt-3 text-xl font-bold text-[#d13f1f]">{formatMoney(amount)}</p>
           <p className="mt-0.5 font-mono text-[11px] font-semibold tracking-wide text-[#4d403a]">{transferContent}</p>
 
           <div className="mx-auto mt-3 max-w-md rounded-xl bg-[#fff8f2] px-3 py-2.5 text-left text-[11px] leading-5 text-[#665b55]">
             <p className="flex items-center justify-between gap-3"><span>Ngân hàng nhận</span><strong>{bankAccount.bankName}</strong></p>
-            <p className="flex items-center justify-between gap-3"><span>Số tài khoản</span><strong className="font-mono text-[#9f1d20]">{bankAccount.accountNumber}</strong></p>
+            <p className="flex items-center justify-between gap-3"><span>Số tài khoản</span><strong className="font-mono text-[#d13f1f]">{bankAccount.accountNumber}</strong></p>
             <p className="flex items-start justify-between gap-3"><span className="shrink-0">Chủ tài khoản</span><strong className="max-w-[68%] text-right text-[10px]">{bankAccount.accountHolder}</strong></p>
           </div>
 
           <div className="mt-3 grid grid-cols-2 gap-2">
-            <button type="button" onClick={() => void saveQr()} disabled={savingQr} className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full border border-[#9f1d20] px-3 text-xs font-semibold text-[#9f1d20] disabled:opacity-55">
+            <button type="button" onClick={() => void saveQr()} disabled={savingQr} className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full border border-[#d13f1f] px-3 text-xs font-semibold text-[#d13f1f] disabled:opacity-55">
               {savingQr ? <Loader2 className="animate-spin" size={15} /> : savedQr ? <Check size={15} /> : <Download size={15} />}
               {savedQr ? "Đã lưu mã" : "Lưu mã QR"}
             </button>
@@ -205,7 +205,7 @@ export function BankTransferDetails({
       </div>
 
       <p className="mt-2.5 flex items-start gap-1.5 text-[11px] leading-5 text-[#8a7a72]">
-        <QrCode size={13} className="mt-0.5 shrink-0 text-[#9f1d20]" />
+        <QrCode size={13} className="mt-0.5 shrink-0 text-[#d13f1f]" />
         {helperText} Giữ nguyên số tiền và nội dung để SePay xác nhận tự động.
       </p>
 
@@ -214,11 +214,11 @@ export function BankTransferDetails({
           <section role="dialog" aria-modal="true" aria-label="Chọn ứng dụng ngân hàng" onClick={(event) => event.stopPropagation()} className="absolute inset-x-0 bottom-0 mx-auto flex max-h-[82dvh] w-full max-w-xl flex-col overflow-hidden rounded-t-[1.75rem] bg-[#fffaf6] shadow-2xl">
             <div className="border-b border-[#eadbd1] bg-white px-4 pb-3 pt-4">
               <div className="flex items-start justify-between gap-3">
-                <div><p className="flex items-center gap-1.5 text-sm font-bold text-[#191414]"><Landmark size={16} className="text-[#9f1d20]" /> Chọn ứng dụng ngân hàng</p><p className="mt-1 text-[10px] leading-4 text-[#8a7a72]">Ứng dụng hỗ trợ sẽ mở màn hình chuyển khoản; thông tin VietQR đã được đính kèm.</p></div>
+                <div><p className="flex items-center gap-1.5 text-sm font-bold text-[#191414]"><Landmark size={16} className="text-[#d13f1f]" /> Chọn ứng dụng ngân hàng</p><p className="mt-1 text-[10px] leading-4 text-[#8a7a72]">Ứng dụng hỗ trợ sẽ mở màn hình chuyển khoản; thông tin VietQR đã được đính kèm.</p></div>
                 <button type="button" onClick={() => setShowBankApps(false)} aria-label="Đóng danh sách ngân hàng" className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#f5efeb] text-[#665b55]"><X size={16} /></button>
               </div>
               <label className="mt-3 flex items-center gap-2 rounded-full border border-[#e4d5cc] bg-[#fffaf6] px-3 py-2.5">
-                <Search size={15} className="text-[#9f1d20]" /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Tìm ngân hàng..." className="min-w-0 flex-1 bg-transparent text-sm outline-none" />
+                <Search size={15} className="text-[#d13f1f]" /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Tìm ngân hàng..." className="min-w-0 flex-1 bg-transparent text-sm outline-none" />
               </label>
             </div>
 
@@ -228,12 +228,12 @@ export function BankTransferDetails({
                 {visibleApps.map((app) => (
                   <div key={app.appId} className="grid grid-cols-[1fr_auto] items-center gap-2 rounded-2xl border border-[#eadbd1] bg-white p-2 shadow-sm">
                     <button type="button" onClick={() => openBankApp(app)} className="flex min-w-0 items-center gap-3 text-left">
-                      <span className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[#f7f2ee] text-[10px] font-bold text-[#9f1d20]">
+                      <span className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[#f7f2ee] text-[10px] font-bold text-[#d13f1f]">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         {app.appLogo ? <img src={app.appLogo} alt="" className="h-full w-full object-cover" /> : app.appId.toUpperCase().slice(0, 3)}
                       </span>
                       <span className="min-w-0 flex-1"><span className="block truncate text-xs font-semibold text-[#191414]">{app.appName.replace(/^‎/, "")}</span><span className="mt-0.5 block truncate text-[9px] text-[#8a7a72]">{app.autofill ? "Hỗ trợ điền sẵn thông tin" : app.bankName}</span></span>
-                      <ChevronRight size={15} className="shrink-0 text-[#9f1d20]" />
+                      <ChevronRight size={15} className="shrink-0 text-[#d13f1f]" />
                     </button>
                     <a href={appStoreSearch(app.appName, apple)} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-full bg-[#f5efeb] px-2.5 py-2 text-[9px] font-semibold text-[#665b55]">Chưa cài? <ExternalLink size={10} /></a>
                   </div>

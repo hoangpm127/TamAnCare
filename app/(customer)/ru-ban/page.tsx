@@ -47,17 +47,17 @@ export default function ReferralPage() {
   const maxMonthly = Math.max(...referral.monthlyEarnings.map((item) => item.amount), 1);
 
   if (!referral.ready) {
-    return <main className="flex min-h-[60vh] items-center justify-center bg-[#fffaf6]"><Loader2 className="animate-spin text-[#9f1d20]" /></main>;
+    return <main className="flex min-h-[60vh] items-center justify-center bg-[#fffaf6]"><Loader2 className="animate-spin text-[#d13f1f]" /></main>;
   }
 
   if (!referral.authenticated) {
     return (
       <main className="mx-auto max-w-xl px-4 py-8 text-[#191414] sm:px-6">
         <section className="rounded-3xl bg-white p-6 text-center shadow-xl ring-1 ring-[#eadbd1]">
-          <BadgePercent className="mx-auto text-[#9f1d20]" size={34} />
+          <BadgePercent className="mx-auto text-[#d13f1f]" size={34} />
           <h1 className="mt-3 text-xl font-semibold">Đăng nhập để mở Affiliate</h1>
           <p className="mt-2 text-sm leading-6 text-[#665b55]">Mỗi tài khoản có một mã riêng để chia sẻ, theo dõi khách đủ điều kiện và nhận hoa hồng minh bạch.</p>
-          <Link href="/tai-khoan?returnTo=%2Fru-ban" className="mt-5 inline-flex rounded-full bg-[#9f1d20] px-5 py-3 text-sm font-semibold text-white">Đăng nhập hoặc tạo tài khoản</Link>
+          <Link href="/tai-khoan?returnTo=%2Fru-ban" className="mt-5 inline-flex rounded-full bg-[#d13f1f] px-5 py-3 text-sm font-semibold text-white">Đăng nhập hoặc tạo tài khoản</Link>
         </section>
       </main>
     );
@@ -67,10 +67,10 @@ export default function ReferralPage() {
     return (
       <main className="mx-auto max-w-xl px-4 py-8 text-[#191414] sm:px-6">
         <section className="rounded-3xl bg-white p-6 text-center shadow-xl ring-1 ring-[#eadbd1]">
-          <ShieldCheck className="mx-auto text-[#9f1d20]" size={34} />
+          <ShieldCheck className="mx-auto text-[#d13f1f]" size={34} />
           <h1 className="mt-3 text-xl font-semibold">Xác minh một lần để kích hoạt Affiliate</h1>
           <p className="mt-2 text-sm leading-6 text-[#665b55]">Xác minh số điện thoại giúp mã giới thiệu gắn đúng người nhận hoa hồng. Sau đó bạn có thể chia sẻ link hoặc QR không giới hạn lượt.</p>
-          <Link href="/tai-khoan?returnTo=%2Fru-ban" className="mt-5 inline-flex rounded-full bg-[#9f1d20] px-5 py-3 text-sm font-semibold text-white">Xác minh số điện thoại</Link>
+          <Link href="/tai-khoan?returnTo=%2Fru-ban" className="mt-5 inline-flex rounded-full bg-[#d13f1f] px-5 py-3 text-sm font-semibold text-white">Xác minh số điện thoại</Link>
         </section>
       </main>
     );
@@ -80,7 +80,7 @@ export default function ReferralPage() {
     return (
       <main className="mx-auto max-w-xl px-4 py-8 text-[#191414] sm:px-6">
         <section className="rounded-3xl bg-white p-6 text-center shadow-xl ring-1 ring-[#eadbd1]">
-          <BadgePercent className="mx-auto text-[#9f1d20]" size={34} />
+          <BadgePercent className="mx-auto text-[#d13f1f]" size={34} />
           <h1 className="mt-3 text-xl font-semibold">Mã Affiliate đang được khởi tạo</h1>
           <p className="mt-2 text-sm leading-6 text-[#665b55]">Tài khoản đã sẵn sàng nhưng chưa có mã chia sẻ. Vui lòng thử tải lại sau hoặc liên hệ bộ phận hỗ trợ.</p>
         </section>
@@ -194,8 +194,8 @@ export default function ReferralPage() {
 
       <section className="mt-4 rounded-xl border border-[#eadbd1] bg-white p-4 shadow-sm">
         <div className="flex items-center justify-between gap-2">
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#9f1d20]">Mã giới thiệu của bạn</p>
-          <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-[#fff2ef] px-2 py-0.5 text-[10px] font-semibold text-[#9f1d20]">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#d13f1f]">Mã giới thiệu của bạn</p>
+          <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-[#fff2ef] px-2 py-0.5 text-[10px] font-semibold text-[#d13f1f]">
             {tier.icon} {tier.name}
           </span>
         </div>
@@ -207,7 +207,7 @@ export default function ReferralPage() {
               onClick={copyCode}
               className={cn(
                 "inline-flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1.5 text-xs font-semibold transition",
-                copied ? "bg-[#1d8f55] text-white" : "bg-[#9f1d20] text-white"
+                copied ? "bg-[#1d8f55] text-white" : "bg-[#d13f1f] text-white"
               )}
             >
               {copied ? <Check size={13} /> : <Copy size={13} />}
@@ -227,7 +227,7 @@ export default function ReferralPage() {
             aria-label="Hiện mã QR giới thiệu"
             className={cn(
               "flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-xl border transition",
-              showQr ? "border-[#9f1d20] bg-[#fff2ef] text-[#9f1d20]" : "border-[#eadbd1] text-[#9f1d20]"
+              showQr ? "border-[#d13f1f] bg-[#fff2ef] text-[#d13f1f]" : "border-[#eadbd1] text-[#d13f1f]"
             )}
           >
             <QrCodeIcon size={17} />
@@ -237,7 +237,7 @@ export default function ReferralPage() {
         {showQr ? (
           <div className="mt-3 flex flex-col items-center gap-2 rounded-xl border border-dashed border-[#eadbd1] bg-[#fdf8f5] p-3">
             {qrLoading ? (
-              <Loader2 size={24} className="animate-spin text-[#9f1d20]" />
+              <Loader2 size={24} className="animate-spin text-[#d13f1f]" />
             ) : qrDataUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={qrDataUrl} alt="Mã QR giới thiệu" className="h-32 w-32" />
@@ -253,14 +253,14 @@ export default function ReferralPage() {
 
       <section className="mt-4 grid gap-3 sm:grid-cols-2">
         <div className="flex items-start gap-2.5 rounded-xl border border-[#eadbd1] bg-white p-3.5">
-          <Gift className="mt-0.5 shrink-0 text-[#9f1d20]" size={18} />
+          <Gift className="mt-0.5 shrink-0 text-[#d13f1f]" size={18} />
           <div>
             <p className="text-sm font-semibold">Bạn nhận</p>
             <p className="mt-0.5 text-xs leading-5 text-[#665b55]">{referral.rewardForYou}</p>
           </div>
         </div>
         <div className="flex items-start gap-2.5 rounded-xl border border-[#eadbd1] bg-white p-3.5">
-          <Gift className="mt-0.5 shrink-0 text-[#9f1d20]" size={18} />
+          <Gift className="mt-0.5 shrink-0 text-[#d13f1f]" size={18} />
           <div>
             <p className="text-sm font-semibold">Bạn bè nhận</p>
             <p className="mt-0.5 text-xs leading-5 text-[#665b55]">{referral.rewardForFriend}</p>
@@ -271,9 +271,9 @@ export default function ReferralPage() {
       <section className="mt-5">
         <div className="mb-2.5 flex items-end justify-between gap-4">
           <h2 className="flex items-center gap-1.5 text-base font-semibold tracking-tight">
-            <UserCheck size={16} className="text-[#9f1d20]" /> Bạn bè đã mời
+            <UserCheck size={16} className="text-[#d13f1f]" /> Bạn bè đã mời
           </h2>
-          <p className="text-sm font-semibold text-[#9f1d20]">Đã nhận {formatMoney(referral.totalEarned)}</p>
+          <p className="text-sm font-semibold text-[#d13f1f]">Đã nhận {formatMoney(referral.totalEarned)}</p>
         </div>
         <div className="overflow-hidden rounded-xl border border-[#eadbd1] bg-white">
           {referral.invited.map((friend) => (

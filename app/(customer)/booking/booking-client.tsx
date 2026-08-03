@@ -536,7 +536,7 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
 
           {inviteContext ? (
             <div className={cn("flex items-start gap-3 rounded-xl px-3.5 py-3 text-xs", inviteMode === "boss" ? "bg-gradient-to-r from-[#30201c] to-[#6b3423] text-white" : "bg-[#fff2ef] text-[#6f211f]") }>
-              <span className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-full", inviteMode === "boss" ? "bg-white/10 text-[#f5d982]" : "bg-white text-[#9f1d20]")}>
+              <span className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-full", inviteMode === "boss" ? "bg-white/10 text-[#f5d982]" : "bg-white text-[#d13f1f]")}>
                 {inviteMode === "boss" ? <Handshake size={17} /> : <UserPlus size={17} />}
               </span>
               <span className="min-w-0">
@@ -561,16 +561,16 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
                     onClick={() => toggleService(item.id)}
                     className={cn(
                       "relative w-28 shrink-0 rounded-lg border p-2 text-left transition",
-                      inCart ? "border-[#9f1d20] bg-[#fff2ef]" : "border-[#eadbd1] bg-white hover:border-[#c9a59a]"
+                      inCart ? "border-[#d13f1f] bg-[#fff2ef]" : "border-[#eadbd1] bg-white hover:border-[#c9a59a]"
                     )}
                   >
                     {inCart ? (
-                      <span className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-[#9f1d20] text-white">
+                      <span className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-[#d13f1f] text-white">
                         <Check size={12} />
                       </span>
                     ) : null}
                     <p className="line-clamp-2 text-xs font-semibold leading-tight">{stripDurationFromName(item.name)}</p>
-                    <p className="mt-1.5 text-xs font-bold text-[#9f1d20]">{formatMoney(item.basePrice + item.therapistFee)}</p>
+                    <p className="mt-1.5 text-xs font-bold text-[#d13f1f]">{formatMoney(item.basePrice + item.therapistFee)}</p>
                     <p className="flex items-center gap-1 text-[10px] text-[#8a7a72]">
                       <Clock size={10} /> {item.durationMin} phút
                     </p>
@@ -589,7 +589,7 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
                         <button
                           type="button"
                           onClick={() => changePeople(line.id, -1)}
-                          className="flex h-6 w-6 items-center justify-center rounded-full border border-[#eadbd1] text-[#9f1d20]"
+                          className="flex h-6 w-6 items-center justify-center rounded-full border border-[#eadbd1] text-[#d13f1f]"
                           aria-label="Giảm số người"
                         >
                           <Minus size={12} />
@@ -600,7 +600,7 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
                         <button
                           type="button"
                           onClick={() => changePeople(line.id, 1)}
-                          className="flex h-6 w-6 items-center justify-center rounded-full border border-[#eadbd1] text-[#9f1d20]"
+                          className="flex h-6 w-6 items-center justify-center rounded-full border border-[#eadbd1] text-[#d13f1f]"
                           aria-label="Tăng số người"
                         >
                           <Plus size={12} />
@@ -638,7 +638,7 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
                   }}
                   className={cn(
                     "flex-1 rounded-lg border px-2.5 py-2 text-left transition",
-                    branchId === item.id ? "border-[#9f1d20] bg-[#fff2ef]" : "border-[#eadbd1] bg-white hover:border-[#c9a59a]"
+                    branchId === item.id ? "border-[#d13f1f] bg-[#fff2ef]" : "border-[#eadbd1] bg-white hover:border-[#c9a59a]"
                   )}
                 >
                   <span className="block text-sm font-semibold">{item.label}</span>
@@ -659,7 +659,7 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
                       <TherapistAvatar id={selectedTherapist.id} size={28} className="shrink-0 rounded-full" />
                     ) : (
                       <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#f1e5dd]">
-                        <UserRound size={14} className="text-[#9f1d20]" />
+                        <UserRound size={14} className="text-[#d13f1f]" />
                       </span>
                     )}
                     <span className="text-sm">
@@ -682,11 +682,11 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
                         }}
                         className={cn(
                           "w-24 shrink-0 snap-start rounded-xl border p-3 text-center transition",
-                          !therapistId ? "border-[#9f1d20] bg-[#fff2ef]" : "border-[#eadbd1] bg-white"
+                          !therapistId ? "border-[#d13f1f] bg-[#fff2ef]" : "border-[#eadbd1] bg-white"
                         )}
                       >
                         <span className="mx-auto flex h-9 w-9 items-center justify-center rounded-full bg-[#f1e5dd]">
-                          <UserRound size={16} className="text-[#9f1d20]" />
+                          <UserRound size={16} className="text-[#d13f1f]" />
                         </span>
                         <span className="mt-2 block text-xs font-semibold">Ngẫu nhiên</span>
                       </button>
@@ -701,13 +701,13 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
                           }}
                           className={cn(
                             "w-24 shrink-0 snap-start rounded-xl border p-3 text-center transition",
-                            therapistId === therapist.id ? "border-[#9f1d20] bg-[#fff2ef]" : "border-[#eadbd1] bg-white"
+                            therapistId === therapist.id ? "border-[#d13f1f] bg-[#fff2ef]" : "border-[#eadbd1] bg-white"
                           )}
                         >
                           <TherapistAvatar id={therapist.id} size={36} className="mx-auto shrink-0 rounded-full" />
                           <span className="mt-2 block truncate text-xs font-semibold">{therapist.fullName}</span>
                           <span className="mt-0.5 flex items-center justify-center gap-0.5 text-[10px] text-[#8a7a72]">
-                            <Star size={9} className="fill-[#9f1d20] text-[#9f1d20]" /> {therapist.ratingAvg.toFixed(1)}
+                            <Star size={9} className="fill-[#d13f1f] text-[#d13f1f]" /> {therapist.ratingAvg.toFixed(1)}
                           </span>
                         </button>
                       ))}
@@ -743,7 +743,7 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
                     }}
                     className={cn(
                       "flex w-16 shrink-0 flex-col items-center rounded-lg border py-2 text-center transition",
-                      active ? "border-[#9f1d20] bg-[#9f1d20] text-white" : "border-[#eadbd1] bg-white hover:border-[#c9a59a]"
+                      active ? "border-[#d13f1f] bg-[#d13f1f] text-white" : "border-[#eadbd1] bg-white hover:border-[#c9a59a]"
                     )}
                   >
                     <span className="text-[11px] font-semibold uppercase tracking-wide opacity-90" suppressHydrationWarning>
@@ -834,7 +834,7 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
 
             <div className="mt-2.5 border-t border-[#f1e5dd] pt-2.5">
               <p className="mb-2 flex items-center gap-2 text-sm font-semibold">
-                <Ticket size={16} className="text-[#9f1d20]" /> Sổ voucher
+                <Ticket size={16} className="text-[#d13f1f]" /> Sổ voucher
               </p>
               <div className="scrollbar-hide flex gap-2 overflow-x-auto pb-1">
                 {vouchers
@@ -856,13 +856,13 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
                         disabled={soldOut}
                         className={cn(
                           "flex w-56 shrink-0 items-start gap-2 rounded-lg border p-2.5 text-left transition disabled:cursor-not-allowed disabled:opacity-50",
-                          selected ? "border-[#9f1d20] bg-[#fff2ef]" : "border-[#eadbd1] bg-white hover:border-[#c9a59a]"
+                          selected ? "border-[#d13f1f] bg-[#fff2ef]" : "border-[#eadbd1] bg-white hover:border-[#c9a59a]"
                         )}
                       >
                         <span
                           className={cn(
                             "mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full",
-                            selected ? "bg-[#9f1d20] text-white" : "bg-[#fff2ef] text-[#9f1d20]"
+                            selected ? "bg-[#d13f1f] text-white" : "bg-[#fff2ef] text-[#d13f1f]"
                           )}
                         >
                           {selected ? <Check size={14} /> : <VIcon size={14} />}
@@ -880,7 +880,7 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
               <button
                 type="button"
                 onClick={() => setShowManualVoucher((value) => !value)}
-                className="mt-2.5 inline-flex items-center gap-1 text-xs font-semibold text-[#9f1d20]"
+                className="mt-2.5 inline-flex items-center gap-1 text-xs font-semibold text-[#d13f1f]"
               >
                 Nhập mã khác <ChevronDown size={14} className={cn("transition", showManualVoucher && "rotate-180")} />
               </button>
@@ -902,7 +902,7 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
                   <p className="text-xs font-medium text-red-700">{voucherPreview.message || "Mã voucher không hợp lệ hoặc đã hết hạn."}</p>
                   <span className="flex shrink-0 items-center gap-2">
                     {attributionCode && effectiveVoucherCode === "FIRST60" ? (
-                      <Link href="/tai-khoan?returnTo=%2Fbooking" className="rounded-full bg-[#9f1d20] px-3 py-1.5 text-[11px] font-semibold text-white">
+                      <Link href="/tai-khoan?returnTo=%2Fbooking" className="rounded-full bg-[#d13f1f] px-3 py-1.5 text-[11px] font-semibold text-white">
                         Đăng nhập / xác minh
                       </Link>
                     ) : null}
@@ -913,7 +913,7 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
                         setVoucherOptOut(true);
                         setError("");
                       }}
-                      className="rounded-full bg-white px-3 py-1.5 text-[11px] font-semibold text-[#9f1d20] ring-1 ring-[#efc6c6]"
+                      className="rounded-full bg-white px-3 py-1.5 text-[11px] font-semibold text-[#d13f1f] ring-1 ring-[#efc6c6]"
                     >
                       Bỏ mã & tiếp tục
                     </button>
@@ -941,11 +941,11 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
             <h2 className="mb-1 flex items-center gap-2 text-sm font-semibold tracking-tight">
               <Wallet size={16} /> 5. Đặt cọc giữ chỗ <span className="text-[11px] font-normal text-[#8a7a72]">(bắt buộc)</span>
             </h2>
-            <div className="mt-2.5 flex items-start gap-2.5 rounded-lg border border-[#9f1d20] bg-[#fff2ef] p-3">
-              <ShieldCheck size={18} className="mt-0.5 shrink-0 text-[#9f1d20]" />
+            <div className="mt-2.5 flex items-start gap-2.5 rounded-lg border border-[#d13f1f] bg-[#fff2ef] p-3">
+              <ShieldCheck size={18} className="mt-0.5 shrink-0 text-[#d13f1f]" />
               <span className="min-w-0">
                 <span className="block text-sm font-semibold">Đặt cọc xác nhận giữ chỗ</span>
-                <span className="mt-0.5 block text-base font-bold text-[#9f1d20]">
+                <span className="mt-0.5 block text-base font-bold text-[#d13f1f]">
                   {formatMoney(depositAmount)} <span className="text-xs font-normal text-[#8a7a72]">({catalog.depositPercent}% giá Bill ban đầu)</span>
                 </span>
                 <span className="mt-1 block text-xs text-[#8a7a72]">
@@ -958,7 +958,7 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
 
         <aside className="h-fit overflow-hidden rounded-2xl border border-[#eadbd1] bg-white shadow-lg lg:sticky lg:top-[72px]">
           <div className="border-b border-dashed border-[#eadbd1] bg-[#fff7f3] p-4">
-            <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-[#9f1d20]">
+            <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-[#d13f1f]">
               <Receipt size={13} /> Hoá đơn tạm tính
             </p>
             <p className="mt-1.5 text-xs leading-5 text-[#665b55]">
@@ -988,11 +988,11 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
             </div>
             <div className="mt-3 flex items-center justify-between gap-3 border-t border-dashed border-[#eadbd1] pt-3">
               <p className="text-xs font-semibold uppercase tracking-[0.1em] text-[#8a7a72]">Tổng cộng</p>
-              <p className="text-xl font-bold text-[#9f1d20]">{formatMoney(total)}</p>
+              <p className="text-xl font-bold text-[#d13f1f]">{formatMoney(total)}</p>
             </div>
             {depositActive ? (
               <div className="mt-3 space-y-1.5 rounded-xl bg-[#fff2ef] p-3 text-sm">
-                <div className="flex items-center justify-between gap-3 font-semibold text-[#9f1d20]">
+                <div className="flex items-center justify-between gap-3 font-semibold text-[#d13f1f]">
                   <span className="flex items-center gap-1.5">
                     <Wallet size={13} /> Cọc nền tảng · 10% giá gốc
                   </span>
@@ -1012,12 +1012,12 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
                 type="checkbox"
                 checked={acceptPolicies}
                 onChange={(event) => setAcceptPolicies(event.target.checked)}
-                className="mt-1 h-4 w-4 shrink-0 accent-[#9f1d20]"
+                className="mt-1 h-4 w-4 shrink-0 accent-[#d13f1f]"
               />
               <span>
-                Tôi đồng ý với <Link href="/dieu-khoan" target="_blank" className="font-semibold text-[#9f1d20] underline">Điều khoản</Link>,{" "}
-                <Link href="/chinh-sach-rieng-tu" target="_blank" className="font-semibold text-[#9f1d20] underline">Chính sách bảo vệ dữ liệu</Link> và{" "}
-                <Link href="/chinh-sach-dat-lich" target="_blank" className="font-semibold text-[#9f1d20] underline">Chính sách đặt lịch/đặt cọc</Link>.
+                Tôi đồng ý với <Link href="/dieu-khoan" target="_blank" className="font-semibold text-[#d13f1f] underline">Điều khoản</Link>,{" "}
+                <Link href="/chinh-sach-rieng-tu" target="_blank" className="font-semibold text-[#d13f1f] underline">Chính sách bảo vệ dữ liệu</Link> và{" "}
+                <Link href="/chinh-sach-dat-lich" target="_blank" className="font-semibold text-[#d13f1f] underline">Chính sách đặt lịch/đặt cọc</Link>.
               </span>
             </label>
             {error ? <div className="mb-3 rounded-xl bg-red-50 p-3 text-sm text-red-700">{error}</div> : null}

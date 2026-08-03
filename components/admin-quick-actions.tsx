@@ -67,7 +67,7 @@ function CompactPicker({
         className="mt-1.5 flex w-full items-center justify-between gap-2 rounded-xl border border-[#eadbd1] bg-white px-3 py-2.5 text-left text-xs font-medium disabled:bg-[#fffaf6] disabled:text-[#8a7a72]"
         aria-expanded={expanded}
       >
-        <span className="truncate">{selectedLabel}</span><ChevronDown size={14} className="shrink-0 text-[#9f1d20]" />
+        <span className="truncate">{selectedLabel}</span><ChevronDown size={14} className="shrink-0 text-[#d13f1f]" />
       </button>
       {expanded && !disabled ? (
         <div className="absolute inset-x-0 top-full z-30 mt-1 max-h-44 overflow-y-auto rounded-xl border border-[#e4d2c6] bg-white p-1.5 shadow-xl">
@@ -76,7 +76,7 @@ function CompactPicker({
               type="button"
               key={item.value}
               onClick={() => { onChange(item.value); setExpanded(false); }}
-              className={`block w-full rounded-lg px-2.5 py-2 text-left text-[11px] font-medium ${item.value === value ? "bg-[#fff0ed] text-[#9f1d20]" : "text-[#51443e] hover:bg-[#fffaf6]"}`}
+              className={`block w-full rounded-lg px-2.5 py-2 text-left text-[11px] font-medium ${item.value === value ? "bg-[#fff0ed] text-[#d13f1f]" : "text-[#51443e] hover:bg-[#fffaf6]"}`}
             >
               {item.label}
             </button>
@@ -250,11 +250,11 @@ export function AdminExpenseAction() {
               </div>
             </div>
             <div className="grid min-h-0 flex-1 gap-3 overflow-y-auto p-4 sm:grid-cols-2 sm:p-5">
-              <label className="text-center text-xs font-semibold sm:col-span-2">Số tiền<input required inputMode="numeric" value={amount} onChange={(event) => setAmount(event.target.value)} placeholder="0" className="mt-1.5 w-full rounded-xl border border-[#d8b46a] bg-[#fffaf2] px-3 py-3 text-center text-xl font-bold text-[#9f1d20] outline-none focus:border-[#9f1d20]" />{amount ? <span className="mt-1 block text-[10px] font-normal text-[#8a7a72]">Ghi nhận vào Tổng chi: {formatMoney(Number(amount.replace(/\D/g, "")) || 0)}</span> : null}</label>
+              <label className="text-center text-xs font-semibold sm:col-span-2">Số tiền<input required inputMode="numeric" value={amount} onChange={(event) => setAmount(event.target.value)} placeholder="0" className="mt-1.5 w-full rounded-xl border border-[#d8b46a] bg-[#fffaf2] px-3 py-3 text-center text-xl font-bold text-[#d13f1f] outline-none focus:border-[#d13f1f]" />{amount ? <span className="mt-1 block text-[10px] font-normal text-[#8a7a72]">Ghi nhận vào Tổng chi: {formatMoney(Number(amount.replace(/\D/g, "")) || 0)}</span> : null}</label>
               <label className="text-xs font-semibold sm:col-span-2">Công việc / nội dung chi<input required value={description} onChange={(event) => setDescription(event.target.value)} placeholder="Ví dụ: mua 30 bộ khăn và tinh dầu cho ca tối" className="mt-1.5 w-full rounded-xl border border-[#eadbd1] px-3 py-2.5 text-sm font-normal" /></label>
               <CompactPicker label="Danh mục chi" value={category} onChange={setCategory} options={[{ value: "AUTO", label: "✨ Tự động phân loại" }, ...EXPENSE_CATEGORIES.map((item) => ({ value: item, label: item }))]} />
               <CompactPicker label="Phạm vi hạch toán" disabled={session.role !== "OWNER"} value={branchId} onChange={(value) => { if (value !== branchId) resetEvidence(); setBranchId(value); }} options={[...(session.role === "OWNER" ? [{ value: SYSTEM_ACCOUNTING_SCOPE.id, label: "🏢 Chi cho toàn hệ thống" }] : []), ...branches.filter((branch) => session.role === "OWNER" || branch.id === session.branchId).map((branch) => ({ value: branch.id, label: branch.label }))]} />
-              <div className="flex items-start gap-2 rounded-xl bg-[#fff7ec] p-3 text-[11px] leading-4 text-[#715943] sm:col-span-2"><Sparkles size={14} className="mt-0.5 shrink-0 text-[#9f1d20]" /><span>Danh mục: <strong className="text-[#9f1d20]">{resolvedCategory}</strong>{category === "AUTO" ? " · cập nhật theo nội dung bạn nhập" : " · đã chọn thủ công"}. Hạch toán vào <strong>{branchId === "system" ? "toàn hệ thống" : branches.find((item) => item.id === branchId)?.label}</strong>.</span></div>
+              <div className="flex items-start gap-2 rounded-xl bg-[#fff7ec] p-3 text-[11px] leading-4 text-[#715943] sm:col-span-2"><Sparkles size={14} className="mt-0.5 shrink-0 text-[#d13f1f]" /><span>Danh mục: <strong className="text-[#d13f1f]">{resolvedCategory}</strong>{category === "AUTO" ? " · cập nhật theo nội dung bạn nhập" : " · đã chọn thủ công"}. Hạch toán vào <strong>{branchId === "system" ? "toàn hệ thống" : branches.find((item) => item.id === branchId)?.label}</strong>.</span></div>
               <label className="text-xs font-semibold">Ngày phát sinh<input type="date" required value={expenseDate} onChange={(event) => setExpenseDate(event.target.value)} className="mt-1.5 w-full rounded-xl border border-[#eadbd1] px-3 py-2.5 text-sm font-normal" /></label>
               <label className="text-xs font-semibold">Nhà cung cấp / người nhận<input value={counterparty} onChange={(event) => setCounterparty(event.target.value)} placeholder="Không bắt buộc" className="mt-1.5 w-full rounded-xl border border-[#eadbd1] px-3 py-2.5 text-sm font-normal" /></label>
               <div className="sm:col-span-2">
@@ -263,9 +263,9 @@ export function AdminExpenseAction() {
                 <button type="button" onClick={() => billInputRef.current?.click()} className="mt-1.5 flex w-full items-center gap-3 rounded-xl border border-dashed border-[#d4ad63] bg-[#fffaf2] p-3 text-left">
                   {/* Bill preview is a local data URL selected by the administrator. */}
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  {billPreview ? <img src={billPreview} alt="Bill đã tải" className="h-12 w-12 rounded-lg object-cover" /> : <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-white text-[#9f1d20]"><ImagePlus size={20} /></span>}
+                  {billPreview ? <img src={billPreview} alt="Bill đã tải" className="h-12 w-12 rounded-lg object-cover" /> : <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-white text-[#d13f1f]"><ImagePlus size={20} /></span>}
                   <span className="min-w-0 flex-1"><strong className="block truncate text-xs">{billFileName || "Chụp hoặc tải ảnh bill"}</strong><small className="mt-0.5 block text-[10px] font-normal leading-4 text-[#8a7a72]">JPG, PNG hoặc WEBP · tối đa 5 MB · AI chỉ gợi ý, Admin xác nhận.</small></span>
-                  {aiStatus === "uploading" ? <Loader2 size={18} className="animate-spin text-[#9f1d20]" /> : aiStatus === "ready" || aiStatus === "manual" ? <FileCheck2 size={18} className="text-[#16784a]" /> : <ScanLine size={18} className="text-[#b9862c]" />}
+                  {aiStatus === "uploading" ? <Loader2 size={18} className="animate-spin text-[#d13f1f]" /> : aiStatus === "ready" || aiStatus === "manual" ? <FileCheck2 size={18} className="text-[#16784a]" /> : <ScanLine size={18} className="text-[#b9862c]" />}
                 </button>
                 {aiStatus === "uploading" ? <p className="mt-1.5 flex items-center gap-1 text-[10px] font-medium text-[#805914]"><Loader2 size={11} className="animate-spin" /> Đang tải ảnh và đọc chứng từ...</p> : null}
                 {evidenceMessage ? <p className={`mt-1.5 flex items-start gap-1 text-[10px] font-medium ${aiStatus === "ready" ? "text-[#16784a]" : "text-[#805914]"}`}><Sparkles size={11} className="mt-0.5 shrink-0" /> {evidenceMessage}</p> : null}
@@ -273,7 +273,7 @@ export function AdminExpenseAction() {
               </div>
             </div>
             {submitError ? <p className="mx-4 mb-2 rounded-xl bg-red-50 px-3 py-2 text-xs font-medium text-red-700">{submitError}</p> : null}
-            <div className="grid shrink-0 grid-cols-[0.72fr_1.28fr] gap-2 border-t border-[#eadbd1] bg-white p-4"><button type="button" onClick={() => setOpen(false)} className="rounded-full bg-[#f4eeea] py-2.5 text-sm font-semibold text-[#665b55]">Hủy</button><button type="submit" disabled={saving || aiStatus === "uploading" || (duplicateEvidence && !confirmDuplicateEvidence)} title={submitError || undefined} className="inline-flex items-center justify-center gap-1.5 rounded-full bg-[#9f1d20] py-2.5 text-sm font-semibold text-white disabled:opacity-60">{saving ? <Loader2 className="animate-spin" size={16} /> : <CheckCircle2 size={16} />} {saving ? "Đang ghi nhận..." : "Ghi nhận đã chi"}</button></div>
+            <div className="grid shrink-0 grid-cols-[0.72fr_1.28fr] gap-2 border-t border-[#eadbd1] bg-white p-4"><button type="button" onClick={() => setOpen(false)} className="rounded-full bg-[#f4eeea] py-2.5 text-sm font-semibold text-[#665b55]">Hủy</button><button type="submit" disabled={saving || aiStatus === "uploading" || (duplicateEvidence && !confirmDuplicateEvidence)} title={submitError || undefined} className="inline-flex items-center justify-center gap-1.5 rounded-full bg-[#d13f1f] py-2.5 text-sm font-semibold text-white disabled:opacity-60">{saving ? <Loader2 className="animate-spin" size={16} /> : <CheckCircle2 size={16} />} {saving ? "Đang ghi nhận..." : "Ghi nhận đã chi"}</button></div>
           </form>
         </div>
       ), document.body) : null}
@@ -365,7 +365,7 @@ export function AdminCustomerFab() {
         <div className="fixed inset-0 z-[80] flex items-end justify-center sm:items-center sm:p-5">
           <button type="button" className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setOpen(false)} aria-label="Đóng" />
           <form onSubmit={submit} className="relative flex max-h-[calc(100dvh-12px)] w-full max-w-lg flex-col overflow-hidden rounded-t-[2rem] bg-white shadow-2xl sm:max-h-[calc(100dvh-40px)] sm:rounded-[2rem]">
-            <div className="relative shrink-0 overflow-hidden bg-gradient-to-br from-[#231514] via-[#56291a] to-[#9f1d20] p-5 text-white">
+            <div className="relative shrink-0 overflow-hidden bg-gradient-to-br from-[#231514] via-[#56291a] to-[#d13f1f] p-5 text-white">
               <div className="pointer-events-none absolute -right-12 -top-12 h-36 w-36 rounded-full bg-[#f5d982]/15 blur-2xl" />
               <div className="relative flex items-start gap-3"><span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 text-[#f5d982] ring-1 ring-white/15"><UserPlus size={22} /></span><div className="min-w-0 flex-1"><p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#f5d982]">CRM tại quầy</p><h2 className="mt-1 text-xl font-semibold">Tiếp nhận khách mới</h2><p className="mt-1 text-xs leading-5 text-white/70">Tạo hồ sơ, ghi nhận nguồn quan hệ và chuyển đúng cơ sở chăm sóc.</p></div><button type="button" onClick={() => setOpen(false)} className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10" aria-label="Đóng"><X size={17} /></button></div>
               <div className="relative mt-4 grid grid-cols-3 gap-2 text-center text-[9px] text-white/70"><span className="rounded-xl bg-white/[0.07] px-2 py-2"><UserRound size={14} className="mx-auto mb-1 text-[#f5d982]" />Hồ sơ</span><span className="rounded-xl bg-white/[0.07] px-2 py-2"><Handshake size={14} className="mx-auto mb-1 text-[#f5d982]" />Mối quan hệ</span><span className="rounded-xl bg-white/[0.07] px-2 py-2"><MapPin size={14} className="mx-auto mb-1 text-[#f5d982]" />Cơ sở</span></div>

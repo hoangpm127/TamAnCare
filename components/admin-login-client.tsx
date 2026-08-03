@@ -76,34 +76,34 @@ export function AdminLoginClient() {
 
             <div className="p-5 lg:p-7">
               <div className="flex items-start justify-between gap-4">
-                <div><p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#9f1d20]">Xác thực nội bộ</p><h2 className="mt-1 text-xl font-semibold">Đăng nhập quản trị</h2><p className="mt-1 text-xs leading-5 text-[#8a7a72]">Dành cho Xgroup, Admin, Trưởng phòng Quận, Quản lý, Lễ tân, KTV và Nhà đầu tư được cấp quyền.</p></div>
-                <ShieldCheck className="shrink-0 text-[#9f1d20]" size={30} />
+                <div><p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#d13f1f]">Xác thực nội bộ</p><h2 className="mt-1 text-xl font-semibold">Đăng nhập quản trị</h2><p className="mt-1 text-xs leading-5 text-[#8a7a72]">Dành cho Xgroup, Admin, Trưởng phòng Quận, Quản lý, Lễ tân, KTV và Nhà đầu tư được cấp quyền.</p></div>
+                <ShieldCheck className="shrink-0 text-[#d13f1f]" size={30} />
               </div>
 
               <form onSubmit={signIn} className="mt-6 space-y-3">
                 {mfaRequired ? (
                   <div className="rounded-2xl bg-[#fff7ec] p-4 ring-1 ring-[#eadbd1]">
-                    <span className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#9f1d20] ring-1 ring-[#eadbd1]"><KeyRound size={19} /></span>
+                    <span className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#d13f1f] ring-1 ring-[#eadbd1]"><KeyRound size={19} /></span>
                     <p className="mt-2 text-center text-sm font-semibold">Xác thực bước hai</p>
                     <p className="mt-1 text-center text-[11px] leading-5 text-[#786a63]">Nhập mã 6 số từ ứng dụng Authenticator hoặc một mã khôi phục chưa dùng.</p>
                     <label className="mt-3 block">
                       <span className="text-[11px] font-semibold">Mã xác thực</span>
-                      <input required autoFocus value={mfaCode} onChange={(event) => setMfaCode(event.target.value.toUpperCase())} autoComplete="one-time-code" inputMode="text" maxLength={40} className="mt-1.5 w-full rounded-xl border border-[#eadbd1] bg-white px-3 py-3 text-center font-mono text-lg tracking-[0.2em] outline-none focus:border-[#9f1d20]" placeholder="000000" />
+                      <input required autoFocus value={mfaCode} onChange={(event) => setMfaCode(event.target.value.toUpperCase())} autoComplete="one-time-code" inputMode="text" maxLength={40} className="mt-1.5 w-full rounded-xl border border-[#eadbd1] bg-white px-3 py-3 text-center font-mono text-lg tracking-[0.2em] outline-none focus:border-[#d13f1f]" placeholder="000000" />
                     </label>
-                    <button type="button" onClick={() => { setMfaRequired(false); setMfaCode(""); setPassword(""); setError(""); }} className="mt-2 w-full text-center text-[11px] font-semibold text-[#9f1d20]">Dùng tài khoản khác</button>
+                    <button type="button" onClick={() => { setMfaRequired(false); setMfaCode(""); setPassword(""); setError(""); }} className="mt-2 w-full text-center text-[11px] font-semibold text-[#d13f1f]">Dùng tài khoản khác</button>
                   </div>
                 ) : (
                   <>
                 <label className="block">
                   <span className="text-[11px] font-semibold">Tài khoản</span>
-                  <span className="mt-1.5 flex items-center gap-2 rounded-xl border border-[#eadbd1] bg-white px-3 focus-within:border-[#9f1d20]">
+                  <span className="mt-1.5 flex items-center gap-2 rounded-xl border border-[#eadbd1] bg-white px-3 focus-within:border-[#d13f1f]">
                     <UserRound size={16} className="shrink-0 text-[#8a7a72]" />
                     <input required value={username} onChange={(event) => setUsername(event.target.value)} autoComplete="username" inputMode="text" maxLength={100} className="min-w-0 flex-1 bg-transparent py-3 text-sm outline-none" placeholder="Nhập tài khoản được cấp" />
                   </span>
                 </label>
                 <label className="block">
                   <span className="text-[11px] font-semibold">Mật khẩu</span>
-                  <span className="mt-1.5 flex items-center gap-2 rounded-xl border border-[#eadbd1] bg-white px-3 focus-within:border-[#9f1d20]">
+                  <span className="mt-1.5 flex items-center gap-2 rounded-xl border border-[#eadbd1] bg-white px-3 focus-within:border-[#d13f1f]">
                     <LockKeyhole size={16} className="shrink-0 text-[#8a7a72]" />
                     <input required type={showPassword ? "text" : "password"} value={password} onChange={(event) => setPassword(event.target.value)} autoComplete="current-password" maxLength={200} className="min-w-0 flex-1 bg-transparent py-3 text-sm outline-none" placeholder="Nhập mật khẩu" />
                     <button type="button" onClick={() => setShowPassword((value) => !value)} className="text-[#8a7a72]" aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}>{showPassword ? <EyeOff size={17} /> : <Eye size={17} />}</button>

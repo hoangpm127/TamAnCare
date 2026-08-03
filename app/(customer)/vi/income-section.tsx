@@ -40,7 +40,7 @@ const RANGE_PRESETS: { id: RangePreset; label: string }[] = [
 ];
 
 const CATEGORY_META: Record<ReferralOrderCategory, { label: string; color: string; badge: string; icon: typeof UserRound }> = {
-  INDIVIDUAL: { label: "Affiliate cá nhân", color: "#9f1d20", badge: "bg-[#fff2ef] text-[#9f1d20]", icon: UserRound },
+  INDIVIDUAL: { label: "Affiliate cá nhân", color: "#d13f1f", badge: "bg-[#fff2ef] text-[#d13f1f]", icon: UserRound },
   GROUP: { label: "Theo nhóm", color: "#b9862c", badge: "bg-[#fff7ec] text-[#8a5a12]", icon: Users },
   BUSINESS: { label: "Tâm An Business", color: "#1d6c40", badge: "bg-[#eafaf1] text-[#1d6c40]", icon: Briefcase },
 };
@@ -125,7 +125,7 @@ export function IncomeSection({ detailed }: { detailed: boolean }) {
               onClick={() => setRangePreset(item.id)}
               className={cn(
                 "shrink-0 rounded-full border px-3 py-1.5 text-xs font-semibold transition",
-                rangePreset === item.id ? "border-[#9f1d20] bg-[#9f1d20] text-white" : "border-[#eadbd1] bg-white text-[#4d403a]"
+                rangePreset === item.id ? "border-[#d13f1f] bg-[#d13f1f] text-white" : "border-[#eadbd1] bg-white text-[#4d403a]"
               )}
             >
               {item.label}
@@ -191,7 +191,7 @@ export function IncomeSection({ detailed }: { detailed: boolean }) {
 
       <div className="rounded-xl border border-[#eadbd1] bg-white p-4">
         <p className="mb-3 flex items-center gap-1.5 text-sm font-semibold">
-          <PieChart size={15} className="text-[#9f1d20]" /> Phân tích nguồn thu nhập
+          <PieChart size={15} className="text-[#d13f1f]" /> Phân tích nguồn thu nhập
         </p>
         {donutTotal > 0 ? (
           <>
@@ -247,13 +247,13 @@ export function IncomeSection({ detailed }: { detailed: boolean }) {
             </div>
             <p className="mt-3 text-center text-sm font-semibold text-[#191414]">
               {categoryFilter ? CATEGORY_META[categoryFilter].label : "Tổng"}:{" "}
-              <span className="text-[#9f1d20]">{formatMoney(categoryFilter ? categoryTotals[categoryFilter] : donutTotal)}</span>
+              <span className="text-[#d13f1f]">{formatMoney(categoryFilter ? categoryTotals[categoryFilter] : donutTotal)}</span>
             </p>
             {categoryFilter ? (
               <button
                 type="button"
                 onClick={() => setCategoryFilter(null)}
-                className="mx-auto mt-1.5 block text-center text-[11px] font-semibold text-[#9f1d20] underline-offset-2 hover:underline"
+                className="mx-auto mt-1.5 block text-center text-[11px] font-semibold text-[#d13f1f] underline-offset-2 hover:underline"
               >
                 Bỏ lọc, xem tất cả
               </button>
@@ -272,7 +272,7 @@ export function IncomeSection({ detailed }: { detailed: boolean }) {
             onClick={() => setFilter(item.id)}
             className={cn(
               "shrink-0 rounded-full border px-3 py-1.5 text-xs font-semibold transition",
-              filter === item.id ? "border-[#9f1d20] bg-[#9f1d20] text-white" : "border-[#eadbd1] bg-white text-[#4d403a]"
+              filter === item.id ? "border-[#d13f1f] bg-[#d13f1f] text-white" : "border-[#eadbd1] bg-white text-[#4d403a]"
             )}
           >
             {item.label}
@@ -282,7 +282,7 @@ export function IncomeSection({ detailed }: { detailed: boolean }) {
           <button
             type="button"
             onClick={() => setCategoryFilter(null)}
-            className="inline-flex shrink-0 items-center gap-1 rounded-full border border-[#9f1d20] bg-[#fff2ef] px-3 py-1.5 text-xs font-semibold text-[#9f1d20]"
+            className="inline-flex shrink-0 items-center gap-1 rounded-full border border-[#d13f1f] bg-[#fff2ef] px-3 py-1.5 text-xs font-semibold text-[#d13f1f]"
           >
             {CATEGORY_META[categoryFilter].label} ×
           </button>

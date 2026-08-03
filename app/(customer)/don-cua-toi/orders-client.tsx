@@ -13,7 +13,7 @@ const UPCOMING_STATUSES = ["PENDING", "CONFIRMED", "CHECKED_IN", "IN_SERVICE", "
 const HISTORY_STATUSES = ["COMPLETED", "CANCELLED"];
 
 const STATUS_BADGE_STYLE: Record<string, string> = {
-  CONFIRMED: "bg-[#fff2ef] text-[#9f1d20]",
+  CONFIRMED: "bg-[#fff2ef] text-[#d13f1f]",
   PENDING: "bg-[#fff7df] text-[#805914]",
   CHECKED_IN: "bg-[#eef4ff] text-[#2452b8]",
   IN_SERVICE: "bg-[#eef4ff] text-[#2452b8]",
@@ -121,7 +121,7 @@ export function OrdersClient() {
           onClick={() => setTab("upcoming")}
           className={cn(
             "flex items-center justify-center gap-1.5 rounded-full py-2.5 text-sm font-semibold transition",
-            tab === "upcoming" ? "bg-[#9f1d20] text-white" : "text-[#4d403a]"
+            tab === "upcoming" ? "bg-[#d13f1f] text-white" : "text-[#4d403a]"
           )}
         >
           <CalendarClock size={16} /> Lịch đã đặt
@@ -131,7 +131,7 @@ export function OrdersClient() {
           onClick={() => setTab("history")}
           className={cn(
             "flex items-center justify-center gap-1.5 rounded-full py-2.5 text-sm font-semibold transition",
-            tab === "history" ? "bg-[#9f1d20] text-white" : "text-[#4d403a]"
+            tab === "history" ? "bg-[#d13f1f] text-white" : "text-[#4d403a]"
           )}
         >
           <Receipt size={16} /> Lịch sử & hoá đơn
@@ -156,11 +156,11 @@ export function OrdersClient() {
                 ? "Chưa thể đồng bộ đơn. Vui lòng kiểm tra kết nối và thử lại."
                 : tab === "upcoming" ? "Bạn chưa có lịch hẹn sắp tới." : "Chưa có lịch sử booking nào."}
             </p>
-            <Link href="/booking" className="mt-4 inline-flex rounded-full bg-[#9f1d20] px-5 py-2.5 text-sm font-semibold text-white">
+            <Link href="/booking" className="mt-4 inline-flex rounded-full bg-[#d13f1f] px-5 py-2.5 text-sm font-semibold text-white">
               Đặt lịch ngay
             </Link>
             {!customerAuthenticated ? (
-              <Link href="/tai-khoan" className="ml-2 mt-4 inline-flex rounded-full border border-[#9f1d20] px-5 py-2.5 text-sm font-semibold text-[#9f1d20]">
+              <Link href="/tai-khoan" className="ml-2 mt-4 inline-flex rounded-full border border-[#d13f1f] px-5 py-2.5 text-sm font-semibold text-[#d13f1f]">
                 Đăng nhập để khôi phục lịch
               </Link>
             ) : null}
@@ -184,7 +184,7 @@ export function OrdersClient() {
                   <span
                     className={cn(
                       "shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold",
-                      isReserved ? "bg-[#fff2ef] text-[#9f1d20]" : STATUS_BADGE_STYLE[booking.status]
+                      isReserved ? "bg-[#fff2ef] text-[#d13f1f]" : STATUS_BADGE_STYLE[booking.status]
                     )}
                   >
                     {isBusiness ? businessLabel[booking.status] ?? booking.status : booking.status === "PENDING" && booking.paymentStatus === "UNPAID"
@@ -204,8 +204,8 @@ export function OrdersClient() {
                     {displayBookingCode(booking.bookingCode)} · <span className="text-sm font-semibold text-[#191414]">{formatMoney(booking.totalAmount)}</span>
                   </span>
                   <div className="flex flex-wrap items-center justify-end gap-2">
-                    {isBusiness ? <Link href={`/doanh-nghiep/${booking.bookingCode}`} className="inline-flex items-center gap-1 text-xs font-semibold text-[#9f1d20]"><Receipt size={12} /> Xem hồ sơ & Bill</Link> : booking.status === "COMPLETED" ? (
-                      <Link href={`/review/${booking.bookingCode}`} className="inline-flex items-center gap-1 text-xs font-semibold text-[#9f1d20]">
+                    {isBusiness ? <Link href={`/doanh-nghiep/${booking.bookingCode}`} className="inline-flex items-center gap-1 text-xs font-semibold text-[#d13f1f]"><Receipt size={12} /> Xem hồ sơ & Bill</Link> : booking.status === "COMPLETED" ? (
+                      <Link href={`/review/${booking.bookingCode}`} className="inline-flex items-center gap-1 text-xs font-semibold text-[#d13f1f]">
                         <Star size={12} /> Đánh giá
                       </Link>
                     ) : null}
@@ -218,12 +218,12 @@ export function OrdersClient() {
                       <span className="text-[10px] font-medium text-[#8a7a72]">QR mở ngay khi IQ Care xếp xong KTV & giường</span>
                     ) : null}
                     {!isBusiness && (booking.status === "CHECKED_IN" || booking.status === "IN_SERVICE") ? (
-                      <Link href={`/thanh-toan/${booking.bookingCode}`} className="rounded-full bg-[#9f1d20] px-3 py-1.5 text-xs font-semibold text-white">
+                      <Link href={`/thanh-toan/${booking.bookingCode}`} className="rounded-full bg-[#d13f1f] px-3 py-1.5 text-xs font-semibold text-white">
                         Thanh toán Bill
                       </Link>
                     ) : null}
                     {!isBusiness && ["PENDING", "CONFIRMED"].includes(booking.status) ? (
-                      <Link href={`/don-cua-toi/doi-lich/${booking.bookingCode}`} className="text-xs font-semibold text-[#9f1d20]">
+                      <Link href={`/don-cua-toi/doi-lich/${booking.bookingCode}`} className="text-xs font-semibold text-[#d13f1f]">
                         Đổi lịch?
                       </Link>
                     ) : null}

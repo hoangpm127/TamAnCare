@@ -104,7 +104,7 @@ export function CompactSelect({
           triggerClassName,
         )}
       >
-        {icon ? <span className={cn("shrink-0", dark ? "text-[#f5d982]" : "text-[#9f1d20]")}>{icon}</span> : null}
+        {icon ? <span className={cn("shrink-0", dark ? "text-[#f5d982]" : "text-[#d13f1f]")}>{icon}</span> : null}
         <span className="min-w-0 flex-1 truncate">{selected?.label ?? placeholder}</span>
         <ChevronDown size={15} className={cn("shrink-0 transition", open && "rotate-180", dark ? "text-white/65" : "text-[#8a7a72]")} />
       </button>
@@ -147,11 +147,11 @@ export function CompactSelect({
                           className={cn(
                             "flex min-h-10 min-w-0 items-center gap-2 rounded-xl border px-2.5 py-2 text-left transition",
                             active
-                              ? "border-[#9f1d20] bg-gradient-to-br from-[#fff2ef] to-[#fff8e8] text-[#8f171b] shadow-sm"
+                              ? "border-[#d13f1f] bg-gradient-to-br from-[#fff2ef] to-[#fff8e8] text-[#8f171b] shadow-sm"
                               : "border-[#eee3dc] bg-white text-[#33251f] hover:border-[#d8b46a] hover:bg-[#fffaf6]",
                           )}
                         >
-                          <span className={cn("flex h-6 w-6 shrink-0 items-center justify-center rounded-full border", active ? "border-[#9f1d20] bg-[#9f1d20] text-white" : "border-[#e3d5cc] bg-[#fbf6f2] text-transparent")}>
+                          <span className={cn("flex h-6 w-6 shrink-0 items-center justify-center rounded-full border", active ? "border-[#d13f1f] bg-[#d13f1f] text-white" : "border-[#e3d5cc] bg-[#fbf6f2] text-transparent")}>
                             <Check size={12} />
                           </span>
                           <span className="min-w-0 flex-1">

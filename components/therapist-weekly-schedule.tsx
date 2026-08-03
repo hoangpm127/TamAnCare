@@ -70,7 +70,7 @@ export function TherapistCalendarSchedule({
   return (
     <>
       <section className="relative overflow-hidden rounded-2xl border border-[#d8b46a]/60 bg-white shadow-[0_12px_32px_rgba(74,44,28,0.08)]">
-        <div className="bg-gradient-to-r from-[#291714] via-[#63291d] to-[#9f1d20] px-3.5 py-3 text-white sm:px-5">
+        <div className="bg-gradient-to-r from-[#291714] via-[#63291d] to-[#d13f1f] px-3.5 py-3 text-white sm:px-5">
           <div className="flex items-center justify-between gap-3"><div className="flex min-w-0 items-center gap-2.5"><span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/10 text-[#f5d982] ring-1 ring-white/15"><CalendarDays size={17} /></span><div className="min-w-0"><p className="text-[9px] font-bold uppercase tracking-[0.13em] text-[#f5d982]">Lịch cá nhân KTV</p><h1 className="truncate text-base font-semibold">Lịch làm việc của tôi</h1></div></div><Link href="/therapist" className="shrink-0 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-[10px] font-semibold">Hôm nay</Link></div>
           <div className="mt-2.5 flex flex-wrap items-center gap-1.5 text-[9px] font-semibold"><span className="rounded-full bg-white/12 px-2.5 py-1">{monthRegular.length + monthBusiness.length} lịch</span><span className="rounded-full bg-[#dff5e8] px-2.5 py-1 text-[#12683f]">{monthRegular.length} tại cơ sở</span><span className="rounded-full bg-[#dbeaff] px-2.5 py-1 text-[#2452b8]">{monthBusiness.length} Business</span></div>
         </div>
@@ -83,15 +83,15 @@ export function TherapistCalendarSchedule({
 
         <div className="relative bg-gradient-to-b from-[#fffaf4] to-white px-2 pb-3 pt-5 sm:px-4 sm:pb-4">
           <div aria-hidden className="absolute left-4 right-4 top-0 flex -translate-y-1/2 justify-around">{Array.from({ length: 7 }, (_, index) => <span key={index} className="h-5 w-2 rounded-full border border-[#7b5129] bg-gradient-to-b from-[#f6d989] via-[#a8752e] to-[#f5d982] shadow-sm" />)}</div>
-          <div className="grid grid-cols-7 border-b border-[#eadbd1] pb-1.5 text-center text-[9px] font-bold uppercase tracking-[0.08em] text-[#8a6a58]">{WEEKDAYS.map((day) => <span key={day} className={day === "CN" ? "text-[#9f1d20]" : ""}>{day}</span>)}</div>
+          <div className="grid grid-cols-7 border-b border-[#eadbd1] pb-1.5 text-center text-[9px] font-bold uppercase tracking-[0.08em] text-[#8a6a58]">{WEEKDAYS.map((day) => <span key={day} className={day === "CN" ? "text-[#d13f1f]" : ""}>{day}</span>)}</div>
           <div className="mt-1 grid grid-cols-7 gap-1 sm:gap-1.5">
           {days.map((day) => {
             const careCount = regular.filter((item) => item.dayKey === day.key).length;
             const businessCount = business.filter((item) => item.dayKey === day.key).length;
             const active = selectedDay === day.key;
             return (
-              <button key={day.key} type="button" onClick={() => setSelectedDay(day.key)} className={cn("relative min-h-[70px] rounded-xl border px-1 py-1.5 text-left transition sm:min-h-[92px] sm:px-2", active ? "border-[#9f1d20] bg-[#fff0ed] shadow-[0_5px_15px_rgba(159,29,32,0.13)] ring-1 ring-[#9f1d20]/20" : "border-[#eee4dd] bg-white hover:border-[#d8b46a]", !day.isCurrentMonth && "opacity-40")} aria-pressed={active} aria-label={`${day.fullLabel}: ${careCount} lịch cơ sở, ${businessCount} đoàn Business`}>
-                <span className={cn("flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-bold", day.isToday ? "bg-[#9f1d20] text-white" : active ? "text-[#9f1d20]" : "text-[#3c2d27]")}>{day.dayNumber}</span>
+              <button key={day.key} type="button" onClick={() => setSelectedDay(day.key)} className={cn("relative min-h-[70px] rounded-xl border px-1 py-1.5 text-left transition sm:min-h-[92px] sm:px-2", active ? "border-[#d13f1f] bg-[#fff0ed] shadow-[0_5px_15px_rgba(159,29,32,0.13)] ring-1 ring-[#d13f1f]/20" : "border-[#eee4dd] bg-white hover:border-[#d8b46a]", !day.isCurrentMonth && "opacity-40")} aria-pressed={active} aria-label={`${day.fullLabel}: ${careCount} lịch cơ sở, ${businessCount} đoàn Business`}>
+                <span className={cn("flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-bold", day.isToday ? "bg-[#d13f1f] text-white" : active ? "text-[#d13f1f]" : "text-[#3c2d27]")}>{day.dayNumber}</span>
                 <span className="mt-1 grid grid-cols-2 gap-0.5 sm:mt-2"><b title="Lịch tại cơ sở" className="flex items-center justify-center gap-0.5 rounded-md bg-[#dff5e8] px-0.5 py-1 text-[8px] text-[#12683f]"><i className="h-1.5 w-1.5 rounded-full bg-[#29a064]" />{careCount}</b><b title="Đoàn Business" className="flex items-center justify-center gap-0.5 rounded-md bg-[#dbeaff] px-0.5 py-1 text-[8px] text-[#2452b8]"><i className="h-1.5 w-1.5 rounded-full bg-[#4b8ee8]" />{businessCount}</b></span>
               </button>
             );
@@ -102,7 +102,7 @@ export function TherapistCalendarSchedule({
       </section>
 
       <section className="mt-3 overflow-hidden rounded-2xl border border-[#d8b46a]/60 bg-white shadow-sm">
-        <div className="flex items-center justify-between gap-2 border-b border-[#eadbd1] bg-[#fffaf4] px-3.5 py-3"><div><p className="text-[9px] font-bold uppercase tracking-[0.14em] text-[#9f1d20]">Chi tiết trong ngày</p><h2 className="mt-0.5 text-sm font-semibold capitalize">{selected.fullLabel}</h2></div><span className="rounded-full bg-[#291714] px-2.5 py-1 text-[9px] font-semibold text-white">{selectedRegular.length + selectedBusiness.length} lịch</span></div>
+        <div className="flex items-center justify-between gap-2 border-b border-[#eadbd1] bg-[#fffaf4] px-3.5 py-3"><div><p className="text-[9px] font-bold uppercase tracking-[0.14em] text-[#d13f1f]">Chi tiết trong ngày</p><h2 className="mt-0.5 text-sm font-semibold capitalize">{selected.fullLabel}</h2></div><span className="rounded-full bg-[#291714] px-2.5 py-1 text-[9px] font-semibold text-white">{selectedRegular.length + selectedBusiness.length} lịch</span></div>
 
         <div className="space-y-3 p-3 sm:p-4">
           {selectedRegular.map((shift) => <RegularShiftCard key={shift.id} shift={shift} />)}
@@ -115,7 +115,7 @@ export function TherapistCalendarSchedule({
 }
 
 function RegularShiftCard({ shift }: { shift: RegularShift }) {
-  const relationshipTone = shift.relationship === "BOSS" ? "bg-[#2f1d19] text-[#f5d982]" : shift.relationship === "FRIEND" ? "bg-[#fff0ed] text-[#9f1d20]" : "bg-[#edf9f2] text-[#12683f]";
+  const relationshipTone = shift.relationship === "BOSS" ? "bg-[#2f1d19] text-[#f5d982]" : shift.relationship === "FRIEND" ? "bg-[#fff0ed] text-[#d13f1f]" : "bg-[#edf9f2] text-[#12683f]";
   return (
     <article className="overflow-hidden rounded-2xl border border-[#eadbd1] bg-[#fffdfb]">
       <div className="flex items-center justify-between gap-2 border-b border-[#f0e4dc] px-3 py-2.5"><div className="flex min-w-0 items-center gap-2"><span className="rounded-lg bg-[#291714] px-2 py-1.5 text-[9px] font-bold text-white">{time(shift.startTime)}–{time(shift.endTime)}</span><div className="min-w-0"><p className="truncate text-xs font-semibold">{shift.customerName}</p><p className="truncate text-[9px] text-[#8a7a72]">{shift.serviceName} · {shift.roomName}</p></div></div><span className={cn("shrink-0 rounded-full px-2 py-1 text-[8px] font-bold", relationshipTone)}>{shift.relationshipLabel}</span></div>
@@ -124,7 +124,7 @@ function RegularShiftCard({ shift }: { shift: RegularShift }) {
         <div className="rounded-xl bg-[#fff8e8] p-2.5"><p className="text-[9px] font-bold uppercase tracking-wide text-[#805914]">Tip KTV ngoài Bill</p><p className="mt-1 text-xs font-bold leading-4 text-[#805914]">Khách trao trực tiếp nếu hài lòng</p><p className="mt-0.5 text-[8px] leading-3.5 text-[#8a7457]">Gợi ý từ 100.000đ/60 phút · 150.000đ/90 phút</p></div>
       </div>
       <div className="mx-3 mb-3 rounded-xl border border-[#cfe4d8] bg-gradient-to-r from-[#edf9f2] to-[#f8fcfa] p-2.5"><p className="flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-wide text-[#176a4c]"><Sparkles size={12} /> IQ Care căn dặn trước ca</p><ul className="mt-1.5 space-y-1">{shift.aiAdvice.map((advice) => <li key={advice} className="text-[10px] leading-4 text-[#48665a]">• {advice}</li>)}</ul></div>
-      <Link href={`/therapist/bookings/${shift.bookingCode}`} className="flex items-center justify-center border-t border-[#f0e4dc] px-3 py-2.5 text-[10px] font-bold text-[#9f1d20]">Mở hồ sơ ca & thao tác phục vụ <ChevronRight size={13} /></Link>
+      <Link href={`/therapist/bookings/${shift.bookingCode}`} className="flex items-center justify-center border-t border-[#f0e4dc] px-3 py-2.5 text-[10px] font-bold text-[#d13f1f]">Mở hồ sơ ca & thao tác phục vụ <ChevronRight size={13} /></Link>
     </article>
   );
 }
