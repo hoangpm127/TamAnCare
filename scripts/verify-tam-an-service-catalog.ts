@@ -22,6 +22,7 @@ const expectedPackages = new Map([
   ["pkg-5", { serviceId: "svc-body-60", sessions: 5, paidSessions: 5, bonusSessions: 0, price: 2000000 }],
   ["pkg-9", { serviceId: "svc-neck-60", sessions: 10, paidSessions: 9, bonusSessions: 1, price: 3510000 }],
   ["pkg-body-9", { serviceId: "svc-body-60", sessions: 10, paidSessions: 9, bonusSessions: 1, price: 4050000 }],
+  ["pkg-body-15", { serviceId: "svc-body-60", sessions: 17, paidSessions: 15, bonusSessions: 2, price: 6750000 }],
 ]);
 const retiredPackageIds = ["pkg-19", "pkg-29", "pkg-49"];
 
@@ -55,7 +56,7 @@ async function main() {
     activePackages.every((plan) => !plan.serviceId || expectedServices.has(plan.serviceId)),
     "Gói liệu trình đang trỏ tới dịch vụ đã ngừng bán.",
   );
-  assert.equal(activePackages.length, expectedPackages.size, "Danh mục phải có đúng 5 gói dài hạn đang bán.");
+  assert.equal(activePackages.length, expectedPackages.size, "Danh mục phải có đúng 6 gói dài hạn đang bán.");
   for (const plan of activePackages) {
     assert.deepEqual(
       {
@@ -72,7 +73,7 @@ async function main() {
   assert.equal(retiredPackages.length, retiredPackageIds.length, "Thiếu gói cũ cần lưu lịch sử.");
   assert.ok(retiredPackages.every((plan) => !plan.isActive), "Gói giá cao cũ vẫn còn được bán.");
 
-  console.log("✓ Danh mục Tâm An Center có đúng 11 dịch vụ và 5 gói dài hạn mới; các dịch vụ, gói giá cao cũ chỉ còn lưu lịch sử.");
+  console.log("✓ Danh mục Tâm An Center có đúng 11 dịch vụ và 6 gói dài hạn; các dịch vụ, gói giá cao cũ chỉ còn lưu lịch sử.");
 }
 
 main()

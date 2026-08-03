@@ -4,7 +4,7 @@ import { packagePlans } from "@/lib/demo-data";
 import { cn, formatMoney } from "@/lib/utils";
 
 export function LoyaltyPackageCard({ className, compact = false }: { className?: string; compact?: boolean }) {
-  const plan = packagePlans.find((item) => item.id === "pkg-body-9") ?? packagePlans[0];
+  const plan = packagePlans.find((item) => item.id === "pkg-body-15") ?? packagePlans[0];
   const totalSessions = plan.paidSessions + plan.bonusSessions;
 
   if (compact) {
@@ -21,8 +21,8 @@ export function LoyaltyPackageCard({ className, compact = false }: { className?:
             <PackagePlus size={14} />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block truncate text-sm font-bold text-[#4a2d16]">Dài hạn Body 9+1</span>
-            <span className="mt-0.5 block truncate text-[9px] text-[#715943]">10 buổi · hiệu lực 150 ngày</span>
+            <span className="block truncate text-sm font-bold text-[#4a2d16]">Đồng hành Body 15+2</span>
+            <span className="mt-0.5 block truncate text-[9px] text-[#715943]">17 buổi · hiệu lực 240 ngày</span>
           </span>
           <ArrowRight size={15} className="shrink-0 text-[#d13f1f] transition group-hover:translate-x-0.5" />
         </div>
@@ -49,8 +49,8 @@ export function LoyaltyPackageCard({ className, compact = false }: { className?:
         </span>
         <span className="rounded-full bg-[#5c3a1e] px-2 py-1 text-[9px] font-bold uppercase tracking-wide text-[#f5d982]">Khách thân thiết</span>
       </div>
-      <p className="relative mt-3 text-sm font-bold leading-5 text-[#4a2d16]">Dài hạn Body 9+1</p>
-      <p className="relative mt-1 text-xs leading-5 text-[#715943]">Mua 9 tặng 1 · dành riêng cho chủ thẻ · tự trừ buổi khi check-in.</p>
+      <p className="relative mt-3 text-sm font-bold leading-5 text-[#4a2d16]">Đồng hành Body 15+2</p>
+      <p className="relative mt-1 text-xs leading-5 text-[#715943]">Mua 15 tặng 2 · dành riêng cho chủ thẻ · tự trừ buổi khi check-in.</p>
       <div className="relative mt-3 flex items-end justify-between gap-3 border-t border-[#e3b23c]/35 pt-2.5">
         <span>
           <span className="block text-base font-bold text-[#d13f1f]">{formatMoney(plan.price)}</span>

@@ -46,7 +46,7 @@ export default async function Home() {
     .filter((therapist) => therapist.status === "ACTIVE")
     .sort((a, b) => b.ratingAvg - a.ratingAvg);
   const activeTherapistCount = therapists.filter((therapist) => therapist.status === "ACTIVE").length;
-  const bestPackage = packagePlans.find((plan) => plan.id === "pkg-body-9") ?? packagePlans[0];
+  const bestPackage = packagePlans.find((plan) => plan.id === "pkg-body-15") ?? packagePlans[0];
 
   return (
     <main className="bg-[#fffaf6] text-[#191414]">

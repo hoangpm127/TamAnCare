@@ -1345,6 +1345,19 @@ export const packagePlans = [
     badge: "Mua 9 tặng 1",
     highlight: true,
   },
+  {
+    id: "pkg-body-15",
+    name: "Đồng hành Body 15+2",
+    serviceId: "svc-body-60",
+    paidSessions: 15,
+    bonusSessions: 2,
+    sessions: 17,
+    price: 6750000,
+    validityDays: 240,
+    sold: 0,
+    badge: "Mua 15 tặng 2",
+    highlight: true,
+  },
 ];
 
 export const depositPolicy = {
