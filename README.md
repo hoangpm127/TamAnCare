@@ -2,6 +2,13 @@
 
 Web app/PWA quản lý xuyên suốt khách hàng, đặt lịch, check-in QR, vận hành cơ sở và tài chính Tâm An Care.
 
+## Môi trường triển khai Tâm An
+
+- Production: `https://tamancare-production.up.railway.app`
+- GitHub: `https://github.com/hoangpm127/TamAnCare`
+- Railway dùng PostgreSQL riêng và chỉ áp dụng migration bằng `npm run db:deploy`; tuyệt đối không chạy seed trên production.
+- OTP, SePay, Google và Facebook chỉ được bật sau khi có bộ thông tin dành riêng cho Tâm An. Không dùng chung khóa, mẫu SMS hoặc tài khoản nhận tiền của Tuệ Tâm.
+
 ## Chạy bản demo hiện tại
 
 Bản demo trong workspace dùng PostgreSQL tương thích qua PGlite và lưu dữ liệu tại `.pglite-data`.
