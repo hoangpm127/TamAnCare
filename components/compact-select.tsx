@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } fro
 import { createPortal } from "react-dom";
 import { Check, ChevronDown, SlidersHorizontal, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { BrandWordmark } from "@/components/brand-wordmark";
 
 export type CompactSelectOption = {
   value: string;
@@ -122,7 +123,7 @@ export function CompactSelect({
                     <SlidersHorizontal size={14} />
                   </span>
                   <div className="min-w-0 flex-1">
-                    <p className="text-[8px] font-semibold uppercase tracking-[0.14em] text-[#f5d982]">Tâm An Center</p>
+                    <BrandWordmark className="h-[10px] w-[74px] text-[#f5d982]" />
                     <h2 className="truncate text-[12px] font-semibold leading-4">{dialogTitle}</h2>
                   </div>
                   <button type="button" onClick={() => setOpen(false)} className="flex h-7 w-7 items-center justify-center rounded-full bg-white/10 ring-1 ring-white/15" aria-label="Đóng">

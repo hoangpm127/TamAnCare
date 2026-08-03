@@ -20,6 +20,7 @@ import { clearBookingUiDraft } from "@/lib/booking-ui-draft";
 import { ActiveServiceBanner } from "@/components/active-service-banner";
 import { NavigationPendingIndicator } from "@/components/navigation-pending-indicator";
 import { FreeConsultationPopup } from "@/components/free-consultation-popup";
+import { BrandWordmark } from "@/components/brand-wordmark";
 
 const NAV_ITEMS = [
   { href: "/", label: "Trang chủ", icon: Home },
@@ -53,7 +54,7 @@ function CustomerTopbar({ pathname }: { pathname: string }) {
           <Link href="/" className="tap-feedback relative flex min-w-0 items-center gap-2 rounded-xl text-sm font-semibold tracking-normal sm:text-base sm:tracking-wide">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/tam-an-center-mark-transparent.png" alt="" width={34} height={34} className="h-8 w-8 shrink-0 object-contain drop-shadow-sm" />
-            <span className="truncate font-serif text-[#7a1718]">Tâm An Center</span>
+            <BrandWordmark className="h-[14px] w-[104px] text-[#7a1718] sm:h-[18px] sm:w-[138px]" />
             <NavigationPendingIndicator />
           </Link>
         </div>
@@ -149,8 +150,8 @@ export function CustomerShell({ children }: { children: React.ReactNode }) {
       <div className="customer-app flex-1">{children}</div>
       <footer className={cn("shrink-0 border-t border-[#a64d2d] bg-gradient-to-br from-[#4d0c10] via-[#7a1718] to-[#b83d22] px-4 py-4 text-center text-[11px] font-medium leading-5 text-[#fff4df]", showBottomNav && "mb-[calc(68px+env(safe-area-inset-bottom))] md:mb-0")}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/tam-an-center-mark-transparent.png" alt="Tâm An Center" width={58} height={58} className="mx-auto mb-1 h-12 w-12 object-contain drop-shadow" />
-        <p className="font-serif text-sm font-semibold tracking-[0.12em] text-[#f5dc8f]">TÂM AN CENTER</p>
+        <img src="/tam-an-center-mark-transparent.png" alt="" width={58} height={58} className="mx-auto mb-1 h-12 w-12 object-contain drop-shadow" />
+        <BrandWordmark className="mx-auto h-[21px] w-40 text-[#f5dc8f]" />
         <div className="mt-0.5 flex flex-wrap justify-center gap-x-4 gap-y-1">
           <Link href="/dieu-khoan" className="transition-colors hover:text-[#f5d982]">Điều khoản</Link>
           <Link href="/chinh-sach-rieng-tu" className="transition-colors hover:text-[#f5d982]">Bảo vệ dữ liệu</Link>

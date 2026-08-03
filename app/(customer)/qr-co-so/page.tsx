@@ -5,6 +5,7 @@ import { Download, MapPin, QrCode as QrCodeIcon } from "lucide-react";
 import { headers } from "next/headers";
 import { db } from "@/lib/db";
 import { createVenueQrToken, venueCheckinUrl } from "@/lib/server/venue-qr";
+import { BrandWordmark } from "@/components/brand-wordmark";
 
 export const metadata = {
   title: "QR check-in cơ sở | Tâm An Center",
@@ -42,7 +43,7 @@ export default async function BranchQrPage() {
         <div className="mt-5 grid gap-4 sm:grid-cols-2">
           {qrCards.map((branch) => (
             <article key={branch.id} className="rounded-3xl border border-[#d5eadc] bg-white p-5 text-center shadow-[0_14px_36px_rgba(23,61,54,0.10)]">
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#b86b1f]">Tâm An Center</p>
+              <BrandWordmark className="mx-auto h-[18px] w-[138px] text-[#b86b1f]" />
               <h2 className="mt-1 text-xl font-semibold">{branch.label}</h2>
               <Image unoptimized width={420} height={420} src={branch.dataUrl} alt={`QR check-in ${branch.label}`} className="mx-auto mt-3 h-auto w-full max-w-[300px] rounded-2xl" priority />
               <p className="mx-auto mt-3 flex max-w-xs items-start justify-center gap-1.5 text-xs leading-5 text-[#665b55]"><MapPin size={14} className="mt-0.5 shrink-0 text-[#b86b1f]" /> {branch.address}</p>

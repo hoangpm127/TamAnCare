@@ -25,6 +25,7 @@ import { formatMoney, stripDurationFromName } from "@/lib/utils";
 import { VoucherCard } from "@/components/voucher-card";
 import { TherapistAvatar } from "@/components/therapist-avatar";
 import { BookingHeroCta } from "@/components/booking-fab";
+import { BrandWordmark } from "@/components/brand-wordmark";
 
 const QUICK_ACTIONS: { href: string; label: string; icon: LucideIcon }[] = [
   { href: "/don-cua-toi?tab=upcoming", label: "Lịch đã đặt", icon: CalendarClock },
@@ -61,12 +62,12 @@ export default async function Home() {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#170b0a]/92 via-[#170b0a]/45 to-transparent" />
           <div className="relative z-10 flex min-h-[300px] flex-col items-center justify-end px-4 py-5 text-center sm:min-h-[340px] sm:px-6 sm:py-6">
-            <Image src="/tam-an-center-mark-transparent.png" alt="Biểu tượng Tâm An Center" width={66} height={66} className="mb-2 h-[66px] w-[66px] object-contain drop-shadow-[0_8px_18px_rgba(0,0,0,0.34)]" />
+            <Image src="/tam-an-center-mark-transparent.png" alt="" width={66} height={66} className="mb-2 h-[66px] w-[66px] object-contain drop-shadow-[0_8px_18px_rgba(0,0,0,0.34)]" />
             <p className="mb-2 inline-flex w-fit items-center gap-1.5 rounded-full border border-white/25 bg-white/10 px-3 py-1 text-[11px] font-medium">
               <Sparkles size={12} /> Chăm sóc chỉn chu · đặt lịch minh bạch
             </p>
             <h1 className="max-w-md text-xl font-semibold leading-tight tracking-tight sm:text-2xl lg:text-3xl">
-              <span className="block">TÂM AN CENTER</span>
+              <BrandWordmark className="mx-auto mb-1 h-[29px] w-[220px] text-[#f5dc8f] sm:h-[35px] sm:w-[270px]" />
               <span className="block">GIÚP BẠN VUI KHỎE MỖI NGÀY</span>
             </h1>
             <p className="mt-2 max-w-md text-xs leading-5 text-white/80 sm:text-sm">

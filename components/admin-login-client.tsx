@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { ArrowLeft, Check, Eye, EyeOff, KeyRound, Loader2, LockKeyhole, ShieldCheck, UserRound } from "lucide-react";
 import { adminLandingPath } from "@/lib/admin-auth";
+import { BrandWordmark } from "@/components/brand-wordmark";
 
 export function AdminLoginClient() {
   const router = useRouter();
@@ -61,8 +62,8 @@ export function AdminLoginClient() {
             <div className="bg-gradient-to-br from-[#8f151a] via-[#5c1014] to-[#2a1513] p-5 text-white lg:p-7">
               <div className="flex items-center gap-3">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/icon-64.png" alt="Logo Tâm An" className="h-10 w-10 rounded-full ring-1 ring-[#e3b23c]" />
-                <div><p className="text-sm font-semibold">Tâm An Center</p><p className="text-[10px] text-white/65">Vận hành & đầu tư</p></div>
+                <img src="/icon-64.png" alt="" className="h-10 w-10 rounded-full ring-1 ring-[#e3b23c]" />
+                <div><BrandWordmark className="h-[18px] w-[132px] text-[#f5dc8f]" /><p className="mt-0.5 text-[10px] text-white/65">Vận hành & đầu tư</p></div>
               </div>
               <p className="mt-6 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#f5d982]">Khu vực được bảo vệ</p>
               <h1 className="mt-1 text-2xl font-semibold leading-tight">Đăng nhập theo tài khoản được cấp</h1>

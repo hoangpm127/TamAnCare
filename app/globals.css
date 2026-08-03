@@ -88,6 +88,19 @@ a[href] {
   transform: scale(0.97);
 }
 
+.brand-wordmark {
+  aspect-ratio: 1195 / 157;
+  background-color: currentColor;
+  -webkit-mask-image: url("/tam-an-center-wordmark-mask.png");
+  mask-image: url("/tam-an-center-wordmark-mask.png");
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
 .route-link-wait {
   display: flex;
   opacity: 0;
