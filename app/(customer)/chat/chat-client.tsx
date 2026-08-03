@@ -77,18 +77,18 @@ export function ChatClient({ branches }: { branches: CatalogBranch[] }) {
   }
 
   return (
-    <div className="flex h-[100dvh] flex-col bg-[#fffaf6] text-[#191414]">
-      <header className="flex items-center gap-3 border-b border-[#eadbd1] bg-white/95 px-4 py-3 backdrop-blur">
-        <button type="button" onClick={() => router.back()} className="text-[#4d403a]" aria-label="Quay lại">
+    <div className="flex h-[100dvh] flex-col bg-[#fdf8f3] text-[#281b18]">
+      <header className="flex items-center gap-3 border-b border-[#e7d6ca] bg-white/95 px-4 py-3 backdrop-blur">
+        <button type="button" onClick={() => router.back()} className="text-[#51423b]" aria-label="Quay lại">
           <ArrowLeft size={20} />
         </button>
         <div className="min-w-0 flex-1">
           <p className="truncate font-semibold">{branchLabel}</p>
-          <p className="text-xs text-[#8a7a72]">Trợ lý tự động · không phải chat trực tiếp</p>
+          <p className="text-xs text-[#826f66]">Trợ lý tự động · không phải chat trực tiếp</p>
         </div>
         {primaryBranch?.phone ? <a
           href={`tel:${primaryBranch.phone.replace(/\s/g, "")}`}
-          className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#fff2ef] text-[#d13f1f]"
+          className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#f8ebe5] text-[#c64b32]"
           aria-label="Gọi hotline"
         >
           <Phone size={16} />
@@ -101,12 +101,12 @@ export function ChatClient({ branches }: { branches: CatalogBranch[] }) {
             <div
               className={cn(
                 "max-w-[78%] rounded-2xl px-4 py-2.5 text-sm leading-6",
-                message.from === "customer" ? "bg-[#d13f1f] text-white" : "border border-[#eadbd1] bg-white text-[#191414]"
+                message.from === "customer" ? "bg-[#c64b32] text-white" : "border border-[#e7d6ca] bg-white text-[#281b18]"
               )}
             >
               <p>{message.text}</p>
               <p
-                className={cn("mt-1 text-[10px]", message.from === "customer" ? "text-white/70" : "text-[#8a7a72]")}
+                className={cn("mt-1 text-[10px]", message.from === "customer" ? "text-white/70" : "text-[#826f66]")}
                 suppressHydrationWarning
               >
                 {format(message.time, "HH:mm")}
@@ -116,24 +116,24 @@ export function ChatClient({ branches }: { branches: CatalogBranch[] }) {
         ))}
         {typing ? (
           <div className="flex justify-start">
-            <div className="flex items-center gap-1 rounded-2xl border border-[#eadbd1] bg-white px-4 py-3">
-              <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#c9a59a] [animation-delay:-0.3s]" />
-              <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#c9a59a] [animation-delay:-0.15s]" />
-              <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#c9a59a]" />
+            <div className="flex items-center gap-1 rounded-2xl border border-[#e7d6ca] bg-white px-4 py-3">
+              <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#c7a296] [animation-delay:-0.3s]" />
+              <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#c7a296] [animation-delay:-0.15s]" />
+              <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#c7a296]" />
             </div>
           </div>
         ) : null}
         <div ref={bottomRef} />
       </div>
 
-      <div className="border-t border-[#eadbd1] bg-white/95 px-4 pb-[env(safe-area-inset-bottom)] pt-3">
+      <div className="border-t border-[#e7d6ca] bg-white/95 px-4 pb-[env(safe-area-inset-bottom)] pt-3">
         <div className="scrollbar-hide -mx-1 mb-2 flex gap-2 overflow-x-auto px-1">
           {QUICK_REPLIES.map((reply) => (
             <button
               key={reply}
               type="button"
               onClick={() => send(reply)}
-              className="shrink-0 rounded-full border border-[#eadbd1] px-3 py-1.5 text-xs font-medium text-[#4d403a] hover:border-[#c9a59a]"
+              className="shrink-0 rounded-full border border-[#e7d6ca] px-3 py-1.5 text-xs font-medium text-[#51423b] hover:border-[#c7a296]"
             >
               {reply}
             </button>
@@ -150,12 +150,12 @@ export function ChatClient({ branches }: { branches: CatalogBranch[] }) {
             value={draft}
             onChange={(event) => setDraft(event.target.value)}
             placeholder="Nhập tin nhắn..."
-            className="flex-1 rounded-full border border-[#eadbd1] px-4 py-3 text-sm"
+            className="flex-1 rounded-full border border-[#e7d6ca] px-4 py-3 text-sm"
           />
           <button
             type="submit"
             disabled={!draft.trim()}
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#d13f1f] text-white disabled:opacity-50"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#c64b32] text-white disabled:opacity-50"
             aria-label="Gửi"
           >
             <Send size={18} />

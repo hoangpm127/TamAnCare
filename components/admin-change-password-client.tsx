@@ -40,11 +40,11 @@ export function AdminChangePasswordClient({ displayName, role, mustEnrollMfa }: 
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[#241514] px-4 py-8 text-[#191414]">
-      <section className="w-full max-w-lg rounded-3xl border border-white/10 bg-[#fffaf6] p-5 shadow-2xl sm:p-7">
+    <main className="flex min-h-screen items-center justify-center bg-[#241514] px-4 py-8 text-[#281b18]">
+      <section className="w-full max-w-lg rounded-3xl border border-white/10 bg-[#fdf8f3] p-5 shadow-2xl sm:p-7">
         <div className="flex items-start gap-3">
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#fff0ed] text-[#d13f1f]"><ShieldCheck size={22} /></span>
-          <div><p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#d13f1f]">Bảo vệ tài khoản</p><h1 className="mt-1 text-xl font-semibold">Đổi mật khẩu trước khi tiếp tục</h1><p className="mt-1 text-xs leading-5 text-[#8a7a72]">{displayName}, phiên cũ đã bị vô hiệu hóa. Hãy đặt mật khẩu riêng không dùng ở dịch vụ khác.</p></div>
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#fae9e4] text-[#c64b32]"><ShieldCheck size={22} /></span>
+          <div><p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#c64b32]">Bảo vệ tài khoản</p><h1 className="mt-1 text-xl font-semibold">Đổi mật khẩu trước khi tiếp tục</h1><p className="mt-1 text-xs leading-5 text-[#826f66]">{displayName}, phiên cũ đã bị vô hiệu hóa. Hãy đặt mật khẩu riêng không dùng ở dịch vụ khác.</p></div>
         </div>
 
         <form onSubmit={submit} className="mt-5 space-y-3">
@@ -55,18 +55,18 @@ export function AdminChangePasswordClient({ displayName, role, mustEnrollMfa }: 
           ].map((field) => (
             <label key={field.label} className="block">
               <span className="text-[11px] font-semibold">{field.label}</span>
-              <span className="mt-1.5 flex items-center gap-2 rounded-xl border border-[#eadbd1] bg-white px-3 focus-within:border-[#d13f1f]">
-                <KeyRound size={15} className="text-[#8a7a72]" />
+              <span className="mt-1.5 flex items-center gap-2 rounded-xl border border-[#e7d6ca] bg-white px-3 focus-within:border-[#c64b32]">
+                <KeyRound size={15} className="text-[#826f66]" />
                 <input required type={showPassword ? "text" : "password"} value={field.value} onChange={(event) => field.setter(event.target.value)} autoComplete={field.autoComplete} maxLength={200} className="min-w-0 flex-1 bg-transparent py-3 text-sm outline-none" />
-                {field.label === "Mật khẩu mới" ? <button type="button" onClick={() => setShowPassword((value) => !value)} aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"} className="text-[#8a7a72]">{showPassword ? <EyeOff size={16} /> : <Eye size={16} />}</button> : null}
+                {field.label === "Mật khẩu mới" ? <button type="button" onClick={() => setShowPassword((value) => !value)} aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"} className="text-[#826f66]">{showPassword ? <EyeOff size={16} /> : <Eye size={16} />}</button> : null}
               </span>
             </label>
           ))}
-          <div className="rounded-xl bg-[#fff7ec] p-3 text-[11px] leading-5 text-[#665b55]">
-            {["Tối thiểu 12 ký tự", "Có chữ hoa, chữ thường và số", "Có ít nhất một ký tự đặc biệt"].map((item) => <p key={item} className="flex items-center gap-1.5"><Check size={12} className="text-[#d13f1f]" /> {item}</p>)}
+          <div className="rounded-xl bg-[#fbf2e7] p-3 text-[11px] leading-5 text-[#68574f]">
+            {["Tối thiểu 12 ký tự", "Có chữ hoa, chữ thường và số", "Có ít nhất một ký tự đặc biệt"].map((item) => <p key={item} className="flex items-center gap-1.5"><Check size={12} className="text-[#c64b32]" /> {item}</p>)}
           </div>
           {error ? <p role="alert" className="rounded-xl bg-red-50 px-3 py-2.5 text-xs font-medium text-red-700">{error}</p> : null}
-          <button type="submit" disabled={submitting} className="w-full rounded-full bg-[#d13f1f] px-5 py-3 text-sm font-semibold text-white disabled:opacity-60">{submitting ? "Đang cập nhật…" : "Lưu mật khẩu mới"}</button>
+          <button type="submit" disabled={submitting} className="w-full rounded-full bg-[#c64b32] px-5 py-3 text-sm font-semibold text-white disabled:opacity-60">{submitting ? "Đang cập nhật…" : "Lưu mật khẩu mới"}</button>
         </form>
       </section>
     </main>

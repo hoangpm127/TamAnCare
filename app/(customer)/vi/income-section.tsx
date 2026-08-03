@@ -40,9 +40,9 @@ const RANGE_PRESETS: { id: RangePreset; label: string }[] = [
 ];
 
 const CATEGORY_META: Record<ReferralOrderCategory, { label: string; color: string; badge: string; icon: typeof UserRound }> = {
-  INDIVIDUAL: { label: "Affiliate cá nhân", color: "#d13f1f", badge: "bg-[#fff2ef] text-[#d13f1f]", icon: UserRound },
-  GROUP: { label: "Theo nhóm", color: "#b9862c", badge: "bg-[#fff7ec] text-[#8a5a12]", icon: Users },
-  BUSINESS: { label: "Tâm An Business", color: "#1d6c40", badge: "bg-[#fff4e6] text-[#1d6c40]", icon: Briefcase },
+  INDIVIDUAL: { label: "Affiliate cá nhân", color: "#c64b32", badge: "bg-[#f8ebe5] text-[#c64b32]", icon: UserRound },
+  GROUP: { label: "Theo nhóm", color: "#9f7428", badge: "bg-[#fbf2e7] text-[#8a5a12]", icon: Users },
+  BUSINESS: { label: "Tâm An Business", color: "#0d674c", badge: "bg-[#fff4e6] text-[#0d674c]", icon: Briefcase },
 };
 
 function toIsoDateInput(date: Date) {
@@ -125,7 +125,7 @@ export function IncomeSection({ detailed }: { detailed: boolean }) {
               onClick={() => setRangePreset(item.id)}
               className={cn(
                 "shrink-0 rounded-full border px-3 py-1.5 text-xs font-semibold transition",
-                rangePreset === item.id ? "border-[#d13f1f] bg-[#d13f1f] text-white" : "border-[#eadbd1] bg-white text-[#4d403a]"
+                rangePreset === item.id ? "border-[#c64b32] bg-[#c64b32] text-white" : "border-[#e7d6ca] bg-white text-[#51423b]"
               )}
             >
               {item.label}
@@ -133,23 +133,23 @@ export function IncomeSection({ detailed }: { detailed: boolean }) {
           ))}
         </div>
         {rangePreset === "custom" ? (
-          <div className="mt-2 flex items-center gap-2 rounded-xl border border-[#eadbd1] bg-white p-2.5">
+          <div className="mt-2 flex items-center gap-2 rounded-xl border border-[#e7d6ca] bg-white p-2.5">
             <label className="flex-1">
-              <span className="block text-[10px] font-semibold text-[#8a7a72]">Từ ngày</span>
+              <span className="block text-[10px] font-semibold text-[#826f66]">Từ ngày</span>
               <input
                 type="date"
                 value={customFrom}
                 onChange={(event) => setCustomFrom(event.target.value)}
-                className="mt-0.5 w-full rounded-lg border border-[#eadbd1] px-2 py-1.5 text-xs"
+                className="mt-0.5 w-full rounded-lg border border-[#e7d6ca] px-2 py-1.5 text-xs"
               />
             </label>
             <label className="flex-1">
-              <span className="block text-[10px] font-semibold text-[#8a7a72]">Đến ngày</span>
+              <span className="block text-[10px] font-semibold text-[#826f66]">Đến ngày</span>
               <input
                 type="date"
                 value={customTo}
                 onChange={(event) => setCustomTo(event.target.value)}
-                className="mt-0.5 w-full rounded-lg border border-[#eadbd1] px-2 py-1.5 text-xs"
+                className="mt-0.5 w-full rounded-lg border border-[#e7d6ca] px-2 py-1.5 text-xs"
               />
             </label>
           </div>
@@ -157,17 +157,17 @@ export function IncomeSection({ detailed }: { detailed: boolean }) {
       </div>
 
       <div className="grid grid-cols-2 gap-2.5">
-        <div className="rounded-xl border border-[#eadbd1] bg-white p-3.5 text-center">
-          <p className="text-[11px] font-semibold uppercase tracking-wide text-[#b86b1f]">Đã xác nhận</p>
-          <p className="mt-1 text-lg font-bold text-[#b86b1f]">{formatMoney(confirmedTotal)}</p>
+        <div className="rounded-xl border border-[#e7d6ca] bg-white p-3.5 text-center">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-[#a85f29]">Đã xác nhận</p>
+          <p className="mt-1 text-lg font-bold text-[#a85f29]">{formatMoney(confirmedTotal)}</p>
         </div>
-        <div className="rounded-xl border border-dashed border-[#e3b23c] bg-[#fff7ec] p-3.5 text-center">
+        <div className="rounded-xl border border-dashed border-[#c59a3d] bg-[#fbf2e7] p-3.5 text-center">
           <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8a5a12]">Dự kiến</p>
           <p className="mt-1 text-lg font-bold text-[#8a5a12]">{formatMoney(projectedTotal)}</p>
         </div>
       </div>
 
-      <div className="rounded-xl border border-[#eadbd1] bg-white p-4">
+      <div className="rounded-xl border border-[#e7d6ca] bg-white p-4">
         <p className="mb-3 text-sm font-semibold">Thu nhập theo {chartBars.granularityLabel}</p>
         {chartBars.length > 0 ? (
           <div className="scrollbar-hide flex items-end justify-between gap-1.5 overflow-x-auto">
@@ -175,29 +175,29 @@ export function IncomeSection({ detailed }: { detailed: boolean }) {
               <div key={item.key} className="flex min-w-[28px] flex-1 flex-col items-center gap-1.5">
                 <div className="flex h-20 w-full items-end">
                   <div
-                    className="w-full rounded-t-md bg-[#b86b1f]"
+                    className="w-full rounded-t-md bg-[#a85f29]"
                     style={{ height: `${Math.max(4, Math.round((item.amount / maxBar) * 100))}%` }}
                     title={formatMoney(item.amount)}
                   />
                 </div>
-                <p className="whitespace-nowrap text-[9px] text-[#8a7a72]">{item.label}</p>
+                <p className="whitespace-nowrap text-[9px] text-[#826f66]">{item.label}</p>
               </div>
             ))}
           </div>
         ) : (
-          <p className="py-6 text-center text-xs text-[#8a7a72]">Không có thu nhập trong khoảng thời gian này.</p>
+          <p className="py-6 text-center text-xs text-[#826f66]">Không có thu nhập trong khoảng thời gian này.</p>
         )}
       </div>
 
-      <div className="rounded-xl border border-[#eadbd1] bg-white p-4">
+      <div className="rounded-xl border border-[#e7d6ca] bg-white p-4">
         <p className="mb-3 flex items-center gap-1.5 text-sm font-semibold">
-          <PieChart size={15} className="text-[#d13f1f]" /> Phân tích nguồn thu nhập
+          <PieChart size={15} className="text-[#c64b32]" /> Phân tích nguồn thu nhập
         </p>
         {donutTotal > 0 ? (
           <>
             <div className="flex items-center gap-4">
               <svg viewBox="0 0 42 42" className="h-28 w-28 shrink-0 -rotate-90">
-                <circle cx="21" cy="21" r="15.9155" fill="none" stroke="#f1e5dd" strokeWidth="6" />
+                <circle cx="21" cy="21" r="15.9155" fill="none" stroke="#eee0d6" strokeWidth="6" />
                 {donutSegments.map((seg) =>
                   seg.pct > 0 ? (
                     <circle
@@ -235,32 +235,32 @@ export function IncomeSection({ detailed }: { detailed: boolean }) {
                       )}
                     >
                       <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: seg.color }} />
-                      <Icon size={12} className="shrink-0 text-[#8a7a72]" />
-                      <span className={cn("min-w-0 flex-1 truncate text-left text-[#4d403a]", active && "font-semibold text-[#191414]")}>
+                      <Icon size={12} className="shrink-0 text-[#826f66]" />
+                      <span className={cn("min-w-0 flex-1 truncate text-left text-[#51423b]", active && "font-semibold text-[#281b18]")}>
                         {CATEGORY_META[seg.key].label}
                       </span>
-                      <span className="shrink-0 font-semibold text-[#191414]">{Math.round(seg.pct)}%</span>
+                      <span className="shrink-0 font-semibold text-[#281b18]">{Math.round(seg.pct)}%</span>
                     </button>
                   );
                 })}
               </div>
             </div>
-            <p className="mt-3 text-center text-sm font-semibold text-[#191414]">
+            <p className="mt-3 text-center text-sm font-semibold text-[#281b18]">
               {categoryFilter ? CATEGORY_META[categoryFilter].label : "Tổng"}:{" "}
-              <span className="text-[#d13f1f]">{formatMoney(categoryFilter ? categoryTotals[categoryFilter] : donutTotal)}</span>
+              <span className="text-[#c64b32]">{formatMoney(categoryFilter ? categoryTotals[categoryFilter] : donutTotal)}</span>
             </p>
             {categoryFilter ? (
               <button
                 type="button"
                 onClick={() => setCategoryFilter(null)}
-                className="mx-auto mt-1.5 block text-center text-[11px] font-semibold text-[#d13f1f] underline-offset-2 hover:underline"
+                className="mx-auto mt-1.5 block text-center text-[11px] font-semibold text-[#c64b32] underline-offset-2 hover:underline"
               >
                 Bỏ lọc, xem tất cả
               </button>
             ) : null}
           </>
         ) : (
-          <p className="py-4 text-center text-xs text-[#8a7a72]">Không có dữ liệu trong khoảng thời gian này.</p>
+          <p className="py-4 text-center text-xs text-[#826f66]">Không có dữ liệu trong khoảng thời gian này.</p>
         )}
       </div>
 
@@ -272,7 +272,7 @@ export function IncomeSection({ detailed }: { detailed: boolean }) {
             onClick={() => setFilter(item.id)}
             className={cn(
               "shrink-0 rounded-full border px-3 py-1.5 text-xs font-semibold transition",
-              filter === item.id ? "border-[#d13f1f] bg-[#d13f1f] text-white" : "border-[#eadbd1] bg-white text-[#4d403a]"
+              filter === item.id ? "border-[#c64b32] bg-[#c64b32] text-white" : "border-[#e7d6ca] bg-white text-[#51423b]"
             )}
           >
             {item.label}
@@ -282,7 +282,7 @@ export function IncomeSection({ detailed }: { detailed: boolean }) {
           <button
             type="button"
             onClick={() => setCategoryFilter(null)}
-            className="inline-flex shrink-0 items-center gap-1 rounded-full border border-[#d13f1f] bg-[#fff2ef] px-3 py-1.5 text-xs font-semibold text-[#d13f1f]"
+            className="inline-flex shrink-0 items-center gap-1 rounded-full border border-[#c64b32] bg-[#f8ebe5] px-3 py-1.5 text-xs font-semibold text-[#c64b32]"
           >
             {CATEGORY_META[categoryFilter].label} ×
           </button>
@@ -304,7 +304,7 @@ export function IncomeSection({ detailed }: { detailed: boolean }) {
             />
           ))
         ) : (
-          <p className="rounded-xl border border-dashed border-[#eadbd1] bg-white p-4 text-center text-xs text-[#8a7a72]">
+          <p className="rounded-xl border border-dashed border-[#e7d6ca] bg-white p-4 text-center text-xs text-[#826f66]">
             Không có khách giới thiệu nào khớp trong khoảng thời gian này.
           </p>
         )}
@@ -401,7 +401,7 @@ function FriendCard({
   const rewardInRange = inRangeOrders.filter((order) => order.status === "COMPLETED").reduce((sum, order) => sum + order.commission, 0);
 
   return (
-    <div className="rounded-xl border border-[#eadbd1] bg-white p-3.5">
+    <div className="rounded-xl border border-[#e7d6ca] bg-white p-3.5">
       <button type="button" onClick={onToggle} className="flex w-full items-start justify-between gap-3 text-left">
         <span className="min-w-0">
           <span className="block truncate text-sm font-semibold">{friend.name}</span>
@@ -409,24 +409,24 @@ function FriendCard({
             <span
               className={cn(
                 "inline-flex rounded-full px-2 py-0.5 text-[10px] font-semibold",
-                friend.status === "COMPLETED" ? "bg-[#fff4e6] text-[#b86b1f]" : "bg-[#fff7ec] text-[#8a5a12]"
+                friend.status === "COMPLETED" ? "bg-[#fff4e6] text-[#a85f29]" : "bg-[#fbf2e7] text-[#8a5a12]"
               )}
             >
               {friend.status === "COMPLETED" ? "Đã hoàn thành" : "Đang chờ"}
             </span>
-            {confirmedCount > 0 ? <span className="text-[10px] text-[#8a7a72]">{confirmedCount} đơn đã chốt</span> : null}
-            {projectedCount > 0 ? <span className="text-[10px] text-[#8a7a72]">{projectedCount} đơn dự kiến</span> : null}
+            {confirmedCount > 0 ? <span className="text-[10px] text-[#826f66]">{confirmedCount} đơn đã chốt</span> : null}
+            {projectedCount > 0 ? <span className="text-[10px] text-[#826f66]">{projectedCount} đơn dự kiến</span> : null}
           </span>
         </span>
         <span className="flex shrink-0 items-center gap-1.5">
-          <span className="text-sm font-semibold text-[#b86b1f]">{rewardInRange > 0 ? `+${formatMoney(rewardInRange)}` : "—"}</span>
-          <ChevronDown size={14} className={cn("text-[#8a7a72] transition", expanded && "rotate-180")} />
+          <span className="text-sm font-semibold text-[#a85f29]">{rewardInRange > 0 ? `+${formatMoney(rewardInRange)}` : "—"}</span>
+          <ChevronDown size={14} className={cn("text-[#826f66] transition", expanded && "rotate-180")} />
         </span>
       </button>
 
       {expanded ? (
-        <div className="mt-2.5 space-y-2 border-t border-dashed border-[#eadbd1] pt-2.5">
-          <p className="text-[11px] text-[#8a7a72]">
+        <div className="mt-2.5 space-y-2 border-t border-dashed border-[#e7d6ca] pt-2.5">
+          <p className="text-[11px] text-[#826f66]">
             {friend.note} · Tham gia {friend.joinedAt}
           </p>
           {orders.length > 0 ? (
@@ -436,7 +436,7 @@ function FriendCard({
                 <div key={order.id} className="flex items-start justify-between gap-3 rounded-lg bg-[#fdf8f5] px-3 py-2 text-xs">
                   <span className="min-w-0">
                     <span className="flex flex-wrap items-center gap-1.5">
-                      <span className="font-semibold text-[#191414]">{order.serviceLabel}</span>
+                      <span className="font-semibold text-[#281b18]">{order.serviceLabel}</span>
                       {order.category !== "INDIVIDUAL" ? (
                         <span className={cn("inline-flex shrink-0 items-center gap-0.5 rounded-full px-1.5 py-0.5 text-[9px] font-semibold", meta.badge)}>
                           {order.category === "GROUP" ? <Users size={9} /> : <Building2 size={9} />}
@@ -444,21 +444,21 @@ function FriendCard({
                         </span>
                       ) : null}
                     </span>
-                    <span className="mt-0.5 block text-[10px] text-[#8a7a72]">
+                    <span className="mt-0.5 block text-[10px] text-[#826f66]">
                       Bạn chi {formatMoney(order.amount)} · {order.date}
                     </span>
                   </span>
                   <span className="shrink-0 text-right">
-                    <span className={cn("block text-sm font-semibold", order.status === "COMPLETED" ? "text-[#b86b1f]" : "text-[#8a5a12]")}>
+                    <span className={cn("block text-sm font-semibold", order.status === "COMPLETED" ? "text-[#a85f29]" : "text-[#8a5a12]")}>
                       +{formatMoney(order.commission)}
                     </span>
-                    <span className="text-[9px] text-[#8a7a72]">{order.status === "COMPLETED" ? "Đã xác nhận" : "Dự kiến"}</span>
+                    <span className="text-[9px] text-[#826f66]">{order.status === "COMPLETED" ? "Đã xác nhận" : "Dự kiến"}</span>
                   </span>
                 </div>
               );
             })
           ) : (
-            <p className="text-[11px] text-[#8a7a72]">Không có đơn hàng nào khớp bộ lọc.</p>
+            <p className="text-[11px] text-[#826f66]">Không có đơn hàng nào khớp bộ lọc.</p>
           )}
         </div>
       ) : null}

@@ -13,7 +13,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   return (
     <AdminSessionProvider initialSession={session}>
       <AdminGuard>
-        <main className="min-h-screen bg-[#fffaf6] text-[#191414]">
+        <main className="min-h-screen bg-[#fdf8f3] text-[#281b18]">
           <AdminNav />
           <div className="pb-20 md:pb-10">{children}</div>
         </main>

@@ -127,26 +127,26 @@ function OffersContent() {
   }
 
   return (
-    <main className="mx-auto max-w-3xl px-4 pb-6 pt-3 text-[#191414] sm:px-6">
+    <main className="mx-auto max-w-3xl px-4 pb-6 pt-3 text-[#281b18] sm:px-6">
       <div className="mb-2.5 flex items-center gap-2">
-        <Gift className="text-[#d13f1f]" size={20} />
+        <Gift className="text-[#c64b32]" size={20} />
         <h1 className="text-xl font-semibold tracking-tight">Ưu đãi dành cho bạn</h1>
       </div>
 
-      {!catalog && !catalogError ? <p className="mb-4 rounded-xl bg-white p-4 text-center text-sm text-[#665b55]">Đang tải ưu đãi từ hệ thống…</p> : null}
+      {!catalog && !catalogError ? <p className="mb-4 rounded-xl bg-white p-4 text-center text-sm text-[#68574f]">Đang tải ưu đãi từ hệ thống…</p> : null}
       {catalogError ? <p className="mb-4 rounded-xl bg-red-50 p-4 text-center text-sm font-medium text-red-700">{catalogError}</p> : null}
 
       {membership ? (
         <Link
           href="/toi"
-          className="mb-4 flex items-center gap-3 rounded-xl border border-[#e3b23c]/40 bg-gradient-to-br from-[#fff7ec] to-white p-3.5 shadow-sm"
+          className="mb-4 flex items-center gap-3 rounded-xl border border-[#c59a3d]/40 bg-gradient-to-br from-[#fbf2e7] to-white p-3.5 shadow-sm"
         >
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#5c3a1e] text-[#e3b23c]">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#5c3a1e] text-[#c59a3d]">
             <CreditCard size={18} />
           </span>
           <span className="min-w-0 flex-1">
             <span className="block text-sm font-semibold">Thẻ {membership.planName} đang hoạt động</span>
-            <span className="block text-xs text-[#8a7a72]">
+            <span className="block text-xs text-[#826f66]">
               Còn {membership.availableSessions}/{membership.totalSessions} buổi · {membership.reservedSessions > 0 ? `${membership.reservedSessions} lượt đang giữ · ` : ""}HSD {membership.expiresAt}
             </span>
           </span>
@@ -155,9 +155,9 @@ function OffersContent() {
       ) : null}
 
       <p className="mb-2.5 flex items-center gap-1.5 text-sm font-semibold">
-        <PackagePlus size={16} className="text-[#d13f1f]" /> Gói dài hạn — càng mua nhiều, càng tiết kiệm
+        <PackagePlus size={16} className="text-[#c64b32]" /> Gói dài hạn — càng mua nhiều, càng tiết kiệm
       </p>
-      <p className="mb-3 text-xs leading-5 text-[#8a7a72]">
+      <p className="mb-3 text-xs leading-5 text-[#826f66]">
         Thanh toán một lần qua VietQR; thẻ chỉ kích hoạt sau khi SePay xác nhận. Mỗi lượt áp dụng đúng dịch vụ ghi trên gói và không cộng thêm voucher.
       </p>
       <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
@@ -174,20 +174,20 @@ function OffersContent() {
               className={cn(
                 "relative flex min-h-[196px] flex-col items-center justify-center overflow-hidden rounded-xl border p-2.5 text-center transition",
                 selected
-                  ? "border-[#d13f1f] bg-[#fff2ef]"
+                  ? "border-[#c64b32] bg-[#f8ebe5]"
                   : plan.highlight
-                    ? "border-[#e3b23c] bg-gradient-to-br from-[#fff7ec] to-white"
-                    : "border-[#eadbd1] bg-white"
+                    ? "border-[#c59a3d] bg-gradient-to-br from-[#fbf2e7] to-white"
+                    : "border-[#e7d6ca] bg-white"
               )}
             >
-              <span className="mx-auto mb-1 block max-w-full truncate rounded-full bg-[#5c3a1e] px-2 py-0.5 text-[8px] font-semibold leading-4 text-[#e3b23c]">
+              <span className="mx-auto mb-1 block max-w-full truncate rounded-full bg-[#5c3a1e] px-2 py-0.5 text-[8px] font-semibold leading-4 text-[#c59a3d]">
                 {plan.badge ?? "Gói linh hoạt"}
               </span>
               <p className="line-clamp-2 min-h-8 text-[13px] font-semibold leading-4">{plan.name}</p>
               <p className="mt-1 line-clamp-2 min-h-7 text-[10px] leading-3.5 text-[#715943]">
                 Áp dụng: {planService?.name ?? "dịch vụ ghi trên thẻ"}
               </p>
-              <div className="mt-1 grid w-full grid-cols-2 gap-1 rounded-lg bg-white/80 px-1.5 py-1 text-[9px] text-[#715943] ring-1 ring-[#eadbd1]/70">
+              <div className="mt-1 grid w-full grid-cols-2 gap-1 rounded-lg bg-white/80 px-1.5 py-1 text-[9px] text-[#715943] ring-1 ring-[#e7d6ca]/70">
                 <span>
                   <strong className="block text-xs text-[#4a2d16]">{plan.bonusSessions > 0 ? `${plan.paidSessions}+${plan.bonusSessions}` : plan.sessions}</strong>
                   {plan.bonusSessions > 0 ? "Mua + tặng" : "Lượt sử dụng"}
@@ -195,9 +195,9 @@ function OffersContent() {
                 <span><strong className="block text-xs text-[#4a2d16]">{plan.validityDays}</strong> Ngày hiệu lực</span>
               </div>
               <div className="mt-1.5">
-                <p className="text-sm font-bold text-[#d13f1f]">{formatMoney(plan.price)}</p>
-                <p className="text-[9px] text-[#8a7a72]">~{formatMoney(pricePerSession)}/buổi</p>
-                <p className="mt-0.5 text-[9px] font-medium text-[#7a1718]">{plan.shareable ? "Dùng được cho nhóm" : "Dành cho chủ thẻ"}</p>
+                <p className="text-sm font-bold text-[#c64b32]">{formatMoney(plan.price)}</p>
+                <p className="text-[9px] text-[#826f66]">~{formatMoney(pricePerSession)}/buổi</p>
+                <p className="mt-0.5 text-[9px] font-medium text-[#7c2927]">{plan.shareable ? "Dùng được cho nhóm" : "Dành cho chủ thẻ"}</p>
               </div>
             </button>
           );
@@ -205,17 +205,17 @@ function OffersContent() {
       </div>
 
       {selectedPlan ? (
-        <div className="mt-3 overflow-hidden rounded-xl border border-[#e3b23c] bg-[#fff7ec]">
+        <div className="mt-3 overflow-hidden rounded-xl border border-[#c59a3d] bg-[#fbf2e7]">
           {step === "select" ? (
             <div className="p-4">
               <p className="flex items-center gap-2 text-sm font-semibold text-[#5c3a1e]">
                 <CreditCard size={16} className="shrink-0" /> Kích hoạt thẻ {selectedPlan.name}
               </p>
-              <p className="mt-1.5 text-xs leading-5 text-[#8a7a72]">
+              <p className="mt-1.5 text-xs leading-5 text-[#826f66]">
                 Thanh toán đủ {formatMoney(selectedPlan.price)} để kích hoạt thẻ ngay — hệ thống ghi nhớ hạng thẻ và tự động trừ buổi
                 mỗi lần check-in, không cần đặt cọc riêng lẻ từng buổi.
               </p>
-              <div className="mt-2.5 space-y-1.5 rounded-xl border border-[#eadbd1] bg-white p-3 text-[11px] leading-5 text-[#665b55]">
+              <div className="mt-2.5 space-y-1.5 rounded-xl border border-[#e7d6ca] bg-white p-3 text-[11px] leading-5 text-[#68574f]">
                 <p><strong className="text-[#4a2d16]">Dịch vụ:</strong> {selectedPlanService?.name ?? "Theo dịch vụ ghi trên thẻ"}</p>
                 <p>
                   <strong className="text-[#4a2d16]">Quyền lợi:</strong>{" "}
@@ -227,14 +227,14 @@ function OffersContent() {
                 <p><strong className="text-[#4a2d16]">Hiệu lực:</strong> {selectedPlan.validityDays} ngày tính từ lúc ngân hàng xác nhận thanh toán.</p>
               </div>
               <div className="mt-2.5 flex items-center justify-between rounded-lg bg-white px-3 py-2">
-                <span className="text-xs text-[#8a7a72]">Số tiền kích hoạt</span>
-                <span className="text-base font-bold text-[#d13f1f]">{formatMoney(selectedPlan.price)}</span>
+                <span className="text-xs text-[#826f66]">Số tiền kích hoạt</span>
+                <span className="text-base font-bold text-[#c64b32]">{formatMoney(selectedPlan.price)}</span>
               </div>
               {paymentError ? <p className="mt-2 rounded-xl bg-red-50 p-3 text-xs font-medium text-red-700">{paymentError}</p> : null}
               <button
                 type="button"
                 onClick={() => void preparePayment()}
-                className="mt-3 inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-gradient-to-b from-[#c22630] to-[#8f151a] px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-black/15"
+                className="mt-3 inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-gradient-to-b from-[#b6403a] to-[#8b2b28] px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-black/15"
               >
                 Thanh toán qua chuyển khoản
               </button>
@@ -243,9 +243,9 @@ function OffersContent() {
 
           {step === "bank" ? (
             <div className="flex flex-col items-center gap-2.5 p-8 text-center">
-              <Loader2 className="animate-spin text-[#d13f1f]" size={28} />
+              <Loader2 className="animate-spin text-[#c64b32]" size={28} />
               <p className="text-sm font-semibold text-[#5c3a1e]">Đang tạo VietQR thanh toán…</p>
-              <p className="text-xs text-[#8a7a72]">Mã sẽ có sẵn số tiền và nội dung đối soát SePay.</p>
+              <p className="text-xs text-[#826f66]">Mã sẽ có sẵn số tiền và nội dung đối soát SePay.</p>
             </div>
           ) : null}
 
@@ -266,25 +266,25 @@ function OffersContent() {
 
           {step === "confirming" ? (
             <div className="flex flex-col items-center gap-2.5 p-8 text-center">
-              <Loader2 className="animate-spin text-[#d13f1f]" size={28} />
+              <Loader2 className="animate-spin text-[#c64b32]" size={28} />
               <p className="text-sm font-semibold text-[#5c3a1e]">Đang chờ ngân hàng đối soát qua SePay...</p>
-              <p className="text-xs text-[#8a7a72]">Thẻ chưa được kích hoạt chỉ dựa trên thao tác bấm nút.</p>
+              <p className="text-xs text-[#826f66]">Thẻ chưa được kích hoạt chỉ dựa trên thao tác bấm nút.</p>
             </div>
           ) : null}
 
           {step === "done" ? (
             <div className="flex flex-col items-center gap-2 p-6 text-center">
-              <CheckCircle2 className="text-[#b86b1f]" size={32} />
+              <CheckCircle2 className="text-[#a85f29]" size={32} />
               <p className="text-sm font-semibold text-[#8a4f14]">Đã kích hoạt thẻ {selectedPlan.name}!</p>
-              <p className="text-xs leading-5 text-[#8a7a72]">
+              <p className="text-xs leading-5 text-[#826f66]">
                 Thẻ có {selectedPlan.paidSessions + selectedPlan.bonusSessions} buổi, hạn dùng {selectedPlan.validityDays} ngày. Hệ
                 thống sẽ tự động trừ buổi mỗi lần bạn check-in tại quán.
               </p>
               <div className="mt-1.5 flex gap-2">
-                <Link href="/toi" className="rounded-full border border-[#d13f1f] px-4 py-2 text-xs font-semibold text-[#d13f1f]">
+                <Link href="/toi" className="rounded-full border border-[#c64b32] px-4 py-2 text-xs font-semibold text-[#c64b32]">
                   Xem thẻ trong Tôi
                 </Link>
-                <Link href="/check-in" className="rounded-full bg-[#d13f1f] px-4 py-2 text-xs font-semibold text-white">
+                <Link href="/check-in" className="rounded-full bg-[#c64b32] px-4 py-2 text-xs font-semibold text-white">
                   Mở QR Check-in
                 </Link>
               </div>
@@ -294,7 +294,7 @@ function OffersContent() {
       ) : null}
 
       <p className="mb-1 mt-5 text-sm font-semibold">Voucher & mã giảm giá</p>
-      <p className="mb-2.5 truncate text-xs text-[#8a7a72]">Ưu đãi phù hợp theo khung giờ và nhu cầu của bạn.</p>
+      <p className="mb-2.5 truncate text-xs text-[#826f66]">Ưu đãi phù hợp theo khung giờ và nhu cầu của bạn.</p>
       <div className="grid grid-cols-2 gap-3">
         {vouchers.filter((voucher) => firstVisitEligible || voucher.code !== "FIRST60").map((voucher) => (
           <VoucherCard key={voucher.code} voucher={voucher} compact />
@@ -306,7 +306,7 @@ function OffersContent() {
 
 export default function OffersPage() {
   return (
-    <Suspense fallback={<main className="mx-auto min-h-screen max-w-3xl bg-[#fffaf6] px-4 pb-6 pt-3 sm:px-6" />}>
+    <Suspense fallback={<main className="mx-auto min-h-screen max-w-3xl bg-[#fdf8f3] px-4 pb-6 pt-3 sm:px-6" />}>
       <OffersContent />
     </Suspense>
   );

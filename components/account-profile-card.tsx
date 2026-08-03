@@ -31,45 +31,45 @@ export function AccountProfileCard() {
   const remainingToVip = Math.max(0, VIP_THRESHOLD - totalExpense);
 
   return (
-    <section className="rounded-xl border border-[#eadbd1] bg-white p-4 shadow-sm">
+    <section className="rounded-xl border border-[#e7d6ca] bg-white p-4 shadow-sm">
       <div className="flex items-center gap-3">
-        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#d13f1f] text-base font-semibold text-white">
+        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#c64b32] text-base font-semibold text-white">
           {hasIdentity ? initials(displayName) : <UserRound size={22} />}
         </span>
         <div className="min-w-0">
           <p className="truncate text-base font-semibold">{displayName}</p>
-          <p className="text-xs text-[#665b55]">{displayPhone}</p>
+          <p className="text-xs text-[#68574f]">{displayPhone}</p>
         </div>
         <Link
           href={account ? "/toi/cai-dat" : "/tai-khoan"}
           aria-label="Cài đặt thông tin cá nhân"
-          className="ml-auto flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#fff2ef] text-[#d13f1f] transition hover:bg-[#f9ddd7]"
+          className="ml-auto flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#f8ebe5] text-[#c64b32] transition hover:bg-[#f9ddd7]"
         >
           <Settings size={19} />
         </Link>
       </div>
 
-      <div className="mt-3.5 grid grid-cols-3 divide-x divide-[#f1e5dd] border-t border-[#f1e5dd] pt-3 text-center">
+      <div className="mt-3.5 grid grid-cols-3 divide-x divide-[#eee0d6] border-t border-[#eee0d6] pt-3 text-center">
         <div>
           <p className="text-sm font-semibold">{formatMoney(totalExpense)}</p>
-          <p className="mt-0.5 text-[11px] text-[#8a7a72]">Tổng chi tiêu</p>
+          <p className="mt-0.5 text-[11px] text-[#826f66]">Tổng chi tiêu</p>
         </div>
         <div>
           <p className="text-sm font-semibold">{Math.max(profile.totalVisits, account?.totalVisits ?? 0)}</p>
-          <p className="mt-0.5 text-[11px] text-[#8a7a72]">Lần ghé</p>
+          <p className="mt-0.5 text-[11px] text-[#826f66]">Lần ghé</p>
         </div>
         <div>
           <p className="truncate px-1 text-sm font-semibold">{profile.favoriteTherapist}</p>
-          <p className="mt-0.5 text-[11px] text-[#8a7a72]">KTV yêu thích</p>
+          <p className="mt-0.5 text-[11px] text-[#826f66]">KTV yêu thích</p>
         </div>
       </div>
 
-      <div className="mt-3 border-t border-[#f1e5dd] pt-3">
-        <div className="flex items-center justify-between text-xs text-[#8a7a72]"><span>Tiến độ hạng thành viên</span><span>VIP</span></div>
-        <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-[#f1e5dd]">
-          <div className="h-full rounded-full bg-[#d13f1f]" style={{ width: `${tierProgress}%` }} />
+      <div className="mt-3 border-t border-[#eee0d6] pt-3">
+        <div className="flex items-center justify-between text-xs text-[#826f66]"><span>Tiến độ hạng thành viên</span><span>VIP</span></div>
+        <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-[#eee0d6]">
+          <div className="h-full rounded-full bg-[#c64b32]" style={{ width: `${tierProgress}%` }} />
         </div>
-        <p className="mt-1.5 text-xs text-[#8a7a72]">Thêm <strong className="text-[#d13f1f]">{formatMoney(remainingToVip)}</strong> để lên hạng VIP.</p>
+        <p className="mt-1.5 text-xs text-[#826f66]">Thêm <strong className="text-[#c64b32]">{formatMoney(remainingToVip)}</strong> để lên hạng VIP.</p>
       </div>
     </section>
   );

@@ -45,9 +45,9 @@ export function AdminGuard({ children }: { children: React.ReactNode }) {
 
   if (!session || session.role === "THERAPIST") {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-[#fffaf6] px-4 text-[#191414]">
-        <div className="flex items-center gap-3 rounded-2xl border border-[#eadbd1] bg-white px-5 py-4 shadow-sm">
-          <span className="h-5 w-5 animate-spin rounded-full border-2 border-[#eadbd1] border-t-[#d13f1f]" />
+      <main className="flex min-h-screen items-center justify-center bg-[#fdf8f3] px-4 text-[#281b18]">
+        <div className="flex items-center gap-3 rounded-2xl border border-[#e7d6ca] bg-white px-5 py-4 shadow-sm">
+          <span className="h-5 w-5 animate-spin rounded-full border-2 border-[#e7d6ca] border-t-[#c64b32]" />
           <span className="text-sm font-semibold">Phiên quản trị đã kết thúc…</span>
         </div>
       </main>

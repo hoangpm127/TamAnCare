@@ -28,9 +28,9 @@ export default async function CheckInPage({ searchParams }: { searchParams: Prom
     : null;
 
   return (
-    <main className="mx-auto max-w-md px-4 pb-6 pt-3 text-[#191414] sm:px-6">
+    <main className="mx-auto max-w-md px-4 pb-6 pt-3 text-[#281b18] sm:px-6">
       <div className="mb-2.5 flex items-center gap-2">
-        <QrCodeIcon className="text-[#d13f1f]" size={20} />
+        <QrCodeIcon className="text-[#c64b32]" size={20} />
         <h1 className="text-xl font-semibold tracking-tight">{therapistRecord ? `Check-in cùng ${therapistRecord.fullName}` : "Check-in tại cơ sở"}</h1>
       </div>
       <CheckinFlow branches={branches} initialBookingCode={query.bookingCode} initialBranchId={venueRecord?.id} initialTherapist={therapistRecord ? { id: therapistRecord.id, branchId: therapistRecord.branchId, name: therapistRecord.fullName } : undefined} />

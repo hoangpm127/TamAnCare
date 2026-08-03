@@ -38,7 +38,7 @@ function CustomerTopbar({ pathname }: { pathname: string }) {
   const showBack = pathname !== "/";
 
   return (
-    <header className="sticky top-0 z-40 border-b border-[#eadbd1] bg-white/95 shadow-[0_1px_12px_rgba(122,23,24,0.08)] backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-[#e7d6ca] bg-[#fffdf9]/95 shadow-[0_1px_14px_rgba(76,25,27,0.07)] backdrop-blur">
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-10">
         <div className="flex min-w-0 items-center gap-1">
           {showBack ? (
@@ -46,7 +46,7 @@ function CustomerTopbar({ pathname }: { pathname: string }) {
               type="button"
               onClick={() => router.back()}
               aria-label="Quay lại"
-              className="tap-feedback flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[#191414] hover:bg-[#fff2ef] sm:h-9 sm:w-9"
+              className="tap-feedback flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[#281b18] hover:bg-[#f8ebe5] sm:h-9 sm:w-9"
             >
               <ChevronLeft size={20} />
             </button>
@@ -54,14 +54,14 @@ function CustomerTopbar({ pathname }: { pathname: string }) {
           <Link href="/" className="tap-feedback relative flex min-w-0 items-center gap-2 rounded-xl text-sm font-semibold tracking-normal sm:text-base sm:tracking-wide">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/tam-an-center-mark-transparent.png" alt="" width={34} height={34} className="h-8 w-8 shrink-0 object-contain drop-shadow-sm" />
-            <BrandWordmark className="h-[14px] w-[104px] text-[#7a1718] sm:h-[18px] sm:w-[138px]" />
+            <BrandWordmark className="h-[14px] w-[104px] text-[#7c2927] sm:h-[18px] sm:w-[138px]" />
             <NavigationPendingIndicator />
           </Link>
         </div>
         <div className="flex items-center gap-1.5 sm:gap-2">
           <Link
             href="/check-in"
-            className="tap-feedback relative inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#fff2ef] text-[#d13f1f] sm:h-9 sm:w-9"
+            className="tap-feedback relative inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#edf6f2] text-[#0b5d45] ring-1 ring-[#0b5d45]/10 sm:h-9 sm:w-9"
             aria-label="Check-in tại cơ sở"
           >
             <QrCode size={16} />
@@ -69,7 +69,7 @@ function CustomerTopbar({ pathname }: { pathname: string }) {
           </Link>
           <Link
             href="/chat"
-            className="tap-feedback relative inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#fff2ef] text-[#d13f1f] sm:h-9 sm:w-9"
+            className="tap-feedback relative inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#fae9e4] text-[#c64b32] ring-1 ring-[#c64b32]/10 sm:h-9 sm:w-9"
             aria-label="Chat với cơ sở"
           >
             <MessageCircle size={16} />
@@ -77,7 +77,7 @@ function CustomerTopbar({ pathname }: { pathname: string }) {
           </Link>
           <Link
             href="/vi"
-            className="tap-feedback relative inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#fff2ef] text-[#d13f1f] sm:h-9 sm:w-9"
+            className="tap-feedback relative inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#fbf1d8] text-[#76551d] ring-1 ring-[#c59a3d]/15 sm:h-9 sm:w-9"
             aria-label="Thu - Chi của tôi"
           >
             <CircleDollarSign size={16} />
@@ -85,12 +85,12 @@ function CustomerTopbar({ pathname }: { pathname: string }) {
           </Link>
           <Link
             href="/thong-bao"
-            className="tap-feedback relative inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#fff2ef] text-[#d13f1f] sm:h-9 sm:w-9"
+            className="tap-feedback relative inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#f8ebe5] text-[#7c2927] ring-1 ring-[#7c2927]/10 sm:h-9 sm:w-9"
             aria-label="Thông báo"
           >
             <Bell size={16} />
             {unreadCount > 0 ? (
-              <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#b51f24] px-1 text-[9px] font-bold text-white ring-2 ring-white">
+              <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#a93a36] px-1 text-[9px] font-bold text-white ring-2 ring-white">
                 {unreadCount}
               </span>
             ) : null}
@@ -104,7 +104,7 @@ function CustomerTopbar({ pathname }: { pathname: string }) {
 
 function CustomerBottomNav({ pathname }: { pathname: string }) {
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-[#eadbd1] bg-white/95 shadow-[0_-1px_12px_rgba(159,29,32,0.06)] backdrop-blur pb-[env(safe-area-inset-bottom)] md:hidden">
+    <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-[#e7d6ca] bg-[#fffdf9]/95 shadow-[0_-2px_16px_rgba(76,25,27,0.06)] backdrop-blur pb-[env(safe-area-inset-bottom)] md:hidden">
       <div className="mx-auto flex max-w-md items-stretch justify-around">
         {NAV_ITEMS.map((item) => {
           const active = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
@@ -122,12 +122,12 @@ function CustomerBottomNav({ pathname }: { pathname: string }) {
               <span
                 className={cn(
                   "flex h-9 w-9 items-center justify-center rounded-full transition-all",
-                  active ? "bg-gradient-to-br from-[#d13f1f] to-[#8f151a] shadow-sm shadow-[#9f1d20]/30" : ""
+                  active ? "bg-gradient-to-br from-[#c64b32] to-[#8b2b28] shadow-sm shadow-[#9f1d20]/30" : ""
                 )}
               >
-                {Icon ? <Icon size={19} className={active ? "text-white" : "text-[#8a7a72]"} /> : null}
+                {Icon ? <Icon size={19} className={active ? "text-white" : "text-[#826f66]"} /> : null}
               </span>
-              <span className={cn("text-[11px] transition-colors", active ? "font-semibold text-[#a92f18]" : "font-medium text-[#8a7a72]")}>
+              <span className={cn("text-[11px] transition-colors", active ? "font-semibold text-[#a63d2e]" : "font-medium text-[#826f66]")}>
                 {item.label}
               </span>
               <NavigationPendingIndicator className="rounded-none" />
@@ -144,18 +144,18 @@ export function CustomerShell({ children }: { children: React.ReactNode }) {
   const showBottomNav = !HIDE_BOTTOM_NAV_PREFIXES.some((prefix) => pathname.startsWith(prefix));
 
   return (
-    <div className="flex min-h-dvh flex-col bg-[#fffaf6]">
+    <div className="flex min-h-dvh flex-col bg-[#fdf8f3]">
       <CustomerTopbar pathname={pathname} />
       <ActiveServiceBanner />
       <div className="customer-app flex-1">{children}</div>
-      <footer className={cn("shrink-0 border-t border-[#a64d2d] bg-gradient-to-br from-[#4d0c10] via-[#7a1718] to-[#b83d22] px-4 py-4 text-center text-[11px] font-medium leading-5 text-[#fff4df]", showBottomNav && "mb-[calc(68px+env(safe-area-inset-bottom))] md:mb-0")}>
+      <footer className={cn("shrink-0 border-t border-[#c59a3d]/55 bg-gradient-to-br from-[#4c191b] via-[#7c2927] to-[#b85336] px-4 py-4 text-center text-[11px] font-medium leading-5 text-[#fff4df] shadow-[inset_0_1px_0_rgba(232,207,138,0.18)]", showBottomNav && "mb-[calc(68px+env(safe-area-inset-bottom))] md:mb-0")}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/tam-an-center-mark-transparent.png" alt="" width={58} height={58} className="mx-auto mb-1 h-12 w-12 object-contain drop-shadow" />
-        <BrandWordmark className="mx-auto h-[21px] w-40 text-[#f5dc8f]" />
+        <BrandWordmark className="mx-auto h-[21px] w-40 text-[#e8cf8a]" />
         <div className="mt-0.5 flex flex-wrap justify-center gap-x-4 gap-y-1">
-          <Link href="/dieu-khoan" className="transition-colors hover:text-[#f5d982]">Điều khoản</Link>
-          <Link href="/chinh-sach-rieng-tu" className="transition-colors hover:text-[#f5d982]">Bảo vệ dữ liệu</Link>
-          <Link href="/chinh-sach-dat-lich" className="transition-colors hover:text-[#f5d982]">Đặt lịch & đặt cọc</Link>
+          <Link href="/dieu-khoan" className="transition-colors hover:text-[#e7c878]">Điều khoản</Link>
+          <Link href="/chinh-sach-rieng-tu" className="transition-colors hover:text-[#e7c878]">Bảo vệ dữ liệu</Link>
+          <Link href="/chinh-sach-dat-lich" className="transition-colors hover:text-[#e7c878]">Đặt lịch & đặt cọc</Link>
         </div>
       </footer>
       {showBottomNav ? <CustomerBottomNav pathname={pathname} /> : null}

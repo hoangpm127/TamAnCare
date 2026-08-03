@@ -71,9 +71,9 @@ function monthTitle(value: Date) {
 }
 
 function statusView(rawStatus: string) {
-  if (rawStatus === "PENDING") return { label: "Chờ xác nhận", badge: "bg-[#fff0c9] text-[#805914]", dot: "bg-[#d99a22]" };
-  if (["CHECKED_IN", "IN_SERVICE"].includes(rawStatus)) return { label: "Đang phục vụ", badge: "bg-[#ffe0de] text-[#d13f1f]", dot: "bg-[#c33838]" };
-  if (rawStatus === "COMPLETED") return { label: "Hoàn thành", badge: "bg-[#dff5e8] text-[#12683f]", dot: "bg-[#1d9a60]" };
+  if (rawStatus === "PENDING") return { label: "Chờ xác nhận", badge: "bg-[#fff0c9] text-[#76551d]", dot: "bg-[#d99a22]" };
+  if (["CHECKED_IN", "IN_SERVICE"].includes(rawStatus)) return { label: "Đang phục vụ", badge: "bg-[#ffe0de] text-[#c64b32]", dot: "bg-[#c33838]" };
+  if (rawStatus === "COMPLETED") return { label: "Hoàn thành", badge: "bg-[#dff5e8] text-[#0b6248]", dot: "bg-[#1d9a60]" };
   if (["CANCELLED", "NO_SHOW"].includes(rawStatus)) return { label: rawStatus === "NO_SHOW" ? "Khách không đến" : "Đã hủy", badge: "bg-[#eee9e5] text-[#6f625b]", dot: "bg-[#9b8d84]" };
   return { label: "Đã xác nhận", badge: "bg-[#e6f0ff] text-[#2452b8]", dot: "bg-[#3b72d9]" };
 }
@@ -141,13 +141,13 @@ export function AdminCalendarOperations() {
 
   return (
     <div className="mx-auto max-w-7xl px-3 py-3 sm:px-6 sm:py-5 lg:px-10">
-      <section className="relative overflow-hidden rounded-2xl border border-[#d8b46a]/60 bg-white shadow-[0_12px_32px_rgba(74,44,28,0.08)]">
-        <div className="bg-gradient-to-r from-[#291714] via-[#63291d] to-[#d13f1f] px-3.5 py-3 text-white sm:px-5">
+      <section className="relative overflow-hidden rounded-2xl border border-[#d2ad5d]/60 bg-white shadow-[0_12px_32px_rgba(74,44,28,0.08)]">
+        <div className="bg-gradient-to-r from-[#291714] via-[#63291d] to-[#c64b32] px-3.5 py-3 text-white sm:px-5">
           <div className="flex items-center justify-between gap-3">
             <div className="flex min-w-0 items-center gap-2.5">
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/10 text-[#f5d982] ring-1 ring-white/15"><CalendarDays size={17} /></span>
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/10 text-[#e7c878] ring-1 ring-white/15"><CalendarDays size={17} /></span>
               <div className="min-w-0">
-                <p className="flex items-center gap-1 text-[9px] font-bold uppercase tracking-[0.13em] text-[#f5d982]">{session.role === "OWNER" ? <ShieldCheck size={11} /> : <Building2 size={11} />} {session.branchLabel}</p>
+                <p className="flex items-center gap-1 text-[9px] font-bold uppercase tracking-[0.13em] text-[#e7c878]">{session.role === "OWNER" ? <ShieldCheck size={11} /> : <Building2 size={11} />} {session.branchLabel}</p>
                 <h1 className="truncate text-base font-semibold sm:text-lg">Lịch vận hành</h1>
               </div>
             </div>
@@ -155,29 +155,29 @@ export function AdminCalendarOperations() {
           </div>
           <div className="mt-2.5 flex flex-wrap items-center gap-1.5 text-[9px] font-semibold">
             <span className="rounded-full bg-white/12 px-2.5 py-1">{monthEvents.length} Booking</span>
-            <span className="rounded-full bg-[#fff0c9] px-2.5 py-1 text-[#805914]">{waitingCount} chờ xác nhận</span>
-            {activeCount ? <span className="rounded-full bg-[#ffe0de] px-2.5 py-1 text-[#d13f1f]">{activeCount} đang phục vụ</span> : null}
-            <span className="rounded-full bg-[#e7f7ed] px-2.5 py-1 text-[#12683f]">Dự kiến {formatMoney(expectedRevenue)}</span>
+            <span className="rounded-full bg-[#fff0c9] px-2.5 py-1 text-[#76551d]">{waitingCount} chờ xác nhận</span>
+            {activeCount ? <span className="rounded-full bg-[#ffe0de] px-2.5 py-1 text-[#c64b32]">{activeCount} đang phục vụ</span> : null}
+            <span className="rounded-full bg-[#e7f7ed] px-2.5 py-1 text-[#0b6248]">Dự kiến {formatMoney(expectedRevenue)}</span>
           </div>
         </div>
 
-        <div className="border-b border-[#eadbd1] bg-[#fffdfb] p-2.5 sm:px-4">
+        <div className="border-b border-[#e7d6ca] bg-[#fffdfb] p-2.5 sm:px-4">
           <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2">
-            <button type="button" aria-label="Tháng trước" onClick={() => changeMonth(addMonths(visibleMonth, -1))} className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#eadbd1] bg-white text-[#7a2318]"><ChevronLeft size={17} /></button>
+            <button type="button" aria-label="Tháng trước" onClick={() => changeMonth(addMonths(visibleMonth, -1))} className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#e7d6ca] bg-white text-[#8c332a]"><ChevronLeft size={17} /></button>
             <label className="relative block min-w-0">
               <span className="pointer-events-none absolute inset-0 flex items-center justify-center text-sm font-semibold capitalize text-[#291714]">{monthTitle(visibleMonth)}</span>
-              <input aria-label="Chọn tháng" type="month" value={format(visibleMonth, "yyyy-MM")} onChange={(event) => event.target.value && changeMonth(new Date(`${event.target.value}-01T12:00:00`))} className="h-9 w-full cursor-pointer rounded-xl border border-[#eadbd1] bg-white text-center text-transparent [color-scheme:light]" />
+              <input aria-label="Chọn tháng" type="month" value={format(visibleMonth, "yyyy-MM")} onChange={(event) => event.target.value && changeMonth(new Date(`${event.target.value}-01T12:00:00`))} className="h-9 w-full cursor-pointer rounded-xl border border-[#e7d6ca] bg-white text-center text-transparent [color-scheme:light]" />
             </label>
-            <button type="button" aria-label="Tháng sau" onClick={() => changeMonth(addMonths(visibleMonth, 1))} className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#eadbd1] bg-white text-[#7a2318]"><ChevronRight size={17} /></button>
+            <button type="button" aria-label="Tháng sau" onClick={() => changeMonth(addMonths(visibleMonth, 1))} className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#e7d6ca] bg-white text-[#8c332a]"><ChevronRight size={17} /></button>
           </div>
 
           <div className="mt-2 grid grid-cols-[minmax(0,1fr)_132px] gap-2">
             <div className="scrollbar-hide flex gap-1.5 overflow-x-auto rounded-xl bg-[#f7f1ed] p-1">
-              {session.role === "OWNER" ? <button type="button" onClick={() => setBranchId("all")} className={cn("shrink-0 rounded-lg px-3 py-2 text-[10px] font-semibold", allowedBranch === "all" ? "bg-[#291714] text-white shadow-sm" : "text-[#665b55]")}>Tất cả</button> : null}
+              {session.role === "OWNER" ? <button type="button" onClick={() => setBranchId("all")} className={cn("shrink-0 rounded-lg px-3 py-2 text-[10px] font-semibold", allowedBranch === "all" ? "bg-[#291714] text-white shadow-sm" : "text-[#68574f]")}>Tất cả</button> : null}
               {visibleBranches.map((branch) => {
                 const count = timeFiltered.filter((event) => event.branchId === branch.id && isWithinInterval(event.start, monthRange)).length;
                 const active = allowedBranch === branch.id;
-                return <button key={branch.id} type="button" onClick={() => session.role === "OWNER" && setBranchId(branch.id)} className={cn("flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-2 text-[10px] font-semibold", active ? "bg-[#d13f1f] text-white shadow-sm" : "text-[#665b55]")}><i className={cn("h-1.5 w-1.5 rounded-full", active ? "bg-[#f5d982]" : "bg-[#b9862c]")} />{branch.label}<span className={cn("rounded-full px-1.5 text-[8px]", active ? "bg-white/15" : "bg-white")}>{count}</span></button>;
+                return <button key={branch.id} type="button" onClick={() => session.role === "OWNER" && setBranchId(branch.id)} className={cn("flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-2 text-[10px] font-semibold", active ? "bg-[#c64b32] text-white shadow-sm" : "text-[#68574f]")}><i className={cn("h-1.5 w-1.5 rounded-full", active ? "bg-[#e7c878]" : "bg-[#9f7428]")} />{branch.label}<span className={cn("rounded-full px-1.5 text-[8px]", active ? "bg-white/15" : "bg-white")}>{count}</span></button>;
               })}
             </div>
             <CompactSelect value={dayPart} onValueChange={(value) => setDayPart(value as DayPart)} dialogTitle="Lọc lịch theo ca" triggerClassName="min-h-10 rounded-xl py-2" options={DAY_PARTS} />
@@ -186,10 +186,10 @@ export function AdminCalendarOperations() {
 
         <div className="relative bg-gradient-to-b from-[#fffaf4] to-white px-2 pb-3 pt-5 sm:px-4 sm:pb-4">
           <div aria-hidden className="absolute left-4 right-4 top-0 flex -translate-y-1/2 justify-around">
-            {Array.from({ length: 7 }, (_, index) => <span key={index} className="h-5 w-2 rounded-full border border-[#7b5129] bg-gradient-to-b from-[#f6d989] via-[#a8752e] to-[#f5d982] shadow-sm" />)}
+            {Array.from({ length: 7 }, (_, index) => <span key={index} className="h-5 w-2 rounded-full border border-[#7b5129] bg-gradient-to-b from-[#f6d989] via-[#a8752e] to-[#e7c878] shadow-sm" />)}
           </div>
-          <div className="grid grid-cols-7 border-b border-[#eadbd1] pb-1.5 text-center text-[9px] font-bold uppercase tracking-[0.08em] text-[#8a6a58]">
-            {WEEKDAYS.map((day) => <span key={day} className={day === "CN" ? "text-[#d13f1f]" : ""}>{day}</span>)}
+          <div className="grid grid-cols-7 border-b border-[#e7d6ca] pb-1.5 text-center text-[9px] font-bold uppercase tracking-[0.08em] text-[#8a6a58]">
+            {WEEKDAYS.map((day) => <span key={day} className={day === "CN" ? "text-[#c64b32]" : ""}>{day}</span>)}
           </div>
           <div className="mt-1 grid grid-cols-7 gap-1 sm:gap-1.5">
             {calendarDays.map((day) => {
@@ -207,12 +207,12 @@ export function AdminCalendarOperations() {
                   onClick={() => selectCalendarDay(day)}
                   className={cn(
                     "relative min-h-[66px] rounded-xl border px-1 py-1.5 text-left transition sm:min-h-[88px] sm:px-2",
-                    selected ? "border-[#d13f1f] bg-[#fff0ed] shadow-[0_5px_15px_rgba(159,29,32,0.13)] ring-1 ring-[#d13f1f]/20" : "border-[#eee4dd] bg-white hover:border-[#d8b46a]",
+                    selected ? "border-[#c64b32] bg-[#fae9e4] shadow-[0_5px_15px_rgba(159,29,32,0.13)] ring-1 ring-[#c64b32]/20" : "border-[#eee4dd] bg-white hover:border-[#d2ad5d]",
                     !currentMonth && "opacity-40",
                   )}
                 >
-                  <span className={cn("flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-bold", isToday(day) ? "bg-[#d13f1f] text-white" : selected ? "text-[#d13f1f]" : "text-[#3c2d27]")}>{format(day, "d")}</span>
-                  {dayEvents.length ? <div className="mt-1 flex items-center justify-center gap-1 sm:mt-2"><strong className="text-[11px] text-[#7a2318] sm:text-xs">{dayEvents.length}</strong><i className="h-2 w-2 rounded-full bg-[#1d9a60]" /><span className="sr-only">lịch</span>{pending ? <i title={`${pending} chờ xác nhận`} className="h-1.5 w-1.5 rounded-full bg-[#d99a22]" /> : null}{serving ? <i title={`${serving} đang phục vụ`} className="h-1.5 w-1.5 rounded-full bg-[#c33838]" /> : null}</div> : <span className="mt-2 block text-center text-[8px] text-[#c1b5ae]">—</span>}
+                  <span className={cn("flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-bold", isToday(day) ? "bg-[#c64b32] text-white" : selected ? "text-[#c64b32]" : "text-[#3c2d27]")}>{format(day, "d")}</span>
+                  {dayEvents.length ? <div className="mt-1 flex items-center justify-center gap-1 sm:mt-2"><strong className="text-[11px] text-[#8c332a] sm:text-xs">{dayEvents.length}</strong><i className="h-2 w-2 rounded-full bg-[#1d9a60]" /><span className="sr-only">lịch</span>{pending ? <i title={`${pending} chờ xác nhận`} className="h-1.5 w-1.5 rounded-full bg-[#d99a22]" /> : null}{serving ? <i title={`${serving} đang phục vụ`} className="h-1.5 w-1.5 rounded-full bg-[#c33838]" /> : null}</div> : <span className="mt-2 block text-center text-[8px] text-[#c1b5ae]">—</span>}
                 </button>
               );
             })}
@@ -221,16 +221,16 @@ export function AdminCalendarOperations() {
         </div>
       </section>
 
-      <section ref={detailRef} className="mt-3 scroll-mt-28 overflow-hidden rounded-2xl border border-[#d8b46a]/60 bg-white shadow-sm">
-        <div className="flex items-center justify-between gap-3 border-b border-[#eadbd1] bg-[#fffaf4] px-3.5 py-3">
+      <section ref={detailRef} className="mt-3 scroll-mt-28 overflow-hidden rounded-2xl border border-[#d2ad5d]/60 bg-white shadow-sm">
+        <div className="flex items-center justify-between gap-3 border-b border-[#e7d6ca] bg-[#fffaf4] px-3.5 py-3">
           <div className="min-w-0">
-            <p className="text-[9px] font-bold uppercase tracking-[0.12em] text-[#d13f1f]">Chi tiết trong ngày</p>
+            <p className="text-[9px] font-bold uppercase tracking-[0.12em] text-[#c64b32]">Chi tiết trong ngày</p>
             <h2 className="mt-0.5 truncate text-sm font-semibold capitalize">{new Intl.DateTimeFormat("vi-VN", { weekday: "long", day: "2-digit", month: "2-digit", year: "numeric" }).format(selectedDay)}</h2>
           </div>
           <span className="shrink-0 rounded-full bg-[#291714] px-2.5 py-1 text-[9px] font-semibold text-white">{selectedEvents.length} lịch</span>
         </div>
         {selectedEvents.length === 0 ? (
-          <div className="px-4 py-9 text-center"><CalendarDays className="mx-auto text-[#c9ab91]" size={25} /><p className="mt-2 text-xs font-medium text-[#665b55]">Ngày này chưa có Booking.</p><p className="mt-1 text-[10px] text-[#9a8b83]">Chạm ngày khác trên cuốn lịch để xem nhanh lịch vận hành.</p></div>
+          <div className="px-4 py-9 text-center"><CalendarDays className="mx-auto text-[#c9ab91]" size={25} /><p className="mt-2 text-xs font-medium text-[#68574f]">Ngày này chưa có Booking.</p><p className="mt-1 text-[10px] text-[#9a8b83]">Chạm ngày khác trên cuốn lịch để xem nhanh lịch vận hành.</p></div>
         ) : (
           <div className="divide-y divide-[#f0e6df]">
             {selectedEvents.map((event) => {
@@ -241,9 +241,9 @@ export function AdminCalendarOperations() {
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-1.5"><p className="truncate text-xs font-semibold">{event.customer}</p><span className={cn("rounded-full px-2 py-1 text-[8px] font-semibold", status.badge)}>{status.label}</span></div>
                   <p className="mt-1 truncate text-[10px] font-medium text-[#4b3b34]">{event.service}</p>
-                  <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1 text-[9px] text-[#7d6e66]"><span className="flex items-center gap-1"><UserRound size={10} className="text-[#d13f1f]" />{event.therapist}</span><span className="flex items-center gap-1"><MapPin size={10} className="text-[#d13f1f]" />{branch?.label} · {event.room}</span><span className="flex items-center gap-1"><Clock3 size={10} className="text-[#d13f1f]" />{event.phone} · {displayBookingCode(event.code)}</span></div>
+                  <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1 text-[9px] text-[#7d6e66]"><span className="flex items-center gap-1"><UserRound size={10} className="text-[#c64b32]" />{event.therapist}</span><span className="flex items-center gap-1"><MapPin size={10} className="text-[#c64b32]" />{branch?.label} · {event.room}</span><span className="flex items-center gap-1"><Clock3 size={10} className="text-[#c64b32]" />{event.phone} · {displayBookingCode(event.code)}</span></div>
                 </div>
-                <div className="col-start-2 flex items-center justify-between gap-3 rounded-lg bg-[#fff7ec] px-2.5 py-2 text-[9px] sm:col-auto sm:min-w-[170px] sm:flex-col sm:items-end sm:bg-transparent sm:p-0"><span>Đã cọc <strong className="text-[#16784a]">{formatMoney(event.deposit)}</strong></span><strong className="text-[11px]">{formatMoney(event.amount)}</strong></div>
+                <div className="col-start-2 flex items-center justify-between gap-3 rounded-lg bg-[#fbf2e7] px-2.5 py-2 text-[9px] sm:col-auto sm:min-w-[170px] sm:flex-col sm:items-end sm:bg-transparent sm:p-0"><span>Đã cọc <strong className="text-[#0b5d45]">{formatMoney(event.deposit)}</strong></span><strong className="text-[11px]">{formatMoney(event.amount)}</strong></div>
               </article>;
             })}
           </div>

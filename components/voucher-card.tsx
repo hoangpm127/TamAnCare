@@ -50,11 +50,11 @@ export function VoucherCard({ voucher, className, compact, showAllLink = false }
           <p className="text-sm font-bold" style={{ color: voucher.accent }}>
             {voucher.type === "PERCENT" ? `Giảm ${voucher.value}%` : `Giảm ${voucher.value.toLocaleString("vi-VN")}đ`}
           </p>
-          <p className="mt-1 line-clamp-2 text-[11px] font-medium leading-4 text-[#665b55]">{voucher.name}</p>
-          <p className="mt-1 line-clamp-2 text-[10px] leading-3.5 text-[#8a7a72]">
+          <p className="mt-1 line-clamp-2 text-[11px] font-medium leading-4 text-[#68574f]">{voucher.name}</p>
+          <p className="mt-1 line-clamp-2 text-[10px] leading-3.5 text-[#826f66]">
             Đơn từ {formatMoney(voucher.minSpend)} · {voucher.constraint}
           </p>
-          <p className="mt-1 truncate text-[10px] text-[#8a7a72]">HSD {voucher.expiresAt}</p>
+          <p className="mt-1 truncate text-[10px] text-[#826f66]">HSD {voucher.expiresAt}</p>
           <button
             type="button"
             onClick={copyCode}
@@ -93,15 +93,15 @@ export function VoucherCard({ voucher, className, compact, showAllLink = false }
         </span>
       </div>
       <div className="flex flex-1 flex-col p-3.5">
-        <p className="line-clamp-1 h-5 text-sm font-semibold leading-5 text-[#191414]" title={voucher.name}>{voucher.name}</p>
-        <p className="mt-0.5 flex items-center gap-1 text-xs leading-4 text-[#8a7a72]">
+        <p className="line-clamp-1 h-5 text-sm font-semibold leading-5 text-[#281b18]" title={voucher.name}>{voucher.name}</p>
+        <p className="mt-0.5 flex items-center gap-1 text-xs leading-4 text-[#826f66]">
           <Clock size={12} className="shrink-0" />
           <span className="truncate">
             {voucher.constraint} · HSD {voucher.expiresAt}
           </span>
         </p>
         <div className="mt-3 flex items-center justify-between gap-2">
-          <span className="rounded-md bg-[#f7f2ee] px-2 py-1 text-xs font-bold tracking-wide text-[#191414]">{voucher.code}</span>
+          <span className="rounded-md bg-[#f7f2ee] px-2 py-1 text-xs font-bold tracking-wide text-[#281b18]">{voucher.code}</span>
           <span className="flex items-center gap-1.5">
             <button
               type="button"
@@ -118,7 +118,7 @@ export function VoucherCard({ voucher, className, compact, showAllLink = false }
                 href="/uu-dai"
                 aria-label="Xem tất cả ưu đãi"
                 title="Xem tất cả ưu đãi"
-                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#e3b23c] bg-[#5c3a1e] text-[#f5d982] shadow-sm transition hover:translate-x-0.5"
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#c59a3d] bg-[#5c3a1e] text-[#e7c878] shadow-sm transition hover:translate-x-0.5"
               >
                 <ArrowRight size={15} />
               </Link>

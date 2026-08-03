@@ -1,6 +1,6 @@
 const PALETTES = [
   { skin: "#f3c9a4", hair: "#2c2018", bg: ["#fdf0ea", "#f6d9c4"] },
-  { skin: "#eab98f", hair: "#241a14", bg: ["#fff2ef", "#ffe3da"] },
+  { skin: "#eab98f", hair: "#241a14", bg: ["#f8ebe5", "#ffe3da"] },
   { skin: "#f6d3ae", hair: "#3b2a20", bg: ["#f4ece3", "#e8d6c4"] },
   { skin: "#e9b48c", hair: "#1f1712", bg: ["#fbeadb", "#f2cdb0"] },
 ];

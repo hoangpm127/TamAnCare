@@ -24,7 +24,7 @@ export function BankSelector({ selected, onSelect }: { selected: string | null; 
           onClick={() => onSelect(bank.code)}
           className={cn(
             "flex flex-col items-center gap-1.5 rounded-xl border p-2.5 transition",
-            selected === bank.code ? "border-[#d13f1f] bg-[#fff2ef]" : "border-[#eadbd1] bg-white hover:border-[#c9a59a]"
+            selected === bank.code ? "border-[#c64b32] bg-[#f8ebe5]" : "border-[#e7d6ca] bg-white hover:border-[#c7a296]"
           )}
         >
           <span
@@ -33,7 +33,7 @@ export function BankSelector({ selected, onSelect }: { selected: string | null; 
           >
             {bank.code}
           </span>
-          <span className="line-clamp-1 text-[10px] font-medium text-[#4d403a]">{bank.name}</span>
+          <span className="line-clamp-1 text-[10px] font-medium text-[#51423b]">{bank.name}</span>
         </button>
       ))}
     </div>

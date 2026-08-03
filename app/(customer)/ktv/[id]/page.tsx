@@ -42,8 +42,8 @@ export default async function TherapistProfilePage({ params }: { params: Promise
   const branchName = branch.name.replace(/^Tâm An Center · /, "");
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-6 pb-28 text-[#191414] sm:px-6">
-      <Link href="/ktv" className="mb-3 inline-flex items-center gap-1 text-sm font-semibold text-[#d13f1f]">
+    <main className="mx-auto max-w-3xl px-4 py-6 pb-28 text-[#281b18] sm:px-6">
+      <Link href="/ktv" className="mb-3 inline-flex items-center gap-1 text-sm font-semibold text-[#c64b32]">
         <ChevronLeft size={16} /> Đội ngũ KTV
       </Link>
 
@@ -54,7 +54,7 @@ export default async function TherapistProfilePage({ params }: { params: Promise
             <h1 className="text-lg font-semibold tracking-tight">{therapist.fullName}</h1>
             <p className="mt-1 flex items-center gap-1.5 text-sm text-white/85">
               {reviews.length > 0 ? (
-                <><Star size={14} className="fill-[#e3b23c] text-[#e3b23c]" /> {avgReviewRating.toFixed(1)} ({reviews.length} đánh giá)</>
+                <><Star size={14} className="fill-[#c59a3d] text-[#c59a3d]" /> {avgReviewRating.toFixed(1)} ({reviews.length} đánh giá)</>
               ) : "KTV mới trên hệ thống · Chưa có đánh giá"}
             </p>
             <span className="mt-2 inline-flex rounded-full bg-white/10 px-2.5 py-1 text-[11px] font-semibold text-[#8fd3a8]">
@@ -78,83 +78,83 @@ export default async function TherapistProfilePage({ params }: { params: Promise
         </div>
       </section>
 
-      <section className="mt-4 rounded-xl border border-[#eadbd1] bg-white p-4">
+      <section className="mt-4 rounded-xl border border-[#e7d6ca] bg-white p-4">
         <h2 className="flex items-center gap-2 text-sm font-semibold">
-          <Sparkles size={15} className="text-[#d13f1f]" /> Giới thiệu
+          <Sparkles size={15} className="text-[#c64b32]" /> Giới thiệu
         </h2>
-        <p className="mt-1.5 text-sm leading-6 text-[#665b55]">
+        <p className="mt-1.5 text-sm leading-6 text-[#68574f]">
           {therapist.publicBio ?? `KTV tại ${branchName}, chuyên ${therapist.skills.join(", ")}. Hồ sơ hiển thị từ dữ liệu vận hành và đánh giá sau các booking đã hoàn thành.`}
         </p>
         <div className="mt-3 flex flex-wrap gap-1.5">
           {(therapist.publicStrengths.length ? therapist.publicStrengths : therapist.skills).map((skill) => (
-            <span key={skill} className="rounded-full bg-[#fff2ef] px-2.5 py-1 text-xs font-semibold text-[#d13f1f]">
+            <span key={skill} className="rounded-full bg-[#f8ebe5] px-2.5 py-1 text-xs font-semibold text-[#c64b32]">
               {skill}
             </span>
           ))}
         </div>
       </section>
 
-      <section className="mt-4 rounded-xl border border-[#eadbd1] bg-white p-4">
+      <section className="mt-4 rounded-xl border border-[#e7d6ca] bg-white p-4">
         <h2 className="flex items-center gap-2 text-sm font-semibold">
-          <Award size={15} className="text-[#d13f1f]" /> Chứng chỉ & đào tạo
+          <Award size={15} className="text-[#c64b32]" /> Chứng chỉ & đào tạo
         </h2>
         <ul className="mt-2.5 space-y-2">
           {["Đào tạo quy trình chăm sóc và an toàn Tâm An Center", "Tái kiểm định tay nghề định kỳ", "Chỉ nhận dịch vụ nằm trong kỹ năng đã được cấu hình"].map((cert) => (
-            <li key={cert} className="flex items-start gap-2 text-xs leading-5 text-[#665b55]">
-              <ShieldCheck size={14} className="mt-0.5 shrink-0 text-[#b86b1f]" /> {cert}
+            <li key={cert} className="flex items-start gap-2 text-xs leading-5 text-[#68574f]">
+              <ShieldCheck size={14} className="mt-0.5 shrink-0 text-[#a85f29]" /> {cert}
             </li>
           ))}
         </ul>
       </section>
 
-      <section className="mt-4 rounded-xl border border-[#eadbd1] bg-white p-4">
+      <section className="mt-4 rounded-xl border border-[#e7d6ca] bg-white p-4">
         <h2 className="mb-2.5 flex items-center gap-2 text-sm font-semibold">
-          <CalendarCheck size={15} className="text-[#d13f1f]" /> Dịch vụ thực hiện
+          <CalendarCheck size={15} className="text-[#c64b32]" /> Dịch vụ thực hiện
         </h2>
         <div className="space-y-1.5">
           {therapistServices.map((service) => (
             <Link
               key={service.id}
               href={`/booking?service=${service.id}&therapist=${therapist.id}`}
-              className="flex items-center justify-between gap-2 rounded-lg bg-[#fff7f3] px-3 py-2.5 text-sm transition hover:bg-[#fff2ef]"
+              className="flex items-center justify-between gap-2 rounded-lg bg-[#fcf3ed] px-3 py-2.5 text-sm transition hover:bg-[#f8ebe5]"
             >
               <span className="min-w-0 truncate font-medium">{service.name}</span>
-              <span className="shrink-0 font-semibold text-[#d13f1f]">{formatMoney(service.basePrice + service.therapistFee)}</span>
+              <span className="shrink-0 font-semibold text-[#c64b32]">{formatMoney(service.basePrice + service.therapistFee)}</span>
             </Link>
           ))}
         </div>
       </section>
 
-      <section className="mt-4 rounded-xl border border-[#eadbd1] bg-white p-4">
+      <section className="mt-4 rounded-xl border border-[#e7d6ca] bg-white p-4">
         <h2 className="mb-2.5 flex items-center gap-2 text-sm font-semibold">
-          <UsersRound size={15} className="text-[#d13f1f]" /> Đánh giá từ khách hàng
-          <span className="font-normal text-[#8a7a72]">{reviews.length > 0 ? `(${avgReviewRating.toFixed(1)}/5)` : "(Chưa có đánh giá)"}</span>
+          <UsersRound size={15} className="text-[#c64b32]" /> Đánh giá từ khách hàng
+          <span className="font-normal text-[#826f66]">{reviews.length > 0 ? `(${avgReviewRating.toFixed(1)}/5)` : "(Chưa có đánh giá)"}</span>
         </h2>
         <div className="space-y-3">
           {reviews.map((review) => (
-            <div key={review.id} className="border-b border-[#f1e5dd] pb-3 last:border-b-0 last:pb-0">
+            <div key={review.id} className="border-b border-[#eee0d6] pb-3 last:border-b-0 last:pb-0">
               <div className="flex items-center justify-between gap-2">
                 <p className="text-sm font-semibold">Khách hàng đã xác minh</p>
-                <p className="text-xs text-[#8a7a72]">{review.createdAt.toLocaleDateString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" })}</p>
+                <p className="text-xs text-[#826f66]">{review.createdAt.toLocaleDateString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" })}</p>
               </div>
               <div className="mt-1 flex gap-0.5">
                 {Array.from({ length: 5 }, (_, index) => (
-                  <Star key={index} size={12} className={index < review.rating ? "fill-[#d13f1f] text-[#d13f1f]" : "text-[#eadbd1]"} />
+                  <Star key={index} size={12} className={index < review.rating ? "fill-[#c64b32] text-[#c64b32]" : "text-[#e7d6ca]"} />
                 ))}
               </div>
-              <p className="mt-1.5 text-sm leading-6 text-[#665b55]">
+              <p className="mt-1.5 text-sm leading-6 text-[#68574f]">
                 {review.comment || "Khách đã đánh giá sau khi hoàn thành dịch vụ."}
               </p>
             </div>
           ))}
-          {reviews.length === 0 ? <p className="text-sm text-[#8a7a72]">Chưa có đánh giá đã xác minh.</p> : null}
+          {reviews.length === 0 ? <p className="text-sm text-[#826f66]">Chưa có đánh giá đã xác minh.</p> : null}
         </div>
       </section>
 
-      <div className="fixed inset-x-0 bottom-16 z-30 border-t border-[#eadbd1] bg-white/95 p-3 backdrop-blur md:bottom-0">
+      <div className="fixed inset-x-0 bottom-16 z-30 border-t border-[#e7d6ca] bg-white/95 p-3 backdrop-blur md:bottom-0">
         <Link
           href={`/booking?therapist=${therapist.id}`}
-          className="mx-auto flex max-w-3xl items-center justify-center gap-2 rounded-full bg-[#d13f1f] px-5 py-3 text-sm font-semibold text-white"
+          className="mx-auto flex max-w-3xl items-center justify-center gap-2 rounded-full bg-[#c64b32] px-5 py-3 text-sm font-semibold text-white"
         >
           Đặt lịch với {therapist.fullName}
         </Link>

@@ -159,8 +159,8 @@ export function ExpenseSection({ detailed }: { detailed: boolean }) {
     <section className="mt-4 space-y-5">
       <div>
         <p className="mb-2.5 flex items-center gap-2 text-sm font-semibold">
-          <Hourglass size={15} className={inServiceBills.length ? "animate-pulse text-[#b42f20]" : "text-[#e3b23c]"} /> Đang diễn ra
-          {inServiceBills.length ? <span className="rounded-full bg-[#b42f20] px-2.5 py-1 text-[10px] font-bold text-white shadow-sm">{inServiceBills.length} đang phục vụ</span> : null}
+          <Hourglass size={15} className={inServiceBills.length ? "animate-pulse text-[#ad432f]" : "text-[#c59a3d]"} /> Đang diễn ra
+          {inServiceBills.length ? <span className="rounded-full bg-[#ad432f] px-2.5 py-1 text-[10px] font-bold text-white shadow-sm">{inServiceBills.length} đang phục vụ</span> : null}
         </p>
         {inServiceBills.length > 0 || unusedBills.length > 0 ? (
           <div className="space-y-2.5">
@@ -170,7 +170,7 @@ export function ExpenseSection({ detailed }: { detailed: boolean }) {
             ))}
           </div>
         ) : (
-          <p className="rounded-xl border border-dashed border-[#eadbd1] bg-white p-4 text-center text-xs text-[#8a7a72]">
+          <p className="rounded-xl border border-dashed border-[#e7d6ca] bg-white p-4 text-center text-xs text-[#826f66]">
             Không có đơn nào đang chờ sử dụng.
           </p>
         )}
@@ -178,7 +178,7 @@ export function ExpenseSection({ detailed }: { detailed: boolean }) {
 
       {attentionBills.length > 0 ? (
         <div>
-          <p className="mb-2.5 flex items-center gap-1.5 text-sm font-semibold text-[#805914]">
+          <p className="mb-2.5 flex items-center gap-1.5 text-sm font-semibold text-[#76551d]">
             <Hourglass size={15} /> Cần theo dõi
           </p>
           <div className="space-y-2.5">
@@ -189,13 +189,13 @@ export function ExpenseSection({ detailed }: { detailed: boolean }) {
 
       {refundEntries.length > 0 ? (
         <div>
-          <p className="mb-2.5 flex items-center gap-1.5 text-sm font-semibold text-[#b42f20]">
+          <p className="mb-2.5 flex items-center gap-1.5 text-sm font-semibold text-[#ad432f]">
             <RotateCcw size={15} /> Khoản tiền đã hoàn
           </p>
           <div className="space-y-2.5">
-            {refundEntries.map((entry) => <div key={entry.id} className="rounded-xl border border-[#b8dfc9] bg-[#fff4e6] p-3.5">
-              <div className="flex items-start justify-between gap-3"><span className="min-w-0"><strong className="block text-sm text-[#165e3d]">{entry.label}</strong><small className="mt-1 block text-[10px] text-[#567063]">{entry.branchLabel}{entry.bookingCode ? ` · ${displayBookingCode(entry.bookingCode)}` : ""}</small></span><strong className="shrink-0 text-sm text-[#b42f20]">+{formatMoney(Math.abs(entry.amount))}</strong></div>
-              <div className="mt-2 border-t border-dashed border-[#b8dfc9] pt-2 text-[10px] leading-4 text-[#567063]"><p>{entry.note}</p><p className="mt-1 font-medium">Đã chuyển lúc {entry.time} · {entry.date}</p></div>
+            {refundEntries.map((entry) => <div key={entry.id} className="rounded-xl border border-[#c4ddd2] bg-[#fff4e6] p-3.5">
+              <div className="flex items-start justify-between gap-3"><span className="min-w-0"><strong className="block text-sm text-[#165e3d]">{entry.label}</strong><small className="mt-1 block text-[10px] text-[#567063]">{entry.branchLabel}{entry.bookingCode ? ` · ${displayBookingCode(entry.bookingCode)}` : ""}</small></span><strong className="shrink-0 text-sm text-[#ad432f]">+{formatMoney(Math.abs(entry.amount))}</strong></div>
+              <div className="mt-2 border-t border-dashed border-[#c4ddd2] pt-2 text-[10px] leading-4 text-[#567063]"><p>{entry.note}</p><p className="mt-1 font-medium">Đã chuyển lúc {entry.time} · {entry.date}</p></div>
             </div>)}
           </div>
         </div>
@@ -203,7 +203,7 @@ export function ExpenseSection({ detailed }: { detailed: boolean }) {
 
       <div>
         <p className="mb-2.5 flex items-center gap-1.5 text-sm font-semibold">
-          <Receipt size={15} className="text-[#d13f1f]" /> Đã thanh toán & hoàn tất
+          <Receipt size={15} className="text-[#c64b32]" /> Đã thanh toán & hoàn tất
         </p>
         <div className="space-y-2.5">
           {completedBills.map((bill) => (
@@ -216,17 +216,17 @@ export function ExpenseSection({ detailed }: { detailed: boolean }) {
 }
 
 const STATUS_CARD_STYLE: Record<BillStatus, string> = {
-  UNUSED: "border-[#e3b23c] bg-[#fff7ec]",
-  IN_SERVICE: "border-2 border-[#b42f20] bg-gradient-to-br from-[#fff4e6] via-white to-[#f4fff8] shadow-[0_8px_22px_rgba(22,120,74,0.16)] ring-2 ring-[#b8dfc9]/60",
-  COMPLETED: "border-[#eadbd1] bg-white",
+  UNUSED: "border-[#c59a3d] bg-[#fbf2e7]",
+  IN_SERVICE: "border-2 border-[#ad432f] bg-gradient-to-br from-[#fff4e6] via-white to-[#f4fff8] shadow-[0_8px_22px_rgba(22,120,74,0.16)] ring-2 ring-[#c4ddd2]/60",
+  COMPLETED: "border-[#e7d6ca] bg-white",
   ATTENTION: "border-[#e8d39e] bg-[#fffaf0]",
 };
 
 const STATUS_BADGE_STYLE: Record<BillStatus, string> = {
-  UNUSED: "bg-[#e3b23c]/20 text-[#8a5a12]",
-  IN_SERVICE: "bg-[#b42f20] text-white shadow-sm",
-  COMPLETED: "bg-[#fff4e6] text-[#b86b1f]",
-  ATTENTION: "bg-[#f5e8bf] text-[#805914]",
+  UNUSED: "bg-[#c59a3d]/20 text-[#8a5a12]",
+  IN_SERVICE: "bg-[#ad432f] text-white shadow-sm",
+  COMPLETED: "bg-[#fff4e6] text-[#a85f29]",
+  ATTENTION: "bg-[#f5e8bf] text-[#76551d]",
 };
 
 const EARLY_LATE_TOLERANCE_MIN = 6;
@@ -287,7 +287,7 @@ export function BillCard({ data, expanded, onToggle }: { data: BillCardData; exp
           <span className="flex flex-wrap items-center gap-1.5">
             <span className={cn("truncate text-sm font-semibold", data.status === "IN_SERVICE" && "text-[#115f3b]")}>{data.label}</span>
             {data.isGroup ? (
-              <span className="inline-flex shrink-0 items-center gap-0.5 rounded-full bg-[#4d403a]/10 px-1.5 py-0.5 text-[9px] font-semibold text-[#4d403a]">
+              <span className="inline-flex shrink-0 items-center gap-0.5 rounded-full bg-[#51423b]/10 px-1.5 py-0.5 text-[9px] font-semibold text-[#51423b]">
                 <Users size={9} /> Nhóm
               </span>
             ) : null}
@@ -298,35 +298,35 @@ export function BillCard({ data, expanded, onToggle }: { data: BillCardData; exp
         </span>
         <span className="flex shrink-0 flex-col items-end gap-0.5">
           <span className="flex items-center gap-1.5">
-            <span className={cn("text-sm font-semibold", data.status === "COMPLETED" ? "text-[#d13f1f]" : "text-[#191414]")}>
+            <span className={cn("text-sm font-semibold", data.status === "COMPLETED" ? "text-[#c64b32]" : "text-[#281b18]")}>
               {packageSession ? `${data.items?.length ?? 1} lượt` : <>{data.status === "COMPLETED" || depositOnly ? "-" : ""}{formatMoney(depositOnly ? (data.depositAmount ?? data.amount) : data.status === "COMPLETED" ? (data.totalAmount ?? data.amount) : data.amount)}</>}
             </span>
-            <ChevronDown size={14} className={cn("text-[#8a7a72] transition", expanded && "rotate-180")} />
+            <ChevronDown size={14} className={cn("text-[#826f66] transition", expanded && "rotate-180")} />
           </span>
-          <span className="text-[9px] text-[#8a7a72]">{packageSession ? "Không phát sinh thanh toán mới" : depositOnly ? "Tiền cọc đã thanh toán" : paidInFull ? "Toàn bộ hóa đơn đã thanh toán" : data.status === "COMPLETED" ? "Đã thanh toán" : "Cần thanh toán"}</span>
+          <span className="text-[9px] text-[#826f66]">{packageSession ? "Không phát sinh thanh toán mới" : depositOnly ? "Tiền cọc đã thanh toán" : paidInFull ? "Toàn bộ hóa đơn đã thanh toán" : data.status === "COMPLETED" ? "Đã thanh toán" : "Cần thanh toán"}</span>
         </span>
       </button>
 
       {data.status === "IN_SERVICE" && !data.isBusiness ? (
         <Link
           href={`/check-in?bookingCode=${encodeURIComponent(data.bookingCode)}`}
-          className="mt-2.5 inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-gradient-to-b from-[#b86b1f] to-[#8f151a] px-4 py-2.5 text-xs font-semibold text-white shadow-sm"
+          className="mt-2.5 inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-gradient-to-b from-[#a85f29] to-[#8b2b28] px-4 py-2.5 text-xs font-semibold text-white shadow-sm"
         >
           <Hourglass className={data.checkoutRequestedAt ? "" : "animate-pulse"} size={13} /> {data.checkoutRequestedAt ? "Xem check-out sớm" : "Xem đồng hồ đang phục vụ"}
         </Link>
       ) : null}
 
       {expanded ? (
-        <div className="mt-2.5 space-y-1 border-t border-dashed border-[#eadbd1] pt-2.5 text-[11px] text-[#8a7a72]">
+        <div className="mt-2.5 space-y-1 border-t border-dashed border-[#e7d6ca] pt-2.5 text-[11px] text-[#826f66]">
           {data.items && data.items.length > 0 ? (
             <div className="space-y-1 pb-1">
               {data.items.map((line) => (
                 <div key={line.name} className="flex items-center justify-between gap-3">
-                  <span className="text-[#4d403a]">
+                  <span className="text-[#51423b]">
                     {line.name}
                     {line.qty > 1 ? ` x${line.qty}` : ""}
                   </span>
-                  <span className="font-medium text-[#4d403a]">{formatMoney(line.amount)}</span>
+                  <span className="font-medium text-[#51423b]">{formatMoney(line.amount)}</span>
                 </div>
               ))}
             </div>
@@ -334,70 +334,70 @@ export function BillCard({ data, expanded, onToggle }: { data: BillCardData; exp
           {data.totalAmount ? (
             <div className="flex items-center justify-between gap-3">
               <span>Tổng hoá đơn</span>
-              <span className="font-medium text-[#4d403a]">{formatMoney(data.totalAmount)}</span>
+              <span className="font-medium text-[#51423b]">{formatMoney(data.totalAmount)}</span>
             </div>
           ) : null}
           {data.depositAmount ? (
             <div className="flex items-center justify-between gap-3">
               <span>Đã đặt cọc</span>
-              <span className="font-medium text-[#b86b1f]">{formatMoney(data.depositAmount)}</span>
+              <span className="font-medium text-[#a85f29]">{formatMoney(data.depositAmount)}</span>
             </div>
           ) : null}
           {paidInFull && data.totalAmount && data.depositAmount ? (
             <div className="flex items-center justify-between gap-3">
               <span>Thanh toán khi hoàn tất</span>
-              <span className="font-medium text-[#4d403a]">{formatMoney(Math.max(0, data.totalAmount - data.depositAmount))}</span>
+              <span className="font-medium text-[#51423b]">{formatMoney(Math.max(0, data.totalAmount - data.depositAmount))}</span>
             </div>
           ) : null}
           {paidInFull && data.tipAmount ? (
-            <div className="flex items-center justify-between gap-3 text-[#805914]">
+            <div className="flex items-center justify-between gap-3 text-[#76551d]">
               <span>Tip KTV ngoài bill</span>
               <span className="font-semibold">{formatMoney(data.tipAmount)}</span>
             </div>
           ) : null}
           {refunded && data.refundAmount ? (
-            <><div className="flex items-center justify-between gap-3 text-[#b42f20]"><span>Đã được hoàn qua ngân hàng</span><span className="font-semibold">+{formatMoney(data.refundAmount)}</span></div><div className="flex items-center justify-between gap-3"><span>Chi phí ròng sau hoàn</span><span className="font-semibold text-[#4d403a]">{formatMoney(Math.max(0, (data.totalAmount ?? data.amount) - data.refundAmount))}</span></div></>
+            <><div className="flex items-center justify-between gap-3 text-[#ad432f]"><span>Đã được hoàn qua ngân hàng</span><span className="font-semibold">+{formatMoney(data.refundAmount)}</span></div><div className="flex items-center justify-between gap-3"><span>Chi phí ròng sau hoàn</span><span className="font-semibold text-[#51423b]">{formatMoney(Math.max(0, (data.totalAmount ?? data.amount) - data.refundAmount))}</span></div></>
           ) : null}
           {(depositOnly || data.status === "IN_SERVICE") && data.totalAmount ? (
             <div className="flex items-center justify-between gap-3">
               <span>Còn thanh toán sau dịch vụ</span>
-              <span className="font-semibold text-[#d13f1f]">{formatMoney(Math.max(0, data.totalAmount - (data.depositAmount ?? 0)))}</span>
+              <span className="font-semibold text-[#c64b32]">{formatMoney(Math.max(0, data.totalAmount - (data.depositAmount ?? 0)))}</span>
             </div>
           ) : null}
           {paidInFull ? (
             <div className="flex items-center justify-between gap-3">
               <span>Còn phải thanh toán</span>
-              <span className="font-semibold text-[#b86b1f]">0 ₫ · Đã đối soát đủ</span>
+              <span className="font-semibold text-[#a85f29]">0 ₫ · Đã đối soát đủ</span>
             </div>
           ) : null}
           {data.therapistName ? (
             <div className="flex items-center justify-between gap-3">
               <span>KTV thực hiện</span>
-              <span className="font-medium text-[#4d403a]">{data.therapistName}</span>
+              <span className="font-medium text-[#51423b]">{data.therapistName}</span>
             </div>
           ) : null}
           {data.branchLabel ? (
             <div className="flex items-center justify-between gap-3">
               <span>Cơ sở</span>
-              <span className="font-medium text-[#4d403a]">{data.branchLabel}</span>
+              <span className="font-medium text-[#51423b]">{data.branchLabel}</span>
             </div>
           ) : null}
           {data.scheduledTime ? (
             <div className="flex items-center justify-between gap-3">
               <span>Giờ hẹn</span>
-              <span className="font-medium text-[#4d403a]">{scheduledTimeLabel(data.scheduledTime)}</span>
+              <span className="font-medium text-[#51423b]">{scheduledTimeLabel(data.scheduledTime)}</span>
             </div>
           ) : null}
           {data.actualCheckinTime ? (
             <div className="flex items-center justify-between gap-3">
               <span>Giờ check-in</span>
-              <span className="font-medium text-[#4d403a]">{data.actualCheckinTime}</span>
+              <span className="font-medium text-[#51423b]">{data.actualCheckinTime}</span>
             </div>
           ) : null}
           {data.checkoutDate ? (
             <div className="flex items-center justify-between gap-3">
               <span>Giờ thanh toán (check-out)</span>
-              <span className="font-medium text-[#4d403a]">
+              <span className="font-medium text-[#51423b]">
                 {data.checkoutDate}
                 {data.checkoutTime ? ` · ${data.checkoutTime}` : ""}
               </span>
@@ -406,24 +406,24 @@ export function BillCard({ data, expanded, onToggle }: { data: BillCardData; exp
           {data.serviceDurationMin ? (
             <div className="flex items-center justify-between gap-3">
               <span>Thời lượng gói</span>
-              <span className="font-medium text-[#4d403a]">{data.serviceDurationMin} phút</span>
+              <span className="font-medium text-[#51423b]">{data.serviceDurationMin} phút</span>
             </div>
           ) : null}
           {actualMinutes !== null ? (
             <div className="flex items-center justify-between gap-3">
               <span>Thời lượng thực tế</span>
-              <span className="font-medium text-[#4d403a]">{actualMinutes} phút</span>
+              <span className="font-medium text-[#51423b]">{actualMinutes} phút</span>
             </div>
           ) : null}
           <div className="flex items-center justify-between gap-3">
             <span>Mã đơn</span>
-            <span className="font-medium text-[#4d403a]">{displayBookingCode(data.bookingCode)}</span>
+            <span className="font-medium text-[#51423b]">{displayBookingCode(data.bookingCode)}</span>
           </div>
 
           <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 pt-1">
             <span className="min-w-0 justify-self-start">
               {data.note ? (
-                <span className="inline-flex rounded-full bg-[#fff2ef] px-2 py-0.5 text-[10px] font-semibold text-[#d13f1f]">
+                <span className="inline-flex rounded-full bg-[#f8ebe5] px-2 py-0.5 text-[10px] font-semibold text-[#c64b32]">
                   {data.note}
                 </span>
               ) : null}
@@ -433,7 +433,7 @@ export function BillCard({ data, expanded, onToggle }: { data: BillCardData; exp
                 <span
                   className={cn(
                     "inline-flex rounded-full px-2 py-0.5 text-[10px] font-semibold",
-                    durationStatusGood ? "bg-[#fff4e6] text-[#b86b1f]" : "bg-[#fff2ef] text-[#d13f1f]"
+                    durationStatusGood ? "bg-[#fff4e6] text-[#a85f29]" : "bg-[#f8ebe5] text-[#c64b32]"
                   )}
                 >
                   {durationStatusLabel}
@@ -445,14 +445,14 @@ export function BillCard({ data, expanded, onToggle }: { data: BillCardData; exp
           {data.status === "UNUSED" && data.isBusiness ? (
             <Link
               href={`/doanh-nghiep/${data.bookingCode}`}
-              className="mt-2 inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-[#3d1f12] px-4 py-2.5 text-xs font-semibold text-[#f5d982]"
+              className="mt-2 inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-[#3d1f12] px-4 py-2.5 text-xs font-semibold text-[#e7c878]"
             >
               <Briefcase size={13} /> Xem yêu cầu Tâm An Business
             </Link>
           ) : data.status === "UNUSED" ? (
             <Link
               href={`/check-in?bookingCode=${data.bookingCode}`}
-              className="mt-2 inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-[#d13f1f] px-4 py-2.5 text-xs font-semibold text-white"
+              className="mt-2 inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-[#c64b32] px-4 py-2.5 text-xs font-semibold text-white"
             >
               <QrCode size={13} /> Quét QR sử dụng dịch vụ
             </Link>
@@ -460,7 +460,7 @@ export function BillCard({ data, expanded, onToggle }: { data: BillCardData; exp
           {data.status === "IN_SERVICE" && data.isBusiness ? (
             <Link
               href={`/doanh-nghiep/${data.bookingCode}`}
-              className="mt-2 inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-[#3d1f12] px-4 py-2.5 text-xs font-semibold text-[#f5d982]"
+              className="mt-2 inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-[#3d1f12] px-4 py-2.5 text-xs font-semibold text-[#e7c878]"
             >
               <Briefcase size={13} /> Xem đồng hồ Tâm An Business
             </Link>

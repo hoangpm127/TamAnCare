@@ -76,9 +76,9 @@ export function CustomerPasswordRecovery({ initialPhone, onClose }: { initialPho
   }
 
   return (
-    <section className="mt-4 rounded-2xl bg-[#fff8f3] p-4 ring-1 ring-[#eadbd1]">
+    <section className="mt-4 rounded-2xl bg-[#fcf5ef] p-4 ring-1 ring-[#e7d6ca]">
       <div className="flex items-start gap-3">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-[#d13f1f] ring-1 ring-[#eadbd1]">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-[#c64b32] ring-1 ring-[#e7d6ca]">
           {step === "request" ? <MessageSquareText size={17} /> : <KeyRound size={17} />}
         </span>
         <div className="min-w-0 flex-1">
@@ -91,28 +91,28 @@ export function CustomerPasswordRecovery({ initialPhone, onClose }: { initialPho
       {step === "request" ? (
         <form onSubmit={requestCode} className="mt-3 space-y-3">
           <label className="block text-xs font-semibold">Số điện thoại tài khoản
-            <input required inputMode="tel" value={phone} onChange={(event) => setPhone(event.target.value)} className="mt-1.5 w-full rounded-xl border border-[#eadbd1] bg-white px-3 py-3 text-sm outline-none focus:border-[#d13f1f]" />
+            <input required inputMode="tel" value={phone} onChange={(event) => setPhone(event.target.value)} className="mt-1.5 w-full rounded-xl border border-[#e7d6ca] bg-white px-3 py-3 text-sm outline-none focus:border-[#c64b32]" />
           </label>
           {message ? <p role="alert" className="text-[11px] leading-5 text-red-700">{message}</p> : null}
-          {!deliveryConfigured ? <a href="/lien-he" className="inline-flex text-xs font-semibold text-[#d13f1f] underline underline-offset-2">Xem hotline các cơ sở</a> : null}
+          {!deliveryConfigured ? <a href="/lien-he" className="inline-flex text-xs font-semibold text-[#c64b32] underline underline-offset-2">Xem hotline các cơ sở</a> : null}
           <button disabled={submitting} className="flex w-full items-center justify-center gap-2 rounded-full bg-[#6f2821] px-4 py-2.5 text-xs font-semibold text-white disabled:opacity-60">
             {submitting ? <Loader2 className="animate-spin" size={14} /> : <ShieldCheck size={14} />} Gửi mã khôi phục
           </button>
         </form>
       ) : (
         <form onSubmit={confirmReset} className="mt-3 space-y-3">
-          <p className="rounded-xl bg-white p-3 text-[11px] leading-5 text-[#665b55] ring-1 ring-[#eadbd1]">{message}</p>
+          <p className="rounded-xl bg-white p-3 text-[11px] leading-5 text-[#68574f] ring-1 ring-[#e7d6ca]">{message}</p>
           {!deliveryConfigured ? <p role="alert" className="rounded-xl bg-amber-50 p-3 text-[11px] leading-5 text-amber-900 ring-1 ring-amber-200">Kênh SMS/Zalo chưa được cấu hình ở môi trường này. Chủ hệ thống cần kết nối nhà cung cấp trước khi dùng thật.</p> : null}
           <label className="block text-xs font-semibold">Mã xác nhận 8 số
-            <input required inputMode="numeric" pattern="[0-9]{8}" maxLength={8} value={code} onChange={(event) => setCode(event.target.value.replace(/\D/g, ""))} className="mt-1.5 w-full rounded-xl border border-[#eadbd1] bg-white px-3 py-3 text-center font-mono text-lg tracking-[0.3em] outline-none focus:border-[#d13f1f]" />
+            <input required inputMode="numeric" pattern="[0-9]{8}" maxLength={8} value={code} onChange={(event) => setCode(event.target.value.replace(/\D/g, ""))} className="mt-1.5 w-full rounded-xl border border-[#e7d6ca] bg-white px-3 py-3 text-center font-mono text-lg tracking-[0.3em] outline-none focus:border-[#c64b32]" />
           </label>
           <label className="block text-xs font-semibold">Mật khẩu mới · tối thiểu 15 ký tự
-            <input required type="password" minLength={15} maxLength={72} autoComplete="new-password" value={newPassword} onChange={(event) => setNewPassword(event.target.value)} className="mt-1.5 w-full rounded-xl border border-[#eadbd1] bg-white px-3 py-3 text-sm outline-none focus:border-[#d13f1f]" />
+            <input required type="password" minLength={15} maxLength={72} autoComplete="new-password" value={newPassword} onChange={(event) => setNewPassword(event.target.value)} className="mt-1.5 w-full rounded-xl border border-[#e7d6ca] bg-white px-3 py-3 text-sm outline-none focus:border-[#c64b32]" />
           </label>
           <label className="block text-xs font-semibold">Nhập lại mật khẩu mới
-            <input required type="password" minLength={15} maxLength={72} autoComplete="new-password" value={confirmation} onChange={(event) => setConfirmation(event.target.value)} className="mt-1.5 w-full rounded-xl border border-[#eadbd1] bg-white px-3 py-3 text-sm outline-none focus:border-[#d13f1f]" />
+            <input required type="password" minLength={15} maxLength={72} autoComplete="new-password" value={confirmation} onChange={(event) => setConfirmation(event.target.value)} className="mt-1.5 w-full rounded-xl border border-[#e7d6ca] bg-white px-3 py-3 text-sm outline-none focus:border-[#c64b32]" />
           </label>
-          <button disabled={submitting || !deliveryConfigured} className="flex w-full items-center justify-center gap-2 rounded-full bg-[#d13f1f] px-4 py-2.5 text-xs font-semibold text-white disabled:opacity-50">
+          <button disabled={submitting || !deliveryConfigured} className="flex w-full items-center justify-center gap-2 rounded-full bg-[#c64b32] px-4 py-2.5 text-xs font-semibold text-white disabled:opacity-50">
             {submitting ? <Loader2 className="animate-spin" size={14} /> : <KeyRound size={14} />} Đặt lại mật khẩu
           </button>
         </form>

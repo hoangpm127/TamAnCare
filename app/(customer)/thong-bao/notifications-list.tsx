@@ -30,10 +30,10 @@ const FILTERS: { value: Filter; label: string; icon: LucideIcon }[] = [
 function workflowBadge(title: string, body: string) {
   const text = `${title} ${body}`.toLocaleLowerCase("vi-VN");
   if (text.includes("chưa thể xác nhận") || text.includes("điều chỉnh lịch") || text.includes("đã hủy")) return { label: "Cần chọn lịch khác", className: "bg-red-50 text-red-700" };
-  if (text.includes("đã được xác nhận") || text.includes("đã xác nhận lịch") || text.includes("ai xác nhận") || text.includes("được ai xác nhận")) return { label: "Lịch đã sẵn sàng", className: "bg-[#fff4e6] text-[#b42f20]" };
-  if (text.includes("check-in") || text.includes("đã có mặt")) return { label: "Đã tiếp nhận tại cơ sở", className: "bg-[#fff7df] text-[#805914]" };
+  if (text.includes("đã được xác nhận") || text.includes("đã xác nhận lịch") || text.includes("ai xác nhận") || text.includes("được ai xác nhận")) return { label: "Lịch đã sẵn sàng", className: "bg-[#fff4e6] text-[#ad432f]" };
+  if (text.includes("check-in") || text.includes("đã có mặt")) return { label: "Đã tiếp nhận tại cơ sở", className: "bg-[#fff7df] text-[#76551d]" };
   if (text.includes("đã bắt đầu") || text.includes("đang được phục vụ")) return { label: "Đang phục vụ", className: "bg-[#eef5ff] text-[#28669b]" };
-  if (text.includes("hoàn tất")) return { label: "Đã hoàn tất", className: "bg-[#fff4e6] text-[#b42f20]" };
+  if (text.includes("hoàn tất")) return { label: "Đã hoàn tất", className: "bg-[#fff4e6] text-[#ad432f]" };
   return null;
 }
 
@@ -60,31 +60,31 @@ export function NotificationsList() {
 
   return (
     <div className="space-y-3">
-      <section className="rounded-2xl border border-[#eadbd1] bg-white p-3 shadow-sm">
+      <section className="rounded-2xl border border-[#e7d6ca] bg-white p-3 shadow-sm">
         <div className="flex items-center justify-between gap-3">
-          <div><p className="text-xs font-semibold text-[#191414]">Trung tâm thông báo</p><p className="mt-0.5 text-[10px] text-[#8a7a72]">{unreadCount} thông báo chưa đọc</p></div>
-          <button type="button" onClick={markAllRead} disabled={unreadCount === 0} className="inline-flex items-center gap-1.5 rounded-full bg-[#fff2ef] px-3 py-2 text-[11px] font-semibold text-[#d13f1f] disabled:opacity-45"><CheckCheck size={14} /> Đọc tất cả</button>
+          <div><p className="text-xs font-semibold text-[#281b18]">Trung tâm thông báo</p><p className="mt-0.5 text-[10px] text-[#826f66]">{unreadCount} thông báo chưa đọc</p></div>
+          <button type="button" onClick={markAllRead} disabled={unreadCount === 0} className="inline-flex items-center gap-1.5 rounded-full bg-[#f8ebe5] px-3 py-2 text-[11px] font-semibold text-[#c64b32] disabled:opacity-45"><CheckCheck size={14} /> Đọc tất cả</button>
         </div>
         <div className="scrollbar-hide mt-3 flex gap-2 overflow-x-auto">
-          {FILTERS.map((item) => { const Icon = item.icon; const count = sorted.filter((notification) => item.value === "ALL" || (item.value === "BOOKING" ? notification.type === "BOOKING" : item.value === "INVITE" ? notification.type === "INVITE" : item.value === "PROMO" ? notification.type === "PROMO" : ["REMINDER", "SYSTEM", "BUSINESS"].includes(notification.type))).length; return <button key={item.value} type="button" onClick={() => setFilter(item.value)} className={cn("inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-semibold", filter === item.value ? "border-[#d13f1f] bg-[#d13f1f] text-white" : "border-[#eadbd1] text-[#665b55]")}><Icon size={13} /> {item.label}<span className={cn("rounded-full px-1.5 py-0.5 text-[9px]", filter === item.value ? "bg-white/15" : "bg-[#f4eeea]")}>{count}</span></button>; })}
+          {FILTERS.map((item) => { const Icon = item.icon; const count = sorted.filter((notification) => item.value === "ALL" || (item.value === "BOOKING" ? notification.type === "BOOKING" : item.value === "INVITE" ? notification.type === "INVITE" : item.value === "PROMO" ? notification.type === "PROMO" : ["REMINDER", "SYSTEM", "BUSINESS"].includes(notification.type))).length; return <button key={item.value} type="button" onClick={() => setFilter(item.value)} className={cn("inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-semibold", filter === item.value ? "border-[#c64b32] bg-[#c64b32] text-white" : "border-[#e7d6ca] text-[#68574f]")}><Icon size={13} /> {item.label}<span className={cn("rounded-full px-1.5 py-0.5 text-[9px]", filter === item.value ? "bg-white/15" : "bg-[#f4eeea]")}>{count}</span></button>; })}
         </div>
       </section>
 
-      <div className="overflow-hidden rounded-2xl border border-[#eadbd1] bg-white shadow-sm">
+      <div className="overflow-hidden rounded-2xl border border-[#e7d6ca] bg-white shadow-sm">
         {filtered.map((item) => {
           const Icon = TYPE_ICON[item.type] ?? Info;
           const badge = item.type === "BOOKING" ? workflowBadge(item.title, item.body) : null;
           return (
-            <article key={item.id} className={cn("flex gap-3 border-b border-[#f1e5dd] px-4 py-3 last:border-b-0", !item.read && "bg-gradient-to-r from-[#fff3ee] to-white")}>
-              <span className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-xl", item.type === "INVITE" ? "bg-[#fff7df] text-[#805914]" : item.type === "PROMO" ? "bg-[#fff4e6] text-[#b42f20]" : "bg-[#fff2ef] text-[#d13f1f]")}><Icon size={17} /></span>
+            <article key={item.id} className={cn("flex gap-3 border-b border-[#eee0d6] px-4 py-3 last:border-b-0", !item.read && "bg-gradient-to-r from-[#fff3ee] to-white")}>
+              <span className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-xl", item.type === "INVITE" ? "bg-[#fff7df] text-[#76551d]" : item.type === "PROMO" ? "bg-[#fff4e6] text-[#ad432f]" : "bg-[#f8ebe5] text-[#c64b32]")}><Icon size={17} /></span>
               <div className="min-w-0 flex-1">
-                {item.actionUrl ? <Link href={item.actionUrl} onClick={() => markRead(item.id)} className="block"><div className="flex items-start gap-1.5"><p className="min-w-0 flex-1 text-sm font-semibold leading-5">{item.title}</p>{!item.read ? <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[#b51f24]" /> : null}</div>{badge ? <span className={cn("mt-1.5 inline-flex rounded-full px-2 py-1 text-[9px] font-semibold", badge.className)}>{badge.label}</span> : null}<p className="mt-1 text-xs leading-5 text-[#665b55]">{item.body}</p><span className="mt-2 inline-flex items-center gap-1 text-[10px] font-semibold text-[#d13f1f]">{item.actionUrl.startsWith("/check-in") ? "Mở QR/check-in" : "Xem và xử lý"} <ArrowUpRight size={11} /></span></Link> : <><div className="flex items-start gap-1.5"><p className="min-w-0 flex-1 text-sm font-semibold leading-5">{item.title}</p>{!item.read ? <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[#b51f24]" /> : null}</div>{badge ? <span className={cn("mt-1.5 inline-flex rounded-full px-2 py-1 text-[9px] font-semibold", badge.className)}>{badge.label}</span> : null}<p className="mt-1 text-xs leading-5 text-[#665b55]">{item.body}</p></>}
-                <div className="mt-2 flex items-center justify-between gap-2"><p className="text-[10px] text-[#8a7a72]">{notificationTypeLabel(item.type)} · {format(item.createdAt, "HH:mm dd/MM")}</p>{!item.read ? <button type="button" onClick={() => markRead(item.id)} className="inline-flex shrink-0 items-center gap-1 rounded-full border border-[#eadbd1] px-2 py-1 text-[10px] font-semibold text-[#d13f1f]"><Check size={11} /> Đánh dấu đã đọc</button> : <span className="inline-flex items-center gap-1 text-[10px] text-[#8a7a72]"><CheckCheck size={11} /> Đã đọc</span>}</div>
+                {item.actionUrl ? <Link href={item.actionUrl} onClick={() => markRead(item.id)} className="block"><div className="flex items-start gap-1.5"><p className="min-w-0 flex-1 text-sm font-semibold leading-5">{item.title}</p>{!item.read ? <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[#a93a36]" /> : null}</div>{badge ? <span className={cn("mt-1.5 inline-flex rounded-full px-2 py-1 text-[9px] font-semibold", badge.className)}>{badge.label}</span> : null}<p className="mt-1 text-xs leading-5 text-[#68574f]">{item.body}</p><span className="mt-2 inline-flex items-center gap-1 text-[10px] font-semibold text-[#c64b32]">{item.actionUrl.startsWith("/check-in") ? "Mở QR/check-in" : "Xem và xử lý"} <ArrowUpRight size={11} /></span></Link> : <><div className="flex items-start gap-1.5"><p className="min-w-0 flex-1 text-sm font-semibold leading-5">{item.title}</p>{!item.read ? <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[#a93a36]" /> : null}</div>{badge ? <span className={cn("mt-1.5 inline-flex rounded-full px-2 py-1 text-[9px] font-semibold", badge.className)}>{badge.label}</span> : null}<p className="mt-1 text-xs leading-5 text-[#68574f]">{item.body}</p></>}
+                <div className="mt-2 flex items-center justify-between gap-2"><p className="text-[10px] text-[#826f66]">{notificationTypeLabel(item.type)} · {format(item.createdAt, "HH:mm dd/MM")}</p>{!item.read ? <button type="button" onClick={() => markRead(item.id)} className="inline-flex shrink-0 items-center gap-1 rounded-full border border-[#e7d6ca] px-2 py-1 text-[10px] font-semibold text-[#c64b32]"><Check size={11} /> Đánh dấu đã đọc</button> : <span className="inline-flex items-center gap-1 text-[10px] text-[#826f66]"><CheckCheck size={11} /> Đã đọc</span>}</div>
               </div>
             </article>
           );
         })}
-        {filtered.length === 0 ? <div className="p-10 text-center text-xs text-[#8a7a72]">Chưa có thông báo trong nhóm này.</div> : null}
+        {filtered.length === 0 ? <div className="p-10 text-center text-xs text-[#826f66]">Chưa có thông báo trong nhóm này.</div> : null}
       </div>
     </div>
   );

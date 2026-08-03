@@ -27,12 +27,12 @@ export function ReviewForm({ bookingCode }: { bookingCode: string }) {
   }
 
   return (
-    <main className="flex min-h-[calc(100vh-56px)] items-center justify-center bg-[#fffaf6] px-4 text-[#191414]">
-      <section className="w-full max-w-xl rounded-xl border border-[#eadbd1] bg-white p-5 shadow-sm sm:p-6">
-        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#d13f1f]">Đánh giá trải nghiệm</p>
+    <main className="flex min-h-[calc(100vh-56px)] items-center justify-center bg-[#fdf8f3] px-4 text-[#281b18]">
+      <section className="w-full max-w-xl rounded-xl border border-[#e7d6ca] bg-white p-5 shadow-sm sm:p-6">
+        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#c64b32]">Đánh giá trải nghiệm</p>
         <h1 className="mt-2 text-xl font-semibold tracking-tight sm:text-2xl">Hóa đơn {displayBookingCode(bookingCode)}</h1>
         {done ? (
-          <div className="mt-5 rounded-xl bg-[#f2fff7] p-4 text-sm text-[#1d6c40]">
+          <div className="mt-5 rounded-xl bg-[#f2fff7] p-4 text-sm text-[#0d674c]">
             Cảm ơn bạn đã đánh giá. Tâm An sẽ ưu tiên gợi ý KTV này cho lần đặt sau nếu còn slot.
           </div>
         ) : (
@@ -41,7 +41,7 @@ export function ReviewForm({ bookingCode }: { bookingCode: string }) {
               <p className="mb-2 text-sm font-semibold">Điểm đánh giá</p>
               <div className="flex gap-2">
                 {[1, 2, 3, 4, 5].map((value) => (
-                  <button key={value} type="button" onClick={() => setRating(value)} className="text-[#d13f1f]">
+                  <button key={value} type="button" onClick={() => setRating(value)} className="text-[#c64b32]">
                     <Star fill={value <= rating ? "currentColor" : "none"} />
                   </button>
                 ))}
@@ -52,14 +52,14 @@ export function ReviewForm({ bookingCode }: { bookingCode: string }) {
               <textarea
                 value={comment}
                 onChange={(event) => setComment(event.target.value)}
-                className="mt-2 min-h-28 w-full rounded-xl border border-[#eadbd1] px-3 py-3"
+                className="mt-2 min-h-28 w-full rounded-xl border border-[#e7d6ca] px-3 py-3"
               />
             </label>
             <label className="flex items-center gap-3 text-sm">
               <input type="checkbox" checked={wantsRebook} onChange={(event) => setWantsRebook(event.target.checked)} />
               Tôi muốn đặt lại KTV này lần sau
             </label>
-            <button type="button" onClick={submit} className="w-full rounded-full bg-[#d13f1f] px-5 py-3 font-semibold text-white">
+            <button type="button" onClick={submit} className="w-full rounded-full bg-[#c64b32] px-5 py-3 font-semibold text-white">
               Gửi đánh giá
             </button>
             {error ? <p className="rounded-xl bg-red-50 p-3 text-xs font-medium text-red-700">{error}</p> : null}

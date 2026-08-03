@@ -17,30 +17,30 @@ export default async function TherapistListPage() {
   });
 
   return (
-    <main className="mx-auto max-w-3xl px-4 pb-6 pt-3 text-[#191414] sm:px-6">
+    <main className="mx-auto max-w-3xl px-4 pb-6 pt-3 text-[#281b18] sm:px-6">
       <div className="mb-1 flex items-center gap-2">
-        <Users className="text-[#d13f1f]" size={20} />
+        <Users className="text-[#c64b32]" size={20} />
         <h1 className="text-xl font-semibold tracking-tight">Đội ngũ KTV</h1>
       </div>
-      <p className="mb-2.5 text-sm text-[#665b55]">Xem hồ sơ, tay nghề và đánh giá thật trước khi đặt lịch.</p>
+      <p className="mb-2.5 text-sm text-[#68574f]">Xem hồ sơ, tay nghề và đánh giá thật trước khi đặt lịch.</p>
 
       <div className="grid gap-3 sm:grid-cols-2">
         {activeTherapists.map((therapist) => (
           <Link
             key={therapist.id}
             href={`/ktv/${therapist.id}`}
-            className="flex items-start gap-3 rounded-xl border border-[#eadbd1] bg-white p-3.5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+            className="flex items-start gap-3 rounded-xl border border-[#e7d6ca] bg-white p-3.5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
           >
             <TherapistAvatar id={therapist.id} src={therapist.avatarUrl} size={56} className="shrink-0 rounded-full" />
             <div className="min-w-0">
               <p className="text-sm font-semibold tracking-tight">{therapist.fullName}</p>
-              <p className="mt-0.5 flex items-center gap-1 text-xs text-[#8a7a72]">
+              <p className="mt-0.5 flex items-center gap-1 text-xs text-[#826f66]">
                 {therapist.servedCount > 0 ? (
-                  <><Star size={12} className="fill-[#d13f1f] text-[#d13f1f]" /> {therapist.ratingAvg.toFixed(1)} · {therapist.servedCount} buổi · </>
-                ) : <span className="font-semibold text-[#b86b1f]">KTV mới · </span>}
+                  <><Star size={12} className="fill-[#c64b32] text-[#c64b32]" /> {therapist.ratingAvg.toFixed(1)} · {therapist.servedCount} buổi · </>
+                ) : <span className="font-semibold text-[#a85f29]">KTV mới · </span>}
                 {therapist.branch.name.replace(/^Tâm An Center · /, "")} · {therapist.shiftLabel}
               </p>
-              <p className="mt-1.5 line-clamp-2 text-xs leading-5 text-[#665b55]">{therapist.publicBio ?? `Chuyên ${(therapist.publicStrengths.length ? therapist.publicStrengths : therapist.skills).join(" · ")}`}</p>
+              <p className="mt-1.5 line-clamp-2 text-xs leading-5 text-[#68574f]">{therapist.publicBio ?? `Chuyên ${(therapist.publicStrengths.length ? therapist.publicStrengths : therapist.skills).join(" · ")}`}</p>
             </div>
           </Link>
         ))}

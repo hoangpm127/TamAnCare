@@ -22,11 +22,11 @@ export default async function TherapistLayout({ children }: { children: React.Re
       width: 420,
       margin: 1,
       errorCorrectionLevel: "H",
-      color: { dark: "#173d36", light: "#ffffff" },
+      color: { dark: "#0b4f3c", light: "#ffffff" },
     });
   }
   return (
-    <main className="min-h-screen bg-[#fffaf6] text-[#191414]">
+    <main className="min-h-screen bg-[#fdf8f3] text-[#281b18]">
       <TherapistNav qrDataUrl={qrDataUrl} therapistName={therapist?.fullName ?? session.displayName} branchLabel={session.branchLabel} />
       <div className="pb-20">{children}</div>
     </main>

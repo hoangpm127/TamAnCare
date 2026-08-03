@@ -197,8 +197,8 @@ const investorViewPresentation: Record<InvestorView, {
     icon: Landmark,
     pageClass: "bg-[#160f0e]",
     glowClass: "bg-[radial-gradient(circle_at_85%_0%,rgba(232,198,101,0.18),transparent_30%),radial-gradient(circle_at_5%_35%,rgba(132,36,37,0.22),transparent_30%)]",
-    heroClass: "border-[#e8c665]/25 from-[#4a2d20] via-[#281817] to-[#130d0c]",
-    activeTabClass: "bg-[#e8c665] text-[#2b1b13]",
+    heroClass: "border-[#d6b45e]/25 from-[#4a2d20] via-[#281817] to-[#130d0c]",
+    activeTabClass: "bg-[#d6b45e] text-[#2b1b13]",
   },
   performance: {
     eyebrow: "Số liệu cơ sở hoạt động",
@@ -273,9 +273,9 @@ function ModalShell({ title, eyebrow, onClose, children }: { title: string; eyeb
   return (
     <div className="fixed inset-0 z-[70] flex items-end justify-center bg-black/65 backdrop-blur-sm sm:items-center sm:p-5">
       <button type="button" className="absolute inset-0" onClick={onClose} aria-label="Đóng" />
-      <section className="relative max-h-[90dvh] w-full overflow-y-auto rounded-t-[28px] border border-[#e8c665]/20 bg-[#1c1312] p-4 text-white shadow-2xl sm:max-w-xl sm:rounded-[28px] sm:p-5">
+      <section className="relative max-h-[90dvh] w-full overflow-y-auto rounded-t-[28px] border border-[#d6b45e]/20 bg-[#1c1312] p-4 text-white shadow-2xl sm:max-w-xl sm:rounded-[28px] sm:p-5">
         <div className="px-10 text-center">
-          <p className="text-[9px] font-semibold uppercase tracking-[0.18em] text-[#e8c665]">{eyebrow}</p>
+          <p className="text-[9px] font-semibold uppercase tracking-[0.18em] text-[#d6b45e]">{eyebrow}</p>
           <h2 className="mt-1 text-xl font-semibold">{title}</h2>
         </div>
         <button type="button" onClick={onClose} className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full border border-white/8 bg-white/5 text-white/65" aria-label="Đóng"><X size={17} /></button>
@@ -376,7 +376,7 @@ export function InvestorDashboardClient() {
     return (
       <main className="min-h-screen bg-[#160f0e] px-4 py-10 text-white">
         <div className="mx-auto flex max-w-6xl items-center justify-center gap-3 rounded-3xl border border-white/10 bg-white/5 px-5 py-16 text-sm text-white/70">
-          <RefreshCw size={18} className="animate-spin text-[#e8c665]" /> Đang tổng hợp dữ liệu đầu tư…
+          <RefreshCw size={18} className="animate-spin text-[#d6b45e]" /> Đang tổng hợp dữ liệu đầu tư…
         </div>
       </main>
     );
@@ -388,7 +388,7 @@ export function InvestorDashboardClient() {
         <div className="mx-auto max-w-lg rounded-3xl border border-red-300/20 bg-red-500/10 p-6 text-center">
           <p className="font-semibold">Chưa thể mở Trung tâm Nhà đầu tư</p>
           <p className="mt-2 text-sm text-white/65">{error}</p>
-          <button type="button" onClick={refresh} className="mt-4 rounded-full bg-[#e8c665] px-5 py-2 text-sm font-semibold text-[#281b13]">Thử tải lại</button>
+          <button type="button" onClick={refresh} className="mt-4 rounded-full bg-[#d6b45e] px-5 py-2 text-sm font-semibold text-[#281b13]">Thử tải lại</button>
         </div>
       </main>
     );
@@ -406,7 +406,7 @@ export function InvestorDashboardClient() {
     <main className={cn("min-h-screen overflow-x-hidden pb-28 text-white transition-colors duration-500 sm:pb-12", viewPresentation.pageClass)}>
       <div className={cn("pointer-events-none fixed inset-0 transition-all duration-500", viewPresentation.glowClass)} />
       <div className="relative mx-auto w-full min-w-0 max-w-7xl overflow-x-hidden px-3 py-4 sm:px-6 sm:py-7 lg:px-10">
-        <nav className="sticky top-[65px] z-30 mx-0 hidden items-stretch justify-center gap-1 rounded-2xl border border-[#e8c665]/18 bg-[#160f0e]/95 p-1.5 shadow-xl shadow-black/20 backdrop-blur md:flex" aria-label="Điều hướng Trung tâm Nhà đầu tư">
+        <nav className="sticky top-[65px] z-30 mx-0 hidden items-stretch justify-center gap-1 rounded-2xl border border-[#d6b45e]/18 bg-[#160f0e]/95 p-1.5 shadow-xl shadow-black/20 backdrop-blur md:flex" aria-label="Điều hướng Trung tâm Nhà đầu tư">
           {investorViews.map((item) => {
             const Icon = item.icon;
             return <button key={item.key} type="button" onClick={() => selectView(item.key)} className={cn("relative flex min-w-[78px] flex-1 flex-col items-center justify-center gap-1 rounded-xl px-2 py-2 text-[9px] font-semibold transition sm:max-w-36 sm:flex-row sm:text-[10px]", activeView === item.key ? `${investorViewPresentation[item.key].activeTabClass} shadow` : "text-white/48 hover:bg-white/5 hover:text-white")}><Icon size={14} /><span>{item.label}</span>{item.key === "opportunities" ? <i className={cn("absolute right-1.5 top-1 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[8px] not-italic", activeView === item.key ? "bg-[#10243a] text-[#baddff]" : "bg-sky-500 text-white")}>{data.briefing.pipelineOpportunities}</i> : null}</button>;
@@ -430,7 +430,7 @@ export function InvestorDashboardClient() {
             <p className="text-[9px] font-semibold uppercase tracking-[0.15em] text-white/35">Khoảng thời gian</p>
             <div className="mx-auto mt-2 grid max-w-2xl grid-cols-3 gap-1.5 rounded-2xl border border-white/10 bg-black/20 p-1.5 lg:grid-cols-6">
               {ranges.map((item) => (
-                <button key={item.key} type="button" onClick={() => selectRange(item.key)} className={cn("min-w-0 rounded-xl px-1.5 py-2 text-[10px] font-semibold transition sm:px-2 sm:text-xs", range === item.key ? "bg-[#e8c665] text-[#2b1b13] shadow" : "text-white/55 hover:text-white")}>{item.label}</button>
+                <button key={item.key} type="button" onClick={() => selectRange(item.key)} className={cn("min-w-0 rounded-xl px-1.5 py-2 text-[10px] font-semibold transition sm:px-2 sm:text-xs", range === item.key ? "bg-[#d6b45e] text-[#2b1b13] shadow" : "text-white/55 hover:text-white")}>{item.label}</button>
               ))}
             </div>
 
@@ -438,24 +438,24 @@ export function InvestorDashboardClient() {
               <div className="mx-auto mt-2 grid max-w-md grid-cols-[1fr_1fr_auto] gap-2 rounded-2xl border border-white/8 bg-black/15 p-2">
                 <label className="text-left"><span className="ml-1 block text-[8px] text-white/38">Từ ngày</span><input type="date" value={customFrom} max={customTo} onChange={(event) => { setLoading(true); setCustomFrom(event.target.value); }} className="mt-1 w-full rounded-xl border border-white/10 bg-white/8 px-2 py-2 text-[10px] text-white [color-scheme:dark]" /></label>
                 <label className="text-left"><span className="ml-1 block text-[8px] text-white/38">Đến ngày</span><input type="date" value={customTo} min={customFrom} max={today} onChange={(event) => { setLoading(true); setCustomTo(event.target.value); }} className="mt-1 w-full rounded-xl border border-white/10 bg-white/8 px-2 py-2 text-[10px] text-white [color-scheme:dark]" /></label>
-                <button type="button" onClick={refresh} className="self-end rounded-xl bg-[#e8c665] px-3 py-2 text-[10px] font-bold text-[#2b1b13]">Lọc</button>
+                <button type="button" onClick={refresh} className="self-end rounded-xl bg-[#d6b45e] px-3 py-2 text-[10px] font-bold text-[#2b1b13]">Lọc</button>
               </div>
             ) : null}
 
             <p className="mt-4 text-[9px] font-semibold uppercase tracking-[0.15em] text-white/35">Phạm vi đầu tư</p>
             <div className="scrollbar-hide mx-auto mt-2 flex max-w-xl justify-center gap-1.5 overflow-x-auto">
               {[{ branchId: "all", label: "Tất cả cơ sở" }, ...data.filters.availableBranches].map((item) => (
-                <button key={item.branchId} type="button" onClick={() => selectBranch(item.branchId)} className={cn("shrink-0 rounded-full border px-3 py-1.5 text-[10px] font-semibold", selectedBranchId === item.branchId ? "border-[#e8c665] bg-[#e8c665]/15 text-[#f4d979]" : "border-white/10 text-white/48")}>{item.label}</button>
+                <button key={item.branchId} type="button" onClick={() => selectBranch(item.branchId)} className={cn("shrink-0 rounded-full border px-3 py-1.5 text-[10px] font-semibold", selectedBranchId === item.branchId ? "border-[#d6b45e] bg-[#d6b45e]/15 text-[#f4d979]" : "border-white/10 text-white/48")}>{item.label}</button>
               ))}
             </div>
-            <div className="mt-3 flex items-center justify-center gap-3 text-[9px] text-white/38"><span>{periodText(data)}</span><span>·</span><button type="button" onClick={refresh} disabled={loading} className="flex items-center gap-1 text-[#e8c665]/75 disabled:opacity-50"><RefreshCw size={11} className={cn(loading && "animate-spin")} /> Cập nhật</button></div>
+            <div className="mt-3 flex items-center justify-center gap-3 text-[9px] text-white/38"><span>{periodText(data)}</span><span>·</span><button type="button" onClick={refresh} disabled={loading} className="flex items-center gap-1 text-[#d6b45e]/75 disabled:opacity-50"><RefreshCw size={11} className={cn(loading && "animate-spin")} /> Cập nhật</button></div>
           </div> : null}
         </section>
 
-        {activeView === "overview" ? <section className="mt-3 rounded-[24px] border border-[#e8c665]/16 bg-[#251816]/90 p-4 text-center sm:p-5">
-          <div className="flex flex-col items-center"><Landmark size={19} className="text-[#e8c665]" /><p className="mt-2 text-[9px] font-semibold uppercase tracking-[0.16em] text-[#e8c665]">Danh mục hiện hữu</p><h2 className="mt-1 text-base font-semibold">{data.briefing.activePortfolioBranches} cơ sở đã đầu tư và đang hoạt động</h2><p className="mt-1 text-[9px] leading-4 text-white/38">Chỉ số tài chính bên dưới chỉ tổng hợp từ các cơ sở này.</p></div>
+        {activeView === "overview" ? <section className="mt-3 rounded-[24px] border border-[#d6b45e]/16 bg-[#251816]/90 p-4 text-center sm:p-5">
+          <div className="flex flex-col items-center"><Landmark size={19} className="text-[#d6b45e]" /><p className="mt-2 text-[9px] font-semibold uppercase tracking-[0.16em] text-[#d6b45e]">Danh mục hiện hữu</p><h2 className="mt-1 text-base font-semibold">{data.briefing.activePortfolioBranches} cơ sở đã đầu tư và đang hoạt động</h2><p className="mt-1 text-[9px] leading-4 text-white/38">Chỉ số tài chính bên dưới chỉ tổng hợp từ các cơ sở này.</p></div>
           <div className="mt-3 grid grid-cols-2 gap-2">
-            {data.branches.map((branch) => <button key={branch.branchId} type="button" onClick={() => setSelectedBranch(branch)} className="rounded-2xl border border-[#e8c665]/12 bg-black/15 p-3 text-center transition hover:border-[#e8c665]/30"><span className="inline-flex rounded-full bg-emerald-300/9 px-2 py-1 text-[8px] font-bold text-emerald-200">ĐANG VẬN HÀNH</span><p className="mt-2 text-sm font-semibold">{branch.label}</p><p className="mt-1 text-[9px] text-white/36">Đã phân bổ {compactMoney(branch.allocatedCapital)}</p><div className="mt-2 border-t border-white/7 pt-2"><p className="text-[8px] text-white/35">Lợi nhuận kỳ chọn</p><p className="mt-0.5 text-xs font-semibold text-[#f0d478]">{compactMoney(branch.profit)}</p></div></button>)}
+            {data.branches.map((branch) => <button key={branch.branchId} type="button" onClick={() => setSelectedBranch(branch)} className="rounded-2xl border border-[#d6b45e]/12 bg-black/15 p-3 text-center transition hover:border-[#d6b45e]/30"><span className="inline-flex rounded-full bg-emerald-300/9 px-2 py-1 text-[8px] font-bold text-emerald-200">ĐANG VẬN HÀNH</span><p className="mt-2 text-sm font-semibold">{branch.label}</p><p className="mt-1 text-[9px] text-white/36">Đã phân bổ {compactMoney(branch.allocatedCapital)}</p><div className="mt-2 border-t border-white/7 pt-2"><p className="text-[8px] text-white/35">Lợi nhuận kỳ chọn</p><p className="mt-0.5 text-xs font-semibold text-[#dfbf6c]">{compactMoney(branch.profit)}</p></div></button>)}
           </div>
           <div className="mt-3 flex items-center justify-center gap-1.5 rounded-xl bg-white/[0.035] px-3 py-2 text-[9px] text-white/40"><ShieldCheck size={12} className="text-emerald-300" /> Không bao gồm các địa điểm đang khảo sát trong tab Cơ hội mới.</div>
         </section> : null}
@@ -470,8 +470,8 @@ export function InvestorDashboardClient() {
           ].map((card, index) => {
             const Icon = card.icon;
             return (
-              <article key={card.label} className={cn("flex min-h-32 flex-col items-center justify-center rounded-2xl border bg-white/[0.055] p-3.5 text-center", index === 4 && "col-span-2 lg:col-span-1", card.tone === "gold" ? "border-[#e8c665]/20" : "border-white/8")}>
-                <Icon size={17} className={card.tone === "gold" ? "text-[#e8c665]" : card.tone === "green" ? "text-emerald-300" : card.tone === "red" ? "text-rose-300" : "text-sky-300"} />
+              <article key={card.label} className={cn("flex min-h-32 flex-col items-center justify-center rounded-2xl border bg-white/[0.055] p-3.5 text-center", index === 4 && "col-span-2 lg:col-span-1", card.tone === "gold" ? "border-[#d6b45e]/20" : "border-white/8")}>
+                <Icon size={17} className={card.tone === "gold" ? "text-[#d6b45e]" : card.tone === "green" ? "text-emerald-300" : card.tone === "red" ? "text-rose-300" : "text-sky-300"} />
                 <p className="mt-2 text-[10px] font-medium text-white/48">{card.label}</p>
                 <p className="mt-1.5 text-lg font-semibold tracking-tight sm:text-xl">{card.value}</p>
                 <p className="mt-1 text-[9px] text-white/35">{card.note}</p>
@@ -483,20 +483,20 @@ export function InvestorDashboardClient() {
         {activeView === "overview" || activeView === "performance" ? <div className="mt-3 min-w-0">
           {activeView === "overview" ? <section className="min-w-0 max-w-full overflow-hidden rounded-[24px] border border-white/8 bg-white/[0.045] p-4 text-center sm:p-5">
             <div className="flex flex-col items-center">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#e8c665]">Tiến độ thu hồi vốn</p>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#d6b45e]">Tiến độ thu hồi vốn</p>
               <h2 className="mt-1 text-lg font-semibold">Đã nhận {compactMoney(summary.paidReturns)}</h2>
-              <span className="mt-2 rounded-full border border-[#e8c665]/20 bg-[#e8c665]/8 px-2.5 py-1 text-[10px] font-semibold text-[#f3d982]">{summary.recoveredPercent.toLocaleString("vi-VN", { maximumFractionDigits: 1 })}% vốn</span>
+              <span className="mt-2 rounded-full border border-[#d6b45e]/20 bg-[#d6b45e]/8 px-2.5 py-1 text-[10px] font-semibold text-[#f3d982]">{summary.recoveredPercent.toLocaleString("vi-VN", { maximumFractionDigits: 1 })}% vốn</span>
             </div>
-            <div className="mx-auto mt-5 h-3 max-w-xl overflow-hidden rounded-full bg-white/8"><div className="h-full rounded-full bg-gradient-to-r from-[#9f6d1d] via-[#e8c665] to-[#fff0aa] transition-all" style={{ width: `${recoveryWidth}%` }} /></div>
+            <div className="mx-auto mt-5 h-3 max-w-xl overflow-hidden rounded-full bg-white/8"><div className="h-full rounded-full bg-gradient-to-r from-[#9f6d1d] via-[#d6b45e] to-[#fff0aa] transition-all" style={{ width: `${recoveryWidth}%` }} /></div>
             <div className="mt-3 flex flex-wrap justify-center gap-x-5 gap-y-1 text-[10px] text-white/42"><span>Còn lại {compactMoney(summary.remainingCapital)}</span><span>Bình quân {compactMoney(summary.averageMonthlyShare)}/tháng</span></div>
             <div className="mt-5 grid min-w-0 grid-cols-1 gap-2.5 lg:grid-cols-2">
-              <div className="min-w-0 rounded-2xl border border-[#e8c665]/16 bg-[#e8c665]/[0.045] p-3 text-center">
-                <Sparkles size={17} className="mx-auto text-[#e8c665]" />
+              <div className="min-w-0 rounded-2xl border border-[#d6b45e]/16 bg-[#d6b45e]/[0.045] p-3 text-center">
+                <Sparkles size={17} className="mx-auto text-[#d6b45e]" />
                 <p className="mt-2 text-[10px] text-white/42">AI dự kiến hoàn vốn</p>
                 <p className="mt-1 text-xs font-semibold leading-5 sm:text-sm">
                   {payback.earliestDate && payback.latestDate ? <><span className="block">{monthYear(payback.earliestDate)}</span><span className="block text-[10px] font-medium text-white/55">đến {monthYear(payback.latestDate)}</span></> : "Chưa đủ dữ liệu"}
                 </p>
-                <p className="mt-1 text-[9px] text-[#e8c665]/70">{payback.optimisticMonths ?? "—"}–{payback.conservativeMonths ?? "—"} tháng · ±{payback.variancePercent}%</p>
+                <p className="mt-1 text-[9px] text-[#d6b45e]/70">{payback.optimisticMonths ?? "—"}–{payback.conservativeMonths ?? "—"} tháng · ±{payback.variancePercent}%</p>
               </div>
               <div className="min-w-0 rounded-2xl border border-white/7 bg-black/15 p-3 text-center">
                 <Target size={17} className="mx-auto text-emerald-300" />
@@ -509,8 +509,8 @@ export function InvestorDashboardClient() {
           </section> : null}
 
           {activeView === "performance" ? <section className="min-w-0 max-w-full overflow-hidden rounded-[24px] border border-emerald-300/14 bg-[#12231f]/85 p-4 text-center shadow-xl shadow-black/15 sm:p-5">
-            <ChartNoAxesCombined size={21} className="mx-auto text-[#e8c665]" />
-            <p className="mt-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#e8c665]">Biểu đồ tài chính</p>
+            <ChartNoAxesCombined size={21} className="mx-auto text-[#d6b45e]" />
+            <p className="mt-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#d6b45e]">Biểu đồ tài chính</p>
             <h2 className="mt-1 text-base font-semibold">Doanh thu · Chi phí · Lợi nhuận</h2>
             <p className="mt-1 text-[9px] text-white/35">Bấm vào từng cột để xem số liệu cụ thể</p>
             <div className="scrollbar-hide mt-5 flex h-48 w-full min-w-0 items-end gap-2 overflow-x-auto overscroll-x-contain pb-1">
@@ -528,7 +528,7 @@ export function InvestorDashboardClient() {
             <div className="mt-2 flex flex-wrap items-center justify-center gap-3 border-t border-white/7 pt-3 text-[9px] text-white/42">
               <span className="flex items-center gap-1.5"><i className="h-2 w-2 rounded-sm bg-emerald-400" /> Doanh thu</span>
               <span className="flex items-center gap-1.5"><i className="h-2 w-2 rounded-sm bg-rose-400" /> Chi phí</span>
-              <span className="flex items-center gap-1.5"><i className="h-2 w-2 rounded-sm bg-[#e8c665]" /> Lợi nhuận</span>
+              <span className="flex items-center gap-1.5"><i className="h-2 w-2 rounded-sm bg-[#d6b45e]" /> Lợi nhuận</span>
               <span>* chưa chốt</span>
             </div>
           </section> : null}
@@ -540,9 +540,9 @@ export function InvestorDashboardClient() {
           <p className="mt-1 text-[9px] text-white/35">Chỉ gồm Cơ sở 1 và Cơ sở 2 đã được giải ngân · bấm Card để xem cấu thành</p>
           <div className="mt-4 grid gap-2.5 md:grid-cols-2">
             {data.branches.map((branch) => (
-              <button key={branch.branchId} type="button" onClick={() => setSelectedBranch(branch)} className="group rounded-2xl border border-white/7 bg-black/15 p-3.5 text-center transition hover:border-[#e8c665]/25 hover:bg-[#e8c665]/[0.035]">
+              <button key={branch.branchId} type="button" onClick={() => setSelectedBranch(branch)} className="group rounded-2xl border border-white/7 bg-black/15 p-3.5 text-center transition hover:border-[#d6b45e]/25 hover:bg-[#d6b45e]/[0.035]">
                 <div className="flex flex-col items-center">
-                  <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#e8c665]/10 text-[#e8c665]"><Building2 size={16} /></span>
+                  <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#d6b45e]/10 text-[#d6b45e]"><Building2 size={16} /></span>
                   <p className="mt-2 text-sm font-semibold">{branch.label}</p>
                   <p className="mt-0.5 text-[9px] text-white/36">Phân bổ {compactMoney(branch.allocatedCapital)} · sở hữu {branch.ownershipPercent}%</p>
                   <span className={cn("mt-2 rounded-full px-2 py-1 text-[9px] font-semibold", branch.profit >= 0 ? "bg-emerald-300/10 text-emerald-200" : "bg-rose-300/10 text-rose-200")}>Biên lợi nhuận {branch.marginPercent.toLocaleString("vi-VN", { maximumFractionDigits: 1 })}%</span>
@@ -550,9 +550,9 @@ export function InvestorDashboardClient() {
                 <div className="mt-3 grid grid-cols-3 gap-2 border-t border-white/7 pt-3">
                   <div><p className="text-[8px] text-white/35">Doanh thu thuần</p><p className="mt-1 text-xs font-semibold">{compactMoney(branch.revenue)}</p></div>
                   <div><p className="text-[8px] text-white/35">Chi phí</p><p className="mt-1 text-xs font-semibold">{compactMoney(branch.expenses)}</p></div>
-                  <div><p className="text-[8px] text-white/35">Lợi nhuận</p><p className="mt-1 text-xs font-semibold text-[#f0d478]">{compactMoney(branch.profit)}</p></div>
+                  <div><p className="text-[8px] text-white/35">Lợi nhuận</p><p className="mt-1 text-xs font-semibold text-[#dfbf6c]">{compactMoney(branch.profit)}</p></div>
                 </div>
-                <span className="mt-3 inline-flex items-center gap-1 text-[9px] font-semibold text-[#e8c665]/70">Xem chi tiết <ChevronRight size={11} className="transition group-hover:translate-x-0.5" /></span>
+                <span className="mt-3 inline-flex items-center gap-1 text-[9px] font-semibold text-[#d6b45e]/70">Xem chi tiết <ChevronRight size={11} className="transition group-hover:translate-x-0.5" /></span>
               </button>
             ))}
           </div>
@@ -576,7 +576,7 @@ export function InvestorDashboardClient() {
               const remaining = Math.max(0, item.capitalNeed - item.expressedInterestCapital);
               return <article key={item.id} className="min-w-[88%] snap-center overflow-hidden rounded-[22px] border border-sky-300/12 bg-[#0c1622] sm:min-w-[72%] lg:min-w-0">
                 <div className="bg-gradient-to-br from-[#23415e] to-[#101c2a] p-4 text-center">
-                  <div className="flex items-start justify-between gap-2 text-left"><span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#e8c665]/20 bg-[#e8c665]/10 text-[#e8c665]">{item.type === "NEW_BRANCH" ? <Building2 size={18} /> : <FileSearch size={18} />}</span><span className="rounded-full border border-amber-300/18 bg-amber-300/8 px-2.5 py-1 text-[9px] font-semibold text-amber-100">{item.statusLabel} · {item.progressPercent}%</span></div>
+                  <div className="flex items-start justify-between gap-2 text-left"><span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#d6b45e]/20 bg-[#d6b45e]/10 text-[#d6b45e]">{item.type === "NEW_BRANCH" ? <Building2 size={18} /> : <FileSearch size={18} />}</span><span className="rounded-full border border-amber-300/18 bg-amber-300/8 px-2.5 py-1 text-[9px] font-semibold text-amber-100">{item.statusLabel} · {item.progressPercent}%</span></div>
                   <span className="mt-3 inline-flex rounded-full border border-sky-200/14 bg-sky-200/8 px-2.5 py-1 text-[8px] font-bold uppercase tracking-wide text-sky-100">{item.portfolioRelationLabel}</span>
                   <h3 className="mt-3 text-base font-semibold">{item.name}</h3>
                   <p className="mt-1 text-[10px] text-white/42">{item.area}</p>
@@ -585,10 +585,10 @@ export function InvestorDashboardClient() {
                 <div className="p-4">
                   <div className="grid grid-cols-2 gap-2 text-center">
                     <div className="rounded-xl bg-white/[0.035] p-2.5"><p className="text-[8px] text-white/35">Tổng nhu cầu vốn</p><p className="mt-1 text-sm font-semibold">{compactMoney(item.capitalNeed)}</p></div>
-                    <div className="rounded-xl bg-white/[0.035] p-2.5"><p className="text-[8px] text-white/35">Còn đang xem xét</p><p className="mt-1 text-sm font-semibold text-[#f0d478]">{compactMoney(remaining)}</p></div>
+                    <div className="rounded-xl bg-white/[0.035] p-2.5"><p className="text-[8px] text-white/35">Còn đang xem xét</p><p className="mt-1 text-sm font-semibold text-[#dfbf6c]">{compactMoney(remaining)}</p></div>
                     <div className="rounded-xl bg-white/[0.035] p-2.5"><p className="text-[8px] text-white/35">Mức tham gia dự kiến</p><p className="mt-1 text-xs font-semibold">Từ {compactMoney(item.minimumCommitment)}</p></div>
                     <div className="rounded-xl bg-white/[0.035] p-2.5"><p className="text-[8px] text-white/35">Mục tiêu tham chiếu</p><p className="mt-1 text-xs font-semibold">{item.targetReturnRange}</p></div>
-                    <div className="col-span-2 rounded-xl border border-[#e8c665]/12 bg-[#e8c665]/[0.04] p-2.5"><p className="text-[8px] text-white/35">Thời gian hồi vốn dự kiến</p><p className="mt-1 text-xs font-semibold text-[#f0d478]">{item.expectedPaybackPeriod}</p></div>
+                    <div className="col-span-2 rounded-xl border border-[#d6b45e]/12 bg-[#d6b45e]/[0.04] p-2.5"><p className="text-[8px] text-white/35">Thời gian hồi vốn dự kiến</p><p className="mt-1 text-xs font-semibold text-[#dfbf6c]">{item.expectedPaybackPeriod}</p></div>
                   </div>
                   <div className="mt-3 rounded-2xl border border-sky-300/12 bg-sky-300/[0.04] p-3 text-center"><Sparkles size={15} className="mx-auto text-sky-300" /><p className="mt-1 text-[9px] font-semibold text-sky-200">Tóm tắt thẩm định</p><p className="mt-1 line-clamp-2 text-[9px] leading-4 text-white/45">{item.aiAssessment}</p></div>
                   <p className="mt-3 text-center text-[9px] text-white/35">{item.nextUpdate} · {item.expectedOpening}</p>
@@ -620,27 +620,27 @@ export function InvestorDashboardClient() {
             <p className="mx-auto mt-1 max-w-2xl text-[10px] leading-5 text-white/46">{data.briefing.detail}</p>
             <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
               <div className="rounded-2xl border border-white/7 bg-black/15 p-3"><p className="text-[8px] text-white/35">Cơ sở đang hoạt động</p><p className="mt-1 text-sm font-semibold">{data.briefing.activePortfolioBranches}</p></div>
-              <div className="rounded-2xl border border-white/7 bg-black/15 p-3"><p className="text-[8px] text-white/35">Vốn còn xem xét</p><p className="mt-1 text-sm font-semibold text-[#f0d478]">{compactMoney(data.briefing.remainingOpportunityCapital)}</p></div>
+              <div className="rounded-2xl border border-white/7 bg-black/15 p-3"><p className="text-[8px] text-white/35">Vốn còn xem xét</p><p className="mt-1 text-sm font-semibold text-[#dfbf6c]">{compactMoney(data.briefing.remainingOpportunityCapital)}</p></div>
               <div className="rounded-2xl border border-white/7 bg-black/15 p-3"><p className="text-[8px] text-white/35">Mốc gần nhất</p><p className="mt-1 text-[10px] font-semibold leading-4">{data.briefing.nextMilestone}</p></div>
               <button type="button" onClick={() => selectView("opportunities")} className="rounded-2xl border border-sky-200/18 bg-sky-200/10 p-3 text-sky-100"><Rocket size={15} className="mx-auto" /><span className="mt-1 block text-[10px] font-semibold">{data.briefing.pipelineOpportunities} cơ hội mới</span></button>
             </div>
             <div className="mt-3 flex flex-wrap justify-center gap-1.5">{data.opportunities.map((item) => <span key={item.id} className="rounded-full border border-white/8 bg-white/[0.035] px-2.5 py-1.5 text-[9px] text-white/50">{item.name} · <strong className="text-white/75">{item.statusLabel} {item.progressPercent}%</strong> · {item.nextUpdate}</span>)}</div>
           </section>
           <section className="rounded-[24px] border border-white/8 bg-white/[0.045] p-4 text-center sm:p-5">
-            <CircleDollarSign size={19} className="mx-auto text-[#e8c665]" />
+            <CircleDollarSign size={19} className="mx-auto text-[#d6b45e]" />
             <h2 className="mt-2 text-base font-semibold">Lịch sử phân phối lợi nhuận</h2>
             <div className="mt-3 space-y-2">
               {data.distributions.slice(0, 6).map((item) => (
                 <div key={item.id} className="grid grid-cols-[1fr_auto] items-center gap-3 rounded-2xl border border-white/6 bg-black/12 px-3 py-2.5 text-left">
                   <div><p className="text-xs font-semibold">Kỳ {monthYear(item.periodEnd)}</p><p className="mt-0.5 text-[9px] text-white/35">{item.status === "PAID" && item.paidAt ? `Đã trả ngày ${shortDate(item.paidAt)}` : "Chờ chốt sổ"}</p></div>
-                  <div className="text-right"><p className="text-sm font-semibold text-[#f0d478]">+{money(item.amount)}</p><p className={cn("text-[8px] font-semibold", item.status === "PAID" ? "text-emerald-300" : "text-amber-300")}>{item.status === "PAID" ? "ĐÃ PHÂN PHỐI" : "DỰ KIẾN"}</p></div>
+                  <div className="text-right"><p className="text-sm font-semibold text-[#dfbf6c]">+{money(item.amount)}</p><p className={cn("text-[8px] font-semibold", item.status === "PAID" ? "text-emerald-300" : "text-amber-300")}>{item.status === "PAID" ? "ĐÃ PHÂN PHỐI" : "DỰ KIẾN"}</p></div>
                 </div>
               ))}
             </div>
           </section>
 
-          <aside className="rounded-[24px] border border-[#e8c665]/14 bg-[#e8c665]/[0.045] p-4 text-center sm:p-5">
-            <LockKeyhole size={18} className="mx-auto text-[#e8c665]" />
+          <aside className="rounded-[24px] border border-[#d6b45e]/14 bg-[#d6b45e]/[0.045] p-4 text-center sm:p-5">
+            <LockKeyhole size={18} className="mx-auto text-[#d6b45e]" />
             <h2 className="mt-2 text-sm font-semibold">Phạm vi dữ liệu an toàn</h2>
             <p className="mt-3 text-[10px] leading-5 text-white/48">{data.dataPolicy.scope}. Báo cáo này không hiển thị:</p>
             <ul className="mx-auto mt-2 max-w-xs space-y-1.5 text-[10px] text-white/55">{data.dataPolicy.excludes.map((item) => <li key={item}>• {item}</li>)}</ul>
@@ -655,11 +655,11 @@ export function InvestorDashboardClient() {
           <div className="mt-5 grid grid-cols-3 gap-2 text-center">
             <div className="rounded-2xl border border-emerald-300/12 bg-emerald-300/[0.045] p-3"><ArrowUpRight size={16} className="mx-auto text-emerald-300" /><p className="mt-2 text-[9px] text-white/42">Doanh thu</p><p className="mt-1 text-sm font-semibold">{compactMoney(selectedPoint.revenue)}</p></div>
             <div className="rounded-2xl border border-rose-300/12 bg-rose-300/[0.045] p-3"><ArrowDownRight size={16} className="mx-auto text-rose-300" /><p className="mt-2 text-[9px] text-white/42">Chi phí</p><p className="mt-1 text-sm font-semibold">{compactMoney(selectedPoint.expenses)}</p></div>
-            <div className="rounded-2xl border border-[#e8c665]/15 bg-[#e8c665]/[0.045] p-3"><TrendingUp size={16} className="mx-auto text-[#e8c665]" /><p className="mt-2 text-[9px] text-white/42">Lợi nhuận</p><p className="mt-1 text-sm font-semibold text-[#f0d478]">{compactMoney(selectedPoint.profit)}</p></div>
+            <div className="rounded-2xl border border-[#d6b45e]/15 bg-[#d6b45e]/[0.045] p-3"><TrendingUp size={16} className="mx-auto text-[#d6b45e]" /><p className="mt-2 text-[9px] text-white/42">Lợi nhuận</p><p className="mt-1 text-sm font-semibold text-[#dfbf6c]">{compactMoney(selectedPoint.profit)}</p></div>
           </div>
           <div className="mt-3 grid grid-cols-2 gap-2 text-center">
             <div className="rounded-2xl border border-white/7 bg-black/15 p-3"><p className="text-[9px] text-white/38">Biên lợi nhuận</p><p className="mt-1 text-base font-semibold">{selectedPoint.marginPercent.toLocaleString("vi-VN", { maximumFractionDigits: 1 })}%</p></div>
-            <div className="rounded-2xl border border-white/7 bg-black/15 p-3"><p className="text-[9px] text-white/38">Phần của bạn</p><p className="mt-1 text-base font-semibold text-[#f0d478]">{compactMoney(selectedPoint.investorShare)}</p></div>
+            <div className="rounded-2xl border border-white/7 bg-black/15 p-3"><p className="text-[9px] text-white/38">Phần của bạn</p><p className="mt-1 text-base font-semibold text-[#dfbf6c]">{compactMoney(selectedPoint.investorShare)}</p></div>
           </div>
           <p className="mt-4 text-center text-[9px] italic leading-4 text-white/35">Tip KTV được loại khỏi toàn bộ doanh thu, chi phí và lợi nhuận trong báo cáo này.</p>
         </ModalShell>
@@ -674,10 +674,10 @@ export function InvestorDashboardClient() {
             <div className="rounded-2xl border border-white/7 bg-black/15 p-3"><p className="text-[8px] text-white/35">Nhu cầu vốn</p><p className="mt-1 text-sm font-semibold">{compactMoney(selectedOpportunity.capitalNeed)}</p></div>
             <div className="rounded-2xl border border-white/7 bg-black/15 p-3"><p className="text-[8px] text-white/35">Đăng ký quan tâm</p><p className="mt-1 text-sm font-semibold">{compactMoney(selectedOpportunity.expressedInterestCapital)}</p></div>
             <div className="rounded-2xl border border-white/7 bg-black/15 p-3"><p className="text-[8px] text-white/35">Mức dự kiến từ</p><p className="mt-1 text-sm font-semibold">{compactMoney(selectedOpportunity.minimumCommitment)}</p></div>
-            <div className="rounded-2xl border border-[#e8c665]/14 bg-[#e8c665]/[0.04] p-3"><p className="text-[8px] text-white/35">Mục tiêu tham chiếu</p><p className="mt-1 text-sm font-semibold text-[#f0d478]">{selectedOpportunity.targetReturnRange}</p></div>
+            <div className="rounded-2xl border border-[#d6b45e]/14 bg-[#d6b45e]/[0.04] p-3"><p className="text-[8px] text-white/35">Mục tiêu tham chiếu</p><p className="mt-1 text-sm font-semibold text-[#dfbf6c]">{selectedOpportunity.targetReturnRange}</p></div>
             <div className="col-span-2 rounded-2xl border border-sky-300/14 bg-sky-300/[0.04] p-3"><p className="text-[8px] text-white/35">Thời gian hồi vốn dự kiến</p><p className="mt-1 text-sm font-semibold text-sky-200">{selectedOpportunity.expectedPaybackPeriod}</p></div>
           </div>
-          <div className="mt-3 rounded-2xl border border-[#e8c665]/12 bg-[#e8c665]/[0.04] p-3 text-center"><Sparkles size={16} className="mx-auto text-[#e8c665]" /><p className="mt-1 text-[9px] font-semibold text-[#f0d478]">Đánh giá hỗ trợ quyết định</p><p className="mt-1 text-[10px] leading-5 text-white/50">{selectedOpportunity.aiAssessment}</p></div>
+          <div className="mt-3 rounded-2xl border border-[#d6b45e]/12 bg-[#d6b45e]/[0.04] p-3 text-center"><Sparkles size={16} className="mx-auto text-[#d6b45e]" /><p className="mt-1 text-[9px] font-semibold text-[#dfbf6c]">Đánh giá hỗ trợ quyết định</p><p className="mt-1 text-[10px] leading-5 text-white/50">{selectedOpportunity.aiAssessment}</p></div>
           <div className="mt-3 space-y-1.5">{selectedOpportunity.highlights.map((highlight) => <p key={highlight} className="flex items-start gap-2 rounded-xl bg-white/[0.025] px-3 py-2 text-[10px] leading-4 text-white/52"><CheckCircle2 size={13} className="mt-0.5 shrink-0 text-emerald-300" />{highlight}</p>)}</div>
           <p className="mt-4 text-center text-[9px] font-semibold uppercase tracking-[0.14em] text-white/35">Tiến độ hồ sơ</p>
           <div className="mt-2 flex flex-wrap justify-center gap-1.5">{selectedOpportunity.checks.map((check) => <span key={check.label} className={cn("rounded-full border px-2.5 py-1.5 text-[9px] font-medium", check.status === "DONE" ? "border-emerald-300/15 bg-emerald-300/8 text-emerald-200" : check.status === "IN_PROGRESS" ? "border-amber-300/15 bg-amber-300/8 text-amber-100" : "border-white/8 text-white/35")}>{check.label}</span>)}</div>
@@ -698,7 +698,7 @@ export function InvestorDashboardClient() {
           <div className="mt-3 grid grid-cols-3 gap-2 text-center">
             <div className="rounded-2xl border border-white/7 p-3"><p className="text-[8px] text-white/35">Đóng góp doanh thu</p><p className="mt-1 text-sm font-semibold">{selectedBranch.revenueContributionPercent.toLocaleString("vi-VN", { maximumFractionDigits: 1 })}%</p></div>
             <div className="rounded-2xl border border-white/7 p-3"><p className="text-[8px] text-white/35">Tỷ lệ chi phí</p><p className="mt-1 text-sm font-semibold">{selectedBranch.expenseRatioPercent.toLocaleString("vi-VN", { maximumFractionDigits: 1 })}%</p></div>
-            <div className="rounded-2xl border border-[#e8c665]/15 p-3"><p className="text-[8px] text-white/35">Phần của bạn</p><p className="mt-1 text-sm font-semibold text-[#f0d478]">{compactMoney(selectedBranch.investorShare)}</p></div>
+            <div className="rounded-2xl border border-[#d6b45e]/15 p-3"><p className="text-[8px] text-white/35">Phần của bạn</p><p className="mt-1 text-sm font-semibold text-[#dfbf6c]">{compactMoney(selectedBranch.investorShare)}</p></div>
           </div>
           {selectedBranch.refunds > 0 ? <div className="mt-3 rounded-2xl border border-amber-200/12 bg-amber-200/[0.045] p-3 text-center"><p className="text-[9px] text-white/42">Doanh thu gộp {compactMoney(selectedBranch.grossRevenue)} · đã hoàn khách {compactMoney(selectedBranch.refunds)}</p><p className="mt-1 text-[9px] leading-4 text-amber-100/65">Khoản hoàn đảo giảm doanh thu; không được xếp vào chi phí vận hành và không liên quan Tip KTV.</p></div> : null}
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -711,7 +711,7 @@ export function InvestorDashboardClient() {
               <div className="mt-2 space-y-2">{selectedBranch.expenseSources.length ? selectedBranch.expenseSources.map((item) => <div key={item.label} className="rounded-xl bg-black/15 px-3 py-2"><p className="line-clamp-2 text-[9px] leading-4 text-white/45">{item.label}</p><p className="mt-0.5 text-xs font-semibold">{money(item.amount)}</p></div>) : <p className="py-4 text-[10px] text-white/35">Chưa có chi phí trong kỳ.</p>}</div>
             </div>
           </div>
-          <button type="button" onClick={() => { setSelectedBranch(null); selectBranch(selectedBranch.branchId); }} className="mt-4 w-full rounded-full bg-[#e8c665] px-4 py-2.5 text-xs font-bold text-[#2b1b13]">Lọc toàn bộ báo cáo theo {selectedBranch.label}</button>
+          <button type="button" onClick={() => { setSelectedBranch(null); selectBranch(selectedBranch.branchId); }} className="mt-4 w-full rounded-full bg-[#d6b45e] px-4 py-2.5 text-xs font-bold text-[#2b1b13]">Lọc toàn bộ báo cáo theo {selectedBranch.label}</button>
         </ModalShell>
       ) : null}
     </main>

@@ -31,11 +31,11 @@ export default function WalletPage() {
   ).size;
 
   return (
-    <main className="mx-auto max-w-3xl px-4 pb-6 pt-3 text-[#191414] sm:px-6">
+    <main className="mx-auto max-w-3xl px-4 pb-6 pt-3 text-[#281b18] sm:px-6">
       <div className="mb-2.5 flex items-center gap-2">
-        <CircleDollarSign className="shrink-0 text-[#d13f1f]" size={22} />
+        <CircleDollarSign className="shrink-0 text-[#c64b32]" size={22} />
         <h1 className="min-w-0 flex-1 text-xl font-semibold tracking-tight">Thu - Chi của tôi</h1>
-        <Link href="/don-cua-toi?tab=upcoming" className="inline-flex shrink-0 items-center gap-1 rounded-full bg-[#fff2ef] px-3 py-2 text-xs font-semibold text-[#d13f1f] ring-1 ring-[#eadbd1]">
+        <Link href="/don-cua-toi?tab=upcoming" className="inline-flex shrink-0 items-center gap-1 rounded-full bg-[#f8ebe5] px-3 py-2 text-xs font-semibold text-[#c64b32] ring-1 ring-[#e7d6ca]">
           <CalendarCheck2 size={14} /> Đơn của tôi{pendingCount > 0 ? ` · ${pendingCount}` : ""} <ChevronRight size={13} />
         </Link>
       </div>
@@ -58,8 +58,8 @@ export default function WalletPage() {
         {pendingCount > 0 || inServiceCount > 0 ? (
           <div className="flex flex-col items-center justify-center gap-1.5 px-4 pb-3.5 pt-3 sm:px-5">
             {inServiceCount > 0 ? (
-              <span className="inline-flex items-center gap-1 whitespace-nowrap rounded-full bg-white px-2.5 py-1 text-[10px] font-bold text-[#d13f1f] shadow-sm">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#d13f1f]" /> {inServiceCount} đang phục vụ
+              <span className="inline-flex items-center gap-1 whitespace-nowrap rounded-full bg-white px-2.5 py-1 text-[10px] font-bold text-[#c64b32] shadow-sm">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#c64b32]" /> {inServiceCount} đang phục vụ
               </span>
             ) : null}
             {pendingCount > 0 ? (
@@ -67,7 +67,7 @@ export default function WalletPage() {
                 type="button"
                 onClick={() => setShowPendingPreview((value) => !value)}
                 aria-expanded={showPendingPreview}
-                className="inline-flex w-full items-center justify-center gap-1 rounded-xl bg-[#e3b23c] px-3 py-2 text-[11px] font-bold text-[#231514] shadow-sm sm:w-auto sm:min-w-64"
+                className="inline-flex w-full items-center justify-center gap-1 rounded-xl bg-[#c59a3d] px-3 py-2 text-[11px] font-bold text-[#231514] shadow-sm sm:w-auto sm:min-w-64"
               >
                 {pendingCount} lịch đã cọc/chưa hoàn tất, bấm để xem
               </button>
@@ -82,7 +82,7 @@ export default function WalletPage() {
           </p>
         </div>
         <div className="flex items-start gap-2.5 border-t border-white/10 bg-white/5 px-4 py-3 text-xs leading-5 text-white/85 sm:px-5">
-          <Sparkles size={15} className="mt-0.5 shrink-0 text-[#e3b23c]" />
+          <Sparkles size={15} className="mt-0.5 shrink-0 text-[#c59a3d]" />
           <p>
             Thu nhập Affiliate đã bù đắp <strong className="text-white">{offsetPercent}%</strong> chi phí trải nghiệm của bạn tại Tuệ
             Tâm{net >= 0 ? " — đi massage mà vẫn mang tiền về!" : "."}
@@ -103,15 +103,15 @@ export default function WalletPage() {
         </div>
       ) : null}
 
-      <div className="mt-4 overflow-hidden rounded-2xl border border-[#eadbd1] bg-white shadow-sm">
-        <div className="grid grid-cols-2 gap-2 border-b border-dashed border-[#f1e5dd] p-2">
+      <div className="mt-4 overflow-hidden rounded-2xl border border-[#e7d6ca] bg-white shadow-sm">
+        <div className="grid grid-cols-2 gap-2 border-b border-dashed border-[#eee0d6] p-2">
           <button
             type="button"
             onClick={() => setViewMode("overview")}
             className={cn(
               "flex items-center justify-center gap-1.5 rounded-xl py-2 text-xs font-semibold transition",
               viewMode === "overview"
-                ? "bg-gradient-to-b from-[#b32228] to-[#8f151a] text-white shadow-sm"
+                ? "bg-gradient-to-b from-[#b32228] to-[#8b2b28] text-white shadow-sm"
                 : "border border-[#dcc7bb] bg-[#f3e5dc] text-[#5c3a1e]"
             )}
           >
@@ -123,7 +123,7 @@ export default function WalletPage() {
             className={cn(
               "flex items-center justify-center gap-1.5 rounded-xl py-2 text-xs font-semibold transition",
               viewMode === "detailed"
-                ? "bg-gradient-to-b from-[#b32228] to-[#8f151a] text-white shadow-sm"
+                ? "bg-gradient-to-b from-[#b32228] to-[#8b2b28] text-white shadow-sm"
                 : "border border-[#dcc7bb] bg-[#f3e5dc] text-[#5c3a1e]"
             )}
           >
@@ -136,7 +136,7 @@ export default function WalletPage() {
             onClick={() => setTab("thu")}
             className={cn(
               "flex items-center justify-center gap-1.5 rounded-xl py-3 text-sm font-semibold transition",
-              tab === "thu" ? "bg-[#b86b1f] text-white shadow-sm" : "bg-[#fdf8f5] text-[#4d403a]"
+              tab === "thu" ? "bg-[#a85f29] text-white shadow-sm" : "bg-[#fdf8f5] text-[#51423b]"
             )}
           >
             <TrendingUp size={16} /> Thu nhập
@@ -146,7 +146,7 @@ export default function WalletPage() {
             onClick={() => setTab("chi")}
             className={cn(
               "flex items-center justify-center gap-1.5 rounded-xl py-3 text-sm font-semibold transition",
-              tab === "chi" ? "bg-[#d13f1f] text-white shadow-sm" : "bg-[#fdf8f5] text-[#4d403a]"
+              tab === "chi" ? "bg-[#c64b32] text-white shadow-sm" : "bg-[#fdf8f5] text-[#51423b]"
             )}
           >
             <TrendingDown size={16} /> Chi tiêu

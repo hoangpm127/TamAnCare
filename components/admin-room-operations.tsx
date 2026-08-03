@@ -80,7 +80,7 @@ function statusTone(status: RoomLiveStatus) {
   if (status === "AVAILABLE") {
     return {
       card: "border-[#89d2ab] bg-gradient-to-br from-[#eefaf3] to-white",
-      badge: "bg-[#d5f3e1] text-[#12683f]",
+      badge: "bg-[#d5f3e1] text-[#0b6248]",
       label: "RẢNH",
     };
   }
@@ -93,7 +93,7 @@ function statusTone(status: RoomLiveStatus) {
   }
   return {
     card: "border-[#e6cf91] bg-[#fffaf0]",
-    badge: "bg-[#f8e8bd] text-[#805914]",
+    badge: "bg-[#f8e8bd] text-[#76551d]",
     label: "BẢO TRÌ",
   };
 }
@@ -109,8 +109,8 @@ function SpaceCard({ room, compact = false, label }: { room: RoomView; compact?:
       {room.currentBooking ? (
         <div className="mt-1.5 border-t border-current/10 pt-1.5">
           <p className="truncate text-[9px] font-semibold text-[#9f292c]"><UserRound size={9} className="mr-1 inline" />{room.currentBooking.customerName}</p>
-          <p className="mt-0.5 truncate text-[8px] text-[#665b55]">KTV: {room.currentBooking.therapistName}</p>
-          <p className="mt-0.5 truncate text-[8px] text-[#665b55]">{room.currentBooking.serviceName}</p>
+          <p className="mt-0.5 truncate text-[8px] text-[#68574f]">KTV: {room.currentBooking.therapistName}</p>
+          <p className="mt-0.5 truncate text-[8px] text-[#68574f]">{room.currentBooking.serviceName}</p>
           <p className="mt-1 text-[8px] font-semibold text-[#a93434]"><Clock3 size={9} className="mr-1 inline" />{time(room.currentBooking.startTime)}–{time(room.currentBooking.endTime)}</p>
         </div>
       ) : room.nextBooking ? (
@@ -174,35 +174,35 @@ export function AdminRoomOperations() {
 
   return (
     <main className="mx-auto max-w-7xl px-3 py-3 sm:px-6 sm:py-5 lg:px-10">
-      <section className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#173d36] via-[#17634a] to-[#22845a] px-3.5 py-3 text-center text-white shadow-lg">
+      <section className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#0b4f3c] via-[#17634a] to-[#22845a] px-3.5 py-3 text-center text-white shadow-lg">
         <button type="button" onClick={() => void load()} className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/10" aria-label="Làm mới"><RefreshCcw size={14} className={loading ? "animate-spin" : ""} /></button>
         <h1 className="text-lg font-semibold leading-6">Phòng & Giường</h1>
         <p className="mt-0.5 text-[10px] text-white/75">Quan sát tức thì hoặc xem trước công suất theo ngày, giờ</p>
         <div className="mx-auto mt-2 flex max-w-sm items-center justify-center gap-1.5 text-[9px] font-semibold">
           <span className="rounded-full bg-white/10 px-2 py-1">{summary.total} vị trí</span>
-          <span className="rounded-full bg-[#d9f6e5] px-2 py-1 text-[#12683f]">{summary.available} rảnh</span>
+          <span className="rounded-full bg-[#d9f6e5] px-2 py-1 text-[#0b6248]">{summary.available} rảnh</span>
           <span className="rounded-full bg-[#ffe0de] px-2 py-1 text-[#9b2929]">{summary.busy} bận</span>
-          {summary.maintenance > 0 ? <span className="rounded-full bg-[#ffedbd] px-2 py-1 text-[#805914]">{summary.maintenance} bảo trì</span> : null}
+          {summary.maintenance > 0 ? <span className="rounded-full bg-[#ffedbd] px-2 py-1 text-[#76551d]">{summary.maintenance} bảo trì</span> : null}
         </div>
       </section>
 
-      <section className="mt-2.5 rounded-xl border border-[#d8b46a]/55 bg-white p-2 shadow-sm">
+      <section className="mt-2.5 rounded-xl border border-[#d2ad5d]/55 bg-white p-2 shadow-sm">
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-[minmax(0,1fr)_minmax(230px,0.8fr)_auto]">
           <CompactSelect className="min-w-0" value={session.role === "OWNER" ? branchId : session.branchId ?? "all"} onValueChange={setBranchId} disabled={session.role !== "OWNER"} dialogTitle="Chọn sơ đồ cơ sở" triggerClassName="min-h-9 rounded-lg py-2" options={[{ value: "all", label: "Toàn hệ thống" }, ...(payload?.branches ?? []).map((branch) => ({ value: branch.id, label: `${branch.label} · ${branch.seatCapacity} giường` }))]} />
           <label className="flex min-h-9 items-center gap-2 rounded-lg border border-[#e7d8cf] bg-[#fffdfa] px-2.5 text-[10px] font-semibold text-[#5f514a]">
             <CalendarClock size={14} className="shrink-0 text-[#a76b2b]" />
             <input type="datetime-local" value={selectedAtLocal} onChange={(event) => { setSelectedAtLocal(event.target.value); setLiveMode(false); }} className="min-w-0 flex-1 bg-transparent text-[10px] outline-none" aria-label="Chọn ngày giờ xem sơ đồ" />
           </label>
-          <button type="button" onClick={resetToNow} className={cn("min-h-9 rounded-lg px-3 text-[10px] font-bold transition", liveMode ? "bg-[#176a4c] text-white" : "border border-[#d8b46a] bg-[#fffaf0] text-[#7a5324]")}><WandSparkles size={13} className="mr-1 inline" />Bây giờ</button>
+          <button type="button" onClick={resetToNow} className={cn("min-h-9 rounded-lg px-3 text-[10px] font-bold transition", liveMode ? "bg-[#176a4c] text-white" : "border border-[#d2ad5d] bg-[#fffaf0] text-[#7a5324]")}><WandSparkles size={13} className="mr-1 inline" />Bây giờ</button>
         </div>
-        <div className="mt-1.5 flex items-center justify-between px-0.5 text-[8px] text-[#8a7a72]">
+        <div className="mt-1.5 flex items-center justify-between px-0.5 text-[8px] text-[#826f66]">
           <span>{liveMode ? "Đang theo dõi trực tiếp" : `Đang xem trước: ${payload ? fullDateTime(payload.selectedAt) : "..."}`}</span>
           <span>Cập nhật {payload ? time(payload.generatedAt) : "--:--"}</span>
         </div>
       </section>
 
       {error ? <p className="mt-3 rounded-xl bg-red-50 p-3 text-xs text-red-700">{error}</p> : null}
-      {loading && !payload ? <div className="mt-3 flex min-h-48 items-center justify-center rounded-2xl border border-[#eadbd1] bg-white text-[#16784a]"><Loader2 className="mr-2 animate-spin" size={18} /> Đang tải sơ đồ...</div> : null}
+      {loading && !payload ? <div className="mt-3 flex min-h-48 items-center justify-center rounded-2xl border border-[#e7d6ca] bg-white text-[#0b5d45]"><Loader2 className="mr-2 animate-spin" size={18} /> Đang tải sơ đồ...</div> : null}
 
       <div className="mt-3 space-y-3">
         {(payload?.branches ?? []).map((branch) => {
@@ -215,17 +215,17 @@ export function AdminRoomOperations() {
           })).filter((group) => group.rooms.length > 0);
           const otherRooms = branchRooms.filter((room) => !configuredTypes.has(room.type));
           return (
-            <section key={branch.id} className="rounded-2xl border border-[#d8b46a]/50 bg-white p-2.5 shadow-sm sm:p-3">
+            <section key={branch.id} className="rounded-2xl border border-[#d2ad5d]/50 bg-white p-2.5 shadow-sm sm:p-3">
               <div className="mb-2 flex items-center justify-between gap-2">
-                <div><h2 className="text-sm font-semibold">{branch.label}</h2><p className="text-[9px] text-[#8a7a72]">{branchRooms.filter((room) => room.liveStatus === "AVAILABLE").length}/{branchRooms.length} vị trí rảnh tại thời điểm đã chọn</p></div>
-                <span className="flex shrink-0 items-center gap-1.5 text-[8px] text-[#8a7a72]"><i className="h-2 w-2 rounded-sm bg-[#29a064]" /> Rảnh <i className="h-2 w-2 rounded-sm bg-[#d34a4a]" /> Bận</span>
+                <div><h2 className="text-sm font-semibold">{branch.label}</h2><p className="text-[9px] text-[#826f66]">{branchRooms.filter((room) => room.liveStatus === "AVAILABLE").length}/{branchRooms.length} vị trí rảnh tại thời điểm đã chọn</p></div>
+                <span className="flex shrink-0 items-center gap-1.5 text-[8px] text-[#826f66]"><i className="h-2 w-2 rounded-sm bg-[#228965]" /> Rảnh <i className="h-2 w-2 rounded-sm bg-[#d34a4a]" /> Bận</span>
               </div>
               <div className="space-y-2.5">
                 {bedGroups.map((group) => (
                   <div key={group.type} className="min-w-0 rounded-xl bg-[#faf7f4] p-2">
                     <div className="mb-1.5 flex items-center justify-between gap-2 px-0.5">
                       <p className={cn("text-[9px] font-bold uppercase tracking-[0.14em]", group.tone)}>{group.label}</p>
-                      <span className="text-[8px] font-semibold text-[#8a7a72]">{group.rooms.length} giường</span>
+                      <span className="text-[8px] font-semibold text-[#826f66]">{group.rooms.length} giường</span>
                     </div>
                     <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3 lg:grid-cols-6">{group.rooms.map((room) => <SpaceCard key={room.id} room={room} />)}</div>
                   </div>

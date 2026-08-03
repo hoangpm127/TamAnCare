@@ -11,7 +11,7 @@ export default async function AdminSecurityPage() {
   if (session.mustChangePassword) redirect("/doi-mat-khau-quan-tri");
   if (!["OWNER", "BRANCH_MANAGER", "XGROUP_SUPER_ADMIN", "DISTRICT_SALES_MANAGER"].includes(session.role)) redirect(adminLandingPath(session.role));
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[#241514] px-4 py-8 text-[#191414]">
+    <main className="flex min-h-screen items-center justify-center bg-[#241514] px-4 py-8 text-[#281b18]">
       <AdminMfaSetupClient displayName={session.displayName} alreadyEnabled={session.mfaEnabled} landingPath={adminLandingPath(session.role)} />
     </main>
   );

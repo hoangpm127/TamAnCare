@@ -37,11 +37,11 @@ export function ActiveServiceBanner() {
     : `/check-in?bookingCode=${encodeURIComponent(primary.bookingCode)}`;
 
   return (
-    <div className="sticky top-14 z-30 border-b border-[#b8dfc9] bg-[#effaf3]/95 px-3 py-1.5 shadow-[0_4px_14px_rgba(22,120,74,0.10)] backdrop-blur">
-      <Link href={href} className="mx-auto flex max-w-3xl items-center gap-2.5 rounded-xl bg-gradient-to-r from-[#8f151a] to-[#b86b1f] px-3 py-2 text-white shadow-sm">
+    <div className="sticky top-14 z-30 border-b border-[#c4ddd2] bg-[#effaf3]/95 px-3 py-1.5 shadow-[0_4px_14px_rgba(22,120,74,0.10)] backdrop-blur">
+      <Link href={href} className="mx-auto flex max-w-3xl items-center gap-2.5 rounded-xl bg-gradient-to-r from-[#8b2b28] to-[#a85f29] px-3 py-2 text-white shadow-sm">
         <span className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/15">
           <Hourglass size={15} className="animate-pulse" />
-          <i className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full bg-[#f5d982] ring-2 ring-[#b42f20]" />
+          <i className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full bg-[#e7c878] ring-2 ring-[#ad432f]" />
         </span>
         <span className="min-w-0 flex-1">
           <span className="flex items-center gap-1.5 text-[11px] font-bold">

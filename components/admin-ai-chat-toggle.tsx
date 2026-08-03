@@ -30,15 +30,15 @@ export function AdminAiChatToggle() {
   const enabled = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
   return (
-    <div className="mb-4 flex items-start justify-between gap-4 rounded-lg border border-[#eadbd1] bg-white p-4 shadow-sm sm:p-5">
+    <div className="mb-4 flex items-start justify-between gap-4 rounded-lg border border-[#e7d6ca] bg-white p-4 shadow-sm sm:p-5">
       <div className="flex items-start gap-3">
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#fff2ef] text-[#d13f1f]">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#f8ebe5] text-[#c64b32]">
           <MessageCircle size={18} />
         </span>
         <div>
           <p className="text-sm font-semibold">{chatAssistant.label}</p>
-          <p className="mt-1 max-w-md text-xs leading-5 text-[#665b55]">{chatAssistant.description}</p>
-          <p className="mt-1 text-[11px] text-[#8a7a72]">Quyền bật/tắt: Super Admin, Quản lý cơ sở.</p>
+          <p className="mt-1 max-w-md text-xs leading-5 text-[#68574f]">{chatAssistant.description}</p>
+          <p className="mt-1 text-[11px] text-[#826f66]">Quyền bật/tắt: Super Admin, Quản lý cơ sở.</p>
         </div>
       </div>
       <button
@@ -46,7 +46,7 @@ export function AdminAiChatToggle() {
         role="switch"
         aria-checked={enabled}
         onClick={() => setEnabled(!enabled)}
-        className={cn("relative h-7 w-12 shrink-0 rounded-full transition", enabled ? "bg-[#1d8f55]" : "bg-[#d8cdc6]")}
+        className={cn("relative h-7 w-12 shrink-0 rounded-full transition", enabled ? "bg-[#18815e]" : "bg-[#d8cdc6]")}
       >
         <span
           className={cn(

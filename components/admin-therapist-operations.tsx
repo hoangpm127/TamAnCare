@@ -50,10 +50,10 @@ function remaining(value: string, now: number) {
 }
 
 const STYLE: Record<LiveStatus, { card: string; badge: string; label: string }> = {
-  AVAILABLE: { card: "border-[#8fd3ad] bg-gradient-to-br from-[#edf9f2] to-white", badge: "bg-[#d6f3e1] text-[#12683f]", label: "RẢNH" },
+  AVAILABLE: { card: "border-[#8fd3ad] bg-gradient-to-br from-[#eff7f3] to-white", badge: "bg-[#d6f3e1] text-[#0b6248]", label: "RẢNH" },
   BUSY: { card: "border-[#efb5b2] bg-gradient-to-br from-[#fff0ef] to-white", badge: "bg-[#ffd8d5] text-[#a32b2b]", label: "BẬN" },
   BUSINESS: { card: "border-[#a8c8ef] bg-gradient-to-br from-[#eef5ff] to-white", badge: "bg-[#dbeaff] text-[#2452b8]", label: "BUSINESS" },
-  WRAP_UP: { card: "border-[#e8d39e] bg-gradient-to-br from-[#fff8e8] to-white", badge: "bg-[#f8e8bd] text-[#805914]", label: "CHỜ ĐÓNG BILL" },
+  WRAP_UP: { card: "border-[#e8d39e] bg-gradient-to-br from-[#fff8e8] to-white", badge: "bg-[#f8e8bd] text-[#76551d]", label: "CHỜ ĐÓNG BILL" },
   OFF: { card: "border-[#d8d0cb] bg-[#f5f2f0]", badge: "bg-[#e8e2de] text-[#6f625b]", label: "NGHỈ" },
 };
 
@@ -130,47 +130,47 @@ export function AdminTherapistOperations() {
 
   return (
     <main className="mx-auto max-w-7xl px-3 py-3 sm:px-6 sm:py-5 lg:px-10">
-      <section className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#173d36] via-[#17634a] to-[#22845a] px-3.5 py-3 text-center text-white shadow-lg">
+      <section className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#0b4f3c] via-[#17634a] to-[#22845a] px-3.5 py-3 text-center text-white shadow-lg">
         <button type="button" onClick={() => void load()} className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/10" aria-label="Làm mới"><RefreshCcw size={14} className={loading ? "animate-spin" : ""} /></button>
         <h1 className="text-lg font-semibold">KTV bận/rảnh tức thì</h1>
         <p className="mt-0.5 text-[10px] text-white/70">Booking tại cơ sở và Tâm An Business · tự cập nhật mỗi 5 giây</p>
         <div className="mx-auto mt-2 flex max-w-xl flex-wrap items-center justify-center gap-1.5 text-[9px] font-semibold">
           <span className="rounded-full bg-white/10 px-2.5 py-1">{summary.total} KTV</span>
-          <span className="rounded-full bg-[#d9f6e5] px-2.5 py-1 text-[#12683f]">{summary.available} rảnh</span>
+          <span className="rounded-full bg-[#d9f6e5] px-2.5 py-1 text-[#0b6248]">{summary.available} rảnh</span>
           <span className="rounded-full bg-[#ffe0de] px-2.5 py-1 text-[#9b2929]">{summary.busy} tại cơ sở</span>
           <span className="rounded-full bg-[#dbeaff] px-2.5 py-1 text-[#2452b8]">{summary.business} Business</span>
-          {summary.wrapUp ? <span className="rounded-full bg-[#ffedbd] px-2.5 py-1 text-[#805914]">{summary.wrapUp} chờ đóng Bill</span> : null}
+          {summary.wrapUp ? <span className="rounded-full bg-[#ffedbd] px-2.5 py-1 text-[#76551d]">{summary.wrapUp} chờ đóng Bill</span> : null}
         </div>
       </section>
 
-      <section className="mt-2.5 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 rounded-xl border border-[#d8b46a]/55 bg-white p-2 shadow-sm">
+      <section className="mt-2.5 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 rounded-xl border border-[#d2ad5d]/55 bg-white p-2 shadow-sm">
         <CompactSelect value={session.role === "OWNER" ? branchId : session.branchId ?? "all"} onValueChange={setBranchId} disabled={session.role !== "OWNER"} dialogTitle="Chọn cơ sở xem KTV" triggerClassName="min-h-9 rounded-lg py-2" options={[{ value: "all", label: "Toàn hệ thống" }, ...(payload?.branches ?? []).map((branch) => ({ value: branch.id, label: branch.label }))]} />
-        <Link href="/admin/qr-management" className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-[#16784a] px-3 text-[10px] font-semibold text-white"><QrCode size={13} /> Quản lý QR</Link>
+        <Link href="/admin/qr-management" className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-[#0b5d45] px-3 text-[10px] font-semibold text-white"><QrCode size={13} /> Quản lý QR</Link>
       </section>
-      {pendingProfiles.length ? <section className="mt-3 rounded-2xl border border-[#d8b46a] bg-gradient-to-br from-[#fffaf0] to-white p-3 shadow-sm">
-        <div className="flex items-center justify-between gap-3"><div><h2 className="text-sm font-semibold">Hồ sơ KTV chờ duyệt</h2><p className="mt-0.5 text-[9px] text-[#8a7a72]">Chỉ thông tin được duyệt mới hiển thị cho khách lựa chọn</p></div><span className="rounded-full bg-[#fff0c8] px-2.5 py-1 text-[9px] font-bold text-[#805914]">{pendingProfiles.length} hồ sơ</span></div>
-        <div className="mt-3 grid gap-3 lg:grid-cols-2">{pendingProfiles.map((therapist) => <article key={therapist.id} className="rounded-2xl border border-[#eadbd1] bg-white p-3">
-          <div className="flex items-start gap-3"><TherapistAvatar id={therapist.id} src={therapist.proposedAvatarUrl ?? therapist.avatarUrl} size={58} className="shrink-0 rounded-2xl" /><div className="min-w-0 flex-1"><p className="text-xs font-semibold">{therapist.fullName}</p><p className="mt-0.5 text-[8px] text-[#8a7a72]">Gửi {therapist.profileSubmittedAt ? new Date(therapist.profileSubmittedAt).toLocaleString("vi-VN") : "vừa xong"}</p><p className="mt-2 text-[10px] leading-5 text-[#665b55]">{therapist.proposedBio}</p><div className="mt-2 flex flex-wrap gap-1">{therapist.proposedStrengths.map((skill) => <span key={skill} className="rounded-full bg-[#edf9f2] px-2 py-1 text-[8px] font-semibold text-[#16784a]">{skill}</span>)}</div></div></div>
-          <textarea value={reviewNotes[therapist.id] ?? ""} onChange={(event) => setReviewNotes((current) => ({ ...current, [therapist.id]: event.target.value }))} rows={2} placeholder="Ghi chú duyệt hoặc nội dung cần KTV bổ sung..." className="mt-3 w-full rounded-xl border border-[#dfd1c8] p-2.5 text-[10px] outline-none focus:border-[#16784a]" />
-          <div className="mt-2 grid grid-cols-2 gap-2"><button type="button" disabled={reviewingId === therapist.id} onClick={() => void reviewProfile(therapist.id, "REQUEST_CHANGES")} className="flex items-center justify-center gap-1.5 rounded-xl bg-[#fff2ef] py-2.5 text-[9px] font-semibold text-[#d13f1f] disabled:opacity-50"><MessageSquareWarning size={13} /> Yêu cầu bổ sung</button><button type="button" disabled={reviewingId === therapist.id} onClick={() => void reviewProfile(therapist.id, "APPROVE")} className="flex items-center justify-center gap-1.5 rounded-xl bg-[#16784a] py-2.5 text-[9px] font-semibold text-white disabled:opacity-50">{reviewingId === therapist.id ? <Loader2 size={13} className="animate-spin" /> : <CheckCircle2 size={13} />} Duyệt công khai</button></div>
+      {pendingProfiles.length ? <section className="mt-3 rounded-2xl border border-[#d2ad5d] bg-gradient-to-br from-[#fffaf0] to-white p-3 shadow-sm">
+        <div className="flex items-center justify-between gap-3"><div><h2 className="text-sm font-semibold">Hồ sơ KTV chờ duyệt</h2><p className="mt-0.5 text-[9px] text-[#826f66]">Chỉ thông tin được duyệt mới hiển thị cho khách lựa chọn</p></div><span className="rounded-full bg-[#fff0c8] px-2.5 py-1 text-[9px] font-bold text-[#76551d]">{pendingProfiles.length} hồ sơ</span></div>
+        <div className="mt-3 grid gap-3 lg:grid-cols-2">{pendingProfiles.map((therapist) => <article key={therapist.id} className="rounded-2xl border border-[#e7d6ca] bg-white p-3">
+          <div className="flex items-start gap-3"><TherapistAvatar id={therapist.id} src={therapist.proposedAvatarUrl ?? therapist.avatarUrl} size={58} className="shrink-0 rounded-2xl" /><div className="min-w-0 flex-1"><p className="text-xs font-semibold">{therapist.fullName}</p><p className="mt-0.5 text-[8px] text-[#826f66]">Gửi {therapist.profileSubmittedAt ? new Date(therapist.profileSubmittedAt).toLocaleString("vi-VN") : "vừa xong"}</p><p className="mt-2 text-[10px] leading-5 text-[#68574f]">{therapist.proposedBio}</p><div className="mt-2 flex flex-wrap gap-1">{therapist.proposedStrengths.map((skill) => <span key={skill} className="rounded-full bg-[#eff7f3] px-2 py-1 text-[8px] font-semibold text-[#0b5d45]">{skill}</span>)}</div></div></div>
+          <textarea value={reviewNotes[therapist.id] ?? ""} onChange={(event) => setReviewNotes((current) => ({ ...current, [therapist.id]: event.target.value }))} rows={2} placeholder="Ghi chú duyệt hoặc nội dung cần KTV bổ sung..." className="mt-3 w-full rounded-xl border border-[#dfd1c8] p-2.5 text-[10px] outline-none focus:border-[#0b5d45]" />
+          <div className="mt-2 grid grid-cols-2 gap-2"><button type="button" disabled={reviewingId === therapist.id} onClick={() => void reviewProfile(therapist.id, "REQUEST_CHANGES")} className="flex items-center justify-center gap-1.5 rounded-xl bg-[#f8ebe5] py-2.5 text-[9px] font-semibold text-[#c64b32] disabled:opacity-50"><MessageSquareWarning size={13} /> Yêu cầu bổ sung</button><button type="button" disabled={reviewingId === therapist.id} onClick={() => void reviewProfile(therapist.id, "APPROVE")} className="flex items-center justify-center gap-1.5 rounded-xl bg-[#0b5d45] py-2.5 text-[9px] font-semibold text-white disabled:opacity-50">{reviewingId === therapist.id ? <Loader2 size={13} className="animate-spin" /> : <CheckCircle2 size={13} />} Duyệt công khai</button></div>
         </article>)}</div>
       </section> : null}
       {error ? <p className="mt-3 rounded-xl bg-red-50 p-3 text-xs text-red-700">{error}</p> : null}
-      {loading && !payload ? <div className="mt-3 flex min-h-48 items-center justify-center rounded-2xl border border-[#eadbd1] bg-white text-[#16784a]"><Loader2 className="mr-2 animate-spin" size={18} /> Đang đồng bộ KTV...</div> : null}
+      {loading && !payload ? <div className="mt-3 flex min-h-48 items-center justify-center rounded-2xl border border-[#e7d6ca] bg-white text-[#0b5d45]"><Loader2 className="mr-2 animate-spin" size={18} /> Đang đồng bộ KTV...</div> : null}
 
       <div className="mt-3 space-y-3">
         {(payload?.branches ?? []).map((branch) => {
           const therapists = payload?.therapists.filter((item) => item.branchId === branch.id) ?? [];
           const gap = payload?.businessStaffing.filter((item) => item.branchId === branch.id).reduce((sum, item) => sum + item.staffingGap, 0) ?? 0;
-          return <section key={branch.id} className="rounded-2xl border border-[#d8b46a]/50 bg-white p-3 shadow-sm">
-            <div className="mb-2.5 flex items-center justify-between gap-3"><div><h2 className="text-sm font-semibold">{branch.label}</h2><p className="text-[9px] text-[#8a7a72]">{therapists.filter((item) => item.liveStatus === "AVAILABLE").length}/{therapists.length} KTV rảnh ngay</p></div>{gap ? <span className="rounded-full bg-[#fff2ef] px-2.5 py-1 text-[9px] font-bold text-[#d13f1f]">Business cần gán thêm {gap} KTV</span> : null}</div>
+          return <section key={branch.id} className="rounded-2xl border border-[#d2ad5d]/50 bg-white p-3 shadow-sm">
+            <div className="mb-2.5 flex items-center justify-between gap-3"><div><h2 className="text-sm font-semibold">{branch.label}</h2><p className="text-[9px] text-[#826f66]">{therapists.filter((item) => item.liveStatus === "AVAILABLE").length}/{therapists.length} KTV rảnh ngay</p></div>{gap ? <span className="rounded-full bg-[#f8ebe5] px-2.5 py-1 text-[9px] font-bold text-[#c64b32]">Business cần gán thêm {gap} KTV</span> : null}</div>
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
               {therapists.map((therapist) => {
                 const style = STYLE[therapist.liveStatus];
                 return <article key={therapist.id} className={cn("overflow-hidden rounded-xl border p-2.5", style.card)}>
                   <div className="flex items-start justify-between gap-1"><Link href={`/admin/therapists/${therapist.id}`} className="min-w-0 truncate text-[11px] font-semibold hover:underline">{therapist.fullName}</Link><span className={cn("shrink-0 rounded-full px-2 py-1 text-[7px] font-bold", style.badge)}>{style.label}</span></div>
-                  <p className="mt-0.5 text-[8px] text-[#8a7a72]">{therapist.shiftLabel} · {therapist.ratingAvg.toFixed(1)}★</p>
-                  {therapist.live ? <div className="mt-2 border-t border-current/10 pt-2"><p className={cn("truncate text-[9px] font-semibold", therapist.live.type === "BUSINESS" ? "text-[#2452b8]" : "text-[#d13f1f]")}>{therapist.live.type === "BUSINESS" ? <BriefcaseBusiness size={10} className="mr-1 inline" /> : <UserRound size={10} className="mr-1 inline" />}{therapist.live.label}</p><p className="mt-0.5 truncate text-[8px] text-[#665b55]">{therapist.live.serviceName}{therapist.live.roomName ? ` · ${therapist.live.roomName}` : ""}</p><p className="mt-1 text-[8px] font-bold"><Clock3 size={9} className="mr-1 inline" />{remaining(therapist.live.expectedEndAt, now)} · đến {time(therapist.live.expectedEndAt)}</p></div> : therapist.wrapUp ? <div className="mt-2 border-t border-[#ead6a2] pt-2"><p className="truncate text-[9px] font-semibold text-[#805914]">{therapist.wrapUp.customerName}</p><p className="mt-1 text-[8px] text-[#806e65]">Đã check-out · quầy cần đóng Bill</p></div> : therapist.next ? <div className="mt-2 border-t border-[#cfe9da] pt-2"><p className="text-[8px] text-[#8a7a72]">Ca kế tiếp</p><p className="mt-0.5 truncate text-[9px] font-semibold">{time(therapist.next.startsAt)} · {therapist.next.label}</p></div> : <p className="mt-2 text-[8px] leading-3.5 text-[#4d8068]">Sẵn sàng nhận khách ngay</p>}
+                  <p className="mt-0.5 text-[8px] text-[#826f66]">{therapist.shiftLabel} · {therapist.ratingAvg.toFixed(1)}★</p>
+                  {therapist.live ? <div className="mt-2 border-t border-current/10 pt-2"><p className={cn("truncate text-[9px] font-semibold", therapist.live.type === "BUSINESS" ? "text-[#2452b8]" : "text-[#c64b32]")}>{therapist.live.type === "BUSINESS" ? <BriefcaseBusiness size={10} className="mr-1 inline" /> : <UserRound size={10} className="mr-1 inline" />}{therapist.live.label}</p><p className="mt-0.5 truncate text-[8px] text-[#68574f]">{therapist.live.serviceName}{therapist.live.roomName ? ` · ${therapist.live.roomName}` : ""}</p><p className="mt-1 text-[8px] font-bold"><Clock3 size={9} className="mr-1 inline" />{remaining(therapist.live.expectedEndAt, now)} · đến {time(therapist.live.expectedEndAt)}</p></div> : therapist.wrapUp ? <div className="mt-2 border-t border-[#ead6a2] pt-2"><p className="truncate text-[9px] font-semibold text-[#76551d]">{therapist.wrapUp.customerName}</p><p className="mt-1 text-[8px] text-[#806e65]">Đã check-out · quầy cần đóng Bill</p></div> : therapist.next ? <div className="mt-2 border-t border-[#cfe9da] pt-2"><p className="text-[8px] text-[#826f66]">Ca kế tiếp</p><p className="mt-0.5 truncate text-[9px] font-semibold">{time(therapist.next.startsAt)} · {therapist.next.label}</p></div> : <p className="mt-2 text-[8px] leading-3.5 text-[#4d8068]">Sẵn sàng nhận khách ngay</p>}
                 </article>;
               })}
             </div>

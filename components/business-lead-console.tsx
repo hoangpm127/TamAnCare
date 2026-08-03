@@ -42,7 +42,7 @@ export function BusinessLeadConsole({ initialEvent, qrDataUrl }: { initialEvent:
           <p className="mt-1 text-xs text-white/70">{event.eventCode}</p>
         </div>
         <div className="p-5 text-center">
-          <div className="mx-auto w-fit rounded-3xl border border-[#eadbd1] bg-white p-3 shadow-lg">
+          <div className="mx-auto w-fit rounded-3xl border border-[#e7d6ca] bg-white p-3 shadow-lg">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={qrDataUrl} alt={`QR vận hành ${event.eventCode}`} className="h-60 w-60" />
           </div>
@@ -51,8 +51,8 @@ export function BusinessLeadConsole({ initialEvent, qrDataUrl }: { initialEvent:
         </div>
       </section>
 
-      <section className="rounded-[2rem] border border-[#eadbd1] bg-white p-5 shadow-xl">
-        <div className="flex items-center justify-between gap-3"><div><p className="text-xs font-bold uppercase tracking-[0.14em] text-[#d13f1f]">Bảng điều phối trực tiếp</p><h2 className="mt-1 text-xl font-semibold">Trạng thái buổi phục vụ</h2></div><RefreshCw size={20} className="text-[#d13f1f]" /></div>
+      <section className="rounded-[2rem] border border-[#e7d6ca] bg-white p-5 shadow-xl">
+        <div className="flex items-center justify-between gap-3"><div><p className="text-xs font-bold uppercase tracking-[0.14em] text-[#c64b32]">Bảng điều phối trực tiếp</p><h2 className="mt-1 text-xl font-semibold">Trạng thái buổi phục vụ</h2></div><RefreshCw size={20} className="text-[#c64b32]" /></div>
         <div className="mt-4 grid grid-cols-2 gap-2.5">
           <Info icon={<MapPin size={15} />} label="Địa điểm" value={event.location} wide />
           <Info icon={<Users size={15} />} label="Quy mô" value={`${event.headcount} người`} />
@@ -62,16 +62,16 @@ export function BusinessLeadConsole({ initialEvent, qrDataUrl }: { initialEvent:
         {event.status === "READY" ? <State icon={<ScanLine size={28} />} title="Sẵn sàng bắt đầu" body="Đưa mã QR cho người đặt dịch vụ quét để bắt đầu tính giờ." /> : null}
         {event.status === "AWAITING_BALANCE" ? <State icon={<BellRing size={28} />} title="Đang chờ thanh toán" body="Giữ màn hình QR mở để khách hoàn tất VietQR; hệ thống sẽ tự đối soát." /> : null}
         {event.status === "COMPLETED" ? <State icon={<CheckCircle2 size={30} />} title="Đã hoàn tất" body="Thời gian, Bill và đánh giá đã được khóa vào báo cáo Business." /> : null}
-        <div className="mt-4 rounded-2xl bg-[#fff7ec] p-3 text-xs leading-5 text-[#765b35]">Mã QR tự hết hiệu lực nếu Admin đổi KTV trưởng. Không chụp và gửi mã ra ngoài nhóm triển khai.</div>
+        <div className="mt-4 rounded-2xl bg-[#fbf2e7] p-3 text-xs leading-5 text-[#765b35]">Mã QR tự hết hiệu lực nếu Admin đổi KTV trưởng. Không chụp và gửi mã ra ngoài nhóm triển khai.</div>
       </section>
     </div>
   );
 }
 
 function Info({ icon, label, value, wide }: { icon: React.ReactNode; label: string; value: string; wide?: boolean }) {
-  return <div className={`${wide ? "col-span-2" : ""} rounded-2xl bg-[#fffaf6] p-3`}><p className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wide text-[#d13f1f]">{icon}{label}</p><p className="mt-1 text-xs font-semibold leading-5">{value}</p></div>;
+  return <div className={`${wide ? "col-span-2" : ""} rounded-2xl bg-[#fdf8f3] p-3`}><p className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wide text-[#c64b32]">{icon}{label}</p><p className="mt-1 text-xs font-semibold leading-5">{value}</p></div>;
 }
 
 function State({ icon, title, body }: { icon: React.ReactNode; title: string; body: string }) {
-  return <div className="mt-4 rounded-3xl border border-[#ead6a9] bg-[#fffaf0] p-5 text-center text-[#684c27]"><span className="inline-flex text-[#d13f1f]">{icon}</span><p className="mt-2 text-lg font-semibold text-[#211817]">{title}</p><p className="mt-1 text-xs leading-5">{body}</p></div>;
+  return <div className="mt-4 rounded-3xl border border-[#ead6a9] bg-[#fffaf0] p-5 text-center text-[#684c27]"><span className="inline-flex text-[#c64b32]">{icon}</span><p className="mt-2 text-lg font-semibold text-[#211817]">{title}</p><p className="mt-1 text-xs leading-5">{body}</p></div>;
 }

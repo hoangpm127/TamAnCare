@@ -55,8 +55,8 @@ export function RescheduleAccessClient({ bookingCode }: { bookingCode: string })
     return () => { active = false; };
   }, [bookingCode]);
 
-  if (loading) return <main className="flex min-h-[calc(100vh-56px)] items-center justify-center bg-[#fffaf6]"><Loader2 className="mr-2 animate-spin text-[#d13f1f]" size={18} /> Đang xác thực booking…</main>;
-  if (!booking || loadError) return <main className="mx-auto max-w-xl px-4 py-10"><section className="rounded-2xl border border-[#eadbd1] bg-white p-6 text-center"><AlertTriangle className="mx-auto text-[#d13f1f]" /><h1 className="mt-3 text-lg font-semibold">Không thể mở yêu cầu đổi lịch</h1><p className="mt-2 text-sm leading-6 text-[#665b55]">{loadError || "Booking không tồn tại."}</p><Link href="/tai-khoan" className="mt-4 inline-flex rounded-full bg-[#d13f1f] px-5 py-2.5 text-sm font-semibold text-white">Đăng nhập tài khoản</Link></section></main>;
+  if (loading) return <main className="flex min-h-[calc(100vh-56px)] items-center justify-center bg-[#fdf8f3]"><Loader2 className="mr-2 animate-spin text-[#c64b32]" size={18} /> Đang xác thực booking…</main>;
+  if (!booking || loadError) return <main className="mx-auto max-w-xl px-4 py-10"><section className="rounded-2xl border border-[#e7d6ca] bg-white p-6 text-center"><AlertTriangle className="mx-auto text-[#c64b32]" /><h1 className="mt-3 text-lg font-semibold">Không thể mở yêu cầu đổi lịch</h1><p className="mt-2 text-sm leading-6 text-[#68574f]">{loadError || "Booking không tồn tại."}</p><Link href="/tai-khoan" className="mt-4 inline-flex rounded-full bg-[#c64b32] px-5 py-2.5 text-sm font-semibold text-white">Đăng nhập tài khoản</Link></section></main>;
 
   return <RescheduleClient
     bookingCode={booking.referenceCode}
@@ -186,33 +186,33 @@ export function RescheduleClient({
 
   if (stage === "done") {
     return (
-      <main className="mx-auto max-w-xl px-4 py-8 text-[#191414] sm:px-6">
-        <section className="overflow-hidden rounded-3xl border border-[#eadbd1] bg-white shadow-lg">
-          <div className="bg-gradient-to-br from-[#b86b1f] via-[#8f151a] to-[#4d0c10] px-6 pb-7 pt-6 text-center text-white">
+      <main className="mx-auto max-w-xl px-4 py-8 text-[#281b18] sm:px-6">
+        <section className="overflow-hidden rounded-3xl border border-[#e7d6ca] bg-white shadow-lg">
+          <div className="bg-gradient-to-br from-[#a85f29] via-[#8b2b28] to-[#4c191b] px-6 pb-7 pt-6 text-center text-white">
             <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-white/15">
               <CheckCircle2 size={26} />
             </span>
             <h1 className="mt-3 text-lg font-semibold tracking-tight">Đã đổi lịch thành công!</h1>
           </div>
-          <div className="space-y-2 px-6 py-6 text-sm text-[#4d403a]">
+          <div className="space-y-2 px-6 py-6 text-sm text-[#51423b]">
             <p>
               {serviceName} · {therapistName}
             </p>
-            <p className="flex items-center gap-1.5 font-semibold text-[#191414]">
-              <Calendar size={14} className="text-[#d13f1f]" /> {newTime}, ngày {format(parseISO(newDate), "dd/MM/yyyy")}
+            <p className="flex items-center gap-1.5 font-semibold text-[#281b18]">
+              <Calendar size={14} className="text-[#c64b32]" /> {newTime}, ngày {format(parseISO(newDate), "dd/MM/yyyy")}
             </p>
             {!isFreeReschedule ? (
-              <p className="rounded-xl bg-[#fff2ef] p-3 text-xs leading-5 text-[#d13f1f]">
+              <p className="rounded-xl bg-[#f8ebe5] p-3 text-xs leading-5 text-[#c64b32]">
                 Cọc mới {formatMoney(depositAmount)} đã được ghi nhận cho lịch hẹn mới.
               </p>
             ) : (
-              <p className="rounded-xl bg-[#fff4e6] p-3 text-xs leading-5 text-[#1d6c40]">
+              <p className="rounded-xl bg-[#fff4e6] p-3 text-xs leading-5 text-[#0d674c]">
                 Đây là lượt đổi lịch miễn phí đầu tiên của bạn cho đơn này — không mất phí.
               </p>
             )}
             <Link
               href="/don-cua-toi?tab=upcoming"
-              className="mt-3 inline-flex w-full items-center justify-center rounded-full bg-[#d13f1f] px-5 py-3 text-sm font-semibold text-white"
+              className="mt-3 inline-flex w-full items-center justify-center rounded-full bg-[#c64b32] px-5 py-3 text-sm font-semibold text-white"
             >
               Xem lịch đã đặt
             </Link>
@@ -224,11 +224,11 @@ export function RescheduleClient({
 
   if (stage === "confirming") {
     return (
-      <main className="mx-auto max-w-xl px-4 py-8 text-[#191414] sm:px-6">
-        <section className="flex flex-col items-center gap-2.5 rounded-2xl border border-[#e3b23c] bg-[#fff7ec] p-10 text-center">
-          <Loader2 className="animate-spin text-[#d13f1f]" size={28} />
+      <main className="mx-auto max-w-xl px-4 py-8 text-[#281b18] sm:px-6">
+        <section className="flex flex-col items-center gap-2.5 rounded-2xl border border-[#c59a3d] bg-[#fbf2e7] p-10 text-center">
+          <Loader2 className="animate-spin text-[#c64b32]" size={28} />
           <p className="text-sm font-semibold text-[#5c3a1e]">{reschedulePayment ? "Đang chờ đối soát cọc mới..." : "Đang kiểm tra lịch trống và cập nhật booking..."}</p>
-          <p className="text-xs text-[#8a7a72]">{reschedulePayment ? "Lịch chỉ được thay sau khi webhook ngân hàng xác nhận." : "Hệ thống đang khóa KTV và ghế/giường phù hợp."}</p>
+          <p className="text-xs text-[#826f66]">{reschedulePayment ? "Lịch chỉ được thay sau khi webhook ngân hàng xác nhận." : "Hệ thống đang khóa KTV và ghế/giường phù hợp."}</p>
         </section>
       </main>
     );
@@ -236,12 +236,12 @@ export function RescheduleClient({
 
   if (stage === "deposit") {
     return (
-      <main className="mx-auto max-w-xl px-4 py-8 text-[#191414] sm:px-6">
-        <section className="rounded-2xl border border-[#e3b23c] bg-[#fff7ec] p-5">
+      <main className="mx-auto max-w-xl px-4 py-8 text-[#281b18] sm:px-6">
+        <section className="rounded-2xl border border-[#c59a3d] bg-[#fbf2e7] p-5">
           <p className="flex items-center gap-2 text-sm font-semibold text-[#5c3a1e]">
             <ShieldCheck size={16} className="shrink-0" /> Đặt cọc lại {formatMoney(depositAmount)}
           </p>
-          <p className="mt-1.5 text-xs leading-5 text-[#8a7a72]">
+          <p className="mt-1.5 text-xs leading-5 text-[#826f66]">
             Chuyển khoản đúng số tiền để giữ lịch mới: {newTime}, ngày {format(parseISO(newDate), "dd/MM/yyyy")}.
           </p>
           <BankTransferDetails
@@ -257,24 +257,24 @@ export function RescheduleClient({
   }
 
   return (
-    <main className="mx-auto max-w-xl px-4 py-6 text-[#191414] sm:px-6">
+    <main className="mx-auto max-w-xl px-4 py-6 text-[#281b18] sm:px-6">
       <h1 className="text-xl font-semibold tracking-tight">Đổi lịch hẹn</h1>
-      <p className="mt-1 text-sm text-[#665b55]">
+      <p className="mt-1 text-sm text-[#68574f]">
         {serviceName} · {therapistName} · Tổng {formatMoney(totalAmount)}
       </p>
-      <p className="mt-0.5 text-sm text-[#665b55]">Lịch hiện tại: {format(currentStart, "HH:mm dd/MM/yyyy")}</p>
+      <p className="mt-0.5 text-sm text-[#68574f]">Lịch hiện tại: {format(currentStart, "HH:mm dd/MM/yyyy")}</p>
 
       {isFreeReschedule ? (
-        <div className="mt-4 flex items-start gap-2.5 rounded-2xl border border-[#eadbd1] bg-white p-3.5">
-          <ShieldCheck size={18} className="mt-0.5 shrink-0 text-[#1d6c40]" />
-          <p className="text-xs leading-5 text-[#4d403a]">
+        <div className="mt-4 flex items-start gap-2.5 rounded-2xl border border-[#e7d6ca] bg-white p-3.5">
+          <ShieldCheck size={18} className="mt-0.5 shrink-0 text-[#0d674c]" />
+          <p className="text-xs leading-5 text-[#51423b]">
             Bạn được đổi lịch <strong>miễn phí 1 lần</strong> cho đơn này. Từ lần đổi lịch thứ 2 trở đi, tiền cọc đã đặt sẽ không được
             hoàn lại và bạn cần đặt cọc lại để giữ lịch mới.
           </p>
         </div>
       ) : (
-        <div className="mt-4 flex items-start gap-2.5 rounded-2xl border border-[#e3b23c] bg-[#fff7ec] p-3.5">
-          <AlertTriangle size={18} className="mt-0.5 shrink-0 text-[#d13f1f]" />
+        <div className="mt-4 flex items-start gap-2.5 rounded-2xl border border-[#c59a3d] bg-[#fbf2e7] p-3.5">
+          <AlertTriangle size={18} className="mt-0.5 shrink-0 text-[#c64b32]" />
           <p className="text-xs leading-5 text-[#5c3a1e]">
             Bạn đã dùng lượt đổi lịch miễn phí cho đơn này. Đổi lịch lần này, tiền cọc {formatMoney(depositAmount)} đã đặt trước đó sẽ{" "}
             <strong>được tính vào chi phí giữ khung giờ cũ</strong>, và bạn cần đặt cọc lại {formatMoney(depositAmount)} để giữ lịch mới.
@@ -297,42 +297,42 @@ export function RescheduleClient({
               setNewDate(event.target.value);
             }}
             min={format(addDays(new Date(), 1), "yyyy-MM-dd")}
-            className="mt-1.5 w-full rounded-lg border border-[#eadbd1] px-3 py-2.5 text-sm"
+            className="mt-1.5 w-full rounded-lg border border-[#e7d6ca] px-3 py-2.5 text-sm"
           />
         </label>
         <p className="mb-2 mt-3 text-xs font-semibold">Khung giờ mới</p>
         <div className="grid grid-cols-3 gap-2">
-          {loadingSlots ? <p className="col-span-3 flex items-center justify-center gap-2 py-4 text-xs text-[#8a7a72]"><Loader2 className="animate-spin" size={14} /> Đang tải lịch trống thật...</p> : timeSlots.map((time) => (
+          {loadingSlots ? <p className="col-span-3 flex items-center justify-center gap-2 py-4 text-xs text-[#826f66]"><Loader2 className="animate-spin" size={14} /> Đang tải lịch trống thật...</p> : timeSlots.map((time) => (
             <button
               key={time}
               type="button"
               onClick={() => setNewTime(time)}
               className={cn(
                 "flex items-center justify-center gap-1 rounded-lg border py-2 text-xs font-semibold transition",
-                newTime === time ? "border-[#d13f1f] bg-[#fff2ef] text-[#d13f1f]" : "border-[#eadbd1] bg-white text-[#4d403a]"
+                newTime === time ? "border-[#c64b32] bg-[#f8ebe5] text-[#c64b32]" : "border-[#e7d6ca] bg-white text-[#51423b]"
               )}
             >
               <Clock size={11} /> {time}
             </button>
           ))}
-          {!loadingSlots && timeSlots.length === 0 ? <p className="col-span-3 rounded-xl bg-[#fff7ec] p-3 text-center text-xs text-[#805914]">Ngày này chưa còn khung giờ phù hợp.</p> : null}
+          {!loadingSlots && timeSlots.length === 0 ? <p className="col-span-3 rounded-xl bg-[#fbf2e7] p-3 text-center text-xs text-[#76551d]">Ngày này chưa còn khung giờ phù hợp.</p> : null}
         </div>
 
         {!isFreeReschedule ? (
           <button
             type="button"
             onClick={() => setAcceptedDepositPolicy((value) => !value)}
-            className="mt-3 flex w-full items-start gap-2.5 rounded-xl border border-[#eadbd1] bg-[#fffaf6] p-3 text-left"
+            className="mt-3 flex w-full items-start gap-2.5 rounded-xl border border-[#e7d6ca] bg-[#fdf8f3] p-3 text-left"
           >
             <span
               className={cn(
                 "mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded border",
-                acceptedDepositPolicy ? "border-[#d13f1f] bg-[#d13f1f] text-white" : "border-[#c9b6ac] bg-white"
+                acceptedDepositPolicy ? "border-[#c64b32] bg-[#c64b32] text-white" : "border-[#c9b6ac] bg-white"
               )}
             >
               {acceptedDepositPolicy ? <Check size={11} /> : null}
             </span>
-            <span className="text-[11px] leading-5 text-[#665b55]">
+            <span className="text-[11px] leading-5 text-[#68574f]">
               Tôi đã hiểu chính sách đổi lịch từ lần thứ 2 và đồng ý đặt cọc lại để xác nhận khung giờ mới.
             </span>
           </button>
@@ -342,7 +342,7 @@ export function RescheduleClient({
           type="button"
           onClick={confirmSchedule}
           disabled={!newTime || (!isFreeReschedule && !acceptedDepositPolicy)}
-          className="mt-4 w-full rounded-full bg-[#d13f1f] px-5 py-3 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-45"
+          className="mt-4 w-full rounded-full bg-[#c64b32] px-5 py-3 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-45"
         >
           {isFreeReschedule ? "Xác nhận đổi lịch (miễn phí)" : `Đổi lịch & đặt cọc lại ${formatMoney(depositAmount)}`}
         </button>

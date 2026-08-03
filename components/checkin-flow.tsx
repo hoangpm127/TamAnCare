@@ -57,9 +57,9 @@ type Stage = "scan" | "options" | "detail";
 type CheckinState = "idle" | "submitting";
 
 function bookingStatus(status: BookingStatus) {
-  if (status === "IN_SERVICE") return { label: "Đang phục vụ", className: "bg-[#fff4e6] text-[#b42f20]", icon: PlayCircle };
-  if (status === "CHECKED_IN") return { label: "Đang phục vụ · đã nhận QR", className: "bg-[#fff4e6] text-[#b42f20]", icon: Hourglass };
-  if (status === "PENDING") return { label: "Đã cọc · sẵn sàng dùng", className: "bg-[#fff7df] text-[#805914]", icon: CreditCard };
+  if (status === "IN_SERVICE") return { label: "Đang phục vụ", className: "bg-[#fff4e6] text-[#ad432f]", icon: PlayCircle };
+  if (status === "CHECKED_IN") return { label: "Đang phục vụ · đã nhận QR", className: "bg-[#fff4e6] text-[#ad432f]", icon: Hourglass };
+  if (status === "PENDING") return { label: "Đã cọc · sẵn sàng dùng", className: "bg-[#fff7df] text-[#76551d]", icon: CreditCard };
   return { label: "Sẵn sàng sử dụng", className: "bg-[#eef5ff] text-[#28669b]", icon: CheckCircle2 };
 }
 
@@ -67,12 +67,12 @@ function BillLines({ booking }: { booking: CheckinBooking }) {
   return (
     <div className="space-y-1.5 text-sm">
       {booking.items.map((item) => (
-        <div key={`${booking.bookingCode}-${item.name}`} className="flex items-start justify-between gap-3 text-[#665b55]">
+        <div key={`${booking.bookingCode}-${item.name}`} className="flex items-start justify-between gap-3 text-[#68574f]">
           <span className="min-w-0">{item.name}{item.qty > 1 ? ` x${item.qty}` : ""}</span>
-          <span className="shrink-0 font-semibold text-[#191414]">{booking.usedPackage ? "Lượt gói" : formatMoney(item.amount)}</span>
+          <span className="shrink-0 font-semibold text-[#281b18]">{booking.usedPackage ? "Lượt gói" : formatMoney(item.amount)}</span>
         </div>
       ))}
-      {booking.discount && !booking.usedPackage ? <div className="flex items-center justify-between gap-3 font-medium text-[#b86b1f]"><span>Ưu đãi</span><span>-{formatMoney(booking.discount)}</span></div> : null}
+      {booking.discount && !booking.usedPackage ? <div className="flex items-center justify-between gap-3 font-medium text-[#a85f29]"><span>Ưu đãi</span><span>-{formatMoney(booking.discount)}</span></div> : null}
     </div>
   );
 }
@@ -116,34 +116,34 @@ function ServiceTimer({
   const suggestedTip = suggestedTipForDuration(durationMin);
 
   return (
-    <div className="overflow-hidden rounded-2xl bg-gradient-to-br from-[#4d0c10] via-[#b42f20] to-[#b86b1f] p-4 text-center text-white shadow-lg shadow-[#b42f20]/20">
+    <div className="overflow-hidden rounded-2xl bg-gradient-to-br from-[#4c191b] via-[#ad432f] to-[#a85f29] p-4 text-center text-white shadow-lg shadow-[#ad432f]/20">
       <p className="flex items-center justify-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-white/80"><Hourglass className={endedAt ? "" : "animate-pulse"} size={14} /> {endedAt ? "Đồng hồ đã dừng" : "Dịch vụ đang được tính giờ"}</p>
       <p className="mt-2 font-mono text-4xl font-bold tracking-wider tabular-nums">{elapsed}</p>
       <p className="mt-1 text-[10px] font-medium text-white/75">Thời gian đã phục vụ</p>
-      <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/20"><div className="h-full rounded-full bg-[#f5d982] transition-all duration-1000" style={{ width: `${progress}%` }} /></div>
+      <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/20"><div className="h-full rounded-full bg-[#e7c878] transition-all duration-1000" style={{ width: `${progress}%` }} /></div>
       <div className="mt-2 flex items-center justify-between gap-3 text-[10px] text-white/80"><span>Dự kiến {durationMin} phút</span><span>{remainingSeconds > 0 ? `Còn ${remaining}` : "Đã đủ thời lượng"}</span></div>
       <p className="mt-3 border-t border-white/15 pt-2 text-[10px] leading-4 text-white/70">{endedAt ? "Thời lượng thực tế đã được khóa theo yêu cầu check-out sớm và gửi tới cơ sở/KTV." : "Đồng hồ bắt đầu từ lúc xác nhận “Sử dụng dịch vụ” và dừng khi cơ sở/KTV check-out."}</p>
       {!endedAt && remainingSeconds > 0 && suggestedTip > 0 ? (
-        <div className="mt-2 rounded-xl border border-[#f5d982]/25 bg-white/10 px-3 py-2.5 text-left">
+        <div className="mt-2 rounded-xl border border-[#e7c878]/25 bg-white/10 px-3 py-2.5 text-left">
           <p className="flex items-center justify-center gap-1.5 text-[10px] font-semibold text-[#fff1b8]"><Sparkles size={12} /> Một lời cảm ơn dành cho KTV</p>
           <p className="mt-1 text-center text-[10px] leading-4 text-white/90">Tâm An trân trọng gợi ý mức Tip từ <strong className="text-[#fff1b8]">{formatMoney(suggestedTip)}</strong> cho ca {durationMin} phút. Nếu bạn hài lòng với sự tận tâm của KTV, một mức Tip cao hơn sẽ là sự động viên rất ý nghĩa.</p>
           <p className="mt-1 text-center text-[9px] leading-4 text-white/65">Tip được trao trực tiếp cho KTV, tách riêng và không cộng vào Bill thanh toán cho cơ sở.</p>
         </div>
       ) : null}
       {!endedAt && remainingSeconds === 0 ? (
-        <div className="mt-3 rounded-2xl bg-white p-3.5 text-[#191414] shadow-lg">
-          <BellRing className="mx-auto text-[#d13f1f]" size={22} />
+        <div className="mt-3 rounded-2xl bg-white p-3.5 text-[#281b18] shadow-lg">
+          <BellRing className="mx-auto text-[#c64b32]" size={22} />
           <p className="mt-2 text-sm font-semibold">Liệu trình đã đủ thời lượng</p>
-          <p className="mt-1 text-[10px] leading-4 text-[#665b55]">Mời bạn thư giãn trong lúc KTV hỗ trợ kết thúc liệu trình và quầy kiểm tra trạng thái dịch vụ.</p>
+          <p className="mt-1 text-[10px] leading-4 text-[#68574f]">Mời bạn thư giãn trong lúc KTV hỗ trợ kết thúc liệu trình và quầy kiểm tra trạng thái dịch vụ.</p>
           {usedPackage ? (
-            <p className="mt-3 rounded-xl bg-[#fff7df] px-3 py-2 text-[10px] font-medium text-[#805914]">Lượt gói đã được thanh toán trước; quầy chỉ xác nhận hoàn tất và lưu lịch sử sử dụng.</p>
+            <p className="mt-3 rounded-xl bg-[#fff7df] px-3 py-2 text-[10px] font-medium text-[#76551d]">Lượt gói đã được thanh toán trước; quầy chỉ xác nhận hoàn tất và lưu lịch sử sử dụng.</p>
           ) : (
-            <div className="mt-3 rounded-xl bg-[#fff7ec] p-3 text-left">
-              <p className="flex items-center justify-between text-[10px] text-[#8a7a72]"><span>Phần Bill còn lại</span><strong className="text-sm text-[#d13f1f]">{formatMoney(dueAmount)}</strong></p>
-              <Link href={`/thanh-toan/${encodeURIComponent(bookingCode)}`} className="mt-2 inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-[#d13f1f] px-4 py-2.5 text-xs font-semibold text-white"><Receipt size={14} /> Mở Bill thanh toán tại quầy</Link>
+            <div className="mt-3 rounded-xl bg-[#fbf2e7] p-3 text-left">
+              <p className="flex items-center justify-between text-[10px] text-[#826f66]"><span>Phần Bill còn lại</span><strong className="text-sm text-[#c64b32]">{formatMoney(dueAmount)}</strong></p>
+              <Link href={`/thanh-toan/${encodeURIComponent(bookingCode)}`} className="mt-2 inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-[#c64b32] px-4 py-2.5 text-xs font-semibold text-white"><Receipt size={14} /> Mở Bill thanh toán tại quầy</Link>
             </div>
           )}
-          <p className="mt-2 text-[9px] leading-4 text-[#8a7a72]">Tip được trao trực tiếp cho KTV và luôn tách khỏi Bill của cơ sở.</p>
+          <p className="mt-2 text-[9px] leading-4 text-[#826f66]">Tip được trao trực tiếp cho KTV và luôn tách khỏi Bill của cơ sở.</p>
         </div>
       ) : null}
     </div>
@@ -335,12 +335,12 @@ export function CheckinFlow({
   }, [initialTherapist, selectedBooking, startService]);
 
   if (loading) {
-    return <section className="flex items-center justify-center rounded-2xl border border-[#eadbd1] bg-white p-10 text-sm text-[#665b55]"><Loader2 className="mr-2 animate-spin text-[#d13f1f]" size={18} /> Đang xác thực Bill và thẻ của bạn…</section>;
+    return <section className="flex items-center justify-center rounded-2xl border border-[#e7d6ca] bg-white p-10 text-sm text-[#68574f]"><Loader2 className="mr-2 animate-spin text-[#c64b32]" size={18} /> Đang xác thực Bill và thẻ của bạn…</section>;
   }
 
   if (stage === "detail" && selectedBooking) {
     const status = selectedBooking.checkoutRequestedAt
-      ? { label: "Đã yêu cầu check-out sớm", className: "bg-[#fff7df] text-[#805914]", icon: CheckCircle2 }
+      ? { label: "Đã yêu cầu check-out sớm", className: "bg-[#fff7df] text-[#76551d]", icon: CheckCircle2 }
       : bookingStatus(selectedBooking.status);
     const StatusIcon = status.icon;
     return (
@@ -349,50 +349,50 @@ export function CheckinFlow({
           <span className="inline-flex items-center gap-1.5"><StatusIcon size={16} /> {status.label}</span>
           <button type="button" onClick={() => void loadBookings(true)} className="inline-flex items-center gap-1"><RefreshCw size={13} /> Cập nhật</button>
         </div>
-        <section className="rounded-2xl border border-[#eadbd1] bg-white p-4 shadow-sm">
+        <section className="rounded-2xl border border-[#e7d6ca] bg-white p-4 shadow-sm">
           <div className="flex items-start justify-between gap-3">
-            <div><p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-[#d13f1f]"><Receipt size={13} /> {selectedBooking.checkoutRequestedAt ? (selectedBooking.usedPackage ? "Lượt gói chờ hoàn tất" : "Bill chờ hoàn tất") : ["CHECKED_IN", "IN_SERVICE"].includes(selectedBooking.status) ? (selectedBooking.usedPackage ? "Lượt gói đang sử dụng" : "Bill đang sử dụng") : (selectedBooking.usedPackage ? "Lượt gói đã giữ" : "Bill chưa sử dụng")}</p><h2 className="mt-1 text-base font-semibold">{selectedBooking.serviceLabel}</h2></div>
-            {selectedBooking.usedPackage ? <span className="shrink-0 rounded-full bg-[#fff7df] px-2 py-1 text-[10px] font-semibold text-[#805914]">Đã trả trước</span> : null}
+            <div><p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-[#c64b32]"><Receipt size={13} /> {selectedBooking.checkoutRequestedAt ? (selectedBooking.usedPackage ? "Lượt gói chờ hoàn tất" : "Bill chờ hoàn tất") : ["CHECKED_IN", "IN_SERVICE"].includes(selectedBooking.status) ? (selectedBooking.usedPackage ? "Lượt gói đang sử dụng" : "Bill đang sử dụng") : (selectedBooking.usedPackage ? "Lượt gói đã giữ" : "Bill chưa sử dụng")}</p><h2 className="mt-1 text-base font-semibold">{selectedBooking.serviceLabel}</h2></div>
+            {selectedBooking.usedPackage ? <span className="shrink-0 rounded-full bg-[#fff7df] px-2 py-1 text-[10px] font-semibold text-[#76551d]">Đã trả trước</span> : null}
           </div>
           <div className="mt-3"><BillLines booking={selectedBooking} /></div>
           {selectedBooking.usedPackage ? (
-            <div className="mt-3 rounded-xl bg-[#fff7ec] p-3 text-xs leading-5 text-[#715943]"><CreditCard className="mr-1 inline text-[#d13f1f]" size={14} /> Sử dụng thẻ <strong>{selectedBooking.packageName ?? "dài hạn"}</strong>. Check-out chỉ trừ lượt và tạo lịch sử; không thu lại tiền dịch vụ.</div>
+            <div className="mt-3 rounded-xl bg-[#fbf2e7] p-3 text-xs leading-5 text-[#715943]"><CreditCard className="mr-1 inline text-[#c64b32]" size={14} /> Sử dụng thẻ <strong>{selectedBooking.packageName ?? "dài hạn"}</strong>. Check-out chỉ trừ lượt và tạo lịch sử; không thu lại tiền dịch vụ.</div>
           ) : (
             <>
-              <div className="mt-3 flex items-center justify-between border-t border-dashed border-[#eadbd1] pt-3 font-semibold"><span>Tổng dịch vụ</span><span className="text-[#d13f1f]">{formatMoney(selectedBooking.totalAmount)}</span></div>
-              <div className="mt-1.5 flex items-center justify-between text-xs text-[#8a7a72]"><span>Đã đặt cọc</span><span className="font-semibold text-[#b86b1f]">-{formatMoney(selectedBooking.depositAmount)}</span></div>
-              <div className="mt-1 flex items-center justify-between text-xs text-[#8a7a72]"><span>Còn lại sau dịch vụ</span><span className="font-semibold text-[#4d403a]">{formatMoney(selectedBooking.dueAmount)}</span></div>
+              <div className="mt-3 flex items-center justify-between border-t border-dashed border-[#e7d6ca] pt-3 font-semibold"><span>Tổng dịch vụ</span><span className="text-[#c64b32]">{formatMoney(selectedBooking.totalAmount)}</span></div>
+              <div className="mt-1.5 flex items-center justify-between text-xs text-[#826f66]"><span>Đã đặt cọc</span><span className="font-semibold text-[#a85f29]">-{formatMoney(selectedBooking.depositAmount)}</span></div>
+              <div className="mt-1 flex items-center justify-between text-xs text-[#826f66]"><span>Còn lại sau dịch vụ</span><span className="font-semibold text-[#51423b]">{formatMoney(selectedBooking.dueAmount)}</span></div>
             </>
           )}
-          <div className="mt-4 space-y-1.5 border-t border-dashed border-[#eadbd1] pt-3 text-xs text-[#665b55]">
-            <p className="flex items-center gap-1.5"><Clock size={13} className="text-[#d13f1f]" /> {selectedBooking.timeLabel}</p>
-            <p className="flex items-center gap-1.5"><UserRound size={13} className="text-[#d13f1f]" /> {selectedBooking.therapistName}</p>
-            <p className="flex items-center gap-1.5"><MapPin size={13} className="text-[#d13f1f]" /> {selectedBooking.branchLabel}</p>
+          <div className="mt-4 space-y-1.5 border-t border-dashed border-[#e7d6ca] pt-3 text-xs text-[#68574f]">
+            <p className="flex items-center gap-1.5"><Clock size={13} className="text-[#c64b32]" /> {selectedBooking.timeLabel}</p>
+            <p className="flex items-center gap-1.5"><UserRound size={13} className="text-[#c64b32]" /> {selectedBooking.therapistName}</p>
+            <p className="flex items-center gap-1.5"><MapPin size={13} className="text-[#c64b32]" /> {selectedBooking.branchLabel}</p>
           </div>
 
           {selectedBooking.status === "CONFIRMED" ? (
-            <button type="button" onClick={() => void startService()} disabled={checkinState === "submitting"} className="mt-4 inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-[#d13f1f] px-4 py-3 text-sm font-semibold text-white disabled:opacity-60">
+            <button type="button" onClick={() => void startService()} disabled={checkinState === "submitting"} className="mt-4 inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-[#c64b32] px-4 py-3 text-sm font-semibold text-white disabled:opacity-60">
               {checkinState === "submitting" ? <Loader2 className="animate-spin" size={15} /> : <Check size={15} />} {checkinState === "submitting" ? "Đang bắt đầu tính giờ…" : "Sử dụng dịch vụ"}
             </button>
           ) : null}
           {["CHECKED_IN", "IN_SERVICE"].includes(selectedBooking.status) ? <div className="mt-4"><ServiceTimer startedAt={selectedBooking.checkedInAt} endedAt={selectedBooking.checkoutRequestedAt} durationMin={selectedBooking.durationMin} bookingCode={selectedBooking.bookingCode} dueAmount={selectedBooking.dueAmount} usedPackage={selectedBooking.usedPackage} /></div> : null}
           {["CHECKED_IN", "IN_SERVICE"].includes(selectedBooking.status) && !selectedBooking.checkoutRequestedAt ? (
-            <button type="button" onClick={() => setShowEarlyCheckoutConfirm(true)} className="mt-3 inline-flex w-full items-center justify-center gap-1.5 rounded-full border border-[#d13f1f] bg-white px-4 py-2.5 text-xs font-semibold text-[#d13f1f]">
+            <button type="button" onClick={() => setShowEarlyCheckoutConfirm(true)} className="mt-3 inline-flex w-full items-center justify-center gap-1.5 rounded-full border border-[#c64b32] bg-white px-4 py-2.5 text-xs font-semibold text-[#c64b32]">
               <LogOut size={14} /> Check-out sớm
             </button>
           ) : null}
           {showEarlyCheckoutConfirm && !selectedBooking.checkoutRequestedAt ? (
             <div className="mt-3 rounded-2xl border border-[#e8d39e] bg-[#fffaf0] p-3.5">
-              <div className="flex items-start justify-between gap-3"><div><p className="text-sm font-semibold text-[#4d3218]">Xác nhận check-out sớm?</p><p className="mt-1 text-[11px] leading-5 text-[#715943]">Đồng hồ sẽ dừng ngay và gửi thời gian thực tế cho quầy/KTV. Giá Bill hoặc lượt gói không tự giảm; cơ sở sẽ đối soát theo chính sách trước khi hoàn tất.</p></div><button type="button" onClick={() => setShowEarlyCheckoutConfirm(false)} aria-label="Đóng xác nhận check-out sớm" className="rounded-full bg-white p-1.5 text-[#8a7a72]"><X size={14} /></button></div>
-              <div className="mt-3 grid grid-cols-2 gap-2"><button type="button" onClick={() => setShowEarlyCheckoutConfirm(false)} className="rounded-full border border-[#d9c8bc] bg-white px-3 py-2.5 text-xs font-semibold text-[#665b55]">Tiếp tục dịch vụ</button><button type="button" onClick={() => void requestEarlyCheckout()} disabled={checkoutState === "submitting"} className="inline-flex items-center justify-center gap-1.5 rounded-full bg-[#d13f1f] px-3 py-2.5 text-xs font-semibold text-white disabled:opacity-60">{checkoutState === "submitting" ? <Loader2 className="animate-spin" size={13} /> : <LogOut size={13} />} {checkoutState === "submitting" ? "Đang ghi nhận…" : "Xác nhận check-out"}</button></div>
+              <div className="flex items-start justify-between gap-3"><div><p className="text-sm font-semibold text-[#4d3218]">Xác nhận check-out sớm?</p><p className="mt-1 text-[11px] leading-5 text-[#715943]">Đồng hồ sẽ dừng ngay và gửi thời gian thực tế cho quầy/KTV. Giá Bill hoặc lượt gói không tự giảm; cơ sở sẽ đối soát theo chính sách trước khi hoàn tất.</p></div><button type="button" onClick={() => setShowEarlyCheckoutConfirm(false)} aria-label="Đóng xác nhận check-out sớm" className="rounded-full bg-white p-1.5 text-[#826f66]"><X size={14} /></button></div>
+              <div className="mt-3 grid grid-cols-2 gap-2"><button type="button" onClick={() => setShowEarlyCheckoutConfirm(false)} className="rounded-full border border-[#d9c8bc] bg-white px-3 py-2.5 text-xs font-semibold text-[#68574f]">Tiếp tục dịch vụ</button><button type="button" onClick={() => void requestEarlyCheckout()} disabled={checkoutState === "submitting"} className="inline-flex items-center justify-center gap-1.5 rounded-full bg-[#c64b32] px-3 py-2.5 text-xs font-semibold text-white disabled:opacity-60">{checkoutState === "submitting" ? <Loader2 className="animate-spin" size={13} /> : <LogOut size={13} />} {checkoutState === "submitting" ? "Đang ghi nhận…" : "Xác nhận check-out"}</button></div>
             </div>
           ) : null}
           {selectedBooking.checkoutRequestedAt ? (
-            <div className="mt-3 rounded-2xl bg-[#fff7df] p-3.5 text-center text-xs leading-5 text-[#805914]"><CheckCircle2 className="mx-auto mb-1" size={18} /><strong>Đã dừng giờ và báo cho cơ sở/KTV.</strong><br />Quầy đang kiểm tra thời lượng, thanh toán và xác nhận đóng Bill.{!selectedBooking.usedPackage ? <Link href={`/thanh-toan/${encodeURIComponent(selectedBooking.bookingCode)}`} className="mt-3 inline-flex w-full items-center justify-center rounded-full bg-[#d13f1f] px-4 py-2.5 font-semibold text-white">Thanh toán phần còn lại</Link> : null}</div>
+            <div className="mt-3 rounded-2xl bg-[#fff7df] p-3.5 text-center text-xs leading-5 text-[#76551d]"><CheckCircle2 className="mx-auto mb-1" size={18} /><strong>Đã dừng giờ và báo cho cơ sở/KTV.</strong><br />Quầy đang kiểm tra thời lượng, thanh toán và xác nhận đóng Bill.{!selectedBooking.usedPackage ? <Link href={`/thanh-toan/${encodeURIComponent(selectedBooking.bookingCode)}`} className="mt-3 inline-flex w-full items-center justify-center rounded-full bg-[#c64b32] px-4 py-2.5 font-semibold text-white">Thanh toán phần còn lại</Link> : null}</div>
           ) : null}
           {checkinError ? <p className="mt-3 rounded-xl bg-red-50 p-3 text-xs font-medium text-red-700">{checkinError}</p> : null}
-          <div className="mt-3 rounded-xl bg-[#f8f4f1] p-3 text-[10px] leading-4 text-[#665b55]"><ShieldCheck className="mr-1 inline text-[#b86b1f]" size={13} /> Mỗi lần chuyển trạng thái đều được lưu lịch sử và gửi thông báo hai chiều cho khách, cơ sở và KTV phụ trách.</div>
-          <button type="button" onClick={() => { setStage("options"); setSelectedBookingCode(null); setShowEarlyCheckoutConfirm(false); }} className="mt-3 w-full text-center text-xs font-semibold text-[#8a7a72]">Chọn Bill/thẻ khác</button>
+          <div className="mt-3 rounded-xl bg-[#f8f4f1] p-3 text-[10px] leading-4 text-[#68574f]"><ShieldCheck className="mr-1 inline text-[#a85f29]" size={13} /> Mỗi lần chuyển trạng thái đều được lưu lịch sử và gửi thông báo hai chiều cho khách, cơ sở và KTV phụ trách.</div>
+          <button type="button" onClick={() => { setStage("options"); setSelectedBookingCode(null); setShowEarlyCheckoutConfirm(false); }} className="mt-3 w-full text-center text-xs font-semibold text-[#826f66]">Chọn Bill/thẻ khác</button>
         </section>
       </div>
     );
@@ -405,39 +405,39 @@ export function CheckinFlow({
       : `/booking?branch=${encodeURIComponent(scannedBranchId ?? "")}&source=Venue-QR${therapistQuery}`;
     return (
       <div className="space-y-3">
-        <section className="rounded-2xl border border-[#eadbd1] bg-white p-4 shadow-sm">
-          <div className="flex items-center gap-3"><span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#fff4e6] text-[#b86b1f]">{scannedTherapistId ? <UserRound size={18} /> : <MapPin size={18} />}</span><div><p className="text-xs text-[#8a7a72]">{scannedTherapistId ? "Đã nhận diện QR KTV" : "Đã nhận diện địa điểm"}</p><h2 className="text-base font-semibold">{scannedTherapistId ? `${initialTherapist?.name ?? "KTV Tâm An"} · ${scannedBranchLabel}` : scannedBranchLabel}</h2></div></div>
-          <p className="mt-3 text-xs leading-5 text-[#665b55]">{scannedTherapistId ? "Hệ thống chỉ hiển thị Bill đã phân công đúng KTV này. Chọn Bill để bắt đầu hoặc xem ngay đồng hồ phục vụ." : "Chọn Bill hoặc lượt thẻ bạn muốn sử dụng. Hệ thống chỉ hiển thị quyền sử dụng đã được xác thực trên tài khoản hoặc thiết bị này."}</p>
+        <section className="rounded-2xl border border-[#e7d6ca] bg-white p-4 shadow-sm">
+          <div className="flex items-center gap-3"><span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#fff4e6] text-[#a85f29]">{scannedTherapistId ? <UserRound size={18} /> : <MapPin size={18} />}</span><div><p className="text-xs text-[#826f66]">{scannedTherapistId ? "Đã nhận diện QR KTV" : "Đã nhận diện địa điểm"}</p><h2 className="text-base font-semibold">{scannedTherapistId ? `${initialTherapist?.name ?? "KTV Tâm An"} · ${scannedBranchLabel}` : scannedBranchLabel}</h2></div></div>
+          <p className="mt-3 text-xs leading-5 text-[#68574f]">{scannedTherapistId ? "Hệ thống chỉ hiển thị Bill đã phân công đúng KTV này. Chọn Bill để bắt đầu hoặc xem ngay đồng hồ phục vụ." : "Chọn Bill hoặc lượt thẻ bạn muốn sử dụng. Hệ thống chỉ hiển thị quyền sử dụng đã được xác thực trên tài khoản hoặc thiết bị này."}</p>
         </section>
 
         {branchBookings.length ? <div className="space-y-2">{branchBookings.map((booking) => {
           const status = bookingStatus(booking.status);
           const StatusIcon = status.icon;
-          return <button key={booking.bookingCode} type="button" onClick={() => { setSelectedBookingCode(booking.bookingCode); setStage("detail"); }} className="flex w-full items-center gap-3 rounded-2xl border border-[#eadbd1] bg-white p-3.5 text-left shadow-sm"><span className={cn("flex h-11 w-11 shrink-0 items-center justify-center rounded-xl", booking.usedPackage ? "bg-[#fff7df] text-[#805914]" : "bg-[#fff2ef] text-[#d13f1f]")}>{booking.usedPackage ? <CreditCard size={19} /> : <Receipt size={19} />}</span><span className="min-w-0 flex-1"><span className="block truncate text-sm font-semibold">{booking.serviceLabel}</span><span className="mt-0.5 block truncate text-[11px] text-[#8a7a72]">{booking.timeLabel} · {booking.therapistName}</span><span className={cn("mt-1 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[9px] font-semibold", status.className)}><StatusIcon size={10} /> {status.label}</span></span><ChevronRight size={18} className="shrink-0 text-[#c9b6ac]" /></button>;
+          return <button key={booking.bookingCode} type="button" onClick={() => { setSelectedBookingCode(booking.bookingCode); setStage("detail"); }} className="flex w-full items-center gap-3 rounded-2xl border border-[#e7d6ca] bg-white p-3.5 text-left shadow-sm"><span className={cn("flex h-11 w-11 shrink-0 items-center justify-center rounded-xl", booking.usedPackage ? "bg-[#fff7df] text-[#76551d]" : "bg-[#f8ebe5] text-[#c64b32]")}>{booking.usedPackage ? <CreditCard size={19} /> : <Receipt size={19} />}</span><span className="min-w-0 flex-1"><span className="block truncate text-sm font-semibold">{booking.serviceLabel}</span><span className="mt-0.5 block truncate text-[11px] text-[#826f66]">{booking.timeLabel} · {booking.therapistName}</span><span className={cn("mt-1 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[9px] font-semibold", status.className)}><StatusIcon size={10} /> {status.label}</span></span><ChevronRight size={18} className="shrink-0 text-[#c9b6ac]" /></button>;
         })}</div> : null}
 
         {membership ? (
           <section className="rounded-2xl bg-gradient-to-br from-[#231514] to-[#4a281a] p-4 text-white shadow-sm">
-            <div className="flex items-start gap-3"><span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 text-[#f5d982]"><CreditCard size={20} /></span><div className="min-w-0 flex-1"><p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#e3b23c]">Thẻ dùng chung cả 2 cơ sở</p><h3 className="mt-0.5 truncate text-sm font-semibold">{membership.planName}</h3><p className="mt-1 text-xs text-white/70">Còn {membership.availableSessions} lượt khả dụng · HSD {membership.expiresAt}</p></div></div>
+            <div className="flex items-start gap-3"><span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 text-[#e7c878]"><CreditCard size={20} /></span><div className="min-w-0 flex-1"><p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#c59a3d]">Thẻ dùng chung cả 2 cơ sở</p><h3 className="mt-0.5 truncate text-sm font-semibold">{membership.planName}</h3><p className="mt-1 text-xs text-white/70">Còn {membership.availableSessions} lượt khả dụng · HSD {membership.expiresAt}</p></div></div>
             <p className="mt-3 text-[11px] leading-5 text-white/70">Nếu chưa có lịch đã giữ ở {scannedBranchLabel}, hãy chọn dịch vụ/giờ/KTV. Hệ thống tự nhận lượt gói và không yêu cầu đặt cọc.</p>
-            <Link href={packageBookingHref} className="mt-3 inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-[#f5d982] px-4 py-2.5 text-xs font-semibold text-[#4a2d16]">Đặt nhanh bằng lượt gói <ChevronRight size={14} /></Link>
+            <Link href={packageBookingHref} className="mt-3 inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-[#e7c878] px-4 py-2.5 text-xs font-semibold text-[#4a2d16]">Đặt nhanh bằng lượt gói <ChevronRight size={14} /></Link>
           </section>
         ) : null}
 
-        {!branchBookings.length && !membership ? <section className="rounded-2xl border border-dashed border-[#eadbd1] bg-white p-6 text-center"><p className="text-sm leading-6 text-[#665b55]">Chưa tìm thấy Bill chưa sử dụng hoặc thẻ dài hạn còn hiệu lực tại {scannedBranchLabel}.</p>{accessError ? <p className="mt-2 text-xs text-[#d13f1f]">{accessError}</p> : null}<div className="mt-4 flex justify-center gap-2"><Link href="/tai-khoan" className="rounded-full border border-[#d13f1f] px-4 py-2.5 text-xs font-semibold text-[#d13f1f]">Đăng nhập khôi phục</Link><Link href={`/booking?branch=${encodeURIComponent(scannedBranchId ?? "")}${therapistQuery}`} className="rounded-full bg-[#d13f1f] px-4 py-2.5 text-xs font-semibold text-white">Đặt lịch mới</Link></div></section> : null}
-        <button type="button" onClick={() => setStage("scan")} className="w-full text-center text-xs font-semibold text-[#d13f1f]">Quét QR cơ sở khác</button>
+        {!branchBookings.length && !membership ? <section className="rounded-2xl border border-dashed border-[#e7d6ca] bg-white p-6 text-center"><p className="text-sm leading-6 text-[#68574f]">Chưa tìm thấy Bill chưa sử dụng hoặc thẻ dài hạn còn hiệu lực tại {scannedBranchLabel}.</p>{accessError ? <p className="mt-2 text-xs text-[#c64b32]">{accessError}</p> : null}<div className="mt-4 flex justify-center gap-2"><Link href="/tai-khoan" className="rounded-full border border-[#c64b32] px-4 py-2.5 text-xs font-semibold text-[#c64b32]">Đăng nhập khôi phục</Link><Link href={`/booking?branch=${encodeURIComponent(scannedBranchId ?? "")}${therapistQuery}`} className="rounded-full bg-[#c64b32] px-4 py-2.5 text-xs font-semibold text-white">Đặt lịch mới</Link></div></section> : null}
+        <button type="button" onClick={() => setStage("scan")} className="w-full text-center text-xs font-semibold text-[#c64b32]">Quét QR cơ sở khác</button>
       </div>
     );
   }
 
   return (
     <section>
-      <div className="rounded-2xl border border-[#eadbd1] bg-white p-4 shadow-sm">
-        <p className="mb-1 flex items-center justify-center gap-2 text-sm font-semibold"><Camera size={16} className="text-[#d13f1f]" /> Đưa mã QR vào giữa khung</p>
-        <p className="mb-3 text-center text-[10px] leading-4 text-[#8a7a72]">Quét mã tại cơ sở, trên thiết bị KTV hoặc KTV Business trưởng.</p>
+      <div className="rounded-2xl border border-[#e7d6ca] bg-white p-4 shadow-sm">
+        <p className="mb-1 flex items-center justify-center gap-2 text-sm font-semibold"><Camera size={16} className="text-[#c64b32]" /> Đưa mã QR vào giữa khung</p>
+        <p className="mb-3 text-center text-[10px] leading-4 text-[#826f66]">Quét mã tại cơ sở, trên thiết bị KTV hoặc KTV Business trưởng.</p>
         <QrScanner onScanned={handleScanned} />
-        <p className="mt-3 text-center text-xs leading-5 text-[#8a7a72]">Hệ thống sẽ tự mở đúng lịch hoặc thẻ đủ điều kiện để bạn bắt đầu sử dụng dịch vụ.</p>
-        {scanError ? <p className="mt-2 rounded-xl bg-[#fff7df] p-2.5 text-center text-xs text-[#805914]">{scanError}</p> : null}
+        <p className="mt-3 text-center text-xs leading-5 text-[#826f66]">Hệ thống sẽ tự mở đúng lịch hoặc thẻ đủ điều kiện để bạn bắt đầu sử dụng dịch vụ.</p>
+        {scanError ? <p className="mt-2 rounded-xl bg-[#fff7df] p-2.5 text-center text-xs text-[#76551d]">{scanError}</p> : null}
       </div>
     </section>
   );

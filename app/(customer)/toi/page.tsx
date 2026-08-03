@@ -49,19 +49,19 @@ function MenuRow({ item }: { item: MenuItem }) {
   return (
     <Link
       href={item.href}
-      className="flex items-center gap-3 border-b border-[#f1e5dd] px-4 py-3 last:border-b-0 hover:bg-[#fff7f3]"
+      className="flex items-center gap-3 border-b border-[#eee0d6] px-4 py-3 last:border-b-0 hover:bg-[#fcf3ed]"
     >
-      <span className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#fff2ef] text-[#d13f1f]">
+      <span className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#f8ebe5] text-[#c64b32]">
         <Icon size={18} />
         {item.badge ? (
-          <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#b51f24] px-1 text-[9px] font-bold text-white ring-2 ring-white">
+          <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#a93a36] px-1 text-[9px] font-bold text-white ring-2 ring-white">
             {item.badge}
           </span>
         ) : null}
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block text-sm font-semibold text-[#191414]">{item.label}</span>
-        <span className="block truncate text-xs text-[#8a7a72]">{item.description}</span>
+        <span className="block text-sm font-semibold text-[#281b18]">{item.label}</span>
+        <span className="block truncate text-xs text-[#826f66]">{item.description}</span>
       </span>
       <ChevronRight className="shrink-0 text-[#c9b6ac]" size={18} />
     </Link>
@@ -73,7 +73,7 @@ export default async function AccountPage() {
   const version = appVersion();
 
   return (
-    <main className="mx-auto max-w-3xl px-4 pb-6 pt-3 text-[#191414] sm:px-6">
+    <main className="mx-auto max-w-3xl px-4 pb-6 pt-3 text-[#281b18] sm:px-6">
       <AccountProfileCard />
 
       <MembershipSummaryCard />
@@ -81,23 +81,23 @@ export default async function AccountPage() {
 
       <WalletTeaserCard />
 
-      <p className="mb-2.5 mt-5 px-1 text-xs font-semibold uppercase tracking-[0.14em] text-[#8a7a72]">Hoạt động của tôi</p>
-      <section className="overflow-hidden rounded-xl border border-[#eadbd1] bg-white shadow-sm">
+      <p className="mb-2.5 mt-5 px-1 text-xs font-semibold uppercase tracking-[0.14em] text-[#826f66]">Hoạt động của tôi</p>
+      <section className="overflow-hidden rounded-xl border border-[#e7d6ca] bg-white shadow-sm">
         {ACTIVITY_ITEMS.map((item) => (
           <MenuRow key={item.href} item={item} />
         ))}
         <NotificationMenuRow />
       </section>
 
-      <p className="mb-2.5 mt-5 px-1 text-xs font-semibold uppercase tracking-[0.14em] text-[#8a7a72]">Ưu đãi & hỗ trợ</p>
-      <section className="overflow-hidden rounded-xl border border-[#eadbd1] bg-white shadow-sm">
+      <p className="mb-2.5 mt-5 px-1 text-xs font-semibold uppercase tracking-[0.14em] text-[#826f66]">Ưu đãi & hỗ trợ</p>
+      <section className="overflow-hidden rounded-xl border border-[#e7d6ca] bg-white shadow-sm">
         {SUPPORT_ITEMS.map((item) => (
           <MenuRow key={item.href} item={item} />
         ))}
       </section>
 
-      <p className="mb-2.5 mt-5 px-1 text-xs font-semibold uppercase tracking-[0.14em] text-[#8a7a72]">Tài khoản & quyền truy cập</p>
-      <section className="overflow-hidden rounded-xl border border-[#eadbd1] bg-white shadow-sm">
+      <p className="mb-2.5 mt-5 px-1 text-xs font-semibold uppercase tracking-[0.14em] text-[#826f66]">Tài khoản & quyền truy cập</p>
+      <section className="overflow-hidden rounded-xl border border-[#e7d6ca] bg-white shadow-sm">
         <AccountRoleMenu />
       </section>
 

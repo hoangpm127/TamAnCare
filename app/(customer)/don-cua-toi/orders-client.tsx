@@ -13,12 +13,12 @@ const UPCOMING_STATUSES = ["PENDING", "CONFIRMED", "CHECKED_IN", "IN_SERVICE", "
 const HISTORY_STATUSES = ["COMPLETED", "CANCELLED"];
 
 const STATUS_BADGE_STYLE: Record<string, string> = {
-  CONFIRMED: "bg-[#fff2ef] text-[#d13f1f]",
-  PENDING: "bg-[#fff7df] text-[#805914]",
+  CONFIRMED: "bg-[#f8ebe5] text-[#c64b32]",
+  PENDING: "bg-[#fff7df] text-[#76551d]",
   CHECKED_IN: "bg-[#eef4ff] text-[#2452b8]",
   IN_SERVICE: "bg-[#eef4ff] text-[#2452b8]",
-  COMPLETED: "bg-[#fff4e6] text-[#b86b1f]",
-  CANCELLED: "bg-[#f3efec] text-[#8a7a72]",
+  COMPLETED: "bg-[#fff4e6] text-[#a85f29]",
+  CANCELLED: "bg-[#f3efec] text-[#826f66]",
 };
 
 type OrderView = {
@@ -111,17 +111,17 @@ export function OrdersClient() {
   }
 
   return (
-    <main className="mx-auto max-w-3xl px-4 pb-6 pt-3 text-[#191414] sm:px-6">
+    <main className="mx-auto max-w-3xl px-4 pb-6 pt-3 text-[#281b18] sm:px-6">
       <h1 className="text-xl font-semibold tracking-tight">Đơn của tôi</h1>
-      <p className="mt-1 text-sm text-[#665b55]">Lịch hẹn và hoá đơn gần đây của {customerProfile.fullName || "bạn"}.</p>
+      <p className="mt-1 text-sm text-[#68574f]">Lịch hẹn và hoá đơn gần đây của {customerProfile.fullName || "bạn"}.</p>
 
-      <div className="mt-2.5 grid grid-cols-2 gap-2 rounded-full border border-[#eadbd1] bg-white p-1">
+      <div className="mt-2.5 grid grid-cols-2 gap-2 rounded-full border border-[#e7d6ca] bg-white p-1">
         <button
           type="button"
           onClick={() => setTab("upcoming")}
           className={cn(
             "flex items-center justify-center gap-1.5 rounded-full py-2.5 text-sm font-semibold transition",
-            tab === "upcoming" ? "bg-[#d13f1f] text-white" : "text-[#4d403a]"
+            tab === "upcoming" ? "bg-[#c64b32] text-white" : "text-[#51423b]"
           )}
         >
           <CalendarClock size={16} /> Lịch đã đặt
@@ -131,7 +131,7 @@ export function OrdersClient() {
           onClick={() => setTab("history")}
           className={cn(
             "flex items-center justify-center gap-1.5 rounded-full py-2.5 text-sm font-semibold transition",
-            tab === "history" ? "bg-[#d13f1f] text-white" : "text-[#4d403a]"
+            tab === "history" ? "bg-[#c64b32] text-white" : "text-[#51423b]"
           )}
         >
           <Receipt size={16} /> Lịch sử & hoá đơn
@@ -150,17 +150,17 @@ export function OrdersClient() {
 
       <div className="mt-4 space-y-3">
         {list.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-[#eadbd1] bg-white p-8 text-center">
-            <p className="text-sm text-[#665b55]">
+          <div className="rounded-xl border border-dashed border-[#e7d6ca] bg-white p-8 text-center">
+            <p className="text-sm text-[#68574f]">
               {loadError
                 ? "Chưa thể đồng bộ đơn. Vui lòng kiểm tra kết nối và thử lại."
                 : tab === "upcoming" ? "Bạn chưa có lịch hẹn sắp tới." : "Chưa có lịch sử booking nào."}
             </p>
-            <Link href="/booking" className="mt-4 inline-flex rounded-full bg-[#d13f1f] px-5 py-2.5 text-sm font-semibold text-white">
+            <Link href="/booking" className="mt-4 inline-flex rounded-full bg-[#c64b32] px-5 py-2.5 text-sm font-semibold text-white">
               Đặt lịch ngay
             </Link>
             {!customerAuthenticated ? (
-              <Link href="/tai-khoan" className="ml-2 mt-4 inline-flex rounded-full border border-[#d13f1f] px-5 py-2.5 text-sm font-semibold text-[#d13f1f]">
+              <Link href="/tai-khoan" className="ml-2 mt-4 inline-flex rounded-full border border-[#c64b32] px-5 py-2.5 text-sm font-semibold text-[#c64b32]">
                 Đăng nhập để khôi phục lịch
               </Link>
             ) : null}
@@ -172,19 +172,19 @@ export function OrdersClient() {
             const isBusiness = booking.kind === "BUSINESS";
             const businessLabel: Record<string, string> = { AWAITING_DEPOSIT: "Chờ đối soát cọc", DEPOSIT_CONFIRMED: "Đã cọc · đang điều phối", READY: "Sẵn sàng", IN_SERVICE: "Đang phục vụ", AWAITING_BALANCE: "Chờ thanh toán", COMPLETED: "Đã hoàn tất dịch vụ & thanh toán", CANCELLED: "Đã hủy" };
             return (
-              <div key={booking.id} className="rounded-xl border border-[#eadbd1] bg-white p-3.5 shadow-sm">
+              <div key={booking.id} className="rounded-xl border border-[#e7d6ca] bg-white p-3.5 shadow-sm">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
                     <p className="truncate text-sm font-semibold">{booking.serviceName}</p>
-                    <p className="mt-1 text-xs text-[#665b55]">
+                    <p className="mt-1 text-xs text-[#68574f]">
                       {format(displayStartTime, "HH:mm dd/MM")} · {booking.therapistName}
                     </p>
-                    {isBusiness && booking.location ? <p className="mt-1 line-clamp-1 text-[11px] text-[#8a7a72]">{booking.location}</p> : null}
+                    {isBusiness && booking.location ? <p className="mt-1 line-clamp-1 text-[11px] text-[#826f66]">{booking.location}</p> : null}
                   </div>
                   <span
                     className={cn(
                       "shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold",
-                      isReserved ? "bg-[#fff2ef] text-[#d13f1f]" : STATUS_BADGE_STYLE[booking.status]
+                      isReserved ? "bg-[#f8ebe5] text-[#c64b32]" : STATUS_BADGE_STYLE[booking.status]
                     )}
                   >
                     {isBusiness ? businessLabel[booking.status] ?? booking.status : booking.status === "PENDING" && booking.paymentStatus === "UNPAID"
@@ -195,17 +195,17 @@ export function OrdersClient() {
                   </span>
                 </div>
                 {isReserved ? (
-                  <p className="mt-1.5 text-[11px] text-[#8a7a72]">
+                  <p className="mt-1.5 text-[11px] text-[#826f66]">
                     Đã cọc {formatMoney(booking.paidAmount)} · Còn lại {formatMoney(booking.totalAmount - booking.paidAmount)} thanh toán sau dịch vụ
                   </p>
                 ) : null}
-                <div className="mt-2.5 flex items-center justify-between gap-2 border-t border-[#f1e5dd] pt-2.5">
-                  <span className="text-[11px] text-[#8a7a72]">
-                    {displayBookingCode(booking.bookingCode)} · <span className="text-sm font-semibold text-[#191414]">{formatMoney(booking.totalAmount)}</span>
+                <div className="mt-2.5 flex items-center justify-between gap-2 border-t border-[#eee0d6] pt-2.5">
+                  <span className="text-[11px] text-[#826f66]">
+                    {displayBookingCode(booking.bookingCode)} · <span className="text-sm font-semibold text-[#281b18]">{formatMoney(booking.totalAmount)}</span>
                   </span>
                   <div className="flex flex-wrap items-center justify-end gap-2">
-                    {isBusiness ? <Link href={`/doanh-nghiep/${booking.bookingCode}`} className="inline-flex items-center gap-1 text-xs font-semibold text-[#d13f1f]"><Receipt size={12} /> Xem hồ sơ & Bill</Link> : booking.status === "COMPLETED" ? (
-                      <Link href={`/review/${booking.bookingCode}`} className="inline-flex items-center gap-1 text-xs font-semibold text-[#d13f1f]">
+                    {isBusiness ? <Link href={`/doanh-nghiep/${booking.bookingCode}`} className="inline-flex items-center gap-1 text-xs font-semibold text-[#c64b32]"><Receipt size={12} /> Xem hồ sơ & Bill</Link> : booking.status === "COMPLETED" ? (
+                      <Link href={`/review/${booking.bookingCode}`} className="inline-flex items-center gap-1 text-xs font-semibold text-[#c64b32]">
                         <Star size={12} /> Đánh giá
                       </Link>
                     ) : null}
@@ -215,15 +215,15 @@ export function OrdersClient() {
                       </Link>
                     ) : null}
                     {!isBusiness && booking.status === "PENDING" && ["DEPOSITED", "PAID"].includes(booking.paymentStatus) ? (
-                      <span className="text-[10px] font-medium text-[#8a7a72]">QR mở ngay khi IQ Care xếp xong KTV & giường</span>
+                      <span className="text-[10px] font-medium text-[#826f66]">QR mở ngay khi IQ Care xếp xong KTV & giường</span>
                     ) : null}
                     {!isBusiness && (booking.status === "CHECKED_IN" || booking.status === "IN_SERVICE") ? (
-                      <Link href={`/thanh-toan/${booking.bookingCode}`} className="rounded-full bg-[#d13f1f] px-3 py-1.5 text-xs font-semibold text-white">
+                      <Link href={`/thanh-toan/${booking.bookingCode}`} className="rounded-full bg-[#c64b32] px-3 py-1.5 text-xs font-semibold text-white">
                         Thanh toán Bill
                       </Link>
                     ) : null}
                     {!isBusiness && ["PENDING", "CONFIRMED"].includes(booking.status) ? (
-                      <Link href={`/don-cua-toi/doi-lich/${booking.bookingCode}`} className="text-xs font-semibold text-[#d13f1f]">
+                      <Link href={`/don-cua-toi/doi-lich/${booking.bookingCode}`} className="text-xs font-semibold text-[#c64b32]">
                         Đổi lịch?
                       </Link>
                     ) : null}

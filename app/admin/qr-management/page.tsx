@@ -29,7 +29,7 @@ export default async function AdminQrManagementPage() {
 
   const branchItems = await Promise.all(branches.map(async (branch) => {
     const link = venueCheckinUrl(createVenueQrToken({ branchId: branch.id, version: branch.qrVersion }), origin);
-    return { id: branch.id, targetType: "BRANCH" as const, title: branch.name.replace(/^Tâm An Center · /, ""), subtitle: branch.address, branchLabel: branch.name.replace(/^Tâm An Center · /, ""), version: branch.qrVersion, link, dataUrl: await QRCode.toDataURL(link, qrOptions("#173d36")), status: "QR check-in tại quầy" };
+    return { id: branch.id, targetType: "BRANCH" as const, title: branch.name.replace(/^Tâm An Center · /, ""), subtitle: branch.address, branchLabel: branch.name.replace(/^Tâm An Center · /, ""), version: branch.qrVersion, link, dataUrl: await QRCode.toDataURL(link, qrOptions("#0b4f3c")), status: "QR check-in tại quầy" };
   }));
   const therapistItems = await Promise.all(therapists.map(async (therapist) => {
     const link = therapistCheckinUrl(createTherapistQrToken({ therapistId: therapist.id, branchId: therapist.branchId, version: therapist.qrVersion }), origin);

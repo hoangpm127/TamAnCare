@@ -29,9 +29,9 @@ export function TherapistBookingActions({ bookingCode, initialStatus }: { bookin
 
   return (
     <div className="mt-5">
-      {status === "CONFIRMED" || status === "CHECKED_IN" ? <button type="button" onClick={startService} disabled={loading} className="inline-flex rounded-full bg-[#d13f1f] px-5 py-3 font-semibold text-white disabled:opacity-60">{loading ? <Loader2 className="mr-2 animate-spin" size={16} /> : null}Bắt đầu ca</button> : null}
-      {status === "IN_SERVICE" ? <p className="rounded-xl bg-[#edf9f2] p-3 text-sm font-semibold text-[#16784a]">Ca đang phục vụ. Khách hoặc quầy sẽ check-out và đối soát thanh toán khi kết thúc.</p> : null}
-      {error ? <p className="mt-2 text-sm text-[#d13f1f]">{error}</p> : null}
+      {status === "CONFIRMED" || status === "CHECKED_IN" ? <button type="button" onClick={startService} disabled={loading} className="inline-flex rounded-full bg-[#c64b32] px-5 py-3 font-semibold text-white disabled:opacity-60">{loading ? <Loader2 className="mr-2 animate-spin" size={16} /> : null}Bắt đầu ca</button> : null}
+      {status === "IN_SERVICE" ? <p className="rounded-xl bg-[#eff7f3] p-3 text-sm font-semibold text-[#0b5d45]">Ca đang phục vụ. Khách hoặc quầy sẽ check-out và đối soát thanh toán khi kết thúc.</p> : null}
+      {error ? <p className="mt-2 text-sm text-[#c64b32]">{error}</p> : null}
     </div>
   );
 }

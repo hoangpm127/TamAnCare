@@ -7,7 +7,7 @@ export const metadata = {
 
 export default function OrdersPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-[#fffaf6] p-6">Đang tải đơn của bạn...</div>}>
+    <Suspense fallback={<div className="min-h-screen bg-[#fdf8f3] p-6">Đang tải đơn của bạn...</div>}>
       <OrdersClient />
     </Suspense>
   );

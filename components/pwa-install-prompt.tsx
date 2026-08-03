@@ -103,13 +103,13 @@ export function PwaInstallPrompt() {
 
   return (
     <>
-      <section className="overflow-hidden rounded-2xl border border-[#eadbd1] bg-gradient-to-br from-white to-[#fff6ef] shadow-sm">
+      <section className="overflow-hidden rounded-2xl border border-[#e7d6ca] bg-gradient-to-br from-white to-[#fff6ef] shadow-sm">
         <div className="flex items-start gap-3 p-4">
           <span className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-[#211716] shadow-md ring-1 ring-[#d8b86a]">
             <Image src="/icon-192.png" alt="Biểu tượng Tâm An Center" width={48} height={48} className="h-full w-full object-cover" />
           </span>
           <div className="min-w-0 flex-1">
-            <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#d13f1f]">Webapp trên điện thoại</p>
+            <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#c64b32]">Webapp trên điện thoại</p>
             <h2 className="mt-1 text-base font-semibold tracking-tight">Cài Tâm An Center để mở lại trong một chạm</h2>
             <p className="mt-1 text-xs leading-5 text-[#6f625c]">Không cần App Store hay CH Play. Mã giới thiệu đã lưu trên thiết bị và vẫn tự áp dụng khi bạn đặt lịch.</p>
           </div>
@@ -125,7 +125,7 @@ export function PwaInstallPrompt() {
           <button
             type="button"
             onClick={() => setGuide("ios")}
-            className={`flex min-h-12 items-center justify-between gap-2 rounded-xl border px-3 py-2.5 text-left transition ${platform === "ios" ? "border-[#d13f1f] bg-[#fff2ef] text-[#8b1b1e]" : "border-[#eadbd1] bg-white text-[#433a36]"}`}
+            className={`flex min-h-12 items-center justify-between gap-2 rounded-xl border px-3 py-2.5 text-left transition ${platform === "ios" ? "border-[#c64b32] bg-[#f8ebe5] text-[#8b1b1e]" : "border-[#e7d6ca] bg-white text-[#433a36]"}`}
           >
             <span><span className="block text-xs font-semibold">Cài trên iPhone</span><span className="mt-0.5 block text-[10px] opacity-70">Qua Safari</span></span>
             <ChevronRight size={15} className="shrink-0" />
@@ -133,7 +133,7 @@ export function PwaInstallPrompt() {
           <button
             type="button"
             onClick={() => void installOnAndroid()}
-            className={`flex min-h-12 items-center justify-between gap-2 rounded-xl border px-3 py-2.5 text-left transition ${platform === "android" ? "border-[#d13f1f] bg-[#d13f1f] text-white" : "border-[#eadbd1] bg-white text-[#433a36]"}`}
+            className={`flex min-h-12 items-center justify-between gap-2 rounded-xl border px-3 py-2.5 text-left transition ${platform === "android" ? "border-[#c64b32] bg-[#c64b32] text-white" : "border-[#e7d6ca] bg-white text-[#433a36]"}`}
           >
             <span><span className="block text-xs font-semibold">Cài trên Android</span><span className="mt-0.5 block text-[10px] opacity-70">{installPrompt ? "Cài ngay" : "Qua Chrome"}</span></span>
             <Download size={15} className="shrink-0" />
@@ -155,7 +155,7 @@ export function PwaInstallPrompt() {
               <button type="button" onClick={() => setGuide(null)} aria-label="Đóng hướng dẫn cài đặt" className="rounded-full bg-white/10 p-2"><X size={17} /></button>
             </header>
 
-            <div className="space-y-3 p-5 text-sm text-[#4d403a]">
+            <div className="space-y-3 p-5 text-sm text-[#51423b]">
               {guide === "ios" ? (
                 <>
                   {!isSafari ? <p className="rounded-xl bg-[#fff2d9] p-3 text-xs leading-5 text-[#79520d]">Trước tiên, mở link này bằng <strong>Safari</strong>. Trình duyệt bên trong Facebook/Zalo không cài được webapp.</p> : null}
@@ -171,7 +171,7 @@ export function PwaInstallPrompt() {
                 </>
               )}
 
-              <button type="button" onClick={() => void copyCurrentLink()} className="flex w-full items-center justify-center gap-2 rounded-full border border-[#eadbd1] px-4 py-2.5 text-xs font-semibold text-[#8f201c]">
+              <button type="button" onClick={() => void copyCurrentLink()} className="flex w-full items-center justify-center gap-2 rounded-full border border-[#e7d6ca] px-4 py-2.5 text-xs font-semibold text-[#8f201c]">
                 {copied ? <Check size={14} /> : <Copy size={14} />}{copied ? "Đã sao chép link" : "Sao chép link để mở bằng trình duyệt"}
               </button>
             </div>
@@ -184,9 +184,9 @@ export function PwaInstallPrompt() {
 
 function InstallStep({ number, icon, title, detail }: { number: string; icon: ReactNode; title: string; detail: string }) {
   return (
-    <div className="flex items-start gap-3 rounded-xl bg-[#fffaf6] p-3 ring-1 ring-[#eee1d8]">
-      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#d13f1f] text-xs font-bold text-white">{number}</span>
-      <span className="mt-0.5 text-[#d13f1f]">{icon}</span>
+    <div className="flex items-start gap-3 rounded-xl bg-[#fdf8f3] p-3 ring-1 ring-[#eee1d8]">
+      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#c64b32] text-xs font-bold text-white">{number}</span>
+      <span className="mt-0.5 text-[#c64b32]">{icon}</span>
       <span className="min-w-0"><strong className="block text-xs">{title}</strong><span className="mt-0.5 block text-[11px] leading-5 text-[#786a63]">{detail}</span></span>
     </div>
   );
