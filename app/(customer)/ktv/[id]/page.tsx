@@ -53,7 +53,9 @@ export default async function TherapistProfilePage({ params }: { params: Promise
           <div className="min-w-0">
             <h1 className="text-lg font-semibold tracking-tight">{therapist.fullName}</h1>
             <p className="mt-1 flex items-center gap-1.5 text-sm text-white/85">
-              <Star size={14} className="fill-[#e3b23c] text-[#e3b23c]" /> {therapist.ratingAvg.toFixed(1)} ({reviews.length} đánh giá)
+              {reviews.length > 0 ? (
+                <><Star size={14} className="fill-[#e3b23c] text-[#e3b23c]" /> {avgReviewRating.toFixed(1)} ({reviews.length} đánh giá)</>
+              ) : "KTV mới trên hệ thống · Chưa có đánh giá"}
             </p>
             <span className="mt-2 inline-flex rounded-full bg-white/10 px-2.5 py-1 text-[11px] font-semibold text-[#8fd3a8]">
               {resourceStatusLabel(therapist.status)}
@@ -126,7 +128,7 @@ export default async function TherapistProfilePage({ params }: { params: Promise
       <section className="mt-4 rounded-xl border border-[#eadbd1] bg-white p-4">
         <h2 className="mb-2.5 flex items-center gap-2 text-sm font-semibold">
           <UsersRound size={15} className="text-[#d13f1f]" /> Đánh giá từ khách hàng
-          <span className="font-normal text-[#8a7a72]">({avgReviewRating.toFixed(1)}/5)</span>
+          <span className="font-normal text-[#8a7a72]">{reviews.length > 0 ? `(${avgReviewRating.toFixed(1)}/5)` : "(Chưa có đánh giá)"}</span>
         </h2>
         <div className="space-y-3">
           {reviews.map((review) => (

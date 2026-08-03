@@ -35,7 +35,9 @@ export default async function TherapistListPage() {
             <div className="min-w-0">
               <p className="text-sm font-semibold tracking-tight">{therapist.fullName}</p>
               <p className="mt-0.5 flex items-center gap-1 text-xs text-[#8a7a72]">
-                <Star size={12} className="fill-[#d13f1f] text-[#d13f1f]" /> {therapist.ratingAvg.toFixed(1)} · {therapist.servedCount} buổi ·{" "}
+                {therapist.servedCount > 0 ? (
+                  <><Star size={12} className="fill-[#d13f1f] text-[#d13f1f]" /> {therapist.ratingAvg.toFixed(1)} · {therapist.servedCount} buổi · </>
+                ) : <span className="font-semibold text-[#b86b1f]">KTV mới · </span>}
                 {therapist.branch.name.replace(/^Tâm An Center · /, "")} · {therapist.shiftLabel}
               </p>
               <p className="mt-1.5 line-clamp-2 text-xs leading-5 text-[#665b55]">{therapist.publicBio ?? `Chuyên ${(therapist.publicStrengths.length ? therapist.publicStrengths : therapist.skills).join(" · ")}`}</p>

@@ -200,7 +200,7 @@ export default async function Home() {
 
       <section className="mx-auto max-w-7xl px-4 pb-3 pt-4 sm:px-6 lg:px-10">
         <div className="mb-2.5 flex items-end justify-between gap-4">
-          <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">KTV được yêu thích nhất</h2>
+          <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">Đội ngũ KTV tại Tâm An Center</h2>
           <Link href="/ktv" className="hidden font-semibold text-[#d13f1f] sm:inline-flex">
             Xem hồ sơ KTV
           </Link>
@@ -215,7 +215,9 @@ export default async function Home() {
               <TherapistAvatar id={therapist.id} src={therapist.avatarUrl} size={56} className="mx-auto shrink-0 rounded-full" />
               <p className="mt-3 text-sm font-semibold tracking-tight">{therapist.fullName}</p>
               <p className="mt-1 flex items-center justify-center gap-1 text-xs text-[#8a7a72]">
-                <Star size={12} className="fill-[#d13f1f] text-[#d13f1f]" /> {therapist.ratingAvg.toFixed(1)} · {therapist.servedCount} buổi
+                {therapist.servedCount > 0 ? (
+                  <><Star size={12} className="fill-[#d13f1f] text-[#d13f1f]" /> {therapist.ratingAvg.toFixed(1)} · {therapist.servedCount} buổi</>
+                ) : <span className="font-semibold text-[#b86b1f]">KTV mới</span>}
               </p>
               <p className="mt-2 line-clamp-1 text-[11px] text-[#8a7a72]">{(therapist.publicStrengths.length ? therapist.publicStrengths : therapist.skills).join(" · ")}</p>
             </Link>

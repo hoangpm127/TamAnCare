@@ -707,7 +707,9 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
                           <TherapistAvatar id={therapist.id} size={36} className="mx-auto shrink-0 rounded-full" />
                           <span className="mt-2 block truncate text-xs font-semibold">{therapist.fullName}</span>
                           <span className="mt-0.5 flex items-center justify-center gap-0.5 text-[10px] text-[#8a7a72]">
-                            <Star size={9} className="fill-[#d13f1f] text-[#d13f1f]" /> {therapist.ratingAvg.toFixed(1)}
+                            {therapist.servedCount > 0 ? (
+                              <><Star size={9} className="fill-[#d13f1f] text-[#d13f1f]" /> {therapist.ratingAvg.toFixed(1)}</>
+                            ) : <span className="font-semibold text-[#b86b1f]">Mới</span>}
                           </span>
                         </button>
                       ))}
