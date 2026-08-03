@@ -88,7 +88,7 @@ export async function POST(request: Request) {
       phone,
       code,
       expiresMinutes: PHONE_OTP_TTL_MINUTES,
-      templateId: "TUETAM_PHONE_VERIFICATION",
+      templateId: "TAMAN_PHONE_VERIFICATION",
     });
     await db.phoneOtpChallenge.updateMany({
       where: { id: challengeId, consumedAt: null, deliveryStatus: "PENDING" },

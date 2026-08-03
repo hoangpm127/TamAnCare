@@ -7,8 +7,8 @@ import { z } from "zod";
 import { publicAppUrl } from "@/lib/public-app-url";
 import { safeCustomerReturnPath } from "@/lib/safe-return-path";
 
-export const CUSTOMER_OAUTH_STATE_COOKIE = "tt_customer_oauth_state";
-export const CUSTOMER_OAUTH_PENDING_COOKIE = "tt_customer_oauth_pending";
+export const CUSTOMER_OAUTH_STATE_COOKIE = "ta_customer_oauth_state";
+export const CUSTOMER_OAUTH_PENDING_COOKIE = "ta_customer_oauth_pending";
 export const CUSTOMER_OAUTH_PENDING_MINUTES = 15;
 
 export type CustomerOAuthProviderSlug = "google" | "facebook";

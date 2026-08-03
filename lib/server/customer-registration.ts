@@ -24,7 +24,7 @@ function affiliateCode(fullName: string, phone: string) {
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-zA-Z0-9]/g, "")
     .toUpperCase()
-    .slice(0, 12) || "TUETAM";
+    .slice(0, 12) || "TAMAN";
   return `${name}${phone.replace(/\D/g, "").slice(-4)}`;
 }
 

@@ -5,7 +5,7 @@
 const productionDefault = {
   bankId: "TPB",
   bankName: "TPBank",
-  accountNumber: "12346666888",
+  accountNumber: "88888888188",
   accountHolder: "CTCP DAU TU VA PT CONG NGHE XGROUP",
 };
 

@@ -65,7 +65,7 @@ export async function deliverPasswordResetCode(challengeId: string, phone: strin
       phone,
       code,
       expiresMinutes: PASSWORD_RESET_TTL_MINUTES,
-      templateId: "TUETAM_PASSWORD_RESET",
+      templateId: "TAMAN_PASSWORD_RESET",
     });
     await db.passwordResetChallenge.updateMany({
       where: { id: challengeId, consumedAt: null, deliveryStatus: "PENDING" },

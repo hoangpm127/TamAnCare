@@ -5,8 +5,8 @@ import { cookies } from "next/headers";
 import { db } from "@/lib/db";
 import { phoneVerificationRequired } from "@/lib/server/otp-delivery";
 
-const COOKIE_NAME = "tt_customer_session_v2";
-const LEGACY_COOKIE_NAME = "tt_customer_session";
+const COOKIE_NAME = "ta_customer_session_v2";
+const LEGACY_COOKIE_NAME = "ta_customer_session";
 const SESSION_DAYS = 30;
 
 function tokenHash(token: string) {

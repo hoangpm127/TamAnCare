@@ -1274,7 +1274,7 @@ export const vouchers = [
 export const campaigns = [
   { code: "FB-TT-BODY60", name: "Facebook Tâm An Spa", source: "Facebook Ads", bookings: 32, completed: 21, revenue: 6300000, cost: 1800000 },
   { code: "TT-VAIGAY-OFFICE", name: "TikTok Vai Gáy Dân Văn Phòng", source: "TikTok Ads", bookings: 26, completed: 17, revenue: 5100000, cost: 1300000 },
-  { code: "GG-TUETAM", name: "Google Tâm An Spa", source: "Google", bookings: 19, completed: 15, revenue: 4800000, cost: 950000 },
+  { code: "GG-TAMAN", name: "Google Tâm An Spa", source: "Google", bookings: 19, completed: 15, revenue: 4800000, cost: 950000 },
   { code: "OFFICE-CMC", name: "Office CMC Business", source: "Office QR", bookings: 44, completed: 28, revenue: 3920000, cost: 600000 },
   { code: "KOC-LOCAL", name: "KOC Local Review", source: "KOC", bookings: 11, completed: 8, revenue: 2600000, cost: 500000 },
 ];

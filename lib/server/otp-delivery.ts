@@ -1,8 +1,8 @@
 import "server-only";
 
 export type OtpDeliveryTemplate =
-  | "TUETAM_PHONE_VERIFICATION"
-  | "TUETAM_PASSWORD_RESET";
+  | "TAMAN_PHONE_VERIFICATION"
+  | "TAMAN_PASSWORD_RESET";
 
 export type OtpDeliveryResult = {
   status: "PENDING" | "SENT" | "TEST_MODE";
