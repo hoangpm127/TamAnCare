@@ -9,8 +9,6 @@
   --brand-burgundy: #7c2927;
   --brand-burgundy-strong: #4c191b;
   --brand-burgundy-soft: #f8ebe5;
-  --brand-green: #0b5d45;
-  --brand-green-soft: #edf6f2;
   --brand-gold: #c59a3d;
   --brand-gold-soft: #e8cf8a;
   --surface: #fffdf9;
@@ -28,7 +26,7 @@ body {
   background:
     radial-gradient(circle at 10% 0%, rgba(198, 75, 50, 0.075), transparent 46%),
     radial-gradient(circle at 100% 6%, rgba(197, 154, 61, 0.08), transparent 38%),
-    radial-gradient(circle at 92% 92%, rgba(11, 93, 69, 0.045), transparent 34%),
+    radial-gradient(circle at 92% 92%, rgba(124, 41, 39, 0.04), transparent 34%),
     var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;

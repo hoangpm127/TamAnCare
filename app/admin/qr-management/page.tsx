@@ -29,11 +29,11 @@ export default async function AdminQrManagementPage() {
 
   const branchItems = await Promise.all(branches.map(async (branch) => {
     const link = venueCheckinUrl(createVenueQrToken({ branchId: branch.id, version: branch.qrVersion }), origin);
-    return { id: branch.id, targetType: "BRANCH" as const, title: branch.name.replace(/^Tâm An Center · /, ""), subtitle: branch.address, branchLabel: branch.name.replace(/^Tâm An Center · /, ""), version: branch.qrVersion, link, dataUrl: await QRCode.toDataURL(link, qrOptions("#0b4f3c")), status: "QR check-in tại quầy" };
+    return { id: branch.id, targetType: "BRANCH" as const, title: branch.name.replace(/^Tâm An Center · /, ""), subtitle: branch.address, branchLabel: branch.name.replace(/^Tâm An Center · /, ""), version: branch.qrVersion, link, dataUrl: await QRCode.toDataURL(link, qrOptions("#4c191b")), status: "QR check-in tại quầy" };
   }));
   const therapistItems = await Promise.all(therapists.map(async (therapist) => {
     const link = therapistCheckinUrl(createTherapistQrToken({ therapistId: therapist.id, branchId: therapist.branchId, version: therapist.qrVersion }), origin);
-    return { id: therapist.id, targetType: "THERAPIST" as const, title: therapist.fullName, subtitle: `${therapist.shiftLabel} · ${therapist.skills.join(" · ")}`, branchLabel: therapist.branch.name.replace(/^Tâm An Center · /, ""), version: therapist.qrVersion, link, dataUrl: await QRCode.toDataURL(link, qrOptions("#17634a")), status: "QR KTV tại cơ sở" };
+    return { id: therapist.id, targetType: "THERAPIST" as const, title: therapist.fullName, subtitle: `${therapist.shiftLabel} · ${therapist.skills.join(" · ")}`, branchLabel: therapist.branch.name.replace(/^Tâm An Center · /, ""), version: therapist.qrVersion, link, dataUrl: await QRCode.toDataURL(link, qrOptions("#76551d")), status: "QR KTV tại cơ sở" };
   }));
   const businessItems = await Promise.all(businessEvents.map(async (event) => {
     const link = event.leadTherapist ? businessScanUrl(createBusinessQrToken({ eventCode: event.eventCode, leadTherapistId: event.leadTherapist.id, version: event.qrVersion }), origin) : null;

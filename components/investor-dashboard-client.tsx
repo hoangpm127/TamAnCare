@@ -205,10 +205,10 @@ const investorViewPresentation: Record<InvestorView, {
     title: "Hiệu quả tài chính",
     description: "Đối chiếu doanh thu, chi phí và lợi nhuận riêng của các cơ sở đã nằm trong danh mục đầu tư.",
     icon: ChartNoAxesCombined,
-    pageClass: "bg-[#0d1715]",
+    pageClass: "bg-[#281b18]",
     glowClass: "bg-[radial-gradient(circle_at_80%_0%,rgba(78,190,151,0.18),transparent_31%),radial-gradient(circle_at_0%_38%,rgba(29,84,70,0.24),transparent_33%)]",
-    heroClass: "border-emerald-300/20 from-[#17362f] via-[#13231f] to-[#0b1211]",
-    activeTabClass: "bg-[#6bd2ae] text-[#10251f]",
+    heroClass: "border-emerald-300/20 from-[#4c191b] via-[#281b18] to-[#281b18]",
+    activeTabClass: "bg-[#d2ad5d] text-[#281b18]",
   },
   opportunities: {
     eyebrow: "Pipeline mở rộng",
@@ -508,7 +508,7 @@ export function InvestorDashboardClient() {
             <div className="mt-3 flex items-center justify-center gap-1.5 text-[9px] text-white/35"><TrendingUp size={12} className={payback.trendPercent >= 0 ? "text-emerald-300" : "text-rose-300"} /> Tiến độ 3 tháng gần nhất {payback.trendPercent >= 0 ? "+" : ""}{payback.trendPercent.toLocaleString("vi-VN", { maximumFractionDigits: 1 })}% so với bình quân.</div>
           </section> : null}
 
-          {activeView === "performance" ? <section className="min-w-0 max-w-full overflow-hidden rounded-[24px] border border-emerald-300/14 bg-[#12231f]/85 p-4 text-center shadow-xl shadow-black/15 sm:p-5">
+          {activeView === "performance" ? <section className="min-w-0 max-w-full overflow-hidden rounded-[24px] border border-emerald-300/14 bg-[#281b18]/85 p-4 text-center shadow-xl shadow-black/15 sm:p-5">
             <ChartNoAxesCombined size={21} className="mx-auto text-[#d6b45e]" />
             <p className="mt-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#d6b45e]">Biểu đồ tài chính</p>
             <h2 className="mt-1 text-base font-semibold">Doanh thu · Chi phí · Lợi nhuận</h2>
@@ -534,7 +534,7 @@ export function InvestorDashboardClient() {
           </section> : null}
         </div> : null}
 
-        {activeView === "performance" ? <section className="mt-3 rounded-[24px] border border-emerald-300/14 bg-[#12231f]/85 p-4 text-center sm:p-5">
+        {activeView === "performance" ? <section className="mt-3 rounded-[24px] border border-emerald-300/14 bg-[#281b18]/85 p-4 text-center sm:p-5">
           <Building2 size={19} className="mx-auto text-emerald-300" />
           <h2 className="mt-2 text-base font-semibold">Đối chiếu Cơ sở đang vận hành</h2>
           <p className="mt-1 text-[9px] text-white/35">Chỉ gồm Cơ sở 1 và Cơ sở 2 đã được giải ngân · bấm Card để xem cấu thành</p>

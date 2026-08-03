@@ -32,7 +32,7 @@ export function ReviewForm({ bookingCode }: { bookingCode: string }) {
         <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#c64b32]">Đánh giá trải nghiệm</p>
         <h1 className="mt-2 text-xl font-semibold tracking-tight sm:text-2xl">Hóa đơn {displayBookingCode(bookingCode)}</h1>
         {done ? (
-          <div className="mt-5 rounded-xl bg-[#f2fff7] p-4 text-sm text-[#0d674c]">
+          <div className="mt-5 rounded-xl bg-[#fffaf6] p-4 text-sm text-[#76551d]">
             Cảm ơn bạn đã đánh giá. Tâm An sẽ ưu tiên gợi ý KTV này cho lần đặt sau nếu còn slot.
           </div>
         ) : (

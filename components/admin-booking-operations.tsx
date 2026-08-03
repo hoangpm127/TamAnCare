@@ -45,21 +45,21 @@ const QUICK_REASONS = [
 ];
 
 function statusMeta(status: AdminBookingRequest["status"], rawStatus: string) {
-  if (rawStatus === "COMPLETED") return { label: "Đã hoàn tất", className: "bg-[#eff7f3] text-[#0b5d45]" };
+  if (rawStatus === "COMPLETED") return { label: "Đã hoàn tất", className: "bg-[#fbf2e7] text-[#76551d]" };
   if (rawStatus === "IN_SERVICE") return { label: "Đang phục vụ", className: "bg-[#eef4ff] text-[#2452b8]" };
   if (rawStatus === "CHECKED_IN") return { label: "Đã check-in", className: "bg-[#eef4ff] text-[#2452b8]" };
-  if (status === "CONFIRMED") return { label: "Đã xác nhận", className: "bg-[#eff7f3] text-[#0b5d45]" };
+  if (status === "CONFIRMED") return { label: "Đã xác nhận", className: "bg-[#fbf2e7] text-[#76551d]" };
   if (status === "REJECTED") return { label: "Cần đổi lịch", className: "bg-[#fff1ef] text-[#c64b32]" };
   return { label: "Chờ xác nhận", className: "bg-[#fff7df] text-[#76551d]" };
 }
 
 function businessStatusMeta(status: string) {
   if (status === "AWAITING_DEPOSIT") return { label: "Chờ đối soát cọc", className: "bg-[#fff7df] text-[#76551d]" };
-  if (status === "DEPOSIT_CONFIRMED") return { label: "Mới · Cần xác nhận", className: "bg-[#eff7f3] text-[#18815e]" };
-  if (status === "READY") return { label: "Đã xác nhận", className: "bg-[#eff7f3] text-[#0b5d45]" };
+  if (status === "DEPOSIT_CONFIRMED") return { label: "Mới · Cần xác nhận", className: "bg-[#fbf2e7] text-[#a85f29]" };
+  if (status === "READY") return { label: "Đã xác nhận", className: "bg-[#fbf2e7] text-[#76551d]" };
   if (status === "IN_SERVICE") return { label: "Đang triển khai", className: "bg-[#eef4ff] text-[#2452b8]" };
   if (status === "AWAITING_BALANCE") return { label: "Chờ thanh toán", className: "bg-[#fff7df] text-[#76551d]" };
-  if (status === "COMPLETED") return { label: "Đã hoàn tất", className: "bg-[#eff7f3] text-[#0b5d45]" };
+  if (status === "COMPLETED") return { label: "Đã hoàn tất", className: "bg-[#fbf2e7] text-[#76551d]" };
   return { label: "Đã hủy", className: "bg-[#f3efec] text-[#826f66]" };
 }
 
@@ -221,7 +221,7 @@ function CheckoutRecordDialog({ request, onClose, onSaved }: { request: AdminBoo
         <label className="mt-3 block text-xs font-semibold">Ghi chú đối soát<textarea required value={note} onChange={(event) => setNote(event.target.value)} rows={3} className="mt-1.5 w-full resize-none rounded-xl border border-[#e7d6ca] p-3 text-sm font-normal" /></label>
         <p className="mt-3 rounded-xl bg-[#fff7df] p-3 text-[11px] leading-5 text-[#76551d]">Chỉ ghi nhận đúng {formatMoney(dueAmount)} vào Bill. Tip hoàn toàn tùy tâm, khách trao trực tiếp cho KTV và không nhập vào giao dịch này.</p>
         {error ? <p className="mt-3 rounded-xl bg-red-50 p-3 text-xs font-medium text-red-700">{error}</p> : null}
-        <div className="mt-4 grid grid-cols-2 gap-2"><button type="button" onClick={onClose} className="rounded-full border border-[#e7d6ca] py-2.5 text-sm font-semibold">Hủy</button><button disabled={saving || received !== dueAmount} className="rounded-full bg-[#0b5d45] py-2.5 text-sm font-semibold text-white disabled:opacity-50">{saving ? "Đang hạch toán..." : "Đã thanh toán"}</button></div>
+        <div className="mt-4 grid grid-cols-2 gap-2"><button type="button" onClick={onClose} className="rounded-full border border-[#e7d6ca] py-2.5 text-sm font-semibold">Hủy</button><button disabled={saving || received !== dueAmount} className="rounded-full bg-[#76551d] py-2.5 text-sm font-semibold text-white disabled:opacity-50">{saving ? "Đang hạch toán..." : "Đã thanh toán"}</button></div>
       </form>
     </div>
   );
@@ -340,8 +340,8 @@ export function AdminBookingOperations() {
       {selectedBusiness.length > 0 ? (
         <section className="mt-3">
           <div className="mb-2 flex items-center justify-between gap-3 px-1">
-            <div><p className="flex items-center gap-1.5 text-sm font-bold text-[#18815e]"><BriefcaseBusiness size={15} /> Lịch Tâm An Business</p><p className="mt-0.5 text-[10px] text-[#826f66]">Lịch doanh nghiệp mới được đẩy lên trước để điều phối.</p></div>
-            {businessPending > 0 ? <span className="rounded-full bg-[#eff7f3] px-2.5 py-1 text-[10px] font-bold text-[#18815e]">{businessPending} cần xử lý</span> : null}
+            <div><p className="flex items-center gap-1.5 text-sm font-bold text-[#a85f29]"><BriefcaseBusiness size={15} /> Lịch Tâm An Business</p><p className="mt-0.5 text-[10px] text-[#826f66]">Lịch doanh nghiệp mới được đẩy lên trước để điều phối.</p></div>
+            {businessPending > 0 ? <span className="rounded-full bg-[#fbf2e7] px-2.5 py-1 text-[10px] font-bold text-[#a85f29]">{businessPending} cần xử lý</span> : null}
           </div>
           <div className="space-y-3">
             {selectedBusiness.map((request) => {
@@ -349,25 +349,25 @@ export function AdminBookingOperations() {
               const remaining = Math.max(0, request.totalAmount - request.paidAmount);
               const actionable = ["AWAITING_DEPOSIT", "DEPOSIT_CONFIRMED"].includes(request.status);
               return (
-                <article key={request.eventCode} className="overflow-hidden rounded-2xl border border-[#8fd3ad] bg-white shadow-sm">
-                  <div className="border-b border-[#dbe9e2] bg-gradient-to-r from-[#eff7f3] to-white p-3.5">
+                <article key={request.eventCode} className="overflow-hidden rounded-2xl border border-[#d2ad5d] bg-white shadow-sm">
+                  <div className="border-b border-[#f1e5dd] bg-gradient-to-r from-[#fbf2e7] to-white p-3.5">
                     <div className="flex items-start justify-between gap-3">
-                      <div className="min-w-0"><p className="truncate text-sm font-bold">{request.companyName}</p><p className="mt-1 flex items-center gap-1 text-[10px] font-semibold text-[#18815e]"><Building2 size={11} /> {request.branchName}</p></div>
+                      <div className="min-w-0"><p className="truncate text-sm font-bold">{request.companyName}</p><p className="mt-1 flex items-center gap-1 text-[10px] font-semibold text-[#a85f29]"><Building2 size={11} /> {request.branchName}</p></div>
                       <span className={`shrink-0 rounded-full px-2.5 py-1 text-[10px] font-semibold ${status.className}`}>{status.label}</span>
                     </div>
                     <div className="mt-2 grid gap-1.5 text-[11px] text-[#68574f] sm:grid-cols-2">
-                      <p className="flex items-center gap-1.5"><CalendarClock size={12} className="shrink-0 text-[#18815e]" /> {new Date(request.startsAt).toLocaleString("vi-VN", { hour: "2-digit", minute: "2-digit", day: "2-digit", month: "2-digit", year: "numeric" })}</p>
-                      <p className="flex min-w-0 items-center gap-1.5"><MapPin size={12} className="shrink-0 text-[#18815e]" /><span className="truncate">{request.location}</span></p>
-                      <p className="flex items-center gap-1.5"><Users size={12} className="shrink-0 text-[#18815e]" /> {request.headcount} người · {request.requiredTherapists} KTV</p>
+                      <p className="flex items-center gap-1.5"><CalendarClock size={12} className="shrink-0 text-[#a85f29]" /> {new Date(request.startsAt).toLocaleString("vi-VN", { hour: "2-digit", minute: "2-digit", day: "2-digit", month: "2-digit", year: "numeric" })}</p>
+                      <p className="flex min-w-0 items-center gap-1.5"><MapPin size={12} className="shrink-0 text-[#a85f29]" /><span className="truncate">{request.location}</span></p>
+                      <p className="flex items-center gap-1.5"><Users size={12} className="shrink-0 text-[#a85f29]" /> {request.headcount} người · {request.requiredTherapists} KTV</p>
                       <p className="truncate">{request.contactName} · {request.contactPhone}</p>
                     </div>
                   </div>
                   <div className="p-3.5">
                     <p className="text-xs font-semibold">{request.serviceLabel}{request.packageTier ? ` · ${request.packageTier}` : ""}</p>
-                    <div className="mt-2.5 grid grid-cols-3 gap-1.5 text-center"><div className="rounded-xl border border-[#f0e3da] p-2"><span className="block text-[9px] text-[#826f66]">Tổng Bill</span><strong className="mt-0.5 block text-xs">{formatMoney(request.totalAmount)}</strong></div><div className="rounded-xl border border-[#dbe9e2] bg-[#f3fbf6] p-2"><span className="block text-[9px] text-[#56806a]">Đã cọc</span><strong className="mt-0.5 block text-xs text-[#0b5d45]">{formatMoney(request.paidAmount)}</strong></div><div className="rounded-xl border border-[#f0e3da] p-2"><span className="block text-[9px] text-[#826f66]">Còn lại</span><strong className="mt-0.5 block text-xs">{formatMoney(remaining)}</strong></div></div>
+                    <div className="mt-2.5 grid grid-cols-3 gap-1.5 text-center"><div className="rounded-xl border border-[#f0e3da] p-2"><span className="block text-[9px] text-[#826f66]">Tổng Bill</span><strong className="mt-0.5 block text-xs">{formatMoney(request.totalAmount)}</strong></div><div className="rounded-xl border border-[#f1e5dd] bg-[#fbf2e7] p-2"><span className="block text-[9px] text-[#a85f29]">Đã cọc</span><strong className="mt-0.5 block text-xs text-[#76551d]">{formatMoney(request.paidAmount)}</strong></div><div className="rounded-xl border border-[#f0e3da] p-2"><span className="block text-[9px] text-[#826f66]">Còn lại</span><strong className="mt-0.5 block text-xs">{formatMoney(remaining)}</strong></div></div>
                     <div className="mt-3 grid grid-cols-2 gap-2">
                       {actionable ? <button type="button" onClick={() => { setRejectingBusiness(request); setBusinessReason("Tâm An Center chưa thể bảo đảm đủ đội ngũ triển khai trong khung giờ đã chọn. Chúng tôi sẽ liên hệ để ưu tiên một lịch phù hợp gần nhất."); }} className="inline-flex items-center justify-center gap-1 rounded-full border border-[#c64b32] px-3 py-2.5 text-xs font-semibold text-[#c64b32]"><XCircle size={13} /> Từ chối & lý do</button> : <span />}
-                      <Link href={`/admin/business/${request.eventCode}`} className="inline-flex items-center justify-center gap-1 rounded-full bg-[#18815e] px-3 py-2.5 text-xs font-semibold text-white">{request.status === "DEPOSIT_CONFIRMED" ? "Xác nhận & phân công" : "Xem hồ sơ"}<ChevronRight size={13} /></Link>
+                      <Link href={`/admin/business/${request.eventCode}`} className="inline-flex items-center justify-center gap-1 rounded-full bg-[#a85f29] px-3 py-2.5 text-xs font-semibold text-white">{request.status === "DEPOSIT_CONFIRMED" ? "Xác nhận & phân công" : "Xem hồ sơ"}<ChevronRight size={13} /></Link>
                     </div>
                   </div>
                 </article>
@@ -382,7 +382,7 @@ export function AdminBookingOperations() {
           const status = statusMeta(request.status, request.rawStatus);
           const isDeposited = ["DEPOSITED", "PAID"].includes(request.paymentStatus);
           const remaining = Math.max(0, request.totalAmount - request.paidAmount);
-          const depositTone = request.status === "REJECTED" ? "bg-[#fff7df] text-[#76551d]" : isDeposited ? "bg-[#eff7f3] text-[#0b5d45]" : "bg-[#fff7df] text-[#76551d]";
+          const depositTone = request.status === "REJECTED" ? "bg-[#fff7df] text-[#76551d]" : isDeposited ? "bg-[#fbf2e7] text-[#76551d]" : "bg-[#fff7df] text-[#76551d]";
           const depositText = request.status === "REJECTED"
             ? isDeposited ? "Đã nhận cọc · Chờ chuyển lịch hoặc hoàn cọc" : "Chưa nhận cọc · Không giữ chỗ"
             : isDeposited ? "Khoản cọc đã được đối soát" : `Chờ đối soát cọc ${formatMoney(request.depositAmount)}`;
@@ -395,12 +395,12 @@ export function AdminBookingOperations() {
                   <p className="flex min-w-0 items-center gap-1.5 text-[10px] font-medium text-[#68574f]"><CalendarClock size={13} className="shrink-0 text-[#c64b32]" /><span className="truncate">{request.serviceLabel}</span></p>
                 </div>
                 {request.relationship === "BOSS" || request.relationship === "FRIEND" ? <div className={request.relationship === "BOSS" ? "mt-2 flex items-start gap-2 rounded-xl bg-[#30201c] p-2.5 text-white" : "mt-2 flex items-start gap-2 rounded-xl bg-[#f8ebe5] p-2.5 text-[#6f211f]"}><Handshake size={14} className={request.relationship === "BOSS" ? "mt-0.5 shrink-0 text-[#e7c878]" : "mt-0.5 shrink-0 text-[#c64b32]"} /><div><p className="text-[10px] font-bold uppercase tracking-wide">{request.relationship === "BOSS" ? "Khách mời sếp / đối tác" : "Khách đi cùng bạn"}</p><p className={request.relationship === "BOSS" ? "mt-1 text-[10px] leading-4 text-white/70" : "mt-1 text-[10px] leading-4 text-[#80524a]"}>{request.careNote ?? "Ưu tiên sắp xếp giường gần nhau và không gian phù hợp."}</p></div></div> : null}
-                <div className="mt-3 grid grid-cols-3 gap-1.5 text-center"><div className="rounded-xl border border-[#f0e3da] p-2"><span className="block text-[9px] text-[#826f66]">Tổng tiền</span><strong className="mt-0.5 block text-xs">{formatMoney(request.totalAmount)}</strong></div><div className="rounded-xl border border-[#dbe9e2] bg-[#f3fbf6] p-2"><span className="block text-[9px] text-[#56806a]">Đã thu</span><strong className="mt-0.5 block text-xs text-[#0b5d45]">{formatMoney(request.paidAmount)}</strong></div><div className="rounded-xl border border-[#f0e3da] p-2"><span className="block text-[9px] text-[#826f66]">Còn lại</span><strong className="mt-0.5 block text-xs">{formatMoney(remaining)}</strong></div></div>
+                <div className="mt-3 grid grid-cols-3 gap-1.5 text-center"><div className="rounded-xl border border-[#f0e3da] p-2"><span className="block text-[9px] text-[#826f66]">Tổng tiền</span><strong className="mt-0.5 block text-xs">{formatMoney(request.totalAmount)}</strong></div><div className="rounded-xl border border-[#f1e5dd] bg-[#fbf2e7] p-2"><span className="block text-[9px] text-[#a85f29]">Đã thu</span><strong className="mt-0.5 block text-xs text-[#76551d]">{formatMoney(request.paidAmount)}</strong></div><div className="rounded-xl border border-[#f0e3da] p-2"><span className="block text-[9px] text-[#826f66]">Còn lại</span><strong className="mt-0.5 block text-xs">{formatMoney(remaining)}</strong></div></div>
                 <p className={`mt-2 flex items-center justify-center gap-1.5 rounded-lg px-2 py-2 text-center text-[10px] font-semibold ${depositTone}`}>{isDeposited ? <CheckCircle2 size={13} className="shrink-0" /> : <Banknote size={13} className="shrink-0" />} {depositText}</p>
                 {request.status === "REJECTED" && request.rejectionReason ? <div className="mt-2 rounded-xl border border-[#f0c9c4] bg-[#fff8f7] p-2.5"><p className="text-[10px] font-semibold text-[#c64b32]">Lý do đã gửi khách</p><p className="mt-1 text-[11px] leading-4 text-[#68574f]">{request.rejectionReason}</p></div> : null}
               </div>
               <div className="grid border-t border-[#e7d6ca] bg-[#fffdfb] p-2.5">
-                {request.rawStatus === "PENDING" ? <div className="grid grid-cols-2 gap-2"><button type="button" onClick={() => { setRejecting(request); setReason(QUICK_REASONS[0]); }} className="inline-flex items-center justify-center gap-1.5 rounded-full bg-[#c64b32] px-3 py-2.5 text-xs font-semibold text-white"><XCircle size={14} /> Từ chối & lý do</button><button type="button" onClick={() => void confirm(request)} className="inline-flex items-center justify-center gap-1.5 rounded-full bg-[#0b5d45] px-3 py-2.5 text-xs font-semibold text-white"><Check size={14} /> Xác nhận lịch</button></div> : request.rawStatus === "CHECKED_IN" ? <button type="button" onClick={() => void transitionBooking(request, "IN_SERVICE")} className="inline-flex items-center justify-center gap-1.5 rounded-full bg-[#2452b8] py-2.5 text-xs font-semibold text-white"><CheckCircle2 size={14} /> Xác nhận bắt đầu phục vụ</button> : request.rawStatus === "IN_SERVICE" ? request.paymentStatus === "PAID" ? <button type="button" onClick={() => void transitionBooking(request, "COMPLETED")} className="inline-flex items-center justify-center gap-1.5 rounded-full bg-[#0b5d45] py-2.5 text-xs font-semibold text-white"><CheckCircle2 size={14} /> Hoàn tất dịch vụ & đóng Bill</button> : ["OWNER", "BRANCH_MANAGER", "RECEPTIONIST"].includes(activeSession.role) ? <button type="button" onClick={() => setCollecting(request)} className="inline-flex items-center justify-center gap-1.5 rounded-full bg-[#76551d] py-2.5 text-xs font-semibold text-white"><Banknote size={14} /> Đã thanh toán</button> : <p className="flex items-center justify-center gap-1.5 rounded-xl bg-[#fff7df] px-3 py-2.5 text-xs font-semibold text-[#76551d]"><Banknote size={14} /> Chờ quầy đối soát đủ Bill</p> : request.rawStatus === "COMPLETED" ? <p className="flex items-center justify-center gap-1.5 py-1 text-xs font-semibold text-[#0b5d45]"><CheckCircle2 size={15} /> Dịch vụ và Bill đã hoàn tất</p> : request.status === "CONFIRMED" ? <p className="flex items-center justify-center gap-1.5 py-1 text-xs font-semibold text-[#0b5d45]"><CheckCircle2 size={15} /> Đã gửi xác nhận tới khách hàng</p> : <button type="button" onClick={() => setChat({ request, initialMessage: request.rejectionReason ?? "Tâm An xin phép hỗ trợ bạn đổi lịch." })} className="inline-flex items-center justify-center gap-1.5 rounded-full border border-[#c64b32] py-2.5 text-xs font-semibold text-[#c64b32]"><MessageCircleMore size={15} /> Mở trao đổi với khách</button>}
+                {request.rawStatus === "PENDING" ? <div className="grid grid-cols-2 gap-2"><button type="button" onClick={() => { setRejecting(request); setReason(QUICK_REASONS[0]); }} className="inline-flex items-center justify-center gap-1.5 rounded-full bg-[#c64b32] px-3 py-2.5 text-xs font-semibold text-white"><XCircle size={14} /> Từ chối & lý do</button><button type="button" onClick={() => void confirm(request)} className="inline-flex items-center justify-center gap-1.5 rounded-full bg-[#76551d] px-3 py-2.5 text-xs font-semibold text-white"><Check size={14} /> Xác nhận lịch</button></div> : request.rawStatus === "CHECKED_IN" ? <button type="button" onClick={() => void transitionBooking(request, "IN_SERVICE")} className="inline-flex items-center justify-center gap-1.5 rounded-full bg-[#2452b8] py-2.5 text-xs font-semibold text-white"><CheckCircle2 size={14} /> Xác nhận bắt đầu phục vụ</button> : request.rawStatus === "IN_SERVICE" ? request.paymentStatus === "PAID" ? <button type="button" onClick={() => void transitionBooking(request, "COMPLETED")} className="inline-flex items-center justify-center gap-1.5 rounded-full bg-[#76551d] py-2.5 text-xs font-semibold text-white"><CheckCircle2 size={14} /> Hoàn tất dịch vụ & đóng Bill</button> : ["OWNER", "BRANCH_MANAGER", "RECEPTIONIST"].includes(activeSession.role) ? <button type="button" onClick={() => setCollecting(request)} className="inline-flex items-center justify-center gap-1.5 rounded-full bg-[#76551d] py-2.5 text-xs font-semibold text-white"><Banknote size={14} /> Đã thanh toán</button> : <p className="flex items-center justify-center gap-1.5 rounded-xl bg-[#fff7df] px-3 py-2.5 text-xs font-semibold text-[#76551d]"><Banknote size={14} /> Chờ quầy đối soát đủ Bill</p> : request.rawStatus === "COMPLETED" ? <p className="flex items-center justify-center gap-1.5 py-1 text-xs font-semibold text-[#76551d]"><CheckCircle2 size={15} /> Dịch vụ và Bill đã hoàn tất</p> : request.status === "CONFIRMED" ? <p className="flex items-center justify-center gap-1.5 py-1 text-xs font-semibold text-[#76551d]"><CheckCircle2 size={15} /> Đã gửi xác nhận tới khách hàng</p> : <button type="button" onClick={() => setChat({ request, initialMessage: request.rejectionReason ?? "Tâm An xin phép hỗ trợ bạn đổi lịch." })} className="inline-flex items-center justify-center gap-1.5 rounded-full border border-[#c64b32] py-2.5 text-xs font-semibold text-[#c64b32]"><MessageCircleMore size={15} /> Mở trao đổi với khách</button>}
               </div>
             </article>
           );
@@ -412,7 +412,7 @@ export function AdminBookingOperations() {
       {rejectingBusiness ? (
         <div className="fixed inset-0 z-[75] flex items-end bg-black/50 sm:items-center sm:justify-center sm:p-5">
           <section className="w-full rounded-t-3xl bg-white p-4 pb-[calc(env(safe-area-inset-bottom)+1rem)] shadow-2xl sm:max-w-lg sm:rounded-2xl sm:p-5">
-            <div className="flex items-start justify-between gap-3"><div><p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#18815e]">Tâm An Business</p><h2 className="mt-1 text-lg font-semibold">Từ chối lịch của {rejectingBusiness.companyName}</h2><p className="mt-1 text-[11px] leading-4 text-[#826f66]">Lý do sẽ được gửi tới khách và lưu nhật ký quản trị. Khoản cọc đã nhận sẽ được đưa vào luồng hoàn/đổi lịch.</p></div><button type="button" onClick={() => setRejectingBusiness(null)} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#fbf2e7]" aria-label="Đóng"><X size={17} /></button></div>
+            <div className="flex items-start justify-between gap-3"><div><p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#a85f29]">Tâm An Business</p><h2 className="mt-1 text-lg font-semibold">Từ chối lịch của {rejectingBusiness.companyName}</h2><p className="mt-1 text-[11px] leading-4 text-[#826f66]">Lý do sẽ được gửi tới khách và lưu nhật ký quản trị. Khoản cọc đã nhận sẽ được đưa vào luồng hoàn/đổi lịch.</p></div><button type="button" onClick={() => setRejectingBusiness(null)} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#fbf2e7]" aria-label="Đóng"><X size={17} /></button></div>
             <label className="mt-4 block text-xs font-semibold">Nội dung gửi khách<textarea value={businessReason} onChange={(event) => setBusinessReason(event.target.value)} rows={5} className="mt-1.5 w-full resize-none rounded-xl border border-[#e7d6ca] p-3 text-sm leading-5" /></label>
             {actionError ? <p className="mt-3 rounded-xl bg-red-50 p-3 text-xs font-medium text-red-700">{actionError}</p> : null}
             <div className="mt-4 grid grid-cols-[0.8fr_1.2fr] gap-2"><button type="button" onClick={() => setRejectingBusiness(null)} className="rounded-full border border-[#e7d6ca] py-2.5 text-xs font-semibold">Quay lại</button><button type="button" onClick={() => void rejectBusiness()} className="inline-flex items-center justify-center gap-1.5 rounded-full bg-[#c64b32] py-2.5 text-xs font-semibold text-white"><XCircle size={14} /> Gửi & từ chối lịch</button></div>

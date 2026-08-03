@@ -22,7 +22,7 @@ export default async function TherapistLayout({ children }: { children: React.Re
       width: 420,
       margin: 1,
       errorCorrectionLevel: "H",
-      color: { dark: "#0b4f3c", light: "#ffffff" },
+      color: { dark: "#4c191b", light: "#ffffff" },
     });
   }
   return (

@@ -25,7 +25,7 @@ export default async function TherapistProfilePage({ params }: { params: Promise
   const protocol = requestHeaders.get("x-forwarded-proto") ?? (host?.includes("localhost") ? "http" : "https");
   const origin = host ? `${protocol}://${host}` : undefined;
   const qrToken = createTherapistQrToken({ therapistId: therapist.id, branchId: therapist.branchId, version: therapist.qrVersion });
-  const qrDataUrl = await QRCode.toDataURL(therapistCheckinUrl(qrToken, origin), { width: 420, margin: 1, errorCorrectionLevel: "H", color: { dark: "#0b4f3c", light: "#ffffff" } });
+  const qrDataUrl = await QRCode.toDataURL(therapistCheckinUrl(qrToken, origin), { width: 420, margin: 1, errorCorrectionLevel: "H", color: { dark: "#4c191b", light: "#ffffff" } });
   const businessDate = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Ho_Chi_Minh", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
   const therapistBookings = await db.booking.findMany({
     where: { therapistId: therapist.id, startTime: { gte: new Date(`${businessDate}T00:00:00+07:00`), lte: new Date(`${businessDate}T23:59:59+07:00`) } },

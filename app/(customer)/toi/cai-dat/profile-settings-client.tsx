@@ -94,7 +94,7 @@ export function ProfileSettingsClient() {
           </div>
         </section>
 
-        {saved ? <p className="flex items-center justify-center gap-1.5 rounded-xl bg-[#fff4e6] p-3 text-sm font-semibold text-[#0d674c]"><CheckCircle2 size={17} /> Đã lưu thông tin tài khoản vào hệ thống.</p> : null}
+        {saved ? <p className="flex items-center justify-center gap-1.5 rounded-xl bg-[#fff4e6] p-3 text-sm font-semibold text-[#76551d]"><CheckCircle2 size={17} /> Đã lưu thông tin tài khoản vào hệ thống.</p> : null}
         {error ? <p className="rounded-xl bg-red-50 p-3 text-center text-xs font-medium text-red-700">{error}</p> : null}
         <button type="submit" disabled={saving || !form.fullName || !form.phone} className="flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-b from-[#b6403a] to-[#8b2b28] px-5 py-3 text-sm font-semibold text-white shadow-md disabled:opacity-50"><Save size={17} /> {saving ? "Đang lưu…" : "Lưu thay đổi"}</button>
       </form>

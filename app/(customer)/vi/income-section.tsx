@@ -42,7 +42,7 @@ const RANGE_PRESETS: { id: RangePreset; label: string }[] = [
 const CATEGORY_META: Record<ReferralOrderCategory, { label: string; color: string; badge: string; icon: typeof UserRound }> = {
   INDIVIDUAL: { label: "Affiliate cá nhân", color: "#c64b32", badge: "bg-[#f8ebe5] text-[#c64b32]", icon: UserRound },
   GROUP: { label: "Theo nhóm", color: "#9f7428", badge: "bg-[#fbf2e7] text-[#8a5a12]", icon: Users },
-  BUSINESS: { label: "Tâm An Business", color: "#0d674c", badge: "bg-[#fff4e6] text-[#0d674c]", icon: Briefcase },
+  BUSINESS: { label: "Tâm An Business", color: "#76551d", badge: "bg-[#fff4e6] text-[#76551d]", icon: Briefcase },
 };
 
 function toIsoDateInput(date: Date) {

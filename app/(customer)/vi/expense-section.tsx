@@ -193,9 +193,9 @@ export function ExpenseSection({ detailed }: { detailed: boolean }) {
             <RotateCcw size={15} /> Khoản tiền đã hoàn
           </p>
           <div className="space-y-2.5">
-            {refundEntries.map((entry) => <div key={entry.id} className="rounded-xl border border-[#c4ddd2] bg-[#fff4e6] p-3.5">
-              <div className="flex items-start justify-between gap-3"><span className="min-w-0"><strong className="block text-sm text-[#165e3d]">{entry.label}</strong><small className="mt-1 block text-[10px] text-[#567063]">{entry.branchLabel}{entry.bookingCode ? ` · ${displayBookingCode(entry.bookingCode)}` : ""}</small></span><strong className="shrink-0 text-sm text-[#ad432f]">+{formatMoney(Math.abs(entry.amount))}</strong></div>
-              <div className="mt-2 border-t border-dashed border-[#c4ddd2] pt-2 text-[10px] leading-4 text-[#567063]"><p>{entry.note}</p><p className="mt-1 font-medium">Đã chuyển lúc {entry.time} · {entry.date}</p></div>
+            {refundEntries.map((entry) => <div key={entry.id} className="rounded-xl border border-[#e8d2c4] bg-[#fff4e6] p-3.5">
+              <div className="flex items-start justify-between gap-3"><span className="min-w-0"><strong className="block text-sm text-[#76551d]">{entry.label}</strong><small className="mt-1 block text-[10px] text-[#a85f29]">{entry.branchLabel}{entry.bookingCode ? ` · ${displayBookingCode(entry.bookingCode)}` : ""}</small></span><strong className="shrink-0 text-sm text-[#ad432f]">+{formatMoney(Math.abs(entry.amount))}</strong></div>
+              <div className="mt-2 border-t border-dashed border-[#e8d2c4] pt-2 text-[10px] leading-4 text-[#a85f29]"><p>{entry.note}</p><p className="mt-1 font-medium">Đã chuyển lúc {entry.time} · {entry.date}</p></div>
             </div>)}
           </div>
         </div>
@@ -217,7 +217,7 @@ export function ExpenseSection({ detailed }: { detailed: boolean }) {
 
 const STATUS_CARD_STYLE: Record<BillStatus, string> = {
   UNUSED: "border-[#c59a3d] bg-[#fbf2e7]",
-  IN_SERVICE: "border-2 border-[#ad432f] bg-gradient-to-br from-[#fff4e6] via-white to-[#f4fff8] shadow-[0_8px_22px_rgba(22,120,74,0.16)] ring-2 ring-[#c4ddd2]/60",
+  IN_SERVICE: "border-2 border-[#ad432f] bg-gradient-to-br from-[#fff4e6] via-white to-[#fffaf6] shadow-[0_8px_22px_rgba(168,95,41,0.16)] ring-2 ring-[#e8d2c4]/60",
   COMPLETED: "border-[#e7d6ca] bg-white",
   ATTENTION: "border-[#e8d39e] bg-[#fffaf0]",
 };
@@ -285,7 +285,7 @@ export function BillCard({ data, expanded, onToggle }: { data: BillCardData; exp
       <button type="button" onClick={openCard} className="flex w-full items-start justify-between gap-3 text-left">
         <span className="min-w-0">
           <span className="flex flex-wrap items-center gap-1.5">
-            <span className={cn("truncate text-sm font-semibold", data.status === "IN_SERVICE" && "text-[#115f3b]")}>{data.label}</span>
+            <span className={cn("truncate text-sm font-semibold", data.status === "IN_SERVICE" && "text-[#76551d]")}>{data.label}</span>
             {data.isGroup ? (
               <span className="inline-flex shrink-0 items-center gap-0.5 rounded-full bg-[#51423b]/10 px-1.5 py-0.5 text-[9px] font-semibold text-[#51423b]">
                 <Users size={9} /> Nhóm

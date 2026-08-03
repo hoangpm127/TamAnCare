@@ -210,7 +210,7 @@ export function OrdersClient() {
                       </Link>
                     ) : null}
                     {!isBusiness && booking.status === "CONFIRMED" && ["DEPOSITED", "PAID"].includes(booking.paymentStatus) ? (
-                      <Link href={`/check-in?bookingCode=${encodeURIComponent(booking.bookingCode)}`} className="inline-flex items-center gap-1 rounded-full bg-[#176b43] px-3 py-1.5 text-xs font-semibold text-white">
+                      <Link href={`/check-in?bookingCode=${encodeURIComponent(booking.bookingCode)}`} className="inline-flex items-center gap-1 rounded-full bg-[#76551d] px-3 py-1.5 text-xs font-semibold text-white">
                         <QrCode size={13} /> Mở Camera quét QR
                       </Link>
                     ) : null}

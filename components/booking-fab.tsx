@@ -118,7 +118,7 @@ function BookingChoice({ trigger, active = false }: { trigger: "nav" | "hero"; a
                 </button>
               </div>
 
-              <button type="button" onClick={() => goTo("/doanh-nghiep")} className="group relative mt-2.5 flex min-h-[88px] w-full items-center gap-3 overflow-hidden rounded-[22px_30px_22px_30px] border border-[#c59a3d]/45 bg-gradient-to-r from-[#073d31] via-[#0b5d45] to-[#064233] px-4 py-3 text-left text-white shadow-[0_12px_26px_rgba(7,61,49,0.24)] transition active:scale-[0.99]">
+              <button type="button" onClick={() => goTo("/doanh-nghiep")} className="group relative mt-2.5 flex min-h-[88px] w-full items-center gap-3 overflow-hidden rounded-[22px_30px_22px_30px] border border-[#d5ad5b]/45 bg-gradient-to-r from-[#2b1917] via-[#211311] to-[#160d0c] px-4 py-3 text-left text-white shadow-[0_12px_26px_rgba(32,18,15,0.28)] transition active:scale-[0.99]">
                 <span className="pointer-events-none absolute -right-5 -top-9 h-24 w-24 rounded-full border-[14px] border-[#e7c878]/10" />
                 <span className="flex h-12 w-12 shrink-0 rotate-2 items-center justify-center rounded-[16px_20px_14px_20px] bg-[#e7c878]/12 text-[#e7c878] shadow-sm ring-1 ring-[#e7c878]/20 transition group-hover:rotate-0"><Briefcase size={21} /></span>
                 <span className="relative min-w-0 flex-1"><strong className="block text-sm font-bold text-[#f7df9a]">Tâm An Business</strong><small className="mt-1 block text-[9px] text-white/65">Sức khỏe định kỳ cho cả công ty</small></span>

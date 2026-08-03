@@ -27,7 +27,7 @@ export default async function BranchQrPage() {
       margin: 2,
       width: 420,
       errorCorrectionLevel: "H",
-      color: { dark: "#0b4f3c", light: "#ffffff" },
+      color: { dark: "#4c191b", light: "#ffffff" },
     }),
   })));
 
@@ -42,7 +42,7 @@ export default async function BranchQrPage() {
 
         <div className="mt-5 grid gap-4 sm:grid-cols-2">
           {qrCards.map((branch) => (
-            <article key={branch.id} className="rounded-3xl border border-[#dbe9e2] bg-white p-5 text-center shadow-[0_14px_36px_rgba(23,61,54,0.10)]">
+            <article key={branch.id} className="rounded-3xl border border-[#f1e5dd] bg-white p-5 text-center shadow-[0_14px_36px_rgba(76,25,27,0.10)]">
               <BrandWordmark className="mx-auto h-[18px] w-[138px] text-[#a85f29]" />
               <h2 className="mt-1 text-xl font-semibold">{branch.label}</h2>
               <Image unoptimized width={420} height={420} src={branch.dataUrl} alt={`QR check-in ${branch.label}`} className="mx-auto mt-3 h-auto w-full max-w-[300px] rounded-2xl" priority />
@@ -52,10 +52,10 @@ export default async function BranchQrPage() {
           ))}
         </div>
 
-        <div className="mt-5 rounded-2xl bg-[#0b4f3c] p-4 text-center text-white">
+        <div className="mt-5 rounded-2xl bg-[#4c191b] p-4 text-center text-white">
           <p className="text-sm font-semibold">Kiểm thử ngay trên điện thoại</p>
           <p className="mt-1 text-xs leading-5 text-white/70">Đăng nhập tài khoản có booking đã xác nhận, mở camera trong luồng check-in rồi hướng vào một trong hai mã phía trên.</p>
-          <Link href="/check-in" className="mt-3 inline-flex rounded-full bg-white px-5 py-2.5 text-xs font-semibold text-[#0b4f3c]">Mở camera check-in</Link>
+          <Link href="/check-in" className="mt-3 inline-flex rounded-full bg-white px-5 py-2.5 text-xs font-semibold text-[#4c191b]">Mở camera check-in</Link>
         </div>
       </section>
     </main>

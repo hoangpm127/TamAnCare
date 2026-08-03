@@ -206,7 +206,7 @@ export function RescheduleClient({
                 Cọc mới {formatMoney(depositAmount)} đã được ghi nhận cho lịch hẹn mới.
               </p>
             ) : (
-              <p className="rounded-xl bg-[#fff4e6] p-3 text-xs leading-5 text-[#0d674c]">
+              <p className="rounded-xl bg-[#fff4e6] p-3 text-xs leading-5 text-[#76551d]">
                 Đây là lượt đổi lịch miễn phí đầu tiên của bạn cho đơn này — không mất phí.
               </p>
             )}
@@ -266,7 +266,7 @@ export function RescheduleClient({
 
       {isFreeReschedule ? (
         <div className="mt-4 flex items-start gap-2.5 rounded-2xl border border-[#e7d6ca] bg-white p-3.5">
-          <ShieldCheck size={18} className="mt-0.5 shrink-0 text-[#0d674c]" />
+          <ShieldCheck size={18} className="mt-0.5 shrink-0 text-[#76551d]" />
           <p className="text-xs leading-5 text-[#51423b]">
             Bạn được đổi lịch <strong>miễn phí 1 lần</strong> cho đơn này. Từ lần đổi lịch thứ 2 trở đi, tiền cọc đã đặt sẽ không được
             hoàn lại và bạn cần đặt cọc lại để giữ lịch mới.

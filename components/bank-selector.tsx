@@ -3,13 +3,13 @@
 import { cn } from "@/lib/utils";
 
 export const BANKS = [
-  { code: "VCB", name: "Vietcombank", color: "#00693e" },
+  { code: "VCB", name: "Vietcombank", color: "#76551d" },
   { code: "TCB", name: "Techcombank", color: "#e30613" },
   { code: "MBB", name: "MB Bank", color: "#1d3557" },
   { code: "ACB", name: "ACB", color: "#0033a0" },
   { code: "BIDV", name: "BIDV", color: "#00558c" },
   { code: "CTG", name: "VietinBank", color: "#0a3b7c" },
-  { code: "VPB", name: "VPBank", color: "#00a651" },
+  { code: "VPB", name: "VPBank", color: "#a85f29" },
   { code: "TPB", name: "TPBank", color: "#7b2d8e" },
   { code: "STB", name: "Sacombank", color: "#0b4ea2" },
 ];

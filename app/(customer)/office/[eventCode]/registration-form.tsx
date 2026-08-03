@@ -75,7 +75,7 @@ export function OfficeRegistrationForm({ event }: { event: OfficeEventRegistrati
         </div>
 
         {done ? (
-          <div className="mt-5 rounded-xl bg-[#f2fff7] p-4 text-sm text-[#0d674c]">
+          <div className="mt-5 rounded-xl bg-[#fffaf6] p-4 text-sm text-[#76551d]">
             <CheckCircle2 className="mb-2" />
             Đăng ký thành công. Voucher của bạn: <strong>{event.voucherCode}</strong>
           </div>

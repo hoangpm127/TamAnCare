@@ -46,7 +46,7 @@ export function AdminAiChatToggle() {
         role="switch"
         aria-checked={enabled}
         onClick={() => setEnabled(!enabled)}
-        className={cn("relative h-7 w-12 shrink-0 rounded-full transition", enabled ? "bg-[#18815e]" : "bg-[#d8cdc6]")}
+        className={cn("relative h-7 w-12 shrink-0 rounded-full transition", enabled ? "bg-[#a85f29]" : "bg-[#d8cdc6]")}
       >
         <span
           className={cn(

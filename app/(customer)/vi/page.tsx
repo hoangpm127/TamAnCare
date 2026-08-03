@@ -43,7 +43,7 @@ export default function WalletPage() {
       <section className="overflow-hidden rounded-2xl bg-gradient-to-br from-[#231514] to-[#3d1f12] text-white shadow-lg">
         <div className="grid grid-cols-2 divide-x divide-white/10 px-4 pt-4 sm:px-5 sm:pt-5">
           <div className="pr-3 text-center">
-            <p className="flex items-center justify-center gap-1.5 text-xs font-semibold uppercase tracking-[0.1em] text-[#8fd3a8]">
+            <p className="flex items-center justify-center gap-1.5 text-xs font-semibold uppercase tracking-[0.1em] text-[#d2ad5d]">
               <ArrowUpCircle size={13} /> Tổng Thu
             </p>
             <p className="mt-1.5 text-xl font-bold sm:text-2xl">{formatMoney(totalIncome)}</p>
@@ -76,7 +76,7 @@ export default function WalletPage() {
         ) : null}
         <div className="border-t border-white/10 px-4 py-3.5 text-center sm:px-5">
           <p className="text-xs text-white/70">Chênh lệch Thu - Chi</p>
-          <p className={cn("text-lg font-bold", net >= 0 ? "text-[#8fd3a8]" : "text-[#f4c2b6]")}>
+          <p className={cn("text-lg font-bold", net >= 0 ? "text-[#d2ad5d]" : "text-[#f4c2b6]")}>
             {net >= 0 ? "+" : ""}
             {formatMoney(net)}
           </p>

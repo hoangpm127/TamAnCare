@@ -265,10 +265,10 @@ export function AdminExpenseAction() {
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   {billPreview ? <img src={billPreview} alt="Bill đã tải" className="h-12 w-12 rounded-lg object-cover" /> : <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-white text-[#c64b32]"><ImagePlus size={20} /></span>}
                   <span className="min-w-0 flex-1"><strong className="block truncate text-xs">{billFileName || "Chụp hoặc tải ảnh bill"}</strong><small className="mt-0.5 block text-[10px] font-normal leading-4 text-[#826f66]">JPG, PNG hoặc WEBP · tối đa 5 MB · AI chỉ gợi ý, Admin xác nhận.</small></span>
-                  {aiStatus === "uploading" ? <Loader2 size={18} className="animate-spin text-[#c64b32]" /> : aiStatus === "ready" || aiStatus === "manual" ? <FileCheck2 size={18} className="text-[#0b5d45]" /> : <ScanLine size={18} className="text-[#9f7428]" />}
+                  {aiStatus === "uploading" ? <Loader2 size={18} className="animate-spin text-[#c64b32]" /> : aiStatus === "ready" || aiStatus === "manual" ? <FileCheck2 size={18} className="text-[#76551d]" /> : <ScanLine size={18} className="text-[#9f7428]" />}
                 </button>
                 {aiStatus === "uploading" ? <p className="mt-1.5 flex items-center gap-1 text-[10px] font-medium text-[#76551d]"><Loader2 size={11} className="animate-spin" /> Đang tải ảnh và đọc chứng từ...</p> : null}
-                {evidenceMessage ? <p className={`mt-1.5 flex items-start gap-1 text-[10px] font-medium ${aiStatus === "ready" ? "text-[#0b5d45]" : "text-[#76551d]"}`}><Sparkles size={11} className="mt-0.5 shrink-0" /> {evidenceMessage}</p> : null}
+                {evidenceMessage ? <p className={`mt-1.5 flex items-start gap-1 text-[10px] font-medium ${aiStatus === "ready" ? "text-[#76551d]" : "text-[#76551d]"}`}><Sparkles size={11} className="mt-0.5 shrink-0" /> {evidenceMessage}</p> : null}
                 {duplicateEvidence ? <label className="mt-2 flex items-start gap-2 rounded-xl border border-[#e5b96b] bg-[#fff8e8] p-2.5 text-[10px] leading-4 text-[#715943]"><input type="checkbox" checked={confirmDuplicateEvidence} onChange={(event) => setConfirmDuplicateEvidence(event.target.checked)} className="mt-0.5" /><span><strong>Phát hiện ảnh trùng chứng từ đã hạch toán.</strong> Chỉ xác nhận nếu đây thực sự là một khoản chi khác.</span></label> : null}
               </div>
             </div>

@@ -141,7 +141,7 @@ export function BusinessScanClient({ token }: { token: string }) {
           </div>
 
           {event.status === "IN_SERVICE" && remainingSeconds !== null ? (
-            <div className="mt-4 rounded-3xl bg-gradient-to-br from-[#173f2d] to-[#0d6b44] p-5 text-center text-white shadow-lg">
+            <div className="mt-4 rounded-3xl bg-gradient-to-br from-[#4c191b] to-[#76551d] p-5 text-center text-white shadow-lg">
               <p className="flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-white/70"><Clock3 size={15} /> {remainingSeconds >= 0 ? "Thời gian còn lại" : "Thời gian phát sinh"}</p>
               <p className="mt-2 font-mono text-4xl font-bold tabular-nums tracking-tight">{clock(remainingSeconds)}</p>
               <p className="mt-2 text-xs text-white/70">Bắt đầu {event.actualStartedAt ? new Date(event.actualStartedAt).toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" }) : "--:--"}</p>
@@ -150,7 +150,7 @@ export function BusinessScanClient({ token }: { token: string }) {
           ) : null}
 
           {canStart ? (
-            <div className="mt-4 rounded-3xl border border-[#c9dfd1] bg-[#f1faf5] p-4 text-center">
+            <div className="mt-4 rounded-3xl border border-[#e8d2c4] bg-[#fbf2e7] p-4 text-center">
               <Play className="mx-auto text-[#9a5a16]" size={30} />
               <h2 className="mt-2 text-lg font-semibold">Xác nhận bắt đầu phục vụ</h2>
               <p className="mt-1 text-xs leading-5 text-[#5e6e64]">Thao tác này ghi nhận giờ thực tế, địa điểm và KTV trưởng vào hồ sơ vận hành.</p>

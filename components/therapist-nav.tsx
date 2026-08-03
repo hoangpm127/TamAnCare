@@ -58,7 +58,7 @@ export function TherapistNav({ qrDataUrl, therapistName, branchLabel }: Props) {
             <NavigationPendingIndicator />
           </Link>
           <div className="flex items-center gap-1.5">
-            <button type="button" onClick={() => setPanel("qr")} disabled={!qrDataUrl} className="flex h-9 w-9 items-center justify-center rounded-full bg-[#eff7f3] text-[#0b5d45] disabled:opacity-40" aria-label="Mở QR KTV"><QrCode size={17} /></button>
+            <button type="button" onClick={() => setPanel("qr")} disabled={!qrDataUrl} className="flex h-9 w-9 items-center justify-center rounded-full bg-[#fbf2e7] text-[#76551d] disabled:opacity-40" aria-label="Mở QR KTV"><QrCode size={17} /></button>
             <button type="button" onClick={() => { setPanel("notifications"); setUnread(0); }} className="relative flex h-9 w-9 items-center justify-center rounded-full bg-[#f8ebe5] text-[#c64b32]" aria-label="Mở thông báo">
               <Bell size={17} />
               {unread ? <span className="absolute -right-0.5 -top-0.5 flex min-h-4 min-w-4 items-center justify-center rounded-full bg-[#c64b32] px-1 text-[7px] font-bold text-white">{Math.min(99, unread)}</span> : null}

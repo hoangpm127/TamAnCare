@@ -57,7 +57,7 @@ export default async function TherapistProfilePage({ params }: { params: Promise
                 <><Star size={14} className="fill-[#c59a3d] text-[#c59a3d]" /> {avgReviewRating.toFixed(1)} ({reviews.length} đánh giá)</>
               ) : "KTV mới trên hệ thống · Chưa có đánh giá"}
             </p>
-            <span className="mt-2 inline-flex rounded-full bg-white/10 px-2.5 py-1 text-[11px] font-semibold text-[#8fd3a8]">
+            <span className="mt-2 inline-flex rounded-full bg-white/10 px-2.5 py-1 text-[11px] font-semibold text-[#d2ad5d]">
               {resourceStatusLabel(therapist.status)}
             </span>
           </div>

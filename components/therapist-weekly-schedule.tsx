@@ -72,7 +72,7 @@ export function TherapistCalendarSchedule({
       <section className="relative overflow-hidden rounded-2xl border border-[#d2ad5d]/60 bg-white shadow-[0_12px_32px_rgba(74,44,28,0.08)]">
         <div className="bg-gradient-to-r from-[#291714] via-[#63291d] to-[#c64b32] px-3.5 py-3 text-white sm:px-5">
           <div className="flex items-center justify-between gap-3"><div className="flex min-w-0 items-center gap-2.5"><span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/10 text-[#e7c878] ring-1 ring-white/15"><CalendarDays size={17} /></span><div className="min-w-0"><p className="text-[9px] font-bold uppercase tracking-[0.13em] text-[#e7c878]">Lịch cá nhân KTV</p><h1 className="truncate text-base font-semibold">Lịch làm việc của tôi</h1></div></div><Link href="/therapist" className="shrink-0 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-[10px] font-semibold">Hôm nay</Link></div>
-          <div className="mt-2.5 flex flex-wrap items-center gap-1.5 text-[9px] font-semibold"><span className="rounded-full bg-white/12 px-2.5 py-1">{monthRegular.length + monthBusiness.length} lịch</span><span className="rounded-full bg-[#dff5e8] px-2.5 py-1 text-[#0b6248]">{monthRegular.length} tại cơ sở</span><span className="rounded-full bg-[#dbeaff] px-2.5 py-1 text-[#2452b8]">{monthBusiness.length} Business</span></div>
+          <div className="mt-2.5 flex flex-wrap items-center gap-1.5 text-[9px] font-semibold"><span className="rounded-full bg-white/12 px-2.5 py-1">{monthRegular.length + monthBusiness.length} lịch</span><span className="rounded-full bg-[#f1e5dd] px-2.5 py-1 text-[#76551d]">{monthRegular.length} tại cơ sở</span><span className="rounded-full bg-[#dbeaff] px-2.5 py-1 text-[#2452b8]">{monthBusiness.length} Business</span></div>
         </div>
 
         <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 border-b border-[#e7d6ca] bg-[#fffdfb] p-2.5 sm:px-4">
@@ -92,12 +92,12 @@ export function TherapistCalendarSchedule({
             return (
               <button key={day.key} type="button" onClick={() => setSelectedDay(day.key)} className={cn("relative min-h-[70px] rounded-xl border px-1 py-1.5 text-left transition sm:min-h-[92px] sm:px-2", active ? "border-[#c64b32] bg-[#fae9e4] shadow-[0_5px_15px_rgba(159,29,32,0.13)] ring-1 ring-[#c64b32]/20" : "border-[#eee4dd] bg-white hover:border-[#d2ad5d]", !day.isCurrentMonth && "opacity-40")} aria-pressed={active} aria-label={`${day.fullLabel}: ${careCount} lịch cơ sở, ${businessCount} đoàn Business`}>
                 <span className={cn("flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-bold", day.isToday ? "bg-[#c64b32] text-white" : active ? "text-[#c64b32]" : "text-[#3c2d27]")}>{day.dayNumber}</span>
-                <span className="mt-1 grid grid-cols-2 gap-0.5 sm:mt-2"><b title="Lịch tại cơ sở" className="flex items-center justify-center gap-0.5 rounded-md bg-[#dff5e8] px-0.5 py-1 text-[8px] text-[#0b6248]"><i className="h-1.5 w-1.5 rounded-full bg-[#228965]" />{careCount}</b><b title="Đoàn Business" className="flex items-center justify-center gap-0.5 rounded-md bg-[#dbeaff] px-0.5 py-1 text-[8px] text-[#2452b8]"><i className="h-1.5 w-1.5 rounded-full bg-[#4b8ee8]" />{businessCount}</b></span>
+                <span className="mt-1 grid grid-cols-2 gap-0.5 sm:mt-2"><b title="Lịch tại cơ sở" className="flex items-center justify-center gap-0.5 rounded-md bg-[#f1e5dd] px-0.5 py-1 text-[8px] text-[#76551d]"><i className="h-1.5 w-1.5 rounded-full bg-[#a85f29]" />{careCount}</b><b title="Đoàn Business" className="flex items-center justify-center gap-0.5 rounded-md bg-[#dbeaff] px-0.5 py-1 text-[8px] text-[#2452b8]"><i className="h-1.5 w-1.5 rounded-full bg-[#4b8ee8]" />{businessCount}</b></span>
               </button>
             );
           })}
           </div>
-          <div className="mt-2.5 flex items-center justify-center gap-4 text-[8px] text-[#756861]"><span className="flex items-center gap-1"><i className="h-2 w-2 rounded-full bg-[#228965]" /> Lịch tại cơ sở</span><span className="flex items-center gap-1"><i className="h-2 w-2 rounded-full bg-[#4b8ee8]" /> Đoàn Business</span></div>
+          <div className="mt-2.5 flex items-center justify-center gap-4 text-[8px] text-[#756861]"><span className="flex items-center gap-1"><i className="h-2 w-2 rounded-full bg-[#a85f29]" /> Lịch tại cơ sở</span><span className="flex items-center gap-1"><i className="h-2 w-2 rounded-full bg-[#4b8ee8]" /> Đoàn Business</span></div>
         </div>
       </section>
 
@@ -115,7 +115,7 @@ export function TherapistCalendarSchedule({
 }
 
 function RegularShiftCard({ shift }: { shift: RegularShift }) {
-  const relationshipTone = shift.relationship === "BOSS" ? "bg-[#2f1d19] text-[#e7c878]" : shift.relationship === "FRIEND" ? "bg-[#fae9e4] text-[#c64b32]" : "bg-[#eff7f3] text-[#0b6248]";
+  const relationshipTone = shift.relationship === "BOSS" ? "bg-[#2f1d19] text-[#e7c878]" : shift.relationship === "FRIEND" ? "bg-[#fae9e4] text-[#c64b32]" : "bg-[#fbf2e7] text-[#76551d]";
   return (
     <article className="overflow-hidden rounded-2xl border border-[#e7d6ca] bg-[#fffdfb]">
       <div className="flex items-center justify-between gap-2 border-b border-[#f0e4dc] px-3 py-2.5"><div className="flex min-w-0 items-center gap-2"><span className="rounded-lg bg-[#291714] px-2 py-1.5 text-[9px] font-bold text-white">{time(shift.startTime)}–{time(shift.endTime)}</span><div className="min-w-0"><p className="truncate text-xs font-semibold">{shift.customerName}</p><p className="truncate text-[9px] text-[#826f66]">{shift.serviceName} · {shift.roomName}</p></div></div><span className={cn("shrink-0 rounded-full px-2 py-1 text-[8px] font-bold", relationshipTone)}>{shift.relationshipLabel}</span></div>
@@ -123,7 +123,7 @@ function RegularShiftCard({ shift }: { shift: RegularShift }) {
         <div className="rounded-xl bg-[#f8f4f1] p-2.5"><p className="flex items-center gap-1 text-[9px] font-bold uppercase tracking-wide text-[#6f625b]"><UserRound size={11} /> Yêu cầu cần lưu ý</p><p className="mt-1.5 text-[10px] leading-4 text-[#574b45]">{shift.requestNote}</p></div>
         <div className="rounded-xl bg-[#fff8e8] p-2.5"><p className="text-[9px] font-bold uppercase tracking-wide text-[#76551d]">Tip KTV ngoài Bill</p><p className="mt-1 text-xs font-bold leading-4 text-[#76551d]">Khách trao trực tiếp nếu hài lòng</p><p className="mt-0.5 text-[8px] leading-3.5 text-[#8a7457]">Gợi ý từ 100.000đ/60 phút · 150.000đ/90 phút</p></div>
       </div>
-      <div className="mx-3 mb-3 rounded-xl border border-[#cfe4d8] bg-gradient-to-r from-[#eff7f3] to-[#f8fcfa] p-2.5"><p className="flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-wide text-[#176a4c]"><Sparkles size={12} /> IQ Care căn dặn trước ca</p><ul className="mt-1.5 space-y-1">{shift.aiAdvice.map((advice) => <li key={advice} className="text-[10px] leading-4 text-[#48665a]">• {advice}</li>)}</ul></div>
+      <div className="mx-3 mb-3 rounded-xl border border-[#e8d2c4] bg-gradient-to-r from-[#fbf2e7] to-[#fffaf6] p-2.5"><p className="flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-wide text-[#76551d]"><Sparkles size={12} /> IQ Care căn dặn trước ca</p><ul className="mt-1.5 space-y-1">{shift.aiAdvice.map((advice) => <li key={advice} className="text-[10px] leading-4 text-[#a85f29]">• {advice}</li>)}</ul></div>
       <Link href={`/therapist/bookings/${shift.bookingCode}`} className="flex items-center justify-center border-t border-[#f0e4dc] px-3 py-2.5 text-[10px] font-bold text-[#c64b32]">Mở hồ sơ ca & thao tác phục vụ <ChevronRight size={13} /></Link>
     </article>
   );

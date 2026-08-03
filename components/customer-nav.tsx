@@ -61,7 +61,7 @@ function CustomerTopbar({ pathname }: { pathname: string }) {
         <div className="flex items-center gap-1.5 sm:gap-2">
           <Link
             href="/check-in"
-            className="tap-feedback relative inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#edf6f2] text-[#0b5d45] ring-1 ring-[#0b5d45]/10 sm:h-9 sm:w-9"
+            className="tap-feedback relative inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#fbf2e7] text-[#76551d] ring-1 ring-[#76551d]/10 sm:h-9 sm:w-9"
             aria-label="Check-in tại cơ sở"
           >
             <QrCode size={16} />

@@ -211,14 +211,14 @@ export function CorporateClient() {
               <strong className="text-[#281b18]">{contactPhone}</strong> trước giờ hẹn 2 tiếng để xác nhận lần cuối trước khi triển khai
               dịch vụ tận nơi cho {companyName}.
             </p>
-            <Link href={`/doanh-nghiep/${persistedEventCode || inquiryCode}`} className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#0d674c] px-4 py-3 text-sm font-semibold text-white">
+            <Link href={`/doanh-nghiep/${persistedEventCode || inquiryCode}`} className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#76551d] px-4 py-3 text-sm font-semibold text-white">
               Xem hồ sơ vận hành & Bill Business <ChevronRight size={16} />
             </Link>
 
             <div className="mt-5 space-y-2.5 border-t border-dashed border-[#e7d6ca] pt-5">
               <p className="text-xs font-semibold uppercase tracking-wide text-[#826f66]">Các bước tiếp theo</p>
               <div className="flex items-start gap-3">
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#fff4e6] text-xs font-bold text-[#0d674c]">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#fff4e6] text-xs font-bold text-[#76551d]">
                   1
                 </span>
                 <p className="mt-0.5 text-xs leading-5 text-[#51423b]">
@@ -226,7 +226,7 @@ export function CorporateClient() {
                 </p>
               </div>
               <div className="flex items-start gap-3">
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#fff4e6] text-xs font-bold text-[#0d674c]">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#fff4e6] text-xs font-bold text-[#76551d]">
                   2
                 </span>
                 <p className="mt-0.5 text-xs leading-5 text-[#51423b]">
@@ -234,7 +234,7 @@ export function CorporateClient() {
                 </p>
               </div>
               <div className="flex items-start gap-3">
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#fff4e6] text-xs font-bold text-[#0d674c]">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#fff4e6] text-xs font-bold text-[#76551d]">
                   3
                 </span>
                 <p className="mt-0.5 text-xs leading-5 text-[#51423b]">
@@ -310,7 +310,7 @@ export function CorporateClient() {
                 <span className="font-semibold">{formatMoney(subtotal)}</span>
               </div>
               {discount > 0 ? (
-                <div className="flex items-center justify-between text-[#0d674c]">
+                <div className="flex items-center justify-between text-[#76551d]">
                   <span>
                     Ưu đãi {tier.name} (-{tier.discountPercent}%)
                   </span>
@@ -601,7 +601,7 @@ export function CorporateClient() {
                   <ul className="mt-2 space-y-1 text-[11px] leading-4 text-[#51423b]">
                     {item.perks.map((perk) => (
                       <li key={perk} className="flex items-start gap-1">
-                        <Check size={11} className="mt-0.5 shrink-0 text-[#0d674c]" /> {perk}
+                        <Check size={11} className="mt-0.5 shrink-0 text-[#76551d]" /> {perk}
                       </li>
                     ))}
                   </ul>
@@ -634,7 +634,7 @@ export function CorporateClient() {
               <span className="font-semibold">{formatMoney(subtotal)}</span>
             </div>
             {discount > 0 ? (
-              <div className="flex items-center justify-between text-[#0d674c]">
+              <div className="flex items-center justify-between text-[#76551d]">
                 <span>
                   Ưu đãi {tier.name} (-{tier.discountPercent}%)
                 </span>

@@ -167,7 +167,7 @@ export function AdminSectionContent({ section, title, rows, branches, beforeTabl
             <h1 className="mt-0.5 text-xl font-semibold tracking-tight">{title}</h1>
             <p className="mx-auto mt-1 max-w-lg text-[11px] leading-4 text-[#715943]">{meta.description}</p>
           </div>
-          <span className="absolute right-0 top-0 inline-flex items-center gap-1 rounded-full bg-[#eff7f3] px-2.5 py-1.5 text-[10px] font-semibold text-[#0b5d45]"><Check size={12} /> CSDL</span>
+          <span className="absolute right-0 top-0 inline-flex items-center gap-1 rounded-full bg-[#fbf2e7] px-2.5 py-1.5 text-[10px] font-semibold text-[#76551d]"><Check size={12} /> CSDL</span>
         </div>
         <div className="relative mt-3 flex items-center justify-between gap-3 border-t border-[#c59a3d]/30 pt-2.5 text-[10px] text-[#826f66]">
           <span><strong className="text-sm text-[#281b18]">{scopedRows.length}</strong> bản ghi trong phạm vi</span>
@@ -197,8 +197,8 @@ export function AdminSectionContent({ section, title, rows, branches, beforeTabl
                   </div>
                   {row.branchId ? <p className="mt-1.5 text-[9px] font-semibold text-[#c64b32]">{branches.find((item) => item.id === row.branchId)?.label}</p> : null}
                   {section === "bookings" ? (
-                    row.workflowStatus === "NEW" ? <button type="button" onClick={() => void confirmBooking(row)} className="mt-2.5 inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-[#c64b32] px-3 py-2 text-[11px] font-semibold text-white"><Check size={13} /> Xác nhận lịch</button> : <p className="mt-2 flex items-center justify-center gap-1 text-[10px] font-semibold text-[#18815e]"><Check size={12} /> Đã xử lý và gửi thông báo khách</p>
-                  ) : <p className="mt-2 flex items-center justify-end gap-1 border-t border-[#f4ebe5] pt-2 text-[10px] font-semibold text-[#0b5d45]"><Check size={11} /> Dữ liệu máy chủ</p>}
+                    row.workflowStatus === "NEW" ? <button type="button" onClick={() => void confirmBooking(row)} className="mt-2.5 inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-[#c64b32] px-3 py-2 text-[11px] font-semibold text-white"><Check size={13} /> Xác nhận lịch</button> : <p className="mt-2 flex items-center justify-center gap-1 text-[10px] font-semibold text-[#a85f29]"><Check size={12} /> Đã xử lý và gửi thông báo khách</p>
+                  ) : <p className="mt-2 flex items-center justify-end gap-1 border-t border-[#f4ebe5] pt-2 text-[10px] font-semibold text-[#76551d]"><Check size={11} /> Dữ liệu máy chủ</p>}
                   </div>
                 </div>
               ))}
@@ -209,7 +209,7 @@ export function AdminSectionContent({ section, title, rows, branches, beforeTabl
                 <tbody>{scopedRows.map((row) => (
                   <tr key={row.__id} className="border-b border-[#f2e7df] last:border-0">
                     <td className="px-4 py-3 font-semibold">{row.href ? <Link href={row.href} className="text-[#c64b32]">{displayPrimary(row)}</Link> : displayPrimary(row)}</td><td>{row.secondary}</td><td>{row.meta}</td><td>{row.branchId ? branches.find((item) => item.id === row.branchId)?.label : "Dùng chung"}</td><td><span className="rounded-full bg-[#f8ebe5] px-2 py-1 text-[10px] font-semibold text-[#c64b32]">{row.status}</span></td><td className="text-right font-semibold">{row.value}</td>
-                    <td className="pr-4 text-right">{section === "bookings" ? row.workflowStatus === "NEW" ? <button type="button" onClick={() => void confirmBooking(row)} className="rounded-full bg-[#c64b32] px-3 py-1.5 text-[10px] font-semibold text-white">Xác nhận</button> : <span className="text-[10px] font-semibold text-[#18815e]">Đã xử lý</span> : <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#0b5d45]"><Check size={11} /> CSDL</span>}</td>
+                    <td className="pr-4 text-right">{section === "bookings" ? row.workflowStatus === "NEW" ? <button type="button" onClick={() => void confirmBooking(row)} className="rounded-full bg-[#c64b32] px-3 py-1.5 text-[10px] font-semibold text-white">Xác nhận</button> : <span className="text-[10px] font-semibold text-[#a85f29]">Đã xử lý</span> : <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#76551d]"><Check size={11} /> CSDL</span>}</td>
                   </tr>
                 ))}</tbody>
               </table>

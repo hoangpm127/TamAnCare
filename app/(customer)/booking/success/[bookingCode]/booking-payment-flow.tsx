@@ -356,7 +356,7 @@ export function BookingPaymentFlow({ referenceCode }: { referenceCode: string })
                 <span>Tổng dịch vụ</span><span>{formatMoney(summary.total)}</span>
               </div>
               {summary.packageName ? (
-                <div className="flex items-center justify-between rounded-xl bg-[#eef9f2] px-3 py-2.5 text-[#ad432f]">
+                <div className="flex items-center justify-between rounded-xl bg-[#fbf2e7] px-3 py-2.5 text-[#ad432f]">
                   <span>Thanh toán thêm</span><span className="font-bold">0đ</span>
                 </div>
               ) : (

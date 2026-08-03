@@ -175,7 +175,7 @@ export function AdminNav() {
     });
     const investorNavItems = [
       { view: "overview" as const, href: "/admin#overview", label: "Tổng quan", icon: LayoutDashboard, activeIconClass: "bg-[#d6b45e] text-[#2b1b13] shadow-[#d6b45e]/25", activeTextClass: "text-[#dfbf6c]" },
-      { view: "performance" as const, href: "/admin#performance", label: "Hiệu quả", icon: BarChart3, activeIconClass: "bg-[#6bd2ae] text-[#10251f] shadow-emerald-300/20", activeTextClass: "text-emerald-200" },
+      { view: "performance" as const, href: "/admin#performance", label: "Hiệu quả", icon: BarChart3, activeIconClass: "bg-[#d2ad5d] text-[#281b18] shadow-emerald-300/20", activeTextClass: "text-emerald-200" },
       { view: "opportunities" as const, href: "/admin#opportunities", label: "Cơ hội mới", icon: Rocket, activeIconClass: "bg-[#78baff] text-[#10243a] shadow-sky-300/20", activeTextClass: "text-sky-200" },
       { view: "benefits" as const, href: "/admin#benefits", label: "Đặc quyền", icon: Gem, activeIconClass: "bg-[#d99be4] text-[#341b38] shadow-fuchsia-300/20", activeTextClass: "text-fuchsia-200" },
       { view: "updates" as const, href: "/admin#updates", label: "Cập nhật", icon: Newspaper, activeIconClass: "bg-[#9bc5e8] text-[#172838] shadow-sky-200/20", activeTextClass: "text-sky-100" },
@@ -347,8 +347,8 @@ export function AdminNav() {
 
           <div className="flex items-center gap-1.5">
             <AdminExpenseAction />
-            <Link href="/admin/qr-management" className={cn("tap-feedback relative flex h-9 w-9 items-center justify-center rounded-full border", pathname.startsWith("/admin/qr-management") ? "border-[#0b5d45] bg-[#0b5d45] text-white" : "border-[#e7d6ca] text-[#0b5d45]")} aria-label="Trung tâm quản lý QR" title="Quản lý QR"><QrCode size={17} /><NavigationPendingIndicator /></Link>
-            {session.role === "OWNER" ? <Link href="/admin/investment-opportunities" className={cn("tap-feedback relative flex h-9 w-9 items-center justify-center rounded-full border", pathname.startsWith("/admin/investment-opportunities") ? "border-[#146650] bg-[#146650] text-white" : "border-[#e7d6ca] text-[#146650]")} aria-label="Quản lý cơ hội đầu tư" title="Cơ hội đầu tư"><Rocket size={17} /><NavigationPendingIndicator /></Link> : null}
+            <Link href="/admin/qr-management" className={cn("tap-feedback relative flex h-9 w-9 items-center justify-center rounded-full border", pathname.startsWith("/admin/qr-management") ? "border-[#76551d] bg-[#76551d] text-white" : "border-[#e7d6ca] text-[#76551d]")} aria-label="Trung tâm quản lý QR" title="Quản lý QR"><QrCode size={17} /><NavigationPendingIndicator /></Link>
+            {session.role === "OWNER" ? <Link href="/admin/investment-opportunities" className={cn("tap-feedback relative flex h-9 w-9 items-center justify-center rounded-full border", pathname.startsWith("/admin/investment-opportunities") ? "border-[#76551d] bg-[#76551d] text-white" : "border-[#e7d6ca] text-[#76551d]")} aria-label="Quản lý cơ hội đầu tư" title="Cơ hội đầu tư"><Rocket size={17} /><NavigationPendingIndicator /></Link> : null}
             <Link href="/admin/finance" className={cn("tap-feedback relative flex h-9 w-9 items-center justify-center rounded-full border", pathname.startsWith("/admin/finance") ? "border-[#c64b32] bg-[#c64b32] text-white" : "border-[#e7d6ca] text-[#7a3e1d]")} aria-label="Trung tâm Bill và tài chính" title="Bill & tài chính">
               <CircleDollarSign size={18} />
               <NavigationPendingIndicator />
@@ -414,7 +414,7 @@ export function AdminNav() {
                 <span className={cn("relative flex h-8 w-8 items-center justify-center rounded-full", active && "bg-[#c64b32]")}>
                   <Icon size={18} className={active ? "text-white" : "text-[#826f66]"} />
                   {item.slug === "bookings" && regularBookingCount > 0 ? <span className="absolute -right-2 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#c59a3d] px-1 text-[9px] font-bold text-[#3d1f12] ring-2 ring-white">{regularBookingCount}</span> : null}
-                  {item.slug === "bookings" && bookingCounts.business > 0 ? <span className="absolute -left-2 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#228965] px-1 text-[9px] font-bold text-white ring-2 ring-white">{bookingCounts.business}</span> : null}
+                  {item.slug === "bookings" && bookingCounts.business > 0 ? <span className="absolute -left-2 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#a85f29] px-1 text-[9px] font-bold text-white ring-2 ring-white">{bookingCounts.business}</span> : null}
                 </span>
                 <span className={cn("text-[10px] font-medium", active ? "text-[#c64b32]" : "text-[#826f66]")}>{item.label}</span>
                 <NavigationPendingIndicator className="rounded-none" />
@@ -458,7 +458,7 @@ export function AdminNav() {
                 const unread = isNotificationUnread(item);
                 const Icon = item.kind === "booking" ? CalendarCheck : item.kind === "vip" ? Crown : item.kind === "finance" ? ReceiptText : item.kind === "branch" ? Building2 : item.kind === "system" ? Sparkles : UsersRound;
                 return <article key={item.id} className={cn("flex gap-3 border-b border-[#eee0d6] px-4 py-3 last:border-b-0", unread && "bg-gradient-to-r from-[#fff3ee] to-white")}>
-                  <span className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-xl", item.kind === "vip" ? "bg-[#fff7df] text-[#76551d]" : item.kind === "finance" || item.kind === "system" ? "bg-[#eff7f3] text-[#0b5d45]" : "bg-[#f8ebe5] text-[#c64b32]")}><Icon size={17} /></span>
+                  <span className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-xl", item.kind === "vip" ? "bg-[#fff7df] text-[#76551d]" : item.kind === "finance" || item.kind === "system" ? "bg-[#fbf2e7] text-[#76551d]" : "bg-[#f8ebe5] text-[#c64b32]")}><Icon size={17} /></span>
                   <div className="min-w-0 flex-1">
                     <Link href={item.href} onClick={() => { markNotificationRead(item.id); setNotificationsOpen(false); }} className="block">
                       <div className="flex items-start gap-1.5"><p className="min-w-0 flex-1 text-sm font-semibold leading-5">{item.title}</p>{unread ? <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[#a93a36]" /> : null}<ChevronRight size={14} className="mt-1 shrink-0 text-[#9f7428]" /></div>
@@ -512,8 +512,8 @@ export function AdminNav() {
                 );
               })}
             </div>
-            {session.role === "OWNER" ? <Link href="/admin/investment-opportunities" onClick={() => setMoreOpen(false)} className="mt-4 flex items-center gap-2.5 rounded-xl border border-[#c9dfe6] bg-[#f4fbfd] p-3"><span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#146650] text-white"><Rocket size={16} /></span><span><span className="block text-xs font-semibold">Cơ hội đầu tư</span><span className="block text-[10px] text-[#6c7c84]">Tạo, thẩm định, công bố và gửi bản tin</span></span></Link> : null}
-            {session.role === "OWNER" || session.role === "BRANCH_MANAGER" ? <Link href="/admin/qr-management" onClick={() => setMoreOpen(false)} className="mt-4 flex items-center gap-2.5 rounded-xl border border-[#c4ddd2] bg-[#f2fbf6] p-3"><span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#0b5d45] text-white"><QrCode size={16} /></span><span><span className="block text-xs font-semibold">Trung tâm quản lý QR</span><span className="block text-[10px] text-[#607a6b]">Cơ sở, KTV và Business · cấp lại an toàn</span></span></Link> : null}
+            {session.role === "OWNER" ? <Link href="/admin/investment-opportunities" onClick={() => setMoreOpen(false)} className="mt-4 flex items-center gap-2.5 rounded-xl border border-[#c9dfe6] bg-[#f4fbfd] p-3"><span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#76551d] text-white"><Rocket size={16} /></span><span><span className="block text-xs font-semibold">Cơ hội đầu tư</span><span className="block text-[10px] text-[#6c7c84]">Tạo, thẩm định, công bố và gửi bản tin</span></span></Link> : null}
+            {session.role === "OWNER" || session.role === "BRANCH_MANAGER" ? <Link href="/admin/qr-management" onClick={() => setMoreOpen(false)} className="mt-4 flex items-center gap-2.5 rounded-xl border border-[#e8d2c4] bg-[#fbf2e7] p-3"><span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#76551d] text-white"><QrCode size={16} /></span><span><span className="block text-xs font-semibold">Trung tâm quản lý QR</span><span className="block text-[10px] text-[#607a6b]">Cơ sở, KTV và Business · cấp lại an toàn</span></span></Link> : null}
             {session.role === "OWNER" || session.role === "BRANCH_MANAGER" ? <Link href="/bao-mat-quan-tri" onClick={() => setMoreOpen(false)} className="mt-4 flex items-center gap-2.5 rounded-xl border border-[#e7d6ca] bg-white p-3"><span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#f8ebe5] text-[#c64b32]"><KeyRound size={16} /></span><span><span className="block text-xs font-semibold">Bảo mật hai lớp</span><span className="block text-[10px] text-[#826f66]">Authenticator và mã khôi phục</span></span></Link> : null}
             <div className="mt-4 grid grid-cols-2 gap-2 border-t border-[#e7d6ca] pt-4">
               <Link href="/dang-nhap-quan-tri" className="flex items-center justify-center gap-1.5 rounded-full border border-[#c64b32] px-3 py-2.5 text-xs font-semibold text-[#c64b32]"><ShieldCheck size={14} /> Đổi vai trò</Link>

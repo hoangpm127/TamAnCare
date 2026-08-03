@@ -173,7 +173,7 @@ export function BankTransferDetails({
     <div>
       <div className="mt-3 overflow-hidden rounded-2xl border border-[#e7d4ca] bg-white shadow-sm">
         <div className="flex items-center justify-between gap-2 border-b border-dashed border-[#e7d6ca] bg-[#fdf8f3] px-3 py-2 text-[10px] font-semibold">
-          <span className="inline-flex items-center gap-1 text-[#0d674c]"><ShieldCheck size={12} /> VietQR đã điền sẵn</span>
+          <span className="inline-flex items-center gap-1 text-[#76551d]"><ShieldCheck size={12} /> VietQR đã điền sẵn</span>
           <span className="inline-flex items-center gap-1 tabular-nums text-[#8a5a12]"><TimerReset size={12} /> {minutes}:{String(seconds).padStart(2, "0")}</span>
         </div>
 
@@ -240,7 +240,7 @@ export function BankTransferDetails({
                 ))}
               </div>
               {!visibleApps.length ? <p className="rounded-2xl border border-dashed border-[#d9c9c0] bg-white p-5 text-center text-xs text-[#826f66]">Không tìm thấy ngân hàng phù hợp. Bạn vẫn có thể lưu QR và quét trong bất kỳ ứng dụng ngân hàng nào.</p> : null}
-              <p className="mt-3 flex items-start gap-1.5 rounded-xl bg-[#eef8f2] p-3 text-[10px] leading-4 text-[#3e6652]"><CheckCircle2 size={13} className="mt-0.5 shrink-0" /> Nếu chưa cài ứng dụng, dùng liên kết “Chưa cài?” để mở chợ ứng dụng. Bạn luôn có thể quay lại và thanh toán bằng QR đã lưu.</p>
+              <p className="mt-3 flex items-start gap-1.5 rounded-xl bg-[#fbf2e7] p-3 text-[10px] leading-4 text-[#a85f29]"><CheckCircle2 size={13} className="mt-0.5 shrink-0" /> Nếu chưa cài ứng dụng, dùng liên kết “Chưa cài?” để mở chợ ứng dụng. Bạn luôn có thể quay lại và thanh toán bằng QR đã lưu.</p>
             </div>
           </section>
         </div>

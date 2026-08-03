@@ -73,14 +73,14 @@ function roomName(value: string) {
 const BED_GROUPS = [
   { type: "HEAD_SPA_BED", label: "Giường gội", tone: "text-[#8d4d76]" },
   { type: "FOOT_CHAIR", label: "Giường Foot", tone: "text-[#9a6322]" },
-  { type: "MASSAGE_BED", label: "Giường Body", tone: "text-[#176a4c]" },
+  { type: "MASSAGE_BED", label: "Giường Body", tone: "text-[#76551d]" },
 ] as const;
 
 function statusTone(status: RoomLiveStatus) {
   if (status === "AVAILABLE") {
     return {
-      card: "border-[#89d2ab] bg-gradient-to-br from-[#eefaf3] to-white",
-      badge: "bg-[#d5f3e1] text-[#0b6248]",
+      card: "border-[#d2ad5d] bg-gradient-to-br from-[#fbf2e7] to-white",
+      badge: "bg-[#f1e5dd] text-[#76551d]",
       label: "RẢNH",
     };
   }
@@ -174,13 +174,13 @@ export function AdminRoomOperations() {
 
   return (
     <main className="mx-auto max-w-7xl px-3 py-3 sm:px-6 sm:py-5 lg:px-10">
-      <section className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#0b4f3c] via-[#17634a] to-[#22845a] px-3.5 py-3 text-center text-white shadow-lg">
+      <section className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#4c191b] via-[#76551d] to-[#a85f29] px-3.5 py-3 text-center text-white shadow-lg">
         <button type="button" onClick={() => void load()} className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/10" aria-label="Làm mới"><RefreshCcw size={14} className={loading ? "animate-spin" : ""} /></button>
         <h1 className="text-lg font-semibold leading-6">Phòng & Giường</h1>
         <p className="mt-0.5 text-[10px] text-white/75">Quan sát tức thì hoặc xem trước công suất theo ngày, giờ</p>
         <div className="mx-auto mt-2 flex max-w-sm items-center justify-center gap-1.5 text-[9px] font-semibold">
           <span className="rounded-full bg-white/10 px-2 py-1">{summary.total} vị trí</span>
-          <span className="rounded-full bg-[#d9f6e5] px-2 py-1 text-[#0b6248]">{summary.available} rảnh</span>
+          <span className="rounded-full bg-[#f1e5dd] px-2 py-1 text-[#76551d]">{summary.available} rảnh</span>
           <span className="rounded-full bg-[#ffe0de] px-2 py-1 text-[#9b2929]">{summary.busy} bận</span>
           {summary.maintenance > 0 ? <span className="rounded-full bg-[#ffedbd] px-2 py-1 text-[#76551d]">{summary.maintenance} bảo trì</span> : null}
         </div>
@@ -193,7 +193,7 @@ export function AdminRoomOperations() {
             <CalendarClock size={14} className="shrink-0 text-[#a76b2b]" />
             <input type="datetime-local" value={selectedAtLocal} onChange={(event) => { setSelectedAtLocal(event.target.value); setLiveMode(false); }} className="min-w-0 flex-1 bg-transparent text-[10px] outline-none" aria-label="Chọn ngày giờ xem sơ đồ" />
           </label>
-          <button type="button" onClick={resetToNow} className={cn("min-h-9 rounded-lg px-3 text-[10px] font-bold transition", liveMode ? "bg-[#176a4c] text-white" : "border border-[#d2ad5d] bg-[#fffaf0] text-[#7a5324]")}><WandSparkles size={13} className="mr-1 inline" />Bây giờ</button>
+          <button type="button" onClick={resetToNow} className={cn("min-h-9 rounded-lg px-3 text-[10px] font-bold transition", liveMode ? "bg-[#76551d] text-white" : "border border-[#d2ad5d] bg-[#fffaf0] text-[#7a5324]")}><WandSparkles size={13} className="mr-1 inline" />Bây giờ</button>
         </div>
         <div className="mt-1.5 flex items-center justify-between px-0.5 text-[8px] text-[#826f66]">
           <span>{liveMode ? "Đang theo dõi trực tiếp" : `Đang xem trước: ${payload ? fullDateTime(payload.selectedAt) : "..."}`}</span>
@@ -202,7 +202,7 @@ export function AdminRoomOperations() {
       </section>
 
       {error ? <p className="mt-3 rounded-xl bg-red-50 p-3 text-xs text-red-700">{error}</p> : null}
-      {loading && !payload ? <div className="mt-3 flex min-h-48 items-center justify-center rounded-2xl border border-[#e7d6ca] bg-white text-[#0b5d45]"><Loader2 className="mr-2 animate-spin" size={18} /> Đang tải sơ đồ...</div> : null}
+      {loading && !payload ? <div className="mt-3 flex min-h-48 items-center justify-center rounded-2xl border border-[#e7d6ca] bg-white text-[#76551d]"><Loader2 className="mr-2 animate-spin" size={18} /> Đang tải sơ đồ...</div> : null}
 
       <div className="mt-3 space-y-3">
         {(payload?.branches ?? []).map((branch) => {
@@ -218,7 +218,7 @@ export function AdminRoomOperations() {
             <section key={branch.id} className="rounded-2xl border border-[#d2ad5d]/50 bg-white p-2.5 shadow-sm sm:p-3">
               <div className="mb-2 flex items-center justify-between gap-2">
                 <div><h2 className="text-sm font-semibold">{branch.label}</h2><p className="text-[9px] text-[#826f66]">{branchRooms.filter((room) => room.liveStatus === "AVAILABLE").length}/{branchRooms.length} vị trí rảnh tại thời điểm đã chọn</p></div>
-                <span className="flex shrink-0 items-center gap-1.5 text-[8px] text-[#826f66]"><i className="h-2 w-2 rounded-sm bg-[#228965]" /> Rảnh <i className="h-2 w-2 rounded-sm bg-[#d34a4a]" /> Bận</span>
+                <span className="flex shrink-0 items-center gap-1.5 text-[8px] text-[#826f66]"><i className="h-2 w-2 rounded-sm bg-[#a85f29]" /> Rảnh <i className="h-2 w-2 rounded-sm bg-[#d34a4a]" /> Bận</span>
               </div>
               <div className="space-y-2.5">
                 {bedGroups.map((group) => (

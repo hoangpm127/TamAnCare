@@ -29,7 +29,7 @@ import { BrandWordmark } from "@/components/brand-wordmark";
 
 const QUICK_ACTIONS: { href: string; label: string; icon: LucideIcon; tone: string }[] = [
   { href: "/don-cua-toi?tab=upcoming", label: "Lịch đã đặt", icon: CalendarClock, tone: "bg-[#fae9e4] text-[#c64b32] ring-[#c64b32]/10" },
-  { href: "/don-cua-toi?tab=history", label: "Lịch sử", icon: Receipt, tone: "bg-[#edf6f2] text-[#0b5d45] ring-[#0b5d45]/10" },
+  { href: "/don-cua-toi?tab=history", label: "Lịch sử", icon: Receipt, tone: "bg-[#fbf2e7] text-[#76551d] ring-[#76551d]/10" },
   { href: "/uu-dai", label: "Ưu đãi", icon: Gift, tone: "bg-[#fbf1d8] text-[#76551d] ring-[#c59a3d]/15" },
   { href: "/ru-ban", label: "Affiliate", icon: BadgePercent, tone: "bg-[#f8ebe5] text-[#7c2927] ring-[#7c2927]/10" },
 ];
@@ -134,7 +134,7 @@ export default async function Home() {
         <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
           {[
             { title: "Giá rõ ràng", body: "Hiển thị đúng giá dịch vụ trước khi đặt, không phát sinh.", accent: "#c64b32" },
-            { title: "Chọn KTV", body: "Chọn KTV yêu thích hoặc để hệ thống gợi ý người còn slot.", accent: "#0b5d45" },
+            { title: "Chọn KTV", body: "Chọn KTV yêu thích hoặc để hệ thống gợi ý người còn slot.", accent: "#76551d" },
             { title: "Không trùng lịch", body: "Kiểm tra KTV và phòng/giường với buffer 15 phút.", accent: "#9f7428" },
             { title: "Không làm phiền", body: "Chỉ nhắc lịch đúng lúc theo cài đặt của bạn, không gọi quảng cáo.", accent: "#7c2927" },
           ].map(({ title, body, accent }) => (
@@ -227,8 +227,8 @@ export default async function Home() {
       </section>
 
       <section className="mx-auto max-w-7xl px-4 pb-4 pt-2 sm:px-6 lg:px-10">
-        <div className="relative overflow-hidden rounded-2xl border border-[#c59a3d]/45 bg-gradient-to-br from-[#073d31] via-[#0b5d45] to-[#176f54] text-white shadow-[0_18px_42px_rgba(7,61,49,0.2)]">
-          <div className="pointer-events-none absolute -right-12 -top-12 h-48 w-48 rounded-full bg-[#e8cf8a]/16 blur-3xl" />
+        <div className="relative overflow-hidden rounded-2xl border border-[#e8c45f]/45 bg-gradient-to-br from-[#680d13] via-[#8f1719] to-[#bd3b21] text-white shadow-xl">
+          <div className="pointer-events-none absolute -right-12 -top-12 h-48 w-48 rounded-full bg-[#e3b23c]/15 blur-3xl" />
           <div className="relative grid gap-5 p-5 sm:p-7 lg:grid-cols-[1.05fr_0.95fr] lg:gap-8">
             <div className="text-center">
               <span className="mx-auto inline-flex items-center gap-1.5 rounded-full border border-[#c59a3d]/35 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-[#e7c878]">
@@ -276,9 +276,9 @@ export default async function Home() {
       </section>
 
       <section className="mx-auto max-w-7xl px-4 pb-8 pt-2 sm:px-6 lg:px-10">
-        <div className="overflow-hidden rounded-2xl border border-[#c59a3d]/35 bg-gradient-to-br from-[#fffdf9] via-[#fbf3e8] to-[#edf6f2] text-[#281b18] shadow-[0_12px_30px_rgba(76,25,27,0.08)]">
+        <div className="overflow-hidden rounded-2xl border border-[#c59a3d]/35 bg-gradient-to-br from-[#fffdf9] via-[#fbf3e8] to-[#fbf2e7] text-[#281b18] shadow-[0_12px_30px_rgba(76,25,27,0.08)]">
           <div className="px-5 pt-5 sm:px-7 sm:pt-7">
-            <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-[#0b5d45]">
+            <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-[#76551d]">
               <ShieldCheck size={13} /> Vận hành minh bạch
             </p>
           </div>
@@ -295,19 +295,19 @@ export default async function Home() {
             </div>
             <div className="space-y-3.5 border-t border-[#e7d6ca] pt-4 text-xs md:border-t-0 md:border-l md:pl-5 md:pt-0">
               <div>
-                <p className="flex items-center gap-1.5 font-semibold text-[#0b5d45]">
+                <p className="flex items-center gap-1.5 font-semibold text-[#76551d]">
                   <CalendarCheck size={13} /> Quy trình
                 </p>
                 <p className="mt-1 text-[#68574f]">Chọn dịch vụ → đặt lịch → đến đúng giờ.</p>
               </div>
               <div>
-                <p className="flex items-center gap-1.5 font-semibold text-[#0b5d45]">
+                <p className="flex items-center gap-1.5 font-semibold text-[#76551d]">
                   <QrCode size={13} /> Voucher đang chạy
                 </p>
                 <p className="mt-1 text-[#68574f]">{vouchers.map((voucher) => voucher.code).join(" · ")}</p>
               </div>
               <div>
-                <p className="flex items-center gap-1.5 font-semibold text-[#0b5d45]">
+                <p className="flex items-center gap-1.5 font-semibold text-[#76551d]">
                   <MapPin size={13} /> Địa chỉ
                 </p>
                 <div className="mt-1.5 space-y-1.5">

@@ -73,7 +73,7 @@ function monthTitle(value: Date) {
 function statusView(rawStatus: string) {
   if (rawStatus === "PENDING") return { label: "Chờ xác nhận", badge: "bg-[#fff0c9] text-[#76551d]", dot: "bg-[#d99a22]" };
   if (["CHECKED_IN", "IN_SERVICE"].includes(rawStatus)) return { label: "Đang phục vụ", badge: "bg-[#ffe0de] text-[#c64b32]", dot: "bg-[#c33838]" };
-  if (rawStatus === "COMPLETED") return { label: "Hoàn thành", badge: "bg-[#dff5e8] text-[#0b6248]", dot: "bg-[#1d9a60]" };
+  if (rawStatus === "COMPLETED") return { label: "Hoàn thành", badge: "bg-[#f1e5dd] text-[#76551d]", dot: "bg-[#a85f29]" };
   if (["CANCELLED", "NO_SHOW"].includes(rawStatus)) return { label: rawStatus === "NO_SHOW" ? "Khách không đến" : "Đã hủy", badge: "bg-[#eee9e5] text-[#6f625b]", dot: "bg-[#9b8d84]" };
   return { label: "Đã xác nhận", badge: "bg-[#e6f0ff] text-[#2452b8]", dot: "bg-[#3b72d9]" };
 }
@@ -157,7 +157,7 @@ export function AdminCalendarOperations() {
             <span className="rounded-full bg-white/12 px-2.5 py-1">{monthEvents.length} Booking</span>
             <span className="rounded-full bg-[#fff0c9] px-2.5 py-1 text-[#76551d]">{waitingCount} chờ xác nhận</span>
             {activeCount ? <span className="rounded-full bg-[#ffe0de] px-2.5 py-1 text-[#c64b32]">{activeCount} đang phục vụ</span> : null}
-            <span className="rounded-full bg-[#e7f7ed] px-2.5 py-1 text-[#0b6248]">Dự kiến {formatMoney(expectedRevenue)}</span>
+            <span className="rounded-full bg-[#fbf2e7] px-2.5 py-1 text-[#76551d]">Dự kiến {formatMoney(expectedRevenue)}</span>
           </div>
         </div>
 
@@ -212,12 +212,12 @@ export function AdminCalendarOperations() {
                   )}
                 >
                   <span className={cn("flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-bold", isToday(day) ? "bg-[#c64b32] text-white" : selected ? "text-[#c64b32]" : "text-[#3c2d27]")}>{format(day, "d")}</span>
-                  {dayEvents.length ? <div className="mt-1 flex items-center justify-center gap-1 sm:mt-2"><strong className="text-[11px] text-[#8c332a] sm:text-xs">{dayEvents.length}</strong><i className="h-2 w-2 rounded-full bg-[#1d9a60]" /><span className="sr-only">lịch</span>{pending ? <i title={`${pending} chờ xác nhận`} className="h-1.5 w-1.5 rounded-full bg-[#d99a22]" /> : null}{serving ? <i title={`${serving} đang phục vụ`} className="h-1.5 w-1.5 rounded-full bg-[#c33838]" /> : null}</div> : <span className="mt-2 block text-center text-[8px] text-[#c1b5ae]">—</span>}
+                  {dayEvents.length ? <div className="mt-1 flex items-center justify-center gap-1 sm:mt-2"><strong className="text-[11px] text-[#8c332a] sm:text-xs">{dayEvents.length}</strong><i className="h-2 w-2 rounded-full bg-[#a85f29]" /><span className="sr-only">lịch</span>{pending ? <i title={`${pending} chờ xác nhận`} className="h-1.5 w-1.5 rounded-full bg-[#d99a22]" /> : null}{serving ? <i title={`${serving} đang phục vụ`} className="h-1.5 w-1.5 rounded-full bg-[#c33838]" /> : null}</div> : <span className="mt-2 block text-center text-[8px] text-[#c1b5ae]">—</span>}
                 </button>
               );
             })}
           </div>
-          <div className="mt-2.5 flex flex-wrap items-center justify-center gap-3 text-[8px] text-[#756861]"><span><i className="mr-1 inline-block h-1.5 w-1.5 rounded-full bg-[#d99a22]" />Chờ xác nhận</span><span><i className="mr-1 inline-block h-1.5 w-1.5 rounded-full bg-[#c33838]" />Đang phục vụ</span><span><i className="mr-1 inline-block h-1.5 w-1.5 rounded-full bg-[#1d9a60]" />Đã xếp lịch</span></div>
+          <div className="mt-2.5 flex flex-wrap items-center justify-center gap-3 text-[8px] text-[#756861]"><span><i className="mr-1 inline-block h-1.5 w-1.5 rounded-full bg-[#d99a22]" />Chờ xác nhận</span><span><i className="mr-1 inline-block h-1.5 w-1.5 rounded-full bg-[#c33838]" />Đang phục vụ</span><span><i className="mr-1 inline-block h-1.5 w-1.5 rounded-full bg-[#a85f29]" />Đã xếp lịch</span></div>
         </div>
       </section>
 
@@ -243,7 +243,7 @@ export function AdminCalendarOperations() {
                   <p className="mt-1 truncate text-[10px] font-medium text-[#4b3b34]">{event.service}</p>
                   <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1 text-[9px] text-[#7d6e66]"><span className="flex items-center gap-1"><UserRound size={10} className="text-[#c64b32]" />{event.therapist}</span><span className="flex items-center gap-1"><MapPin size={10} className="text-[#c64b32]" />{branch?.label} · {event.room}</span><span className="flex items-center gap-1"><Clock3 size={10} className="text-[#c64b32]" />{event.phone} · {displayBookingCode(event.code)}</span></div>
                 </div>
-                <div className="col-start-2 flex items-center justify-between gap-3 rounded-lg bg-[#fbf2e7] px-2.5 py-2 text-[9px] sm:col-auto sm:min-w-[170px] sm:flex-col sm:items-end sm:bg-transparent sm:p-0"><span>Đã cọc <strong className="text-[#0b5d45]">{formatMoney(event.deposit)}</strong></span><strong className="text-[11px]">{formatMoney(event.amount)}</strong></div>
+                <div className="col-start-2 flex items-center justify-between gap-3 rounded-lg bg-[#fbf2e7] px-2.5 py-2 text-[9px] sm:col-auto sm:min-w-[170px] sm:flex-col sm:items-end sm:bg-transparent sm:p-0"><span>Đã cọc <strong className="text-[#76551d]">{formatMoney(event.deposit)}</strong></span><strong className="text-[11px]">{formatMoney(event.amount)}</strong></div>
               </article>;
             })}
           </div>

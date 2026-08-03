@@ -15,7 +15,7 @@ const KIND = {
   personal: { label: "Cá nhân", dot: "bg-[#c64b32]", text: "text-[#c64b32]", pale: "bg-[#fae9e4]" },
   friend: { label: "Rủ bạn", dot: "bg-[#d89a22]", text: "text-[#8a5a12]", pale: "bg-[#fff6df]" },
   boss: { label: "Mời sếp", dot: "bg-[#7654b8]", text: "text-[#5e3d9b]", pale: "bg-[#f2edff]" },
-  business: { label: "Business", dot: "bg-[#1d9a60]", text: "text-[#0b5d45]", pale: "bg-[#eaf8f0]" },
+  business: { label: "Business", dot: "bg-[#a85f29]", text: "text-[#76551d]", pale: "bg-[#fbf2e7]" },
 } as const;
 
 function monthTitle(value: Date) {
@@ -81,7 +81,7 @@ function BookingAutomationControl({ branchId }: { branchId: string }) {
           <button type="button" disabled={!view.canManage || saving} onClick={() => void changeMode("MANUAL")} className={cn("inline-flex items-center justify-center gap-1 rounded-md px-2 py-1.5 text-[9px] font-bold transition disabled:cursor-not-allowed", view.mode === "MANUAL" ? "bg-white text-[#63291d]" : "text-white/65")}><UserCheck size={11} /> Xác nhận thủ công</button>
         </div>
       ) : null}
-      {view?.automaticallyConfirmed ? <p className="mt-1 text-center text-[8px] font-semibold text-[#dff5e8]">Đã tự xác nhận {view.automaticallyConfirmed} lịch đủ điều kiện đang chờ.</p> : null}
+      {view?.automaticallyConfirmed ? <p className="mt-1 text-center text-[8px] font-semibold text-[#f1e5dd]">Đã tự xác nhận {view.automaticallyConfirmed} lịch đủ điều kiện đang chờ.</p> : null}
       {error ? <p className="mt-1 text-center text-[8px] font-semibold text-[#ffd7d1]">{error}</p> : null}
     </div>
   );
@@ -135,7 +135,7 @@ export function AdminBookingCalendar({
   return <section className="relative overflow-hidden rounded-2xl border border-[#d2ad5d]/60 bg-white shadow-[0_12px_32px_rgba(74,44,28,0.08)]">
     <div className="bg-gradient-to-r from-[#291714] via-[#63291d] to-[#c64b32] px-3.5 py-3 text-white sm:px-5">
       <div className="grid grid-cols-[36px_minmax(0,1fr)_36px] items-center gap-2"><span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 text-[#e7c878] ring-1 ring-white/15"><CalendarClock size={17} /></span><div className="min-w-0 text-center"><p className="flex items-center justify-center gap-1 text-[9px] font-bold uppercase tracking-[0.13em] text-[#e7c878]">{session.role === "OWNER" ? <ShieldCheck size={11} /> : <Building2 size={11} />} {session.branchLabel}</p><h1 className="truncate text-base font-semibold sm:text-lg">Quản lý Booking</h1></div><button type="button" onClick={onCreate} className="flex h-9 w-9 items-center justify-center rounded-full bg-[#c59a3d] text-[#3d1f12]" aria-label="Tạo booking"><Plus size={16} /></button></div>
-      <div className="mt-2.5 flex flex-wrap items-center justify-center gap-1.5 text-[9px] font-semibold"><span className="rounded-full bg-white/12 px-2.5 py-1">{monthRegular.length + monthBusiness.length} Booking</span><span className="rounded-full bg-[#fff0c9] px-2.5 py-1 text-[#76551d]">{pending} chờ xử lý</span><span className="rounded-full bg-[#dff5e8] px-2.5 py-1 text-[#0b6248]">{confirmed} đã xếp lịch</span></div>
+      <div className="mt-2.5 flex flex-wrap items-center justify-center gap-1.5 text-[9px] font-semibold"><span className="rounded-full bg-white/12 px-2.5 py-1">{monthRegular.length + monthBusiness.length} Booking</span><span className="rounded-full bg-[#fff0c9] px-2.5 py-1 text-[#76551d]">{pending} chờ xử lý</span><span className="rounded-full bg-[#f1e5dd] px-2.5 py-1 text-[#76551d]">{confirmed} đã xếp lịch</span></div>
       <BookingAutomationControl key={allowedBranch} branchId={allowedBranch} />
     </div>
 

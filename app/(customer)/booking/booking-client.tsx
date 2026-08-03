@@ -762,7 +762,7 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
             <div className="mt-2.5">
               <div className="mb-2 flex items-center justify-between gap-2 rounded-lg bg-[#f8f4f0] px-2.5 py-2 text-[10px]">
                 <span className="font-semibold text-[#68574f]">{selectedTherapist ? `Lịch của ${selectedTherapist.fullName}` : isGroupBooking ? `Năng lực cho nhóm ${totalPeople} người` : "Lịch còn nhận đặt"}</span>
-                <span className="flex shrink-0 items-center gap-2 text-[#826f66]"><i className="h-2.5 w-2.5 rounded-sm bg-[#228965]" /> Rảnh <i className="h-2.5 w-2.5 rounded-sm bg-[#d34a4a]" /> Bận</span>
+                <span className="flex shrink-0 items-center gap-2 text-[#826f66]"><i className="h-2.5 w-2.5 rounded-sm bg-[#a85f29]" /> Rảnh <i className="h-2.5 w-2.5 rounded-sm bg-[#d34a4a]" /> Bận</span>
               </div>
               {loadingSlots ? (
                 <div className="flex items-center gap-2 rounded-xl bg-[#fcf3ed] p-3 text-sm text-[#68574f]">
@@ -786,7 +786,7 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
                           active
                             ? "border-[#ad432f] bg-[#ad432f] text-white shadow-sm"
                             : canBook
-                              ? "border-[#8fd3ad] bg-[#fff4e6] text-[#0b6248] hover:border-[#ad432f]"
+                              ? "border-[#d2ad5d] bg-[#fff4e6] text-[#76551d] hover:border-[#ad432f]"
                               : "cursor-not-allowed border-[#efb5b2] bg-[#fff0ef] text-[#a93434] opacity-85"
                         )}
                       >
