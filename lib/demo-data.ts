@@ -1282,7 +1282,7 @@ export const campaigns = [
 export const packagePlans = [
   {
     id: "pkg-3",
-    name: "Khởi động Cổ Vai Gáy 3 buổi",
+    name: "Cổ Vai Gáy 3 buổi",
     serviceId: "svc-neck-60",
     paidSessions: 3,
     bonusSessions: 0,
