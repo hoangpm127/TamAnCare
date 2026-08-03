@@ -1,0 +1,157 @@
+@import "tailwindcss";
+
+:root {
+  --background: #fffaf6;
+  --foreground: #191414;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background:
+    radial-gradient(circle at 12% 0%, rgba(227, 178, 60, 0.07), transparent 50%),
+    radial-gradient(circle at 100% 8%, rgba(159, 29, 32, 0.05), transparent 42%),
+    var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-feature-settings: "cv11", "ss01";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3 {
+  letter-spacing: -0.015em;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  outline-color: #9f1d20;
+}
+
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.field {
+  min-height: 2.5rem;
+  width: 100%;
+  border: 1px solid #eadbd1;
+  border-radius: 0.75rem;
+  background: #fff;
+  padding: 0.625rem 0.75rem;
+  color: #2d211d;
+  font-size: 0.75rem;
+  line-height: 1.25rem;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.field:focus {
+  border-color: #9f1d20;
+  box-shadow: 0 0 0 3px rgba(159, 29, 32, 0.08);
+}
+
+button,
+a[href] {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.tap-feedback {
+  transition: opacity 120ms ease, transform 120ms ease, background-color 150ms ease, color 150ms ease;
+  touch-action: manipulation;
+}
+
+.tap-feedback:active {
+  opacity: 0.78;
+  transform: scale(0.97);
+}
+
+.route-link-wait {
+  display: flex;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.route-link-wait[data-pending="true"] {
+  visibility: visible;
+  animation: route-wait-reveal 160ms ease 140ms forwards;
+}
+
+.route-loading-progress {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 60;
+  height: 3px;
+  transform-origin: left;
+  background: linear-gradient(90deg, #9f1d20, #e3b23c, #16784a);
+  box-shadow: 0 1px 8px rgba(159, 29, 32, 0.28);
+  animation: route-progress 1.25s ease-in-out infinite;
+}
+
+.route-loading-content {
+  opacity: 0;
+  transform: translateY(4px);
+  animation: route-content-reveal 180ms ease 120ms forwards;
+}
+
+.route-skeleton {
+  position: relative;
+  overflow: hidden;
+}
+
+.route-skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.68), transparent);
+  animation: route-skeleton-shimmer 1.2s ease-in-out infinite;
+}
+
+@keyframes route-wait-reveal {
+  to { opacity: 1; }
+}
+
+@keyframes route-progress {
+  0% { transform: scaleX(0.08); opacity: 0.7; }
+  55% { transform: scaleX(0.72); opacity: 1; }
+  100% { transform: scaleX(0.94); opacity: 0.75; }
+}
+
+@keyframes route-content-reveal {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes route-skeleton-shimmer {
+  100% { transform: translateX(100%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tap-feedback,
+  .route-link-wait,
+  .route-loading-content,
+  .route-loading-progress,
+  .route-skeleton::after {
+    animation: none;
+    transition: none;
+  }
+
+  .route-loading-content,
+  .route-link-wait[data-pending="true"] {
+    opacity: 1;
+  }
+}

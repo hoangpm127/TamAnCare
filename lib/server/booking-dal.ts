@@ -1,0 +1,865 @@
+import "server-only";
+
+import { BOOKING_POLICY } from "@/lib/business-policy";
+
+import { addMinutes } from "date-fns";
+import { Prisma, type ServiceCategory } from "@/app/generated/prisma/client";
+import { db } from "@/lib/db";
+import { maybeAutoConfirmBookingGroup } from "@/lib/server/booking-automation";
+import { legalDocumentEvidence } from "@/lib/server/legal-documents";
+import { money, notifyCustomer, notifyOperations, notifyTherapist } from "@/lib/server/notification-service";
+import { buildPaymentCode } from "@/lib/server/payment-service";
+import { minimumTipForBookings, minimumTipForDuration } from "@/lib/tip-policy";
+import { calculatePaymentBreakdown } from "@/lib/payment-policy";
+import { affiliateCustomerId, affiliateOwnerEligible, normalizeAffiliateCode } from "@/lib/referral-policy";
+import { calculateVoucherDiscount, voucherRuleError } from "@/lib/server/voucher-rules";
+import { phoneVerificationRequired } from "@/lib/server/otp-delivery";
+import { bookingWindowError, intervalsOverlapWithBuffer, timeToMinutes } from "@/lib/scheduling-policy";
+
+const BUSINESS_TIME_ZONE = "Asia/Ho_Chi_Minh";
+const BUSINESS_OFFSET = "+07:00";
+const BLOCKING_STATUSES = ["PENDING", "CONFIRMED", "CHECKED_IN", "IN_SERVICE"] as const;
+const BOOKING_HOLD_MINUTES = 15;
+
+export class BookingConflictError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "BookingConflictError";
+  }
+}
+
+export type AvailabilityInput = {
+  serviceId: string;
+  date: string;
+  durationMinutes?: number;
+  therapistId?: string;
+  branchId?: string;
+  includeUnavailable?: boolean;
+};
+
+export type BookingUnitInput = {
+  bookingCode: string;
+  serviceId: string;
+  startTime: string;
+  therapistId?: string;
+  customerName?: string;
+  customerPhone?: string;
+  note?: string;
+  source?: string;
+};
+
+export type BookingGroupInput = {
+  referenceCode: string;
+  branchId: string;
+  customerName: string;
+  customerPhone: string;
+  voucherCode?: string;
+  campaignCode?: string;
+  relationship?: "SELF" | "FRIEND" | "BOSS";
+  careNote?: string;
+  source?: string;
+  bankCode?: string;
+  guestSessionId?: string;
+  authenticatedCustomerId?: string;
+  actorUserId?: string;
+  auditIpHash?: string;
+  consent?: {
+    subjectHash?: string;
+    ipHash?: string;
+    userAgentHash?: string;
+  };
+  units: BookingUnitInput[];
+};
+
+function parseBusinessDateTime(value: string) {
+  const hasZone = /(?:Z|[+-]\d{2}:?\d{2})$/i.test(value);
+  return new Date(hasZone ? value : `${value.slice(0, 19)}${BUSINESS_OFFSET}`);
+}
+
+function businessDayRange(date: string) {
+  const start = new Date(`${date}T00:00:00${BUSINESS_OFFSET}`);
+  return { start, end: addMinutes(start, 24 * 60) };
+}
+
+function businessParts(value: Date) {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: BUSINESS_TIME_ZONE,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(value);
+  const part = (type: Intl.DateTimeFormatPartTypes) => parts.find((item) => item.type === type)?.value ?? "";
+  return {
+    date: `${part("year")}-${part("month")}-${part("day")}`,
+    time: `${part("hour")}:${part("minute")}`,
+    minuteOfDay: Number(part("hour")) * 60 + Number(part("minute")),
+  };
+}
+
+function toBusinessIso(value: Date) {
+  const parts = businessParts(value);
+  return `${parts.date}T${parts.time}:00${BUSINESS_OFFSET}`;
+}
+
+function normalizePhone(value: string) {
+  const cleaned = value.replace(/[^0-9+]/g, "");
+  return cleaned || value.trim();
+}
+
+async function findAvailability(
+  client: typeof db,
+  input: AvailabilityInput,
+) {
+  const branch = await client.branch.findUnique({ where: { id: input.branchId ?? "cs1" } });
+  const service = await client.service.findUnique({ where: { id: input.serviceId } });
+  if (!branch || !service || !service.isActive || !service.isOnline) return [];
+
+  const duration = input.durationMinutes ?? service.durationMin;
+  const day = businessDayRange(input.date);
+  const [therapists, rooms, dayBookings] = await Promise.all([
+    client.therapist.findMany({
+      where: {
+        branchId: branch.id,
+        status: "ACTIVE",
+        onlineBooking: true,
+        ...(input.therapistId ? { id: input.therapistId } : {}),
+        services: { some: { id: service.id } },
+      },
+      select: { id: true, fullName: true, ratingAvg: true },
+      orderBy: [{ ratingAvg: "desc" }, { fullName: "asc" }],
+    }),
+    client.room.findMany({
+      where: { branchId: branch.id, status: "ACTIVE", suitableCategories: { has: service.category } },
+      select: { id: true, name: true, type: true },
+      orderBy: { name: "asc" },
+    }),
+    client.booking.findMany({
+      where: {
+        branchId: branch.id,
+        status: { in: [...BLOCKING_STATUSES] },
+        startTime: { lt: day.end },
+        endTime: { gt: day.start },
+      },
+      select: { startTime: true, endTime: true, therapistId: true, roomId: true },
+    }),
+  ]);
+
+  const openMinute = timeToMinutes(branch.openTime);
+  const lastBookingMinute = timeToMinutes(branch.lastBookingTime);
+  const now = new Date();
+  const slots = [];
+
+  for (let minute = openMinute; minute <= lastBookingMinute; minute += 30) {
+    if (bookingWindowError({
+      startMinute: minute,
+      durationMinutes: duration,
+      openTime: branch.openTime,
+      closeTime: branch.closeTime,
+      lastBookingTime: branch.lastBookingTime,
+    })) continue;
+    const start = addMinutes(day.start, minute);
+    const end = addMinutes(start, duration);
+    if (start < now) continue;
+
+    const availableTherapists = therapists.filter((therapist) =>
+      !dayBookings.some((booking) => booking.therapistId === therapist.id && intervalsOverlapWithBuffer(start, end, booking.startTime, booking.endTime, branch.bufferMinutes)),
+    );
+    const availableRooms = rooms.filter((room) =>
+      !dayBookings.some((booking) => booking.roomId === room.id && intervalsOverlapWithBuffer(start, end, booking.startTime, booking.endTime, branch.bufferMinutes)),
+    );
+    const remainingCapacity = Math.min(availableTherapists.length, availableRooms.length, branch.seatCapacity);
+    const isAvailable = remainingCapacity > 0;
+    if (isAvailable || input.includeUnavailable) {
+      slots.push({
+        startTime: toBusinessIso(start),
+        endTime: toBusinessIso(end),
+        availableTherapists,
+        availableRooms,
+        remainingCapacity,
+        isAvailable,
+      });
+    }
+  }
+
+  return slots;
+}
+
+export async function getAvailableSlotsFromDatabase(input: AvailabilityInput) {
+  await expireUnpaidBookingHolds();
+  return findAvailability(db, input);
+}
+
+export async function expireUnpaidBookingHolds() {
+  const now = new Date();
+  const expired = await db.bookingGroup.findMany({
+    where: { status: "PENDING", paymentStatus: "UNPAID", holdExpiresAt: { lte: now } },
+    select: { id: true, referenceCode: true, customerId: true, branchId: true },
+    take: 500,
+  });
+  if (!expired.length) return 0;
+  const groupIds = expired.map((item) => item.id);
+  await db.$transaction(async (tx) => {
+    await tx.paymentTransaction.updateMany({
+      where: { bookingGroupId: { in: groupIds }, status: "PENDING" },
+      data: { status: "VOID", note: "Hết thời gian giữ chỗ trước khi đối soát." },
+    });
+    await tx.voucherUsage.updateMany({
+      where: { booking: { groupId: { in: groupIds } }, status: "RESERVED" },
+      data: { status: "CANCELLED" },
+    });
+    await tx.booking.updateMany({ where: { groupId: { in: groupIds }, status: "PENDING" }, data: { status: "CANCELLED" } });
+    await tx.bookingGroup.updateMany({ where: { id: { in: groupIds }, status: "PENDING" }, data: { status: "CANCELLED" } });
+    for (const group of expired) {
+      await notifyCustomer(tx, group.customerId, {
+        branchId: group.branchId,
+        type: "BOOKING",
+        title: "Khung giờ giữ chỗ đã hết hạn",
+        body: `${group.referenceCode} chưa nhận được khoản cọc trong ${BOOKING_HOLD_MINUTES} phút nên đã trả lại khung giờ. Bạn có thể chọn lịch mới ngay.`,
+        actionUrl: "/booking",
+      });
+    }
+  });
+  return groupIds.length;
+}
+
+export async function createBookingGroup(input: BookingGroupInput) {
+  await expireUnpaidBookingHolds();
+  return db.$transaction(
+    async (tx) => {
+      const existing = await tx.bookingGroup.findUnique({
+        where: { referenceCode: input.referenceCode },
+        include: {
+          branch: true,
+          customer: true,
+          payments: { orderBy: { createdAt: "desc" } },
+          bookings: {
+            include: { service: true, therapist: true, room: true, customerPackage: { include: { packagePlan: true } } },
+            orderBy: { startTime: "asc" },
+          },
+        },
+      });
+      if (existing) {
+        if (input.authenticatedCustomerId && existing.customerId !== input.authenticatedCustomerId) {
+          throw new BookingConflictError("Mã yêu cầu đã được sử dụng.");
+        }
+        if (input.guestSessionId) {
+          const existingGrant = await tx.bookingAccessGrant.findUnique({
+            where: { guestSessionId_bookingGroupId: { guestSessionId: input.guestSessionId, bookingGroupId: existing.id } },
+          });
+          if (!existingGrant || existingGrant.expiresAt <= new Date()) throw new BookingConflictError("Mã yêu cầu đã được sử dụng.");
+        }
+        return existing;
+      }
+
+      const branch = await tx.branch.findUnique({ where: { id: input.branchId } });
+      if (!branch) throw new BookingConflictError("Cơ sở không tồn tại hoặc đang tạm ngưng nhận lịch.");
+      if (input.units.length < 1 || input.units.length > 16) throw new BookingConflictError("Số người trong một booking phải từ 1 đến 16.");
+
+      const serviceIds = [...new Set(input.units.map((unit) => unit.serviceId))];
+      const serviceRecords = await tx.service.findMany({ where: { id: { in: serviceIds }, isActive: true, isOnline: true } });
+      if (serviceRecords.length !== serviceIds.length) throw new BookingConflictError("Có dịch vụ không còn nhận lịch online.");
+
+      const customer = input.authenticatedCustomerId
+        ? await tx.customer.findUnique({ where: { id: input.authenticatedCustomerId } })
+        : await tx.customer.upsert({
+            where: { phone: normalizePhone(input.customerPhone) },
+            create: {
+              fullName: input.customerName.trim() || "Khách Tâm An",
+              phone: normalizePhone(input.customerPhone),
+              firstSource: input.source ?? "WEB_APP",
+              commonIssues: [],
+            },
+            update: { fullName: input.customerName.trim() || undefined },
+          });
+      if (!customer) throw new BookingConflictError("Không tìm thấy hồ sơ khách hàng đã đăng nhập.");
+
+      const subtotalAmount = input.units.reduce((sum, unit) => {
+        const service = serviceRecords.find((item) => item.id === unit.serviceId)!;
+        return sum + service.basePrice + service.therapistFee;
+      }, 0);
+
+      const now = new Date();
+      const normalizedVoucherCode = input.voucherCode?.trim().toUpperCase();
+      const voucher = normalizedVoucherCode
+        ? await tx.voucher.findFirst({
+            where: {
+              code: normalizedVoucherCode,
+              isActive: true,
+              OR: [{ startsAt: null }, { startsAt: { lte: now } }],
+              AND: [{ OR: [{ endsAt: null }, { endsAt: { gte: now } }] }],
+            },
+          })
+        : null;
+      const normalizedCampaignCode = normalizeAffiliateCode(input.campaignCode);
+      const campaign = normalizedCampaignCode
+        ? await tx.campaign.findFirst({ where: { code: normalizedCampaignCode, source: { startsWith: "AFFILIATE:" } } })
+        : null;
+      if (input.campaignCode && !campaign) throw new BookingConflictError("Mã Affiliate không tồn tại hoặc đã ngừng hoạt động.");
+      const affiliateOwnerCustomerId = affiliateCustomerId(campaign?.source);
+      const affiliateOwner = affiliateOwnerCustomerId
+        ? await tx.customerAccount.findUnique({ where: { customerId: affiliateOwnerCustomerId }, select: { phoneVerifiedAt: true } })
+        : null;
+      if (campaign && !affiliateOwnerEligible(affiliateOwner, phoneVerificationRequired())) {
+        throw new BookingConflictError("Mã Affiliate chưa được kích hoạt hoặc đã tạm ngừng.");
+      }
+      if (affiliateOwnerCustomerId === customer.id) {
+        throw new BookingConflictError("Bạn không thể dùng mã Affiliate của chính mình.");
+      }
+      if (normalizedVoucherCode && !voucher) throw new BookingConflictError("Mã ưu đãi không còn hiệu lực.");
+      if (voucher?.serviceId && serviceIds.some((serviceId) => serviceId !== voucher.serviceId)) {
+        throw new BookingConflictError("Ưu đãi này không áp dụng cho dịch vụ đã chọn.");
+      }
+      const customerAccount = voucher && input.authenticatedCustomerId && (voucher.requiresVerifiedPhone || voucher.code === "WELCOME100")
+        ? await tx.customerAccount.findUnique({ where: { customerId: customer.id } })
+        : null;
+      if (voucher) {
+        const ruleError = voucherRuleError(voucher, {
+          subtotal: subtotalAmount,
+          serviceDurations: input.units.map((unit) => serviceRecords.find((item) => item.id === unit.serviceId)!.durationMin),
+          bookingStartTime: input.units[0]?.startTime,
+          authenticated: Boolean(input.authenticatedCustomerId),
+          phoneVerified: Boolean(customerAccount?.phoneVerifiedAt),
+          customer,
+        });
+        if (ruleError) throw new BookingConflictError(ruleError);
+      }
+      const activeUsageFilter = {
+        OR: [
+          { status: "CONFIRMED" },
+          { status: "RESERVED", expiresAt: { gt: now } },
+        ],
+      } satisfies Prisma.VoucherUsageWhereInput;
+      if (voucher?.maxUsage) {
+        const used = await tx.voucherUsage.count({ where: { voucherId: voucher.id, ...activeUsageFilter } });
+        if (used >= voucher.maxUsage) throw new BookingConflictError("Ưu đãi đã hết lượt sử dụng.");
+      }
+      if (voucher?.maxPerCustomer) {
+        const used = await tx.voucherUsage.count({ where: { voucherId: voucher.id, customerId: customer.id, ...activeUsageFilter } });
+        if (used >= voucher.maxPerCustomer) throw new BookingConflictError("Khách hàng đã sử dụng hoặc đang giữ ưu đãi này.");
+      }
+      if (
+        voucher?.code === "WELCOME100"
+        && (!input.authenticatedCustomerId || !customerAccount || customerAccount.creditBalance <= 0)
+      ) {
+        throw new BookingConflictError("Ưu đãi 100K chỉ dành cho tài khoản thành viên mới.");
+      }
+
+      const packageCandidates = !voucher && input.authenticatedCustomerId
+        ? await tx.customerPackage.findMany({
+            where: {
+              customerId: customer.id,
+              status: "ACTIVE",
+              sessionsRemaining: { gte: input.units.length },
+              expiresAt: { gte: now },
+            },
+            include: { packagePlan: true },
+            orderBy: [{ expiresAt: "asc" }, { createdAt: "asc" }],
+            take: 20,
+          })
+        : [];
+      const activePackage = packageCandidates.find((item) => {
+        const serviceEligible = !item.packagePlan.serviceId || serviceIds.every((serviceId) => serviceId === item.packagePlan.serviceId);
+        const groupEligible = input.units.length === 1 || item.packagePlan.shareable;
+        return serviceEligible && groupEligible;
+      }) ?? null;
+
+      const requestedDiscount = activePackage ? subtotalAmount : calculateVoucherDiscount(voucher, subtotalAmount);
+      const paymentBreakdown = calculatePaymentBreakdown({
+        originalAmount: subtotalAmount,
+        discountAmount: requestedDiscount,
+        depositPercent: BOOKING_POLICY.depositPercent,
+        prepaid: Boolean(activePackage),
+      });
+      const { discountAmount, totalAmount, depositAmount } = paymentBreakdown;
+      const holdExpiresAt = depositAmount > 0 ? addMinutes(now, BOOKING_HOLD_MINUTES) : null;
+
+      const group = await tx.bookingGroup.create({
+        data: {
+          referenceCode: input.referenceCode,
+          branchId: branch.id,
+          customerId: customer.id,
+          subtotalAmount,
+          discountAmount,
+          totalAmount,
+          depositAmount,
+          paidAmount: 0,
+          voucherCode: voucher?.code,
+          relationship: input.relationship ?? "SELF",
+          careNote: input.careNote,
+          source: input.source,
+          status: "PENDING",
+          paymentStatus: depositAmount > 0 ? "UNPAID" : "PAID",
+          holdExpiresAt,
+        },
+      });
+
+      if (input.guestSessionId) {
+        await tx.bookingAccessGrant.create({
+          data: {
+            guestSessionId: input.guestSessionId,
+            bookingGroupId: group.id,
+            expiresAt: new Date(Date.now() + 180 * 24 * 60 * 60 * 1000),
+          },
+        });
+      }
+
+      if (input.consent) {
+        const grantedAt = new Date();
+        const documents = [
+          legalDocumentEvidence("TERMS"),
+          legalDocumentEvidence("PRIVACY"),
+          legalDocumentEvidence("BOOKING_POLICY"),
+        ];
+        await tx.consentRecord.createMany({
+          data: documents.map((document) => ({
+            customerId: customer.id,
+            guestSessionId: input.guestSessionId,
+            bookingGroupId: group.id,
+            ...document,
+            source: "ONLINE_BOOKING" as const,
+            granted: true,
+            subjectHash: input.consent?.subjectHash,
+            ipHash: input.consent?.ipHash,
+            userAgentHash: input.consent?.userAgentHash,
+            grantedAt,
+          })),
+        });
+      }
+
+      const reserved: { therapistId: string; roomId: string; start: Date; end: Date }[] = [];
+      const bookingRecords = [];
+      let allocatedDiscount = discountAmount;
+      let allocatedDeposit = 0;
+
+      for (const [index, unit] of input.units.entries()) {
+        const service = serviceRecords.find((item) => item.id === unit.serviceId)!;
+        const start = parseBusinessDateTime(unit.startTime);
+        const end = addMinutes(start, service.durationMin);
+        const startParts = businessParts(start);
+        const startMinute = startParts.minuteOfDay;
+        if (start < new Date()) throw new BookingConflictError("Khung giờ đã qua, vui lòng chọn lại.");
+        const scheduleError = bookingWindowError({
+          startMinute,
+          durationMinutes: service.durationMin,
+          openTime: branch.openTime,
+          closeTime: branch.closeTime,
+          lastBookingTime: branch.lastBookingTime,
+        });
+        if (scheduleError) throw new BookingConflictError(scheduleError);
+
+        const therapistCandidates = await tx.therapist.findMany({
+          where: {
+            branchId: branch.id,
+            status: "ACTIVE",
+            onlineBooking: true,
+            ...(unit.therapistId ? { id: unit.therapistId } : {}),
+            services: { some: { id: service.id } },
+          },
+          orderBy: unit.therapistId
+            ? [{ ratingAvg: "desc" }, { fullName: "asc" }]
+            : [{ servedCount: "asc" }, { ratingAvg: "desc" }, { fullName: "asc" }],
+        });
+        const roomCandidates = await tx.room.findMany({
+          where: { branchId: branch.id, status: "ACTIVE", suitableCategories: { has: service.category as ServiceCategory } },
+          orderBy: { name: "asc" },
+        });
+        const conflicts = await tx.booking.findMany({
+          where: {
+            branchId: branch.id,
+            status: { in: [...BLOCKING_STATUSES] },
+            startTime: { lt: addMinutes(end, branch.bufferMinutes) },
+            endTime: { gt: addMinutes(start, -branch.bufferMinutes) },
+          },
+          select: { therapistId: true, roomId: true, startTime: true, endTime: true },
+        });
+
+        const therapist = therapistCandidates.find((candidate) =>
+          !conflicts.some((booking) => booking.therapistId === candidate.id) &&
+          !reserved.some((item) => item.therapistId === candidate.id && intervalsOverlapWithBuffer(start, end, item.start, item.end, branch.bufferMinutes)),
+        );
+        const room = roomCandidates.find((candidate) =>
+          !conflicts.some((booking) => booking.roomId === candidate.id) &&
+          !reserved.some((item) => item.roomId === candidate.id && intervalsOverlapWithBuffer(start, end, item.start, item.end, branch.bufferMinutes)),
+        );
+        if (!therapist || !room) throw new BookingConflictError("Khung giờ vừa hết chỗ. Vui lòng chọn giờ gần nhất.");
+
+        const unitSubtotal = service.basePrice + service.therapistFee;
+        const unitDiscount = activePackage ? unitSubtotal : Math.min(allocatedDiscount, unitSubtotal);
+        allocatedDiscount -= unitDiscount;
+        const unitTotal = unitSubtotal - unitDiscount;
+        const unitDeposit = index === input.units.length - 1
+          ? depositAmount - allocatedDeposit
+          : activePackage
+            ? 0
+            : Math.min(
+                Math.max(0, depositAmount - allocatedDeposit),
+                Math.round(unitSubtotal * BOOKING_POLICY.depositPercent / 100),
+              );
+        allocatedDeposit += unitDeposit;
+
+        const booking = await tx.booking.create({
+          data: {
+            bookingCode: unit.bookingCode,
+            groupId: group.id,
+            branchId: branch.id,
+            customerId: customer.id,
+            serviceId: service.id,
+            therapistId: therapist.id,
+            roomId: room.id,
+            voucherId: index === 0 ? voucher?.id : undefined,
+            campaignId: campaign?.id,
+            customerPackageId: activePackage?.id,
+            startTime: start,
+            endTime: end,
+            durationMin: service.durationMin,
+            basePrice: service.basePrice,
+            therapistFee: service.therapistFee,
+            discountAmount: unitDiscount,
+            totalAmount: unitTotal,
+            depositAmount: unitDeposit,
+            paidAmount: 0,
+            source: unit.source ?? input.source,
+            note: unit.note,
+            status: "PENDING",
+            paymentStatus: unitDeposit > 0 ? "UNPAID" : "PAID",
+          },
+        });
+        bookingRecords.push(booking);
+        reserved.push({ therapistId: therapist.id, roomId: room.id, start, end });
+      }
+
+      if (activePackage) {
+        const packageReservation = await tx.customerPackage.updateMany({
+          where: {
+            id: activePackage.id,
+            status: "ACTIVE",
+            sessionsRemaining: { gte: bookingRecords.length },
+            expiresAt: { gte: now },
+          },
+          data: {
+            sessionsRemaining: { decrement: bookingRecords.length },
+            sessionsReserved: { increment: bookingRecords.length },
+          },
+        });
+        if (packageReservation.count !== 1) {
+          throw new BookingConflictError("Gói dịch vụ vừa hết lượt khả dụng. Vui lòng kiểm tra lại.");
+        }
+      }
+
+      if (voucher && bookingRecords[0]) {
+        const voucherConfirmedImmediately = depositAmount === 0;
+        await tx.voucherUsage.create({
+          data: {
+            voucherId: voucher.id,
+            customerId: customer.id,
+            bookingId: bookingRecords[0].id,
+            status: voucherConfirmedImmediately ? "CONFIRMED" : "RESERVED",
+            expiresAt: voucherConfirmedImmediately ? null : holdExpiresAt,
+            confirmedAt: voucherConfirmedImmediately ? now : null,
+          },
+        });
+        if (voucherConfirmedImmediately && voucher.code === "WELCOME100" && customerAccount) {
+          await tx.customerAccount.update({
+            where: { id: customerAccount.id },
+            data: { creditBalance: Math.max(0, customerAccount.creditBalance - discountAmount) },
+          });
+          if (discountAmount > 0) {
+            await tx.ledgerEntry.create({
+              data: {
+                branchId: branch.id,
+                customerId: customer.id,
+                bookingGroupId: group.id,
+                bookingId: bookingRecords[0].id,
+                category: "WELCOME_CREDIT",
+                direction: "OUT",
+                amount: discountAmount,
+                description: `Quyền lợi thành viên mới WELCOME100 · ${group.referenceCode}`,
+              },
+            });
+          }
+        }
+      }
+
+      if (depositAmount > 0) {
+        await tx.paymentTransaction.create({
+          data: {
+            bookingGroupId: group.id,
+            branchId: branch.id,
+            customerId: customer.id,
+            type: "DEPOSIT",
+            direction: "IN",
+            status: "PENDING",
+            amount: depositAmount,
+            method: "BANK_TRANSFER_SEPAY",
+            bankCode: input.bankCode,
+            paymentCode: buildPaymentCode(group.referenceCode, "DEPOSIT"),
+            idempotencyKey: `deposit:${group.referenceCode}`,
+            note: "Cọc cho tài khoản nền tảng: 10% giá trị Bill ban đầu trước ưu đãi; chờ ngân hàng đối soát.",
+          },
+        });
+      }
+
+      const bookingAutomation = depositAmount === 0
+        ? await maybeAutoConfirmBookingGroup(tx, group.id)
+        : null;
+
+      if (activePackage) {
+        await notifyCustomer(tx, customer.id, {
+          branchId: branch.id,
+          type: "BOOKING",
+          title: bookingAutomation?.confirmed
+            ? "Chúc mừng! Lịch dùng gói đã được AI xác nhận"
+            : `Đã giữ ${bookingRecords.length} lượt từ ${activePackage.packagePlan.name}`,
+          body: bookingAutomation?.confirmed
+            ? `${group.referenceCode} đã được xếp ${bookingAutomation.assignments.map((item) => `${item.therapistName} · ${item.roomName}`).join(", ")}. Mở Đơn của tôi và dùng Camera quét QR tại cơ sở để check-in.`
+            : `${group.referenceCode} không cần đặt cọc thêm; cơ sở đang xác nhận lịch và vị trí phục vụ.`,
+          actionUrl: `/booking/success/${group.referenceCode}`,
+        });
+      } else if (depositAmount > 0) {
+        await notifyCustomer(tx, customer.id, {
+          branchId: branch.id,
+          type: "PAYMENT",
+          title: "Đã tạo yêu cầu cọc · Chờ đối soát",
+          body: `${group.referenceCode} được giữ trong ${BOOKING_HOLD_MINUTES} phút; vui lòng chuyển đúng ${money(depositAmount)} và nội dung hiển thị trên VietQR.`,
+          actionUrl: `/booking/success/${group.referenceCode}`,
+        });
+      } else {
+        await notifyCustomer(tx, customer.id, {
+          branchId: branch.id,
+          type: "BOOKING",
+          title: bookingAutomation?.confirmed ? "Chúc mừng! Lịch đã được AI xác nhận" : "Đã ghi nhận lịch không cần đặt cọc",
+          body: bookingAutomation?.confirmed
+            ? `${group.referenceCode} đã được xếp ${bookingAutomation.assignments.map((item) => `${item.therapistName} · ${item.roomName}`).join(", ")}. Bạn có thể mở Camera check-in trong Đơn của tôi.`
+            : `${group.referenceCode} đã áp dụng đủ ưu đãi; cơ sở đang xác nhận lịch.`,
+          actionUrl: `/booking/success/${group.referenceCode}`,
+        });
+      }
+      await notifyOperations(tx, {
+        branchId: branch.id,
+        type: "BOOKING",
+        title: bookingAutomation?.confirmed ? `AI đã xác nhận & điều phối · ${customer.fullName}` : `Yêu cầu booking mới · ${customer.fullName}`,
+        body: bookingAutomation?.confirmed
+          ? `${group.referenceCode} · ${bookingRecords.length} khách · ${bookingAutomation.assignments.map((item) => `${item.therapistName} tại ${item.roomName}`).join(", ")}. Không cần duyệt lại.`
+          : `${group.referenceCode} · ${bookingRecords.length} khách · ${activePackage ? `đã giữ lượt ${activePackage.packagePlan.name}` : depositAmount > 0 ? `chờ đối soát cọc ${money(depositAmount)}` : "không cần đặt cọc"}${group.relationship === "BOSS" ? " · Mời sếp, ưu tiên bố trí gần nhau" : group.relationship === "FRIEND" ? " · Mời bạn, ưu tiên bố trí gần nhau" : ""}.`,
+        actionUrl: "/admin/bookings",
+      });
+      if (bookingAutomation?.confirmed) {
+        for (const assignment of bookingAutomation.assignments) {
+          await notifyTherapist(tx, {
+            branchId: branch.id,
+            therapistName: assignment.therapistName,
+            type: "BOOKING",
+            title: `IQ Care vừa điều phối lịch mới · ${customer.fullName}`,
+            body: `${assignment.serviceName} · ${group.referenceCode} · ${assignment.roomName}. Lịch đã sẵn sàng trong Lịch của tôi.`,
+            actionUrl: `/therapist/bookings/${assignment.bookingCode}`,
+          });
+        }
+      }
+      if (input.actorUserId) {
+        await tx.adminAuditLog.create({
+          data: {
+            actorUserId: input.actorUserId,
+            branchId: branch.id,
+            action: "COUNTER_BOOKING_CREATE",
+            entityType: "BookingGroup",
+            entityId: group.id,
+            after: {
+              referenceCode: group.referenceCode,
+              customerId: customer.id,
+              bookingIds: bookingRecords.map((item) => item.id),
+              totalAmount,
+              depositAmount,
+              paymentStatus: group.paymentStatus,
+            },
+            ipHash: input.auditIpHash,
+          },
+        });
+      }
+
+      return tx.bookingGroup.findUniqueOrThrow({
+        where: { id: group.id },
+        include: {
+          bookings: { include: { service: true, therapist: true, room: true, customerPackage: { include: { packagePlan: true } } } },
+          payments: { orderBy: { createdAt: "desc" } },
+          branch: true,
+          customer: true,
+        },
+      });
+    },
+    { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },
+  );
+}
+
+export async function getBookingGroupByReference(referenceCode: string) {
+  await expireUnpaidBookingHolds();
+  return db.bookingGroup.findUnique({
+    where: { referenceCode },
+    include: {
+      branch: true,
+      customer: true,
+      payments: { orderBy: { createdAt: "desc" } },
+      bookings: {
+        include: { service: true, therapist: true, room: true, customerPackage: { include: { packagePlan: true } } },
+        orderBy: { startTime: "asc" },
+      },
+    },
+  });
+}
+
+export function bookingGroupToDto(group: NonNullable<Awaited<ReturnType<typeof getBookingGroupByReference>>>) {
+  const first = group.bookings[0];
+  const depositPayment = group.payments.find((item) => item.type === "DEPOSIT");
+  const checkoutPayment = group.payments.find((item) => item.type === "SERVICE_PAYMENT");
+  return {
+    id: group.id,
+    referenceCode: group.referenceCode,
+    bookingCode: group.referenceCode,
+    branchId: group.branchId,
+    branchLabel: group.branch.name.replace(/^Tâm An Care · /, ""),
+    branchAddress: group.branch.address,
+    customerName: group.customer.fullName,
+    customerPhone: group.customer.phone,
+    serviceLabel: group.bookings.map((item) => item.service.name).join(", "),
+    therapistName: group.bookings.map((item) => item.therapist?.fullName).filter(Boolean).join(", ") || "Cơ sở sắp xếp",
+    therapistIds: group.bookings.map((item) => item.therapistId).filter((id): id is string => Boolean(id)),
+    roomName: group.bookings.map((item) => item.room?.name).filter(Boolean).join(", "),
+    timeIso: first?.startTime.toISOString(),
+    durationMin: Math.max(...group.bookings.map((item) => item.durationMin), 0),
+    minimumTipAmount: minimumTipForBookings(group.bookings),
+    serviceId: first?.serviceId,
+    rescheduleCount: Math.max(...group.bookings.map((item) => item.rescheduleCount), 0),
+    subtotalAmount: group.subtotalAmount,
+    discountAmount: group.discountAmount,
+    voucherCode: group.voucherCode,
+    totalAmount: group.totalAmount,
+    depositAmount: group.depositAmount,
+    tipAmount: group.bookings.reduce((sum, item) => sum + item.tipAmount, 0),
+    dueAmount: Math.max(0, group.totalAmount - Math.min(group.paidAmount, group.totalAmount)),
+    paidAmount: group.paidAmount,
+    status: group.status,
+    paymentStatus: group.paymentStatus,
+    checkedInAt: first?.checkedInAt?.toISOString() ?? null,
+    checkoutRequestedAt: first?.checkoutRequestedAt?.toISOString() ?? null,
+    completedAt: first?.completedAt?.toISOString() ?? null,
+    holdExpiresAt: group.holdExpiresAt?.toISOString() ?? null,
+    usedPackage: Boolean(first?.customerPackageId),
+    customerPackageId: first?.customerPackageId ?? null,
+    packageName: first?.customerPackage?.packagePlan.name ?? null,
+    depositPayment: depositPayment ? {
+      id: depositPayment.id,
+      status: depositPayment.status,
+      amount: depositPayment.amount,
+      receivedAmount: depositPayment.receivedAmount,
+      paymentCode: depositPayment.paymentCode,
+      paidAt: depositPayment.paidAt?.toISOString(),
+    } : null,
+    checkoutPayment: checkoutPayment ? {
+      id: checkoutPayment.id,
+      status: checkoutPayment.status,
+      amount: checkoutPayment.amount,
+      receivedAmount: checkoutPayment.receivedAmount,
+      paymentCode: checkoutPayment.paymentCode,
+      paidAt: checkoutPayment.paidAt?.toISOString(),
+    } : null,
+    relationship: group.relationship,
+    careNote: group.careNote,
+    createdAt: group.createdAt.toISOString(),
+    items: group.bookings.map((item) => ({
+      bookingCode: item.bookingCode,
+      serviceId: item.serviceId,
+      name: item.service.name,
+      qty: 1,
+      amount: item.totalAmount,
+      subtotalAmount: item.basePrice + item.therapistFee,
+      startTime: item.startTime.toISOString(),
+      durationMin: item.durationMin,
+      rescheduleCount: item.rescheduleCount,
+      therapistName: item.therapist?.fullName,
+      roomName: item.room?.name,
+    })),
+  };
+}
+
+export function bookingToDto(booking: {
+  id: string;
+  bookingCode: string;
+  branchId: string;
+  customerId: string;
+  serviceId: string;
+  startTime: Date;
+  durationMin: number;
+  totalAmount: number;
+  depositAmount: number;
+  paidAmount: number;
+  tipAmount: number;
+  discountAmount: number;
+  rescheduleCount: number;
+  status: string;
+  paymentStatus: string;
+  checkedInAt: Date | null;
+  checkoutRequestedAt: Date | null;
+  completedAt: Date | null;
+  customerPackageId: string | null;
+  note: string | null;
+  createdAt: Date;
+  branch: { name: string; address: string };
+  customer: { fullName: string; phone: string };
+  service: { name: string };
+  therapist: { fullName: string } | null;
+  therapistId: string | null;
+  room: { name: string } | null;
+  customerPackage?: { packagePlan: { name: string } } | null;
+}) {
+  return {
+    id: booking.id,
+    referenceCode: booking.bookingCode,
+    bookingCode: booking.bookingCode,
+    branchId: booking.branchId,
+    branchLabel: booking.branch.name.replace(/^Tâm An Care · /, ""),
+    branchAddress: booking.branch.address,
+    customerName: booking.customer.fullName,
+    customerPhone: booking.customer.phone,
+    serviceLabel: booking.service.name,
+    therapistName: booking.therapist?.fullName ?? "Cơ sở sắp xếp",
+    therapistIds: booking.therapistId ? [booking.therapistId] : [],
+    roomName: booking.room?.name ?? "",
+    timeIso: booking.startTime.toISOString(),
+    durationMin: booking.durationMin,
+    minimumTipAmount: minimumTipForDuration(booking.durationMin),
+    serviceId: booking.serviceId,
+    rescheduleCount: booking.rescheduleCount,
+    subtotalAmount: booking.totalAmount + booking.discountAmount,
+    discountAmount: booking.discountAmount,
+    totalAmount: booking.totalAmount,
+    depositAmount: booking.depositAmount,
+    tipAmount: booking.tipAmount,
+    dueAmount: Math.max(0, booking.totalAmount - Math.min(booking.paidAmount, booking.totalAmount)),
+    paidAmount: booking.paidAmount,
+    status: booking.status,
+    paymentStatus: booking.paymentStatus,
+    checkedInAt: booking.checkedInAt?.toISOString() ?? null,
+    checkoutRequestedAt: booking.checkoutRequestedAt?.toISOString() ?? null,
+    completedAt: booking.completedAt?.toISOString() ?? null,
+    usedPackage: Boolean(booking.customerPackageId),
+    customerPackageId: booking.customerPackageId,
+    packageName: booking.customerPackage?.packagePlan.name ?? null,
+    relationship: "SELF",
+    careNote: booking.note,
+    createdAt: booking.createdAt.toISOString(),
+    items: [{
+      bookingCode: booking.bookingCode,
+      serviceId: booking.serviceId,
+      name: booking.service.name,
+      qty: 1,
+      amount: booking.totalAmount,
+      startTime: booking.startTime.toISOString(),
+      durationMin: booking.durationMin,
+      rescheduleCount: booking.rescheduleCount,
+      therapistName: booking.therapist?.fullName,
+      roomName: booking.room?.name,
+    }],
+  };
+}

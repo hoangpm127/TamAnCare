@@ -1,0 +1,1038 @@
+"use client";
+
+import Link from "next/link";
+import { addDays, format, isSameDay } from "date-fns";
+import { vi } from "date-fns/locale";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  Calendar,
+  Check,
+  ChevronDown,
+  Clock,
+  Gift,
+  Handshake,
+  Loader2,
+  MapPin,
+  Minus,
+  Percent,
+  Plus,
+  Receipt,
+  ShieldCheck,
+  Star,
+  Tag,
+  Ticket,
+  UserRound,
+  UserPlus,
+  Users,
+  Wallet,
+  X,
+} from "lucide-react";
+import type { PublicCatalog } from "@/lib/catalog-types";
+import { cn, formatMoney, makeBookingCode, stripDurationFromName } from "@/lib/utils";
+import { useReferralAttribution } from "@/lib/referral-attribution";
+import { TherapistAvatar } from "@/components/therapist-avatar";
+import { saveBookingPaymentDraft } from "@/lib/booking-payment-store";
+import { calculatePaymentBreakdown } from "@/lib/payment-policy";
+import { useCustomerProfile } from "@/lib/customer-profile-store";
+import { useVoucherInventory } from "@/lib/voucher-inventory";
+import { useCustomerAccount } from "@/lib/customer-account";
+import { useMembership } from "@/lib/membership";
+import { BOOKING_UI_DRAFT_KEY, BOOKING_UI_RESET_EVENT } from "@/lib/booking-ui-draft";
+
+type Slot = {
+  startTime: string;
+  endTime: string;
+  availableTherapists: { id: string; fullName: string; ratingAvg: number }[];
+  availableRooms: { id: string; name: string; type: string }[];
+  remainingCapacity: number;
+  isAvailable: boolean;
+};
+
+type CartLine = {
+  id: string;
+  serviceId: string;
+  people: number;
+};
+
+type BookingUiDraft = {
+  contextKey: string;
+  cart: CartLine[];
+  date: string;
+  branchId: string;
+  therapistId: string;
+  selectedSlotStartTime: string;
+  phoneInput: string | null;
+  nameInput: string | null;
+  note: string;
+  voucherCode: string;
+  voucherOptOut?: boolean;
+  showManualVoucher: boolean;
+  acceptPolicies: boolean;
+};
+
+const NEXT_DAYS = 10;
+
+export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
+  const { branches, services, therapists, vouchers } = catalog;
+  const params = useSearchParams();
+  const router = useRouter();
+  const customerProfile = useCustomerProfile();
+  const { account } = useCustomerAccount();
+  const membership = useMembership();
+  const voucherInventory = useVoucherInventory();
+  const bookableServices = useMemo(() => services.filter((item) => item.category !== "OFFICE"), [services]);
+  const bookingContextKey = params.toString();
+  const inviteMode = params.get("invite") === "boss" ? "boss" : params.get("invite") === "friend" ? "friend" : null;
+  const inviteContext = inviteMode === "boss"
+    ? {
+        relationship: "BOSS" as const,
+        title: "Đặt lịch đi cùng sếp / đối tác",
+        body: "Tâm An sẽ chuyển ghi chú tế nhị tới quản lý cơ sở để ưu tiên không gian lịch sự, yên tĩnh và giường gần nhau.",
+        note: "Mời sếp/đối tác đi cùng; ưu tiên không gian lịch sự, yên tĩnh và sắp xếp giường gần nhau để tiện trao đổi.",
+      }
+    : inviteMode === "friend"
+      ? {
+          relationship: "FRIEND" as const,
+          title: "Đặt lịch đi cùng bạn",
+          body: "Cơ sở sẽ chủ động xếp giường gần nhau để hai bạn cùng thư giãn và trò chuyện.",
+          note: "Mời bạn đi cùng; ưu tiên sắp xếp giường gần nhau.",
+        }
+      : null;
+
+  const preselectedTherapist = therapists.find((item) => item.id === params.get("therapist"));
+  const defaultServiceId = params.get("service") ?? preselectedTherapist?.serviceIds[0] ?? bookableServices[0].id;
+  const requestedBranchId = params.get("branch");
+  const defaultBranchId = preselectedTherapist?.branchId
+    ?? branches.find((item) => item.id === requestedBranchId)?.id
+    ?? branches[0]?.id
+    ?? "";
+  const defaultTherapistId = preselectedTherapist?.id ?? "";
+  const defaultPeople = inviteContext ? 2 : 1;
+  const defaultNote = inviteContext?.note ?? "";
+  const [cart, setCart] = useState<CartLine[]>(() => [
+    {
+      id: crypto.randomUUID(),
+      serviceId: defaultServiceId,
+      people: defaultPeople,
+    },
+  ]);
+  const [date, setDate] = useState(format(addDays(new Date(), 1), "yyyy-MM-dd"));
+  const [branchId, setBranchId] = useState(defaultBranchId);
+  const [therapistId, setTherapistId] = useState(defaultTherapistId);
+  const [showTherapistPicker, setShowTherapistPicker] = useState(Boolean(preselectedTherapist));
+  const [selectedSlotStartTime, setSelectedSlotStartTime] = useState("");
+  const [slots, setSlots] = useState<Slot[]>([]);
+  const [draftHydrated, setDraftHydrated] = useState(false);
+  const [phoneInput, setPhoneInput] = useState<string | null>(null);
+  const [nameInput, setNameInput] = useState<string | null>(null);
+  const phone = phoneInput ?? account?.phone ?? customerProfile.phone;
+  const nickName = nameInput ?? account?.fullName ?? customerProfile.fullName;
+  const [note, setNote] = useState(defaultNote);
+  const [voucherCode, setVoucherCode] = useState("");
+  const [voucherOptOut, setVoucherOptOut] = useState(false);
+  const autofilledAccountRef = useRef("");
+  const [showManualVoucher, setShowManualVoucher] = useState(false);
+  const source = params.get("utm_source") ?? params.get("source") ?? "Direct/QR";
+  const [loadingSlots, setLoadingSlots] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
+  const [voucherChecking, setVoucherChecking] = useState(false);
+  const [voucherPreview, setVoucherPreview] = useState({ valid: true, discountAmount: 0, message: "" });
+  const [acceptPolicies, setAcceptPolicies] = useState(false);
+
+  const anchorServiceId = cart[0]?.serviceId ?? bookableServices[0].id;
+  const anchorService = useMemo(
+    () => services.find((item) => item.id === anchorServiceId) ?? bookableServices[0],
+    [anchorServiceId, bookableServices, services]
+  );
+  const eligibleTherapists = therapists.filter(
+    (therapist) => therapist.serviceIds.includes(anchorServiceId) && therapist.status === "ACTIVE" && therapist.branchId === branchId
+  );
+  const selectedBranch = branches.find((item) => item.id === branchId);
+  const selectedTherapist = eligibleTherapists.find((item) => item.id === therapistId);
+  const totalPeople = cart.reduce((sum, line) => sum + line.people, 0);
+  const isGroupBooking = cart.length > 1 || totalPeople > 1;
+  // Đặt nhóm luôn để hệ thống tự rải KTV — bỏ qua lựa chọn 1 KTV cụ thể còn sót lại từ lúc chỉ đặt 1 người.
+  const effectiveTherapistId = isGroupBooking ? "" : therapistId;
+  const slot = slots.find((item) => item.startTime === selectedSlotStartTime && item.isAvailable) ?? null;
+
+  const cartDetails = cart.map((line) => ({
+    ...line,
+    service: services.find((item) => item.id === line.serviceId) ?? bookableServices[0],
+  }));
+  const subtotal = cartDetails.reduce((sum, line) => sum + (line.service.basePrice + line.service.therapistFee) * line.people, 0);
+
+  const attributionCode = useReferralAttribution();
+  const firstVisitEligible = account ? account.totalVisits === 0 : Boolean(attributionCode);
+  const automaticVoucherCode = !voucherOptOut
+    ? account?.welcomeCreditAvailable
+      ? "WELCOME100"
+      : attributionCode && firstVisitEligible
+        ? "FIRST60"
+        : ""
+    : "";
+  const effectiveVoucherCode = (voucherCode || automaticVoucherCode).trim().toUpperCase();
+
+  const depositActive = true;
+  const selectedVoucherStock = effectiveVoucherCode ? voucherInventory[effectiveVoucherCode] : undefined;
+  const voucherInStock = !selectedVoucherStock || selectedVoucherStock.remaining === null || selectedVoucherStock.remaining > 0;
+  const packageEligible = Boolean(
+    !effectiveVoucherCode
+    && membership
+    && membership.availableSessions >= totalPeople
+    && (totalPeople === 1 || membership.shareable)
+    && (!membership.serviceId || cart.every((item) => item.serviceId === membership.serviceId)),
+  );
+  const voucherDiscount = !packageEligible && effectiveVoucherCode && voucherPreview.valid && voucherInStock ? voucherPreview.discountAmount : 0;
+  const paymentBreakdown = calculatePaymentBreakdown({
+    originalAmount: subtotal,
+    discountAmount: packageEligible ? subtotal : voucherDiscount,
+    depositPercent: catalog.depositPercent,
+    prepaid: packageEligible,
+  });
+  const appliedDiscount = paymentBreakdown.discountAmount;
+  const total = paymentBreakdown.totalAmount;
+  const depositAmount = paymentBreakdown.depositAmount;
+  const amountDueAtBranch = paymentBreakdown.balanceAmount;
+
+  useEffect(() => {
+    function resetToFreshBooking() {
+      setCart([{
+        id: crypto.randomUUID(),
+        serviceId: defaultServiceId,
+        people: defaultPeople,
+      }]);
+      setDate(format(addDays(new Date(), 1), "yyyy-MM-dd"));
+      setBranchId(defaultBranchId);
+      setTherapistId(defaultTherapistId);
+      setSelectedSlotStartTime("");
+      setPhoneInput(null);
+      setNameInput(null);
+      setNote(defaultNote);
+      setVoucherCode("");
+      setVoucherOptOut(false);
+      setShowManualVoucher(false);
+      setAcceptPolicies(false);
+      setError("");
+      setDraftHydrated(true);
+    }
+
+    let active = true;
+    queueMicrotask(() => {
+      if (!active) return;
+      try {
+        const raw = window.sessionStorage.getItem(BOOKING_UI_DRAFT_KEY);
+        const saved = raw ? JSON.parse(raw) as BookingUiDraft : null;
+        if (saved?.contextKey === bookingContextKey && Array.isArray(saved.cart) && saved.cart.length > 0) {
+          setCart(saved.cart);
+          setDate(saved.date);
+          setBranchId(saved.branchId);
+          setTherapistId(saved.therapistId);
+          setSelectedSlotStartTime(saved.selectedSlotStartTime);
+          setPhoneInput(saved.phoneInput);
+          setNameInput(saved.nameInput);
+          setNote(saved.note);
+          setVoucherCode(saved.voucherCode);
+          setVoucherOptOut(Boolean(saved.voucherOptOut));
+          setShowManualVoucher(saved.showManualVoucher);
+          setAcceptPolicies(saved.acceptPolicies);
+        }
+      } catch {
+        window.sessionStorage.removeItem(BOOKING_UI_DRAFT_KEY);
+      } finally {
+        setDraftHydrated(true);
+      }
+    });
+
+    window.addEventListener(BOOKING_UI_RESET_EVENT, resetToFreshBooking);
+    return () => {
+      active = false;
+      window.removeEventListener(BOOKING_UI_RESET_EVENT, resetToFreshBooking);
+    };
+  }, [bookingContextKey, defaultBranchId, defaultNote, defaultPeople, defaultServiceId, defaultTherapistId]);
+
+  useEffect(() => {
+    if (!draftHydrated || !account || autofilledAccountRef.current === account.customerId) return;
+    let active = true;
+    queueMicrotask(() => {
+      if (!active || autofilledAccountRef.current === account.customerId) return;
+      autofilledAccountRef.current = account.customerId;
+      // Khi vừa đăng nhập/đăng ký, hồ sơ tài khoản phải ưu tiên hơn bản nháp khách cũ.
+      setPhoneInput(null);
+      setNameInput(null);
+      if (account.welcomeCreditAvailable) {
+        setVoucherOptOut(false);
+        setVoucherCode("WELCOME100");
+      } else if (voucherCode === "WELCOME100") {
+        setVoucherCode("");
+      }
+    });
+    return () => { active = false; };
+  }, [account, draftHydrated, voucherCode]);
+
+  useEffect(() => {
+    if (!draftHydrated) return;
+    const saved: BookingUiDraft = {
+      contextKey: bookingContextKey,
+      cart,
+      date,
+      branchId,
+      therapistId,
+      selectedSlotStartTime,
+      phoneInput,
+      nameInput,
+      note,
+      voucherCode,
+      voucherOptOut,
+      showManualVoucher,
+      acceptPolicies,
+    };
+    window.sessionStorage.setItem(BOOKING_UI_DRAFT_KEY, JSON.stringify(saved));
+  }, [acceptPolicies, bookingContextKey, branchId, cart, date, draftHydrated, nameInput, note, phoneInput, selectedSlotStartTime, showManualVoucher, therapistId, voucherCode, voucherOptOut]);
+
+  useEffect(() => {
+    if (!effectiveVoucherCode) {
+      let active = true;
+      queueMicrotask(() => {
+        if (!active) return;
+        setVoucherChecking(false);
+        setVoucherPreview({ valid: true, discountAmount: 0, message: "" });
+      });
+      return () => { active = false; };
+    }
+    const controller = new AbortController();
+    queueMicrotask(() => {
+      if (controller.signal.aborted) return;
+      setVoucherChecking(true);
+      setVoucherPreview({ valid: false, discountAmount: 0, message: "" });
+    });
+    fetch("/api/vouchers/validate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        code: effectiveVoucherCode,
+        subtotal,
+        serviceIds: [...new Set(cart.map((item) => item.serviceId))],
+        startTime: slot?.startTime,
+        customerPhone: phone ? phone.replace(/\s+/g, "") : undefined,
+      }),
+      signal: controller.signal,
+    })
+      .then(async (response) => {
+        const payload = await response.json();
+        if (!response.ok && !payload.message) throw new Error("Không thể kiểm tra mã ưu đãi.");
+        setVoucherPreview({
+          valid: Boolean(payload.valid),
+          discountAmount: Number(payload.discountAmount ?? 0),
+          message: String(payload.message ?? ""),
+        });
+      })
+      .catch((caught) => {
+        if (caught instanceof DOMException && caught.name === "AbortError") return;
+        setVoucherPreview({ valid: false, discountAmount: 0, message: "Không thể kiểm tra mã ưu đãi lúc này." });
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setVoucherChecking(false);
+      });
+    return () => controller.abort();
+  }, [effectiveVoucherCode, subtotal, cart, slot?.startTime, phone]);
+
+  const dateOptions = useMemo(
+    () => Array.from({ length: NEXT_DAYS }, (_, index) => addDays(new Date(), index)),
+    []
+  );
+
+  useEffect(() => {
+    let ignore = false;
+
+    const query = new URLSearchParams({ serviceId: anchorServiceId, date, includeUnavailable: "true" });
+    if (effectiveTherapistId) {
+      query.set("therapistId", effectiveTherapistId);
+    }
+    if (branchId) {
+      query.set("branchId", branchId);
+    }
+
+    queueMicrotask(() => {
+      if (!ignore) {
+        setLoadingSlots(true);
+        setError("");
+      }
+    });
+
+    fetch(`/api/availability?${query.toString()}`)
+      .then((response) => response.json())
+      .then((data) => {
+        if (!ignore) {
+          setSlots((data.slots ?? []).map((item: Slot) => ({
+            ...item,
+            isAvailable: item.isAvailable ?? item.remainingCapacity > 0,
+          })));
+        }
+      })
+      .catch(() => {
+        if (!ignore) {
+          setError("Không tải được lịch trống. Thử lại sau ít phút.");
+        }
+      })
+      .finally(() => {
+        if (!ignore) {
+          setLoadingSlots(false);
+        }
+      });
+
+    return () => {
+      ignore = true;
+    };
+  }, [anchorServiceId, date, effectiveTherapistId, branchId]);
+
+  function toggleService(serviceId: string) {
+    setSelectedSlotStartTime("");
+    setCart((current) => {
+      const existing = current.find((line) => line.serviceId === serviceId);
+      if (existing) {
+        return current.filter((line) => line.serviceId !== serviceId);
+      }
+      return [...current, { id: crypto.randomUUID(), serviceId, people: 1 }];
+    });
+  }
+
+  function changePeople(lineId: string, delta: number) {
+    setCart((current) =>
+      current.map((line) => (line.id === lineId ? { ...line, people: Math.max(1, Math.min(10, line.people + delta)) } : line))
+    );
+  }
+
+  function removeLine(lineId: string) {
+    setCart((current) => current.filter((line) => line.id !== lineId));
+  }
+
+  function submitBooking() {
+    if (cart.length === 0) {
+      setError("Hãy chọn ít nhất một dịch vụ.");
+      return;
+    }
+    if (!slot) {
+      setError("Hãy chọn khung giờ còn trống.");
+      return;
+    }
+    if (!nickName.trim()) {
+      setError("Hãy nhập tên khách đặt lịch.");
+      return;
+    }
+    if (!/^[0-9+ ]{8,15}$/.test(phone.trim())) {
+      setError("Hãy nhập số điện thoại hợp lệ để xác nhận lịch.");
+      return;
+    }
+    if (voucherChecking) {
+      setError("Hệ thống đang kiểm tra mã ưu đãi. Vui lòng đợi một chút.");
+      return;
+    }
+    if (effectiveVoucherCode && !voucherPreview.valid) {
+      setError(voucherPreview.message || "Mã ưu đãi không hợp lệ.");
+      return;
+    }
+    if (effectiveVoucherCode && voucherPreview.valid && !voucherInStock) {
+      setError(`Ưu đãi ${effectiveVoucherCode} đã hết lượt sử dụng.`);
+      return;
+    }
+    if (totalPeople > slot.remainingCapacity) {
+      setError(`Khung giờ này chỉ còn ${slot.remainingCapacity} chỗ. Hãy giảm số người hoặc chọn giờ khác.`);
+      return;
+    }
+
+    if (!acceptPolicies) {
+      setError("Hãy xác nhận các chính sách để tiếp tục giữ chỗ.");
+      return;
+    }
+
+    setSubmitting(true);
+    setError("");
+
+    const groupCode = `GRP-${crypto.randomUUID().slice(0, 8).toUpperCase()}`;
+    const units: { serviceId: string }[] = [];
+    cartDetails.forEach((line) => {
+      for (let i = 0; i < line.people; i++) units.push({ serviceId: line.serviceId });
+    });
+
+    const bookingCodes = units.map(() => makeBookingCode());
+    const requestPayloads = units.map((unit, index) => {
+      const assignedRoom = slot.availableRooms[index % Math.max(1, slot.availableRooms.length)]?.id;
+      const assignedTherapist =
+        effectiveTherapistId || slot.availableTherapists[index % Math.max(1, slot.availableTherapists.length)]?.id;
+      return {
+        bookingCode: bookingCodes[index],
+        serviceId: unit.serviceId,
+        startTime: slot.startTime,
+        therapistId: assignedTherapist,
+        roomId: assignedRoom,
+        customerName: nickName || undefined,
+        customerPhone: phone || undefined,
+        nickName: nickName || undefined,
+        note: `${units.length > 1 ? `[Nhóm ${groupCode}] ` : ""}${inviteContext ? `[${inviteContext.title}] ` : ""}${note}`.trim(),
+        voucherCode: index === 0 ? effectiveVoucherCode : "",
+        campaignCode: attributionCode || undefined,
+        depositRequested: true as const,
+        source,
+        branchId,
+      };
+    });
+    const servicesSummary = cartDetails.map((line) => `${line.service.name}${line.people > 1 ? ` x${line.people}` : ""}`).join(", ");
+    const itemsPayload = cartDetails.map((line) => ({
+      name: line.service.name,
+      qty: line.people,
+      amount: (line.service.basePrice + line.service.therapistFee) * line.people,
+    }));
+
+    const referenceCode = bookingCodes[0];
+    saveBookingPaymentDraft({
+      referenceCode,
+      createdAt: new Date().toISOString(),
+      status: "AWAITING_DEPOSIT",
+      bookingCodes,
+      requestPayloads,
+      summary: {
+        serviceLabel: servicesSummary,
+        durationMin: anchorService.durationMin,
+        therapistLabel: effectiveTherapistId
+          ? (therapists.find((item) => item.id === effectiveTherapistId)?.fullName ?? "Hệ thống sắp xếp")
+          : "Hệ thống sắp xếp",
+        timeIso: slot.startTime,
+        subtotal,
+        total,
+        nickName: nickName || undefined,
+        depositAmount,
+        dueAmount: amountDueAtBranch,
+        discount: appliedDiscount > 0 ? appliedDiscount : undefined,
+        voucherCode: !packageEligible && voucherDiscount > 0 ? effectiveVoucherCode : undefined,
+        count: bookingCodes.length,
+        items: itemsPayload,
+        branchId,
+        relationship: inviteContext?.relationship ?? "SELF",
+        careNote: inviteContext ? note : undefined,
+        packageName: packageEligible ? membership?.planName : undefined,
+        customerPackageId: packageEligible ? membership?.id : undefined,
+        policyAcceptedAt: new Date().toISOString(),
+      },
+    });
+    router.push(`/booking/success/${referenceCode}`);
+  }
+
+  return (
+    <main className="bg-[#fffaf6] text-[#191414]">
+      <div className="mx-auto grid max-w-7xl gap-2 px-4 pb-6 pt-3 sm:px-6 lg:grid-cols-[1fr_380px] lg:px-10">
+        <section className="min-w-0 space-y-2">
+
+          {attributionCode && firstVisitEligible ? (
+            <div className="flex items-center gap-2 rounded-xl border border-[#e3b23c] bg-[#fff7ec] px-3.5 py-2.5 text-xs text-[#8a5a12]">
+              <Gift size={15} className="shrink-0" />
+              <span>
+                Bạn được giới thiệu qua mã <strong className="font-mono">{attributionCode}</strong> — voucher{" "}
+                <strong>FIRST60</strong> đã tự động áp dụng.
+              </span>
+            </div>
+          ) : null}
+
+          {inviteContext ? (
+            <div className={cn("flex items-start gap-3 rounded-xl px-3.5 py-3 text-xs", inviteMode === "boss" ? "bg-gradient-to-r from-[#30201c] to-[#6b3423] text-white" : "bg-[#fff2ef] text-[#6f211f]") }>
+              <span className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-full", inviteMode === "boss" ? "bg-white/10 text-[#f5d982]" : "bg-white text-[#9f1d20]")}>
+                {inviteMode === "boss" ? <Handshake size={17} /> : <UserPlus size={17} />}
+              </span>
+              <span className="min-w-0">
+                <strong className="block text-sm">{inviteContext.title}</strong>
+                <span className={cn("mt-1 block leading-5", inviteMode === "boss" ? "text-white/72" : "text-[#80524a]")}>{inviteContext.body}</span>
+              </span>
+            </div>
+          ) : null}
+
+          {/* Step 1: Services */}
+          <div className="rounded-xl border border-[#eadbd1] bg-white p-3">
+            <h2 className="mb-2 flex items-center gap-2 text-sm font-semibold tracking-tight">
+              <Check size={16} /> 1. Chọn dịch vụ <span className="text-[11px] font-normal text-[#8a7a72]">(có thể chọn nhiều)</span>
+            </h2>
+            <div className="scrollbar-hide -mx-1 flex gap-2 overflow-x-auto px-1 pb-1">
+              {bookableServices.map((item) => {
+                const inCart = cart.some((line) => line.serviceId === item.id);
+                return (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => toggleService(item.id)}
+                    className={cn(
+                      "relative w-28 shrink-0 rounded-lg border p-2 text-left transition",
+                      inCart ? "border-[#9f1d20] bg-[#fff2ef]" : "border-[#eadbd1] bg-white hover:border-[#c9a59a]"
+                    )}
+                  >
+                    {inCart ? (
+                      <span className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-[#9f1d20] text-white">
+                        <Check size={12} />
+                      </span>
+                    ) : null}
+                    <p className="line-clamp-2 text-xs font-semibold leading-tight">{stripDurationFromName(item.name)}</p>
+                    <p className="mt-1.5 text-xs font-bold text-[#9f1d20]">{formatMoney(item.basePrice + item.therapistFee)}</p>
+                    <p className="flex items-center gap-1 text-[10px] text-[#8a7a72]">
+                      <Clock size={10} /> {item.durationMin} phút
+                    </p>
+                  </button>
+                );
+              })}
+            </div>
+
+            {cartDetails.length > 0 ? (
+              <div className="mt-2.5 space-y-1.5 border-t border-[#f1e5dd] pt-2.5">
+                {cartDetails.map((line) => (
+                  <div key={line.id} className="flex items-center justify-between gap-2 rounded-lg bg-[#fff7f3] px-2.5 py-2">
+                    <p className="min-w-0 truncate text-xs font-semibold">{line.service.name}</p>
+                    <div className="flex shrink-0 items-center gap-2.5">
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => changePeople(line.id, -1)}
+                          className="flex h-6 w-6 items-center justify-center rounded-full border border-[#eadbd1] text-[#9f1d20]"
+                          aria-label="Giảm số người"
+                        >
+                          <Minus size={12} />
+                        </button>
+                        <span className="flex items-center gap-1 text-xs font-semibold">
+                          <Users size={12} /> {line.people}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => changePeople(line.id, 1)}
+                          className="flex h-6 w-6 items-center justify-center rounded-full border border-[#eadbd1] text-[#9f1d20]"
+                          aria-label="Tăng số người"
+                        >
+                          <Plus size={12} />
+                        </button>
+                      </div>
+                      <button type="button" onClick={() => removeLine(line.id)} aria-label="Bỏ dịch vụ" className="text-[#8a7a72]">
+                        <X size={14} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+                {isGroupBooking ? (
+                  <p className="pt-1 text-[11px] text-[#8a7a72]">
+                    Đặt cho nhóm {totalPeople} người — giờ hẹn dùng chung, lễ tân sắp xếp KTV/phòng phù hợp cho từng người.
+                  </p>
+                ) : null}
+              </div>
+            ) : null}
+          </div>
+
+          {/* Step 2: Branch & therapist */}
+          <div className="rounded-xl border border-[#eadbd1] bg-white p-3">
+            <h2 className="mb-2 flex items-center gap-2 text-sm font-semibold tracking-tight">
+              <MapPin size={16} /> 2. Chọn cơ sở & kỹ thuật viên
+            </h2>
+            <div className="flex gap-2">
+              {branches.map((item) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => {
+                    setBranchId(item.id);
+                    setTherapistId("");
+                    setSelectedSlotStartTime("");
+                  }}
+                  className={cn(
+                    "flex-1 rounded-lg border px-2.5 py-2 text-left transition",
+                    branchId === item.id ? "border-[#9f1d20] bg-[#fff2ef]" : "border-[#eadbd1] bg-white hover:border-[#c9a59a]"
+                  )}
+                >
+                  <span className="block text-sm font-semibold">{item.label}</span>
+                  <span className="line-clamp-1 block text-[11px] text-[#8a7a72]">{item.address}</span>
+                </button>
+              ))}
+            </div>
+
+            {!isGroupBooking ? (
+              <div className="mt-2.5 border-t border-[#f1e5dd] pt-2.5">
+                <button
+                  type="button"
+                  onClick={() => setShowTherapistPicker((prev) => !prev)}
+                  className="flex w-full items-center justify-between gap-2 rounded-lg border border-[#eadbd1] bg-[#fdf8f5] px-3 py-2.5 text-left"
+                >
+                  <span className="flex items-center gap-2">
+                    {selectedTherapist ? (
+                      <TherapistAvatar id={selectedTherapist.id} size={28} className="shrink-0 rounded-full" />
+                    ) : (
+                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#f1e5dd]">
+                        <UserRound size={14} className="text-[#9f1d20]" />
+                      </span>
+                    )}
+                    <span className="text-sm">
+                      <span className="font-semibold">Kỹ thuật viên: </span>
+                      {selectedTherapist ? selectedTherapist.fullName : "Ngẫu nhiên"}
+                    </span>
+                  </span>
+                  <ChevronDown size={16} className={cn("shrink-0 text-[#8a7a72] transition", showTherapistPicker && "rotate-180")} />
+                </button>
+
+                {showTherapistPicker ? (
+                  <div className="mt-2.5">
+                    <div className="scrollbar-hide flex snap-x gap-2.5 overflow-x-auto pb-1">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setTherapistId("");
+                          setSelectedSlotStartTime("");
+                          setShowTherapistPicker(false);
+                        }}
+                        className={cn(
+                          "w-24 shrink-0 snap-start rounded-xl border p-3 text-center transition",
+                          !therapistId ? "border-[#9f1d20] bg-[#fff2ef]" : "border-[#eadbd1] bg-white"
+                        )}
+                      >
+                        <span className="mx-auto flex h-9 w-9 items-center justify-center rounded-full bg-[#f1e5dd]">
+                          <UserRound size={16} className="text-[#9f1d20]" />
+                        </span>
+                        <span className="mt-2 block text-xs font-semibold">Ngẫu nhiên</span>
+                      </button>
+                      {eligibleTherapists.map((therapist) => (
+                        <button
+                          key={therapist.id}
+                          type="button"
+                          onClick={() => {
+                            setTherapistId(therapist.id === therapistId ? "" : therapist.id);
+                            setSelectedSlotStartTime("");
+                            setShowTherapistPicker(false);
+                          }}
+                          className={cn(
+                            "w-24 shrink-0 snap-start rounded-xl border p-3 text-center transition",
+                            therapistId === therapist.id ? "border-[#9f1d20] bg-[#fff2ef]" : "border-[#eadbd1] bg-white"
+                          )}
+                        >
+                          <TherapistAvatar id={therapist.id} size={36} className="mx-auto shrink-0 rounded-full" />
+                          <span className="mt-2 block truncate text-xs font-semibold">{therapist.fullName}</span>
+                          <span className="mt-0.5 flex items-center justify-center gap-0.5 text-[10px] text-[#8a7a72]">
+                            <Star size={9} className="fill-[#9f1d20] text-[#9f1d20]" /> {therapist.ratingAvg.toFixed(1)}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                    {eligibleTherapists.length === 0 ? (
+                      <p className="mt-2 text-[11px] text-[#8a7a72]">
+                        {selectedBranch?.label ?? "Cơ sở này"} đang cập nhật đội ngũ KTV cho dịch vụ này — hệ thống sẽ sắp xếp KTV phù hợp.
+                      </p>
+                    ) : null}
+                  </div>
+                ) : null}
+              </div>
+            ) : null}
+          </div>
+
+          {/* Step 3: Date & live availability */}
+          <div className="rounded-xl border border-[#eadbd1] bg-white p-3">
+            <h2 className="mb-2 flex items-center gap-2 text-sm font-semibold tracking-tight">
+              <Calendar size={16} /> 3. Chọn ngày và giờ
+            </h2>
+
+            <div className="scrollbar-hide -mx-1 flex gap-2 overflow-x-auto px-1 pb-1">
+              {dateOptions.map((option) => {
+                const value = format(option, "yyyy-MM-dd");
+                const active = value === date;
+                return (
+                  <button
+                    key={value}
+                    type="button"
+                    onClick={() => {
+                      setDate(value);
+                      setSelectedSlotStartTime("");
+                    }}
+                    className={cn(
+                      "flex w-16 shrink-0 flex-col items-center rounded-lg border py-2 text-center transition",
+                      active ? "border-[#9f1d20] bg-[#9f1d20] text-white" : "border-[#eadbd1] bg-white hover:border-[#c9a59a]"
+                    )}
+                  >
+                    <span className="text-[11px] font-semibold uppercase tracking-wide opacity-90" suppressHydrationWarning>
+                      {isSameDay(option, new Date()) ? "Hôm nay" : format(option, "EEEEE", { locale: vi })}
+                    </span>
+                    <span className="mt-0.5 text-base font-bold" suppressHydrationWarning>
+                      {format(option, "dd/MM")}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="mt-2.5">
+              <div className="mb-2 flex items-center justify-between gap-2 rounded-lg bg-[#f8f4f0] px-2.5 py-2 text-[10px]">
+                <span className="font-semibold text-[#665b55]">{selectedTherapist ? `Lịch của ${selectedTherapist.fullName}` : isGroupBooking ? `Năng lực cho nhóm ${totalPeople} người` : "Lịch còn nhận đặt"}</span>
+                <span className="flex shrink-0 items-center gap-2 text-[#8a7a72]"><i className="h-2.5 w-2.5 rounded-sm bg-[#29a064]" /> Rảnh <i className="h-2.5 w-2.5 rounded-sm bg-[#d34a4a]" /> Bận</span>
+              </div>
+              {loadingSlots ? (
+                <div className="flex items-center gap-2 rounded-xl bg-[#fff7f3] p-3 text-sm text-[#665b55]">
+                  <Loader2 className="animate-spin" size={16} /> Đang đồng bộ lịch KTV và giường...
+                </div>
+              ) : slots.length === 0 ? (
+                <div className="rounded-xl bg-[#fff7f3] p-3 text-sm text-[#665b55]">Chưa có khung giờ phù hợp trong ngày này.</div>
+              ) : (
+                <div className="grid max-h-48 grid-cols-4 gap-1.5 overflow-y-auto pr-1 sm:grid-cols-5">
+                  {slots.map((item) => {
+                    const canBook = item.isAvailable && item.remainingCapacity >= totalPeople;
+                    const active = selectedSlotStartTime === item.startTime && canBook;
+                    return (
+                      <button
+                        key={item.startTime}
+                        type="button"
+                        disabled={!canBook}
+                        onClick={() => setSelectedSlotStartTime(item.startTime)}
+                        className={cn(
+                          "flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-lg border px-1 py-2 text-xs font-semibold transition",
+                          active
+                            ? "border-[#16784a] bg-[#16784a] text-white shadow-sm"
+                            : canBook
+                              ? "border-[#8fd3ad] bg-[#edf9f2] text-[#12683f] hover:border-[#16784a]"
+                              : "cursor-not-allowed border-[#efb5b2] bg-[#fff0ef] text-[#a93434] opacity-85"
+                        )}
+                      >
+                        <span className="flex items-center gap-1"><Clock size={12} /> {item.startTime.slice(11, 16)}</span>
+                        <span className={cn("text-[9px] font-medium", active ? "text-white/80" : "opacity-80")}>
+                          {selectedTherapist && !isGroupBooking ? (canBook ? "Rảnh" : "Bận") : canBook ? `${item.remainingCapacity} chỗ rảnh` : "Đã kín"}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+              <p className="mt-2 text-center text-[10px] leading-4 text-[#7b6c65]">
+                KTV và giường được giữ trọn thời lượng dịch vụ: 10:00 + 90 phút → bận đến 11:30. Ca {selectedBranch?.lastBookingTime ?? "23:00"} chỉ nhận dịch vụ 60 phút.
+              </p>
+            </div>
+          </div>
+
+          {/* Step 4: Customer info */}
+          <div className="rounded-xl border border-[#eadbd1] bg-white p-3">
+            <h2 className="mb-2 flex items-center gap-2 text-sm font-semibold tracking-tight">
+              <UserRound size={16} /> 4. Thông tin khách
+            </h2>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <label className="block">
+                <span className="text-xs font-semibold">Tên hiển thị (Nick name)</span>
+                <input
+                  value={nickName}
+                  onChange={(event) => setNameInput(event.target.value)}
+                  placeholder="Ví dụ: Minh Anh"
+                  className="mt-1.5 w-full rounded-lg border border-[#eadbd1] px-3 py-2.5 text-sm"
+                />
+              </label>
+              <label className="block">
+                <span className="text-xs font-semibold">
+                  Số điện thoại
+                </span>
+                <input
+                  value={phone}
+                  onChange={(event) => setPhoneInput(event.target.value)}
+                  inputMode="tel"
+                  className="mt-1.5 w-full rounded-lg border border-[#eadbd1] px-3 py-2.5 text-sm"
+                />
+              </label>
+            </div>
+            <p className="mt-1.5 text-[11px] leading-4 text-[#8a7a72]">Thông tin được lấy từ phần Cài đặt và dùng để xác nhận, nhắc lịch.</p>
+
+            <div className="mt-2.5 border-t border-[#f1e5dd] pt-2.5">
+              <p className="mb-2 flex items-center gap-2 text-sm font-semibold">
+                <Ticket size={16} className="text-[#9f1d20]" /> Sổ voucher
+              </p>
+              <div className="scrollbar-hide flex gap-2 overflow-x-auto pb-1">
+                {vouchers
+                  .filter((item) => item.active && ((account?.totalVisits ?? 0) === 0 || item.code !== "FIRST60"))
+                  .map((item) => {
+                    const selected = effectiveVoucherCode === item.code;
+                    const inventoryItem = voucherInventory[item.code];
+                    const remaining = inventoryItem?.remaining;
+                    const soldOut = remaining !== null && (remaining ?? 0) <= 0;
+                    const VIcon = item.type === "PERCENT" ? Percent : Tag;
+                    return (
+                      <button
+                        key={item.code}
+                        type="button"
+                        onClick={() => {
+                          setVoucherOptOut(selected);
+                          setVoucherCode(selected ? "" : item.code);
+                        }}
+                        disabled={soldOut}
+                        className={cn(
+                          "flex w-56 shrink-0 items-start gap-2 rounded-lg border p-2.5 text-left transition disabled:cursor-not-allowed disabled:opacity-50",
+                          selected ? "border-[#9f1d20] bg-[#fff2ef]" : "border-[#eadbd1] bg-white hover:border-[#c9a59a]"
+                        )}
+                      >
+                        <span
+                          className={cn(
+                            "mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full",
+                            selected ? "bg-[#9f1d20] text-white" : "bg-[#fff2ef] text-[#9f1d20]"
+                          )}
+                        >
+                          {selected ? <Check size={14} /> : <VIcon size={14} />}
+                        </span>
+                        <span className="min-w-0">
+                          <span className="block text-sm font-semibold">
+                            {item.code} — {item.type === "PERCENT" ? `Giảm ${item.value}%` : `Giảm ${formatMoney(item.value)}`}
+                          </span>
+                          <span className="mt-0.5 block text-xs text-[#8a7a72]">{item.constraint}{soldOut ? " · Đã hết lượt" : ""}</span>
+                        </span>
+                      </button>
+                    );
+                  })}
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowManualVoucher((value) => !value)}
+                className="mt-2.5 inline-flex items-center gap-1 text-xs font-semibold text-[#9f1d20]"
+              >
+                Nhập mã khác <ChevronDown size={14} className={cn("transition", showManualVoucher && "rotate-180")} />
+              </button>
+              {showManualVoucher ? (
+                <input
+                  value={voucherCode}
+                  onChange={(event) => {
+                    setVoucherOptOut(false);
+                    setVoucherCode(event.target.value.toUpperCase());
+                  }}
+                  placeholder="Nhập mã voucher"
+                  className="mt-2 w-full rounded-xl border border-[#eadbd1] px-3 py-3"
+                />
+              ) : null}
+              {voucherChecking ? (
+                <p className="mt-2 flex items-center gap-1.5 text-xs font-medium text-[#8a7a72]"><Loader2 size={12} className="animate-spin" /> Đang kiểm tra ưu đãi trên hệ thống...</p>
+              ) : effectiveVoucherCode && !voucherPreview.valid ? (
+                <div className="mt-2 flex flex-wrap items-center justify-between gap-2 rounded-lg bg-red-50 px-3 py-2">
+                  <p className="text-xs font-medium text-red-700">{voucherPreview.message || "Mã voucher không hợp lệ hoặc đã hết hạn."}</p>
+                  <span className="flex shrink-0 items-center gap-2">
+                    {attributionCode && effectiveVoucherCode === "FIRST60" ? (
+                      <Link href="/tai-khoan?returnTo=%2Fbooking" className="rounded-full bg-[#9f1d20] px-3 py-1.5 text-[11px] font-semibold text-white">
+                        Đăng nhập / xác minh
+                      </Link>
+                    ) : null}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setVoucherCode("");
+                        setVoucherOptOut(true);
+                        setError("");
+                      }}
+                      className="rounded-full bg-white px-3 py-1.5 text-[11px] font-semibold text-[#9f1d20] ring-1 ring-[#efc6c6]"
+                    >
+                      Bỏ mã & tiếp tục
+                    </button>
+                  </span>
+                </div>
+              ) : null}
+              {effectiveVoucherCode && voucherPreview.valid && !voucherInStock ? (
+                <p className="mt-2 text-xs font-medium text-red-600">Ưu đãi này đã hết lượt sử dụng.</p>
+              ) : null}
+            </div>
+
+            <label className="mt-2.5 block border-t border-[#f1e5dd] pt-2.5">
+              <span className="text-sm font-semibold">{inviteContext ? "Ghi chú để cơ sở chủ động sắp xếp" : "Ghi chú"}</span>
+              <textarea
+                value={note}
+                onChange={(event) => setNote(event.target.value)}
+                placeholder="Ví dụ: thích lực nhẹ, đau cổ vai gáy..."
+                className="mt-1.5 min-h-12 w-full rounded-lg border border-[#eadbd1] px-3 py-2 text-sm"
+              />
+            </label>
+          </div>
+
+          {/* Step 5: Deposit */}
+          <div className="rounded-xl border border-[#eadbd1] bg-white p-3">
+            <h2 className="mb-1 flex items-center gap-2 text-sm font-semibold tracking-tight">
+              <Wallet size={16} /> 5. Đặt cọc giữ chỗ <span className="text-[11px] font-normal text-[#8a7a72]">(bắt buộc)</span>
+            </h2>
+            <div className="mt-2.5 flex items-start gap-2.5 rounded-lg border border-[#9f1d20] bg-[#fff2ef] p-3">
+              <ShieldCheck size={18} className="mt-0.5 shrink-0 text-[#9f1d20]" />
+              <span className="min-w-0">
+                <span className="block text-sm font-semibold">Đặt cọc xác nhận giữ chỗ</span>
+                <span className="mt-0.5 block text-base font-bold text-[#9f1d20]">
+                  {formatMoney(depositAmount)} <span className="text-xs font-normal text-[#8a7a72]">({catalog.depositPercent}% giá Bill ban đầu)</span>
+                </span>
+                <span className="mt-1 block text-xs text-[#8a7a72]">
+                  Chuyển vào tài khoản nền tảng để giữ chỗ. Phần còn lại {formatMoney(amountDueAtBranch)} = 90% giá Bill ban đầu trừ ưu đãi, thanh toán riêng cho cơ sở sau dịch vụ.
+                </span>
+              </span>
+            </div>
+          </div>
+        </section>
+
+        <aside className="h-fit overflow-hidden rounded-2xl border border-[#eadbd1] bg-white shadow-lg lg:sticky lg:top-[72px]">
+          <div className="border-b border-dashed border-[#eadbd1] bg-[#fff7f3] p-4">
+            <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-[#9f1d20]">
+              <Receipt size={13} /> Hoá đơn tạm tính
+            </p>
+            <p className="mt-1.5 text-xs leading-5 text-[#665b55]">
+              {slot ? `${slot.startTime.slice(11, 16)} ngày ${slot.startTime.slice(8, 10)}/${slot.startTime.slice(5, 7)}` : "Chưa chọn giờ hẹn"}
+              {isGroupBooking ? ` · Nhóm ${totalPeople} người` : ""}
+            </p>
+          </div>
+          <div className="p-4">
+            <div className="space-y-2 text-sm">
+              {cartDetails.map((line) => (
+                <div key={line.id} className="flex items-start justify-between gap-3 text-[#665b55]">
+                  <span className="min-w-0">
+                    {line.service.name}
+                    {line.people > 1 ? ` x${line.people}` : ""}
+                  </span>
+                  <span className="shrink-0 font-semibold text-[#191414]">
+                    {formatMoney((line.service.basePrice + line.service.therapistFee) * line.people)}
+                  </span>
+                </div>
+              ))}
+              {voucherDiscount > 0 ? (
+                <div className="flex items-center justify-between gap-3 font-medium text-[#1d8f55]">
+                  <span>Giảm ({effectiveVoucherCode})</span>
+                  <span>-{formatMoney(voucherDiscount)}</span>
+                </div>
+              ) : null}
+            </div>
+            <div className="mt-3 flex items-center justify-between gap-3 border-t border-dashed border-[#eadbd1] pt-3">
+              <p className="text-xs font-semibold uppercase tracking-[0.1em] text-[#8a7a72]">Tổng cộng</p>
+              <p className="text-xl font-bold text-[#9f1d20]">{formatMoney(total)}</p>
+            </div>
+            {depositActive ? (
+              <div className="mt-3 space-y-1.5 rounded-xl bg-[#fff2ef] p-3 text-sm">
+                <div className="flex items-center justify-between gap-3 font-semibold text-[#9f1d20]">
+                  <span className="flex items-center gap-1.5">
+                    <Wallet size={13} /> Cọc nền tảng · 10% giá gốc
+                  </span>
+                  <span>{formatMoney(depositAmount)}</span>
+                </div>
+                <div className="flex items-center justify-between gap-3 text-[#8a7a72]">
+                  <span>Còn lại tại cơ sở · đã trừ ưu đãi</span>
+                  <span>{formatMoney(amountDueAtBranch)}</span>
+                </div>
+              </div>
+            ) : null}
+            <p className="mt-2 text-center text-[11px] italic text-[#8a7a72]">{catalog.priceNote}</p>
+          </div>
+          <div className="px-4 pb-4">
+            <label className="mb-3 flex cursor-pointer items-start gap-2.5 rounded-xl bg-[#fff8f3] p-3 text-[11px] leading-5 text-[#5f514a] ring-1 ring-[#eadbd1]">
+              <input
+                type="checkbox"
+                checked={acceptPolicies}
+                onChange={(event) => setAcceptPolicies(event.target.checked)}
+                className="mt-1 h-4 w-4 shrink-0 accent-[#9f1d20]"
+              />
+              <span>
+                Tôi đồng ý với <Link href="/dieu-khoan" target="_blank" className="font-semibold text-[#9f1d20] underline">Điều khoản</Link>,{" "}
+                <Link href="/chinh-sach-rieng-tu" target="_blank" className="font-semibold text-[#9f1d20] underline">Chính sách bảo vệ dữ liệu</Link> và{" "}
+                <Link href="/chinh-sach-dat-lich" target="_blank" className="font-semibold text-[#9f1d20] underline">Chính sách đặt lịch/đặt cọc</Link>.
+              </span>
+            </label>
+            {error ? <div className="mb-3 rounded-xl bg-red-50 p-3 text-sm text-red-700">{error}</div> : null}
+            <button
+              type="button"
+              onClick={submitBooking}
+              disabled={submitting}
+              className="flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-b from-[#c22630] to-[#8f151a] px-5 py-3 font-semibold text-white shadow-md shadow-black/20 ring-1 ring-white/10 disabled:opacity-60"
+            >
+              {submitting ? <Loader2 className="animate-spin" size={18} /> : null}
+              Đặt chỗ & nhận ưu đãi
+            </button>
+          </div>
+        </aside>
+      </div>
+    </main>
+  );
+}

@@ -1,0 +1,1489 @@
+{
+  "title": "TUỆ TÂM MASTER VALUE",
+  "subtitle": "Hệ sinh thái chăm sóc sức khỏe chủ động, kết nối con người và vận hành minh bạch",
+  "tagline": "Human Care. Intelligent Operations. Sustainable Value.",
+  "coverStatement": "Một tài liệu dễ hiểu nhưng đủ chiều sâu để xã hội, khách hàng, đội ngũ, doanh nghiệp, nhà đầu tư và Chủ Tuệ Tâm cùng nhìn thấy giá trị của một nền tảng chăm sóc sức khỏe được thiết kế tử tế, vận hành logic và có khả năng phát triển bền vững.",
+  "version": "Phiên bản 1.0  •  Cập nhật tháng 07/2026",
+  "chapters": [
+    {
+      "number": "00",
+      "title": "Tóm tắt điều hành",
+      "subtitle": "Tuệ Tâm Care không chỉ số hóa việc đặt massage; dự án tổ chức lại toàn bộ hành trình chăm sóc sức khỏe thành một hệ sinh thái có trách nhiệm.",
+      "blocks": [
+        {
+          "type": "lead",
+          "text": "Tuệ Tâm Care được xây dựng để một người có thể tiếp cận chăm sóc sức khỏe dễ dàng như quét một mã QR, đặt lịch minh bạch như mua một dịch vụ hiện đại, được phục vụ bằng sự thấu hiểu như một khách hàng thân thiết và luôn biết rõ tiền của mình đã đi đâu. Ở phía sau, Chủ doanh nghiệp nhìn thấy cùng một sự thật vận hành: ai đang được phục vụ, nguồn lực nào đang được sử dụng, doanh thu nào đã phát sinh, khoản chi nào đã được ghi nhận và giá trị nào đang được tạo ra cho từng cơ sở."
+        },
+        {
+          "type": "callout",
+          "title": "MASTER VALUE TRONG MỘT CÂU",
+          "text": "Tuệ Tâm biến mỗi lần chăm sóc sức khỏe thành một trải nghiệm được tin cậy, mỗi mối quan hệ thành một cơ hội lan tỏa điều tốt và mỗi dữ liệu vận hành thành một quyết định kinh doanh có trách nhiệm.",
+          "tone": "gold"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Vấn đề mà dự án giải quyết"
+        },
+        {
+          "type": "table",
+          "style": "standard",
+          "headers": ["Thực trạng", "Hệ quả với con người", "Cách Tuệ Tâm giải quyết"],
+          "rows": [
+            ["Đặt lịch qua nhiều cuộc gọi hoặc tin nhắn rời rạc", "Mất thời gian, không chắc còn chỗ, khó nhớ thông tin", "Một hành trình đặt lịch trực quan, có giờ trống thật, xác nhận và nhắc lịch rõ ràng"],
+            ["Giá dịch vụ, cọc, số còn lại và Tip thường bị trộn lẫn", "Khách thiếu cảm giác minh bạch; quản lý khó đối soát", "Tách Bill dịch vụ, tiền cọc, phần còn lại và Tip KTV thành các dòng tài chính có ý nghĩa"],
+            ["Dữ liệu khách hàng nằm trong trí nhớ cá nhân hoặc sổ tay", "Chất lượng chăm sóc không nhất quán khi đổi ca, đổi cơ sở", "CRM ghi nhận lịch sử, nhu cầu, mối quan hệ và ghi chú chăm sóc theo đúng quyền truy cập"],
+            ["KTV ít được nhìn nhận như một chuyên gia có hiệu suất và uy tín", "Khó ghi nhận tay nghề, khách quay lại và Tip", "Hồ sơ KTV, lịch ca, đánh giá, lượt phục vụ và Tip được kết nối thành hồ sơ nghề nghiệp"],
+            ["Chủ cơ sở nhìn doanh thu nhưng thiếu bức tranh chi phí và lợi nhuận", "Quyết định chậm, cảm tính, khó nhân rộng", "Trung tâm tài chính theo cơ sở, Thu–Chi, lợi nhuận, Bill, chi phí và phân bổ hệ thống"],
+            ["Nhà đầu tư nhận báo cáo rời rạc, khó thấy tiến độ hoàn vốn", "Niềm tin phụ thuộc vào trao đổi thủ công", "Trung tâm Nhà đầu tư chỉ hiển thị dữ liệu tài chính phù hợp phạm vi đầu tư và ước tính hoàn vốn có biên độ" ]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Sáu giá trị cốt lõi tạo nên lợi thế"
+        },
+        {
+          "type": "table",
+          "style": "dark",
+          "headers": ["Dễ tiếp cận", "Cá nhân hóa", "Minh bạch", "Kết nối", "Thông minh", "Bền vững"],
+          "rows": [
+            ["Không bắt buộc đăng nhập để bắt đầu", "Hiểu khách, hiểu mối quan hệ và nhu cầu", "Bill, Tip, Thu–Chi rõ ràng", "Khách, bạn bè, sếp, doanh nghiệp, KTV", "Dữ liệu phục vụ quyết định đúng lúc", "Tăng trưởng từ khách quay lại và giá trị thật"]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Kết quả mà hệ sinh thái hướng tới"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "Khách hàng chủ động hơn với sức khỏe, ít ma sát hơn khi đặt lịch và an tâm hơn khi thanh toán.",
+            "KTV có lịch làm việc rõ ràng, được ghi nhận công bằng và nhận Tip minh bạch đúng thời điểm.",
+            "Quản lý cơ sở điều phối đúng người, đúng chỗ, đúng giờ và phản ứng nhanh với biến động trong ngày.",
+            "Chủ Tuệ Tâm có một hệ điều hành kinh doanh thống nhất thay cho nhiều bảng tính, nhóm chat và trí nhớ cá nhân.",
+            "Nhà đầu tư nhìn thấy hiệu quả tài chính theo đúng phạm vi, không xâm phạm dữ liệu riêng tư của khách hoặc nhân sự.",
+            "Xã hội có thêm một mô hình chăm sóc sức khỏe dự phòng dễ tiếp cận, gần nơi sống và nơi làm việc."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "01",
+      "title": "Tầm nhìn, sứ mệnh và lời hứa thương hiệu",
+      "subtitle": "Đẳng cấp quốc tế bắt đầu từ một lời hứa đơn giản: tôn trọng con người ở mọi điểm chạm.",
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Tầm nhìn"
+        },
+        {
+          "type": "lead",
+          "text": "Trở thành hệ sinh thái chăm sóc sức khỏe chủ động đáng tin cậy, nơi công nghệ giúp con người được chăm sóc đúng lúc, đội ngũ được phát triển nghề nghiệp và doanh nghiệp tăng trưởng trên nền tảng minh bạch."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Sứ mệnh"
+        },
+        {
+          "type": "paragraph",
+          "text": "Tuệ Tâm đưa dịch vụ chăm sóc sức khỏe thư giãn và phục hồi đến gần hơn với đời sống hàng ngày: tại cơ sở, trong gia đình, giữa bạn bè, trong quan hệ công việc và ngay tại văn phòng. Dự án không thay thế y tế; dự án tạo một lớp chăm sóc dự phòng, thư giãn và kết nối có tổ chức, có dữ liệu và có trách nhiệm."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Lời hứa với từng nhóm"
+        },
+        {
+          "type": "table",
+          "style": "standard",
+          "headers": ["Đối tượng", "Lời hứa của Tuệ Tâm", "Dấu hiệu lời hứa được thực hiện"],
+          "rows": [
+            ["Khách hàng", "Bạn luôn hiểu mình đang đặt gì, trả gì và sẽ được chăm sóc như thế nào", "Giá rõ, cọc rõ, lịch rõ, thông báo đúng, Bill và Tip tách bạch"],
+            ["Người được mời", "Một lời mời sức khỏe phải tinh tế, không gây áp lực", "Hành trình Mời bạn/Mời sếp có ngữ cảnh, ghi chú và sắp xếp gần nhau"],
+            ["KTV", "Tay nghề và nỗ lực của bạn được ghi nhận công bằng", "Lịch ca cá nhân, đánh giá thật, Tip riêng và lịch sử phục vụ"],
+            ["Quản lý", "Bạn có đủ thông tin để chủ động, không bị ngập trong dữ liệu", "Bộ lọc theo ca/cơ sở, cảnh báo hành động, CRM và công suất"],
+            ["Chủ doanh nghiệp", "Bạn nhìn thấy một phiên bản thống nhất của sự thật", "Thu–Chi–lãi/lỗ, Bill, chi phí, dòng khách và hiệu suất cùng một hệ thống"],
+            ["Nhà đầu tư", "Bạn được minh bạch về hiệu quả nhưng vẫn tôn trọng bí mật vận hành", "Dữ liệu tổng hợp theo khoản đầu tư, tiến độ hoàn vốn và thông báo cơ hội mới"]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Hệ giá trị thương hiệu"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "Tử tế trước, tiện lợi sau: không hy sinh sự tôn trọng để đổi lấy tốc độ.",
+            "Minh bạch tạo niềm tin: mọi con số tài chính phải có ngữ cảnh và nguồn phát sinh.",
+            "Cá nhân hóa có giới hạn: chỉ dùng dữ liệu cần thiết cho chăm sóc và vận hành, không tò mò quá mức.",
+            "Đúng người, đúng quyền: thông tin chỉ đến người có trách nhiệm xử lý.",
+            "Công nghệ lùi về phía sau: giao diện nói bằng ngôn ngữ đời sống, không buộc người dùng hiểu thuật ngữ kỹ thuật.",
+            "Tăng trưởng cùng nhau: khách khỏe hơn, KTV tốt nghề hơn, cơ sở hiệu quả hơn và nhà đầu tư được minh bạch hơn."
+          ]
+        },
+        {
+          "type": "callout",
+          "title": "ĐỊNH VỊ",
+          "text": "Tuệ Tâm Care nằm tại giao điểm của Hospitality, Wellness, CRM và Financial Operations: đủ ấm áp để là một thương hiệu chăm sóc, đủ kỷ luật để là một hệ thống vận hành và đủ minh bạch để trở thành một tài sản có thể đầu tư.",
+          "tone": "red"
+        }
+      ]
+    },
+    {
+      "number": "02",
+      "title": "Bản đồ hệ sinh thái giá trị",
+      "subtitle": "Mỗi vai trò nhìn thấy một giao diện khác nhau nhưng cùng tạo ra một vòng tròn giá trị thống nhất.",
+      "blocks": [
+        {
+          "type": "lead",
+          "text": "Tuệ Tâm không thiết kế một ứng dụng duy nhất cho tất cả. Dự án thiết kế nhiều trải nghiệm theo vai trò, nối với nhau bằng cùng dữ liệu và cùng nguyên tắc vận hành. Điều này giúp giao diện đơn giản đối với từng người nhưng bức tranh tổng thể vẫn liền mạch đối với Chủ doanh nghiệp."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Các vai trò trong hệ sinh thái"
+        },
+        {
+          "type": "table",
+          "style": "dark",
+          "headers": ["Vai trò", "Nhu cầu chính", "Không gian sử dụng", "Giá trị đóng góp trở lại"],
+          "rows": [
+            ["Khách vãng lai", "Xem dịch vụ và đặt nhanh, chưa muốn tạo tài khoản", "Trang công khai, QR, đặt lịch", "Tạo nhu cầu mới với rào cản rất thấp"],
+            ["Khách thành viên", "Ưu đãi, lịch sử, gói, hóa đơn và chăm sóc cá nhân", "Tài khoản khách, Ví/Tài chính, Thông báo", "Tăng tỷ lệ quay lại và chất lượng dữ liệu CRM"],
+            ["Người làm Affiliate", "Giới thiệu đúng người, theo dõi trạng thái và hoa hồng", "Affiliate, liên kết/mã giới thiệu", "Mở rộng cộng đồng bằng niềm tin cá nhân"],
+            ["Người được mời", "Nhận lời mời tinh tế từ bạn, sếp hoặc đối tác", "Đặt nhóm, QR/liên kết mời", "Biến chăm sóc sức khỏe thành hoạt động kết nối"],
+            ["Doanh nghiệp/HR", "Chăm sóc định kỳ cho nhân sự tại văn phòng", "Tuệ Tâm Business", "Tạo doanh thu B2B và tác động sức khỏe tại nơi làm việc"],
+            ["KTV", "Lịch ca, ghi chú, kết quả phục vụ, Tip và đánh giá", "Cổng KTV", "Cung cấp chất lượng dịch vụ cốt lõi"],
+            ["Lễ tân", "Tạo khách, xác nhận lịch, check-in và hỗ trợ tại quầy", "CRM tại quầy, Booking, Lịch", "Giữ cho dữ liệu và trải nghiệm thực tế khớp nhau"],
+            ["Quản lý cơ sở", "Điều phối nguồn lực, doanh thu, chi phí và chất lượng", "Admin theo phạm vi cơ sở", "Biến chiến lược thành vận hành hàng ngày"],
+            ["Admin/Chủ", "Toàn cảnh tài chính, vận hành, tăng trưởng và kiểm soát", "Admin tổng, Trung tâm tài chính, IQ Care", "Phân bổ nguồn lực và chịu trách nhiệm cuối cùng"],
+            ["Nhà đầu tư", "Hiệu quả vốn, lợi nhuận, tiến độ hoàn vốn và cơ hội mới", "Trung tâm Nhà đầu tư", "Cung cấp vốn và kỷ luật minh bạch dài hạn"]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Chuỗi giá trị xuyên suốt"
+        },
+        {
+          "type": "steps",
+          "items": [
+            "Khơi gợi nhu cầu",
+            "Đặt lịch phù hợp",
+            "Giữ chỗ minh bạch",
+            "Chăm sóc đúng ngữ cảnh",
+            "Đối soát rõ ràng",
+            "Chăm sóc lại & lan tỏa"
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "Mỗi bước tạo dữ liệu hữu ích cho bước tiếp theo. Nguồn giới thiệu giúp hiểu khách đến từ đâu; booking cho biết nhu cầu và thời điểm; check-in xác nhận việc sử dụng thật; Bill xác nhận doanh thu; đánh giá xác nhận chất lượng; hành vi quay lại xác nhận giá trị dài hạn. Chủ Tuệ Tâm vì vậy không chỉ nhìn thấy giao dịch, mà nhìn thấy toàn bộ vòng đời quan hệ."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Nguyên tắc một nguồn sự thật"
+        },
+        {
+          "type": "callout",
+          "title": "ONE SOURCE OF TRUTH",
+          "text": "Một booking chỉ có một trạng thái vận hành chính; một khoản tiền chỉ có một ý nghĩa kế toán chính; một thông báo chỉ đi tới đúng người cần hành động; một cơ sở chỉ nhìn thấy dữ liệu thuộc phạm vi của mình. Đây là nền tảng để dữ liệu test hôm nay có thể trở thành dữ liệu vận hành thật ngày mai.",
+          "tone": "green"
+        }
+      ]
+    },
+    {
+      "number": "03",
+      "title": "Nguyên tắc thiết kế trải nghiệm",
+      "subtitle": "Sang trọng không nằm ở hiệu ứng; sang trọng nằm ở cảm giác được hiểu, được tôn trọng và không phải đoán.",
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Tám nguyên tắc chuẩn quốc tế"
+        },
+        {
+          "type": "numbered",
+          "items": [
+            "Human-first: bắt đầu từ tình huống đời thực của con người, không bắt đầu từ cấu trúc phòng ban.",
+            "Friction-light: cho phép khám phá và đặt lịch trước khi buộc tạo tài khoản; chỉ yêu cầu thêm thông tin khi nó tạo ra lợi ích rõ ràng.",
+            "Clear money: mọi điểm chạm liên quan đến tiền phải thể hiện Tổng, Ưu đãi, Cọc, Còn lại, Đã thanh toán và Tip bằng cùng một ngôn ngữ.",
+            "Role-based simplicity: mỗi vai trò chỉ thấy những gì cần cho công việc và quyết định của họ.",
+            "Actionable notification: thông báo phải nói điều gì đã xảy ra, vì sao quan trọng và người nhận nên làm gì tiếp theo.",
+            "Progressive disclosure: cho người dùng thấy phần quan trọng trước, chi tiết mở ra khi bấm; tránh bắt họ cuộn quá dài hoặc đọc một màn hình dày đặc.",
+            "Consistent dignity: ngôn từ với khách, KTV, quản lý và nhà đầu tư đều chuyên nghiệp, không phán xét và không gây áp lực.",
+            "Trust by design: hệ thống chủ động ngăn số tiền sai, quyền truy cập sai, trạng thái sai và dữ liệu không có nguồn."
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Ngôn ngữ giao diện"
+        },
+        {
+          "type": "table",
+          "style": "standard",
+          "headers": ["Tình huống", "Cách nói nên dùng", "Cách nói cần tránh", "Lý do"],
+          "rows": [
+            ["Đặt lịch", "Hình thức đặt lịch bạn muốn?", "Chọn loại booking", "Ngôn ngữ tự nhiên, không kỹ thuật"],
+            ["Thanh toán", "Chuyển khoản đặt cọc dịch vụ", "Tôi đã chuyển khoản", "Không giả định người dùng đã hành động"],
+            ["No-show lần đầu", "Mình đã lỡ lịch hôm nay; Tuệ Tâm bảo lưu quyền đổi lịch", "Khách vi phạm", "Giữ sự tôn trọng và khuyến khích quay lại"],
+            ["Tip", "Tip KTV ngoài Bill", "Phụ thu", "Phản ánh đúng bản chất tự nguyện và người thụ hưởng"],
+            ["Nhà đầu tư", "Ước tính theo tiến độ hiện tại ±10%", "Cam kết hoàn vốn", "Minh bạch về tính dự báo, tránh hứa quá mức"],
+            ["Business", "Sức khỏe định kỳ cho cả công ty", "Phúc lợi buổi trưa giá rẻ", "Nâng tầm giá trị và tránh làm nhỏ mục tiêu sức khỏe"]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Thiết kế cho điện thoại trước"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "Nút hành động quan trọng nằm trong vùng ngón tay dễ chạm và không bị che bởi viền an toàn của thiết bị.",
+            "Bộ lọc mở tại vị trí người dùng đang thao tác, không bật từ một vùng xa gây mất ngữ cảnh.",
+            "Card có chiều cao ổn định để màn hình không nhảy khi đổi tab hoặc bộ lọc.",
+            "Chỉ số chính được căn hàng và thống nhất cỡ chữ để người dùng so sánh bằng mắt trong vài giây.",
+            "Thông báo hiển thị như một màn hình đầy đủ, có lọc, trạng thái đọc và đường dẫn hành động rõ ràng.",
+            "Các nút nổi có thể di chuyển trong giới hạn an toàn để không che nội dung quan trọng."
+          ]
+        },
+        {
+          "type": "callout",
+          "title": "TIÊU CHUẨN CẢM NHẬN",
+          "text": "Người dùng không cần khen ứng dụng nhiều tính năng. Họ chỉ cần cảm thấy mọi thứ đúng chỗ, dễ hiểu và đáng tin. Đó là biểu hiện cao nhất của thiết kế đẳng cấp.",
+          "tone": "gold"
+        }
+      ]
+    },
+    {
+      "number": "04",
+      "title": "Hành trình Khách hàng",
+      "subtitle": "Từ một lần quét QR đến một mối quan hệ chăm sóc dài hạn, không ép buộc đăng nhập và không làm khách bị lạc.",
+      "blocks": [
+        {
+          "type": "image",
+          "path": "tuetam-final-live.png",
+          "caption": "Giao diện khách hàng được thiết kế theo hướng thân thiện, giàu cảm xúc nhưng vẫn rõ hành động.",
+          "width": 220
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Luồng 1 — Khách lần đầu chưa đăng nhập"
+        },
+        {
+          "type": "steps",
+          "items": [
+            "Quét QR hoặc mở liên kết",
+            "Xem dịch vụ & cơ sở",
+            "Chọn hình thức đặt lịch",
+            "Chọn giờ trống thật",
+            "Đặt cọc 10%",
+            "Nhận mã lịch & hướng dẫn"
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "Khách có thể xem và đặt dịch vụ ngay mà không bị chặn bởi màn hình đăng nhập. Điều này đặc biệt quan trọng với QR giới thiệu tại văn phòng, cửa hàng đối tác, sự kiện hoặc lời mời cá nhân. Tài khoản chỉ được mời tạo khi lợi ích đủ rõ: nhận ưu đãi 100.000đ lần đầu, đồng bộ lịch, hóa đơn, gói và thông báo."
+        },
+        {
+          "type": "table",
+          "style": "standard",
+          "headers": ["Điểm chạm", "Khách sử dụng gì", "Lợi ích với khách", "Ý nghĩa với Chủ Tuệ Tâm"],
+          "rows": [
+            ["Trang chủ", "Ưu đãi, dịch vụ, KTV, cơ sở, Tuệ Tâm Business", "Hiểu nhanh giá trị và lựa chọn", "Đo được nhu cầu quan tâm theo nội dung"],
+            ["Dấu + đặt lịch", "Cá nhân, Mời bạn, Mời sếp, Business", "Đặt theo đúng ngữ cảnh đời sống", "Nhận biết mục đích và mối quan hệ để điều phối tốt hơn"],
+            ["Lịch trống", "Ngày, giờ, KTV, cơ sở", "Không cần gọi hỏi còn chỗ", "Giảm thao tác lễ tân, tăng khả năng lấp đầy"],
+            ["Đặt cọc", "Ngân hàng, số tiền và nội dung chuyển sẵn", "Giảm sai sót chuyển khoản", "Tăng tỷ lệ xuất hiện và khả năng đối soát"],
+            ["QR tại cơ sở", "Tìm đúng lịch chưa sử dụng tại đúng cơ sở", "Check-in chủ động", "Xác nhận sử dụng thật và khóa sai cơ sở"],
+            ["Ví/Tài chính", "Bill, tiền cọc, phần còn lại, Tip, gói", "Không nhầm giữa cọc và hoàn tất", "Giảm tranh chấp, chuẩn hóa doanh thu"],
+            ["Thông báo", "Booking, khuyến mãi, lời mời, nhắc lịch", "Không bỏ lỡ thông tin quan trọng", "Kích hoạt hành động đúng thời điểm" ]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Luồng 2 — Khách thành viên"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "Tạo tài khoản bằng số điện thoại để nhận quyền lợi chào mừng và đồng bộ dữ liệu giữa các lần truy cập.",
+            "Xem lịch sắp tới, lịch đã hoàn tất, trạng thái cọc và Bill dịch vụ.",
+            "Mua và theo dõi gói nhiều buổi, số buổi còn lại, ngày hết hạn và lịch sử sử dụng.",
+            "Nhận thông báo có thể lọc, đánh dấu đã đọc từng mục hoặc đọc tất cả.",
+            "Đánh giá chỉ sau khi dịch vụ hoàn tất; điểm số cập nhật hồ sơ KTV và tạo cảnh báo chăm sóc lại khi cần.",
+            "Tái đặt lịch dựa trên KTV yêu thích, lịch sử và nhu cầu đã ghi nhận."
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Chính sách đổi lịch và không đến"
+        },
+        {
+          "type": "table",
+          "style": "dark",
+          "headers": ["Tình huống", "Cách hệ thống xử lý", "Thông điệp dành cho khách", "Hạch toán/Quản trị"],
+          "rows": [
+            ["Đổi lịch lần đầu trong tháng", "Bảo lưu cọc cũ, chọn lại giờ trống", "Linh hoạt và được hỗ trợ", "Tăng bộ đếm chính sách, không phát sinh tiền mới"],
+            ["Đổi lịch từ lần thứ hai", "Yêu cầu cọc mới bằng mức cọc trước", "Giải thích rõ chi phí giữ khung cũ", "Ghi cọc mới và cọc cũ không bảo lưu"],
+            ["Không đến lần đầu", "Gửi lời nhắc nhẹ, bảo lưu một cơ hội sắp xếp lại", "Không phán xét, khuyến khích quay lại", "Ghi nhận no-show và đã gửi nhắc phục hồi"],
+            ["Không đến lặp lại trong tháng", "Cọc cũ không còn bảo lưu", "Nêu chính sách lịch sự và mời chọn lịch phù hợp hơn", "Ghi nhận khoản cọc không bảo lưu vào sổ"],
+            ["Khách đến đúng lịch", "Không áp dụng phạt", "Trải nghiệm bình thường", "Chuyển trạng thái check-in và phục vụ"]
+          ]
+        },
+        {
+          "type": "callout",
+          "title": "GIÁ TRỊ HAI CHIỀU",
+          "text": "Chính sách cọc không nhằm phạt khách. Nó bảo vệ thời gian của KTV, công suất cơ sở và sự công bằng với khách khác; đồng thời vẫn dành một cơ hội linh hoạt mỗi tháng để tôn trọng biến động đời sống.",
+          "tone": "green"
+        }
+      ]
+    },
+    {
+      "number": "05",
+      "title": "Mời bạn, Mời sếp và Affiliate",
+      "subtitle": "Mối quan hệ không chỉ là nguồn khách; đó là ngữ cảnh để Tuệ Tâm phục vụ tinh tế hơn.",
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Ba cơ chế, ba mục đích khác nhau"
+        },
+        {
+          "type": "table",
+          "style": "standard",
+          "headers": ["Cơ chế", "Mục đích xã hội", "Trải nghiệm", "Dữ liệu cần biết", "Giá trị kinh doanh"],
+          "rows": [
+            ["Mời bạn", "Cùng thư giãn và hàn huyên", "Đặt nhóm, ưu tiên ghế/giường gần nhau", "Ai mời ai, số người, ghi chú chung", "Tăng giá trị mỗi booking và khả năng giới thiệu tự nhiên"],
+            ["Mời sếp/đối tác", "Thể hiện sự quan tâm trong quan hệ công việc", "Ngôn từ trang trọng, đặt lịch như thông thường, ghi chú tinh tế", "Mối quan hệ và yêu cầu riêng tư", "Mở tệp khách có giá trị cao và chuẩn bị phục vụ tốt hơn"],
+            ["Affiliate", "Lan tỏa dịch vụ qua người có uy tín", "Mã/link riêng, theo dõi trạng thái và thu nhập", "Nguồn giới thiệu, khách mới, lần hoàn tất đầu", "Chi phí thu hút khách có thể đo lường và chỉ trả khi có kết quả"]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Luồng Affiliate chuẩn"
+        },
+        {
+          "type": "steps",
+          "items": [
+            "Nhận mã giới thiệu",
+            "Chia sẻ liên kết/QR",
+            "Khách mới đặt lịch",
+            "Khách hoàn tất buổi đầu",
+            "Ghi hoa hồng",
+            "Đối soát & thông báo"
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "Hoa hồng không được ghi khi người được giới thiệu chỉ nhấp liên kết hoặc mới đặt cọc. Hệ thống chỉ ghi nhận khi khách hoàn tất buổi đầu tiên. Khi đó, khoản hoa hồng đồng thời xuất hiện là thu nhập của Affiliate và chi phí Marketing của cơ sở phát sinh dịch vụ. Hai phía cùng nhìn một sự kiện nhưng với ngữ cảnh phù hợp."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Lợi ích đối với người làm Affiliate"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "Biết ai đã tham gia, ai đang chờ và ai đã hoàn tất điều kiện nhận thưởng.",
+            "Xem thu nhập theo tháng, theo khách, theo đơn và trạng thái dự kiến/đã xác nhận.",
+            "Không phải nhắn hỏi Admin để biết hoa hồng của mình.",
+            "Giới thiệu một dịch vụ có lợi ích sức khỏe thay vì chỉ bán một giao dịch ngắn hạn.",
+            "Tạo uy tín cá nhân nếu trải nghiệm của người được giới thiệu được chăm sóc tốt."
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Lợi ích đối với Chủ Tuệ Tâm"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "Đo được chi phí thu hút khách thật theo nguồn và kết quả.",
+            "Phân biệt khách tự đến, khách Affiliate, khách doanh nghiệp và khách được mời.",
+            "Giảm gian lận nhờ điều kiện lần hoàn tất đầu và cơ chế chống ghi trùng.",
+            "Xây mạng lưới đối tác tăng trưởng mà không phải phụ thuộc hoàn toàn vào quảng cáo trả trước.",
+            "Nhận biết đối tác chất lượng cao dựa trên tỷ lệ hoàn tất, quay lại và giá trị vòng đời khách."
+          ]
+        },
+        {
+          "type": "callout",
+          "title": "NGUYÊN TẮC ĐẠO ĐỨC",
+          "text": "Affiliate chỉ bền vững khi lời giới thiệu dựa trên trải nghiệm thật. Tuệ Tâm cần công khai điều kiện hoa hồng, không khuyến khích spam và không biến mối quan hệ cá nhân thành áp lực mua hàng.",
+          "tone": "red"
+        }
+      ]
+    },
+    {
+      "number": "06",
+      "title": "Tuệ Tâm Business",
+      "subtitle": "Đưa sức khỏe định kỳ đến nơi làm việc, đặc biệt trong khoảng thời gian buổi trưa ít ảnh hưởng năng suất.",
+      "blocks": [
+        {
+          "type": "lead",
+          "text": "Tuệ Tâm Business chuyển dịch vụ từ một lựa chọn cá nhân thành một chương trình sức khỏe định kỳ cho cả công ty. Giá trị không chỉ là một buổi massage tại văn phòng; giá trị nằm ở cách doanh nghiệp tổ chức sự quan tâm đến nhân sự một cách thiết thực, đo lường được và ít gây gián đoạn công việc."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Hành trình doanh nghiệp"
+        },
+        {
+          "type": "steps",
+          "items": [
+            "Chọn trải nghiệm",
+            "Nhập quy mô & thời gian",
+            "Nhận báo giá tự động",
+            "Đặt cọc 10%",
+            "Điều phối KTV",
+            "Thực hiện & báo cáo"
+          ]
+        },
+        {
+          "type": "table",
+          "style": "standard",
+          "headers": ["Tính năng", "HR/Doanh nghiệp nhận được", "Nhân sự nhận được", "Chủ Tuệ Tâm nhận được"],
+          "rows": [
+            ["Gói 15/20/30 phút", "Linh hoạt theo quỹ thời gian", "Trải nghiệm phù hợp mức độ căng mỏi", "Chuẩn hóa định mức và điều phối"],
+            ["Tự tính số KTV", "Biết quy mô phục vụ cần thiết", "Giảm thời gian chờ", "Dự báo nguồn lực và chi phí di chuyển"],
+            ["Gói định kỳ", "Giảm giá, buổi tặng, lịch cố định", "Chăm sóc đều đặn thay vì sự kiện một lần", "Doanh thu lặp lại và quan hệ B2B dài hạn"],
+            ["Đăng ký khung giờ cá nhân", "Danh sách tham gia có tổ chức", "Chủ động chọn giờ", "Giảm hỗn loạn tại sự kiện"],
+            ["Thông báo điều phối", "Biết tiến độ trước ngày triển khai", "Nhận xác nhận rõ ràng", "Cơ sở chủ động nhân sự, dụng cụ và vận chuyển"],
+            ["Báo cáo sau chương trình", "Có dữ liệu tỷ lệ tham gia và phản hồi", "Tiếng nói được ghi nhận", "Chứng minh hiệu quả để gia hạn hợp đồng"]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Báo giá phải được bảo vệ"
+        },
+        {
+          "type": "paragraph",
+          "text": "Số tiền Business được máy chủ tự tính lại từ gói trải nghiệm, số người, thời lượng, tỷ lệ giảm và phí điều phối. Giao diện không có quyền tự quyết số tiền. Nếu dữ liệu gửi lên không khớp báo giá, hệ thống từ chối và yêu cầu tải lại. Đây là ví dụ điển hình của nguyên tắc Trust by Design: không chỉ hiển thị đúng mà còn ngăn ghi sai."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Giá trị xã hội tại nơi làm việc"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "Đưa chăm sóc cổ–vai–gáy và thư giãn đến gần nhóm nhân sự văn phòng thường xuyên căng mỏi.",
+            "Tạo một nghi thức nghỉ giữa ngày tích cực thay cho việc kéo dài thời gian ngồi liên tục.",
+            "Giúp doanh nghiệp thể hiện sự quan tâm bằng hành động cụ thể, không chỉ bằng thông điệp nội bộ.",
+            "Tạo dữ liệu tổng hợp để HR hiểu mức độ tham gia và nhu cầu, nhưng không tiết lộ ghi chú sức khỏe cá nhân nhạy cảm.",
+            "Mở rộng cơ hội việc làm và lịch phục vụ ổn định hơn cho KTV."
+          ]
+        },
+        {
+          "type": "callout",
+          "title": "ĐỊNH VỊ BUSINESS",
+          "text": "Tăng cường sức khỏe vào buổi trưa ngay tại văn phòng — một chương trình sức khỏe định kỳ cho cả công ty, được tổ chức chuyên nghiệp từ đăng ký đến đối soát.",
+          "tone": "gold"
+        }
+      ]
+    },
+    {
+      "number": "07",
+      "title": "Hành trình Kỹ thuật viên",
+      "subtitle": "KTV không phải một tài nguyên vô danh; họ là người tạo ra chất lượng, niềm tin và khả năng khách quay lại.",
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Một ngày làm việc được tổ chức rõ ràng"
+        },
+        {
+          "type": "steps",
+          "items": [
+            "Đăng nhập cá nhân",
+            "Xem lịch hôm nay",
+            "Đọc ghi chú cần thiết",
+            "Bắt đầu ca được giao",
+            "Hoàn tất cùng quầy",
+            "Nhận Tip & phản hồi"
+          ]
+        },
+        {
+          "type": "table",
+          "style": "standard",
+          "headers": ["Nhu cầu của KTV", "Tính năng đáp ứng", "Lợi ích trực tiếp", "Lợi ích với quản lý"],
+          "rows": [
+            ["Biết chính xác lịch được giao", "Cổng KTV theo tài khoản và ngày", "Không nhầm ca, không xem lịch người khác", "Giảm điều phối miệng và tranh cãi"],
+            ["Chuẩn bị trước khi khách đến", "Ghi chú dịch vụ và CRM cần thiết", "Hiểu mức lực, vùng cần lưu ý, quan hệ nhóm", "Chất lượng đồng đều hơn"],
+            ["Xác nhận bắt đầu phục vụ", "Nút Bắt đầu ca chỉ cho booking được phân công", "Thao tác rõ trách nhiệm", "Lịch vận hành chuyển trạng thái theo thời gian thật"],
+            ["Được ghi nhận tay nghề", "Lượt phục vụ, khách đặt lại, điểm đánh giá", "Xây uy tín nghề nghiệp", "Phát triển, đào tạo và phân ca có cơ sở"],
+            ["Nhận Tip minh bạch", "Tip ngoài Bill, thông báo ghi nhận và đã chi", "Biết số tiền và trạng thái", "Không lẫn Tip với doanh thu cơ sở"],
+            ["Không bị ngập thông báo", "Feed riêng theo người, đánh dấu đã đọc", "Chỉ thấy nội dung liên quan", "Giảm nhiễu và bỏ sót"]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Quyền hạn và giới hạn"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "KTV chỉ xem booking được gán cho chính mình tại đúng cơ sở.",
+            "KTV có thể bắt đầu ca đã được xác nhận nhưng không tự sửa Bill, xác nhận doanh thu hoặc xử lý chi phí.",
+            "Thông tin CRM chỉ hiển thị phần cần thiết cho chăm sóc, không mở toàn bộ hồ sơ tài chính và lịch sử riêng tư.",
+            "Tip được ghi nhận khi Bill hoàn tất và chuyển sang Đã chi khi quản lý chốt cuối ngày.",
+            "Đánh giá khách cập nhật điểm trung bình; yêu cầu đặt lại đóng góp vào chỉ số khách quay lại của KTV."
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Ý nghĩa nhân văn"
+        },
+        {
+          "type": "paragraph",
+          "text": "Khi hệ thống ghi nhận rõ ai đã phục vụ, khách phản hồi gì và Tip đã được chi chưa, KTV được đối xử như một chuyên gia có hồ sơ đóng góp. Điều này tạo động lực nâng tay nghề, giảm phụ thuộc vào đánh giá cảm tính và giúp người giỏi được công nhận bằng dữ liệu có ngữ cảnh."
+        },
+        {
+          "type": "callout",
+          "title": "GIÁ TRỊ CHO CHỦ DOANH NGHIỆP",
+          "text": "Dữ liệu KTV không dùng để giám sát cực đoan. Nó dùng để xếp lịch công bằng, phát hiện nhu cầu đào tạo, giữ chân người giỏi và nâng trải nghiệm khách một cách có cơ sở.",
+          "tone": "green"
+        }
+      ]
+    },
+    {
+      "number": "08",
+      "title": "Lễ tân và Quản lý cơ sở",
+      "subtitle": "Biến hoạt động tại quầy từ phản ứng bị động thành một trung tâm điều phối chủ động.",
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "CRM tại quầy"
+        },
+        {
+          "type": "paragraph",
+          "text": "Lễ tân có thể tạo hồ sơ khách đến trực tiếp, khách do bạn giới thiệu, khách được mời cùng sếp hoặc đối tác. Hệ thống ghi nguồn và cơ sở tiếp nhận, gửi thông báo cho khách nếu có tài khoản và tạo sự kiện cho đội ngũ vận hành. Một thao tác tại quầy vì vậy không còn là dữ liệu cục bộ trên một thiết bị."
+        },
+        {
+          "type": "table",
+          "style": "standard",
+          "headers": ["Nhóm công việc", "Hành động chính", "Thông tin cần nhìn", "Kết quả mong muốn"],
+          "rows": [
+            ["Booking", "Xác nhận, đổi trạng thái, nhắn khách, xử lý no-show", "Cọc, giờ, dịch vụ, KTV, phòng, ghi chú", "Lịch rõ ràng và khách được cập nhật"],
+            ["Lịch vận hành", "Xem theo hôm nay/tuần/tùy chỉnh, ca và cơ sở", "Booking theo giờ, công suất, xung đột", "Điều phối nhanh, giảm ghế trống"],
+            ["CRM", "Tạo khách, phân nhóm, xem dòng thời gian", "VIP, thân thiết, dài hạn, doanh nghiệp, Affiliate", "Chăm sóc đúng nhóm và tăng quay lại"],
+            ["KTV & phòng", "Theo dõi người hoạt động, ghế/giường và bảo trì", "Công suất và khả năng đáp ứng", "Không bán quá năng lực hoặc bỏ phí nguồn lực"],
+            ["Chi phí", "Ghi khoản chi, mục chi, nhà cung cấp, chứng từ", "Số tiền, cơ sở, danh mục, người thực hiện", "Chi phí đi ngay vào báo cáo lãi/lỗ"],
+            ["Thông báo", "Lọc booking, cơ sở, VIP, tài chính", "Chưa đọc, nguồn phát sinh, hành động", "Không bỏ sót việc quan trọng"]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Phạm vi dữ liệu theo cơ sở"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "Quản lý Cơ sở 1 không xem booking, CRM chi tiết hoặc thông báo của Cơ sở 2.",
+            "Quản lý chỉ ghi chi phí cho cơ sở mình; chi cho toàn hệ thống chỉ thuộc quyền Chủ/Admin.",
+            "Báo cáo tài chính tự thu hẹp theo cơ sở đăng nhập dù người dùng cố đổi bộ lọc.",
+            "Thông báo tài chính và vận hành phát sinh tại cơ sở nào chỉ tới quản lý/lễ tân phù hợp và Chủ hệ thống.",
+            "Nhà đầu tư và KTV không được dùng giao diện quản lý cơ sở để mở rộng quyền."
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Nhịp vận hành đề xuất"
+        },
+        {
+          "type": "table",
+          "style": "dark",
+          "headers": ["Thời điểm", "Quản lý xem gì", "Quyết định cần đưa ra", "Kết quả lưu lại"],
+          "rows": [
+            ["Trước mở cửa", "Lịch ngày, KTV có mặt, phòng/ghế, ghi chú VIP", "Điều chỉnh phân ca và chuẩn bị", "Phân công rõ trước ca đầu"],
+            ["Giữa ngày", "Booking sắp tới, khách đã check-in, công suất", "Bổ sung KTV, đổi phòng, gọi xác nhận", "Giảm chờ và giảm slot bỏ trống"],
+            ["Cuối ca", "Bill chưa hoàn tất, Tip đang chờ, khoản chi mới", "Đối soát và chốt trạng thái", "Sổ trong ngày đầy đủ"],
+            ["Cuối ngày", "Tổng Thu, Tổng Chi, Tip, no-show, phản hồi thấp", "Chốt Tip và lập danh sách chăm sóc lại", "Thông báo đã chi và công việc ngày sau"],
+            ["Cuối tuần", "Công suất, KTV, khách quay lại, nguồn khách", "Xếp lịch, đào tạo và chiến dịch", "Kế hoạch tuần kế tiếp"]
+          ]
+        },
+        {
+          "type": "callout",
+          "title": "QUẢN LÝ TỐT LÀ QUẢN LÝ THEO NGOẠI LỆ",
+          "text": "Hệ thống nên tự xử lý các trường hợp bình thường và đưa ngoại lệ lên trước: khách sắp đến nhưng chưa xác nhận, công suất quá cao, Bill chưa khớp, Tip chưa chi, đánh giá thấp hoặc chi phí bất thường.",
+          "tone": "gold"
+        }
+      ]
+    },
+    {
+      "number": "09",
+      "title": "Admin Tuệ Tâm — Hệ điều hành của Chủ doanh nghiệp",
+      "subtitle": "Từ nhìn số liệu sang hiểu nguyên nhân; từ hiểu nguyên nhân sang hành động có trách nhiệm.",
+      "blocks": [
+        {
+          "type": "image",
+          "path": ".codex-next-logs\\tuetam-final.png",
+          "caption": "Tổng quan Admin tập trung tài chính, booking, công suất và hiệu suất theo phạm vi lọc.",
+          "width": 225
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Bốn lớp điều hành"
+        },
+        {
+          "type": "table",
+          "style": "standard",
+          "headers": ["Lớp", "Câu hỏi Chủ doanh nghiệp cần trả lời", "Nhóm tính năng", "Giá trị quyết định"],
+          "rows": [
+            ["Toàn cảnh", "Hệ thống hôm nay đang khỏe hay có vấn đề?", "Tổng thu, Tổng chi, lợi nhuận, booking, công suất, KTV", "Nhận biết xu hướng trong vài giây"],
+            ["Vận hành", "Cơ sở nào, ca nào, khách nào cần hành động?", "Lịch, Booking, CRM, KTV, phòng, thông báo", "Đi đúng từ tổng quan đến tình huống cụ thể"],
+            ["Tài chính", "Tiền đến từ đâu, đi đâu và lãi/lỗ thế nào?", "Bill, Doanh thu, Chi phí, Tip, sổ cái", "Đối soát và phân bổ nguồn lực"],
+            ["Tăng trưởng", "Nguồn khách và mô hình nào đáng đầu tư thêm?", "Affiliate, chiến dịch, gói, Business, Nhà đầu tư", "Tăng trưởng dựa trên hiệu quả thật"]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Bộ lọc thống nhất"
+        },
+        {
+          "type": "paragraph",
+          "text": "Thời gian, cơ sở và ca làm việc được đặt tại vùng đầu của Tổng quan. Khi Chủ chọn Hôm nay, Tuần này, Tháng này, Năm nay hoặc tùy chỉnh; chọn Cơ sở 1, Cơ sở 2 hay Toàn hệ thống; chọn Sáng, Chiều, Tối hay Cả ngày, các Card và danh sách bên dưới phải cùng kể một câu chuyện. Bộ lọc không chỉ đổi nhãn; nó thay phạm vi truy vấn dữ liệu."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Trung tâm tài chính"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "Tổng quan: Dòng tiền vào, Dòng tiền ra, Lợi nhuận tạm tính và Tip KTV ngoài Bill.",
+            "Doanh thu: mở từng Bill, thấy Tổng, Đã cọc, Đã thanh toán, Còn lại, cơ sở, khách, dịch vụ và thời điểm.",
+            "Chi phí: mở khoản chi theo danh mục, nhà cung cấp, người ghi nhận, cơ sở và chứng từ.",
+            "Tip KTV: theo dõi riêng khoản đang chờ và đã chi, không cộng vào doanh thu dịch vụ hoặc trừ sai vào lợi nhuận.",
+            "Cơ sở: bấm Cơ sở 1/Cơ sở 2 để xem doanh thu, chi phí, lợi nhuận và các nguồn cấu thành.",
+            "Toàn hệ thống: tổng hợp nhưng vẫn cho phép truy nguyên về cơ sở và giao dịch gốc."
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Chi phí phát sinh"
+        },
+        {
+          "type": "table",
+          "style": "dark",
+          "headers": ["Danh mục", "Ví dụ", "Mục tiêu quản trị", "Phạm vi"],
+          "rows": [
+            ["Cơ sở vật chất", "Trang thiết bị, cải tạo nhỏ", "Theo dõi đầu tư và sửa chữa", "Cơ sở hoặc hệ thống"],
+            ["Khấu hao", "Ghế, giường, máy móc", "Phản ánh chi phí tài sản theo thời gian", "Theo cơ sở sở hữu"],
+            ["Lương & Thưởng", "Lương vận hành, thưởng hiệu suất", "Hiểu chi phí nhân sự", "Theo cơ sở/hệ thống"],
+            ["Mặt bằng", "Tiền thuê, dịch vụ tòa nhà", "Đánh giá hiệu quả địa điểm", "Theo cơ sở"],
+            ["Điện nước & Internet", "Điện, nước, kết nối", "Theo dõi chi phí tiện ích", "Theo cơ sở"],
+            ["Vật tư", "Dầu massage, khăn, đồ tiêu hao", "Kiểm soát chi phí theo lượng phục vụ", "Theo cơ sở"],
+            ["Marketing", "Affiliate, quảng cáo, sự kiện", "Đo chi phí thu hút khách", "Theo nguồn/cơ sở"],
+            ["Nền tảng", "Phần mềm, lưu trữ, dịch vụ số", "Hiểu chi phí hệ thống", "Phân bổ theo tỷ trọng hợp lý"]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "IQ Care"
+        },
+        {
+          "type": "paragraph",
+          "text": "IQ Care là lớp hỗ trợ quyết định, không phải một hộp chat trang trí. Trong lộ trình trưởng thành, IQ Care nên giải thích biến động doanh thu, cảnh báo công suất, gợi ý lịch chăm sóc lại, phát hiện chi phí bất thường, dự báo nhu cầu KTV và tóm tắt việc cần làm. Mỗi gợi ý phải chỉ rõ dữ liệu nguồn và để con người quyết định cuối cùng."
+        },
+        {
+          "type": "callout",
+          "title": "GIÁ TRỊ CAO NHẤT CHO CHỦ TUỆ TÂM",
+          "text": "Không phải nhìn thấy nhiều Card hơn, mà là rút ngắn khoảng cách từ tín hiệu đến quyết định: thấy vấn đề, hiểu nguyên nhân, mở đúng chi tiết và giao đúng người xử lý.",
+          "tone": "red"
+        }
+      ]
+    },
+    {
+      "number": "10",
+      "title": "Trung tâm Nhà đầu tư",
+      "subtitle": "Minh bạch tài chính theo đúng phạm vi đầu tư, giàu thông tin nhưng không xâm phạm dữ liệu vận hành nhạy cảm.",
+      "blocks": [
+        {
+          "type": "image",
+          "path": ".investor-final.png",
+          "caption": "Trung tâm Nhà đầu tư phân tách Tổng quan, Hiệu quả, Cơ hội mới, Đặc quyền và Cập nhật.",
+          "width": 225
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Năm không gian thông tin"
+        },
+        {
+          "type": "table",
+          "style": "standard",
+          "headers": ["Không gian", "Nhà đầu tư tìm thấy gì", "Không nên hiển thị", "Giá trị"],
+          "rows": [
+            ["Tổng quan", "Vốn đầu tư, lợi nhuận được chia, tiến độ thu hồi", "Danh tính khách và Bill chi tiết", "Hiểu vị thế trong vài giây"],
+            ["Hiệu quả", "Doanh thu, chi phí, lợi nhuận theo cơ sở và thời gian", "Ghi chú KTV hoặc CRM cá nhân", "Đánh giá chất lượng tài sản đang hoạt động"],
+            ["Cơ hội mới", "Cơ sở đang khảo sát, thầu lại, nhu cầu vốn, tiến độ thẩm định", "Dữ liệu chưa xác minh như cam kết", "Chuẩn bị quyết định đầu tư tiếp theo"],
+            ["Đặc quyền", "Quyền chăm sóc sức khỏe, ưu tiên phòng, tiếp đón đối tác", "Ưu đãi đại trà không có khác biệt", "Kết nối lợi ích tài chính và trải nghiệm thương hiệu"],
+            ["Cập nhật", "Phân phối lợi nhuận, mốc khảo sát, phiên trao đổi", "Thông báo vận hành vụn vặt", "Duy trì nhịp giao tiếp chuyên nghiệp"]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Bộ lọc độc lập"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "Hôm nay, Tuần, Tháng, Quý, Năm và Tùy chỉnh.",
+            "Tất cả cơ sở đã đầu tư hoặc từng cơ sở độc lập.",
+            "Bấm cột/điểm trên đồ thị để mở Doanh thu, Chi phí và Lợi nhuận cụ thể cho kỳ đó.",
+            "Biểu đồ dùng dữ liệu biến thiên thật; không làm các cột giống nhau chỉ để đẹp.",
+            "Card giữ chiều cao ổn định khi đổi tab để người xem không mất định hướng."
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Ước tính hoàn vốn có trách nhiệm"
+        },
+        {
+          "type": "paragraph",
+          "text": "Hệ thống sử dụng tiến độ dài hạn kết hợp trọng số lớn hơn cho ba tháng gần nhất để ước tính mức chia lợi nhuận hàng tháng. Kết quả trình bày một mốc cơ sở và khoảng sớm/muộn ±10%, kèm độ tin cậy và xu hướng. Đây là công cụ hỗ trợ hình dung, không phải cam kết lợi nhuận. Khi dữ liệu ít hoặc biến động mạnh, giao diện phải nói rõ mức không chắc chắn."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Lợi ích với Chủ Tuệ Tâm"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "Giảm thời gian làm báo cáo thủ công lặp lại cho từng nhà đầu tư.",
+            "Tạo kỷ luật tài chính vì số liệu nhà đầu tư xuất phát từ cùng sổ vận hành.",
+            "Tách cơ hội mới khỏi cơ sở đang hoạt động, tránh hiểu nhầm danh mục.",
+            "Quản lý kỳ vọng bằng biên dự báo, trạng thái thẩm định và chú thích rõ.",
+            "Tăng khả năng gọi vốn cho cơ hội tốt bằng hồ sơ tiến độ có cấu trúc."
+          ]
+        },
+        {
+          "type": "callout",
+          "title": "NIỀM TIN ĐẦU TƯ",
+          "text": "Minh bạch không có nghĩa là mở tất cả dữ liệu. Minh bạch đúng nghĩa là cung cấp đủ thông tin có nguồn, đúng phạm vi và đúng mức chi tiết để một quyết định hợp lý có thể được đưa ra.",
+          "tone": "gold"
+        }
+      ]
+    },
+    {
+      "number": "11",
+      "title": "Logic tài chính và kiến trúc niềm tin",
+      "subtitle": "Mọi khoản tiền phải có tên, nguồn, người hưởng, trạng thái và vị trí đúng trong báo cáo.",
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Nguyên tắc tài chính nền tảng"
+        },
+        {
+          "type": "numbered",
+          "items": [
+            "Giá dịch vụ và ưu đãi được máy chủ xác định; giao diện không được tự quyết số tiền ghi sổ.",
+            "Tiền cọc bằng 10% giá trị Bill ban đầu trước ưu đãi và chuyển vào tài khoản nền tảng; phần còn lại bằng 90% giá trị ban đầu trừ ưu đãi.",
+            "Doanh thu dịch vụ không bao gồm Tip KTV.",
+            "Tip hoàn toàn tùy tâm, khách trao trực tiếp cho KTV và không đi qua Bill hay tài khoản thanh toán của cơ sở.",
+            "Chi phí phát sinh phải có cơ sở hoặc phạm vi hệ thống, danh mục, mô tả, thời điểm và người ghi nhận.",
+            "Chi hệ thống được phân bổ theo nguyên tắc được công bố; bản demo sử dụng tỷ trọng công suất ghế/giường.",
+            "Mỗi giao dịch có khóa chống ghi trùng để bấm lại không tạo thêm tiền.",
+            "Báo cáo tổng hợp phải truy ngược được về Bill, khoản chi hoặc sự kiện nguồn."
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Ví dụ chuẩn về Bill và Tip"
+        },
+        {
+          "type": "table",
+          "style": "dark",
+          "headers": ["Khoản", "Số tiền", "Ý nghĩa", "Nơi xuất hiện"],
+          "rows": [
+            ["Giá dịch vụ", "250.000đ", "Doanh thu dịch vụ thực", "Bill khách, Doanh thu cơ sở"],
+            ["Cọc 10%", "25.000đ", "Một phần thanh toán trước của Bill", "Đã cọc; không cộng thêm ngoài 250.000đ"],
+            ["Còn lại tại cơ sở", "225.000đ", "Phần hoàn tất Bill", "Thanh toán/check-out"],
+            ["Khách Tip trực tiếp", "Tùy tâm", "Trao riêng cho KTV nếu hài lòng", "Không nằm trong giao dịch Bill"],
+            ["Tổng tiền khách chuyển qua nền tảng/cơ sở", "250.000đ", "Chỉ gồm tiền dịch vụ", "Tip không đi qua tài khoản Bill"],
+            ["Lợi nhuận cơ sở", "Tính từ 250.000đ", "Doanh thu dịch vụ trừ chi phí", "Không cộng Tip vào lợi nhuận"]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Luồng ghi nhận tiền"
+        },
+        {
+          "type": "table",
+          "style": "standard",
+          "headers": ["Sự kiện", "Dòng tiền", "Sổ ghi nhận", "Thông báo"],
+          "rows": [
+            ["Đặt cọc booking", "Tiền vào", "Customer Deposit", "Khách, quản lý cơ sở, Admin"],
+            ["Hoàn tất dịch vụ", "Tiền vào", "Service Revenue", "Khách, quản lý, Admin"],
+            ["Tip KTV", "Tiền vào rồi chờ chi", "Tip Payable", "KTV, quản lý, Admin"],
+            ["Chốt Tip cuối ngày", "Tiền ra", "Tip Paid", "KTV và quản lý"],
+            ["Chi phí cơ sở", "Tiền ra", "Operating Expense", "Quản lý cơ sở và Admin"],
+            ["Chi hệ thống", "Tiền ra phân bổ", "Operating Expense từng cơ sở", "Admin tổng"],
+            ["Hoa hồng Affiliate", "Tiền phải trả/chi phí", "Marketing Expense", "Affiliate, quản lý, Admin"],
+            ["Mua gói", "Tiền vào", "Doanh thu/hoặc doanh thu chưa thực hiện theo chính sách kế toán", "Khách, quản lý, Admin"],
+            ["Cọc Business", "Tiền vào", "Customer Deposit", "Đầu mối doanh nghiệp, vận hành, Admin"]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Báo cáo lãi/lỗ theo cơ sở"
+        },
+        {
+          "type": "paragraph",
+          "text": "Mỗi cơ sở có doanh thu dịch vụ, chi phí trực tiếp và phần chi hệ thống được phân bổ. Lợi nhuận tạm tính bằng doanh thu dịch vụ trừ chi phí vận hành; Tip đứng ngoài phép tính này. Chủ có thể xem toàn hệ thống hoặc mở từng cơ sở, sau đó mở tiếp Doanh thu và Chi phí để hiểu các nguồn cấu thành."
+        },
+        {
+          "type": "callout",
+          "title": "ĐIỂM KIỂM SOÁT KHI CHẠY THẬT",
+          "text": "Nút xác nhận chuyển khoản trong demo phải được thay bằng webhook ngân hàng/SePay. Chỉ giao dịch được ngân hàng xác nhận mới chuyển từ Chờ đối soát sang Đã thanh toán. Đây là ranh giới quan trọng giữa bản demo dữ liệu thật và hệ thống tài chính thương mại.",
+          "tone": "red"
+        }
+      ]
+    },
+    {
+      "number": "12",
+      "title": "Hệ thống thông báo theo sự kiện",
+      "subtitle": "Thông báo là dòng công việc được cá nhân hóa, không phải một danh sách tin nhắn ồn ào.",
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Công thức thông báo tốt"
+        },
+        {
+          "type": "steps",
+          "items": [
+            "Sự kiện xảy ra",
+            "Xác định người chịu trách nhiệm",
+            "Viết nội dung theo vai trò",
+            "Gắn hành động tiếp theo",
+            "Lưu trạng thái đọc",
+            "Đo việc đã xử lý"
+          ]
+        },
+        {
+          "type": "table",
+          "style": "standard",
+          "headers": ["Sự kiện", "Khách", "KTV", "Quản lý cơ sở", "Admin/Chủ", "Nhà đầu tư"],
+          "rows": [
+            ["Booking mới", "Xác nhận đã ghi nhận/cọc", "Nhận lịch nếu được gán", "Booking mới cần xác nhận", "Tổng quan và cơ sở phát sinh", "Không nhận"],
+            ["Lịch được xác nhận", "QR check-in đã sẵn sàng", "Chuẩn bị ca", "Trạng thái sẵn sàng", "Theo dõi", "Không nhận"],
+            ["Đổi lịch", "Lịch mới và chính sách cọc", "Lịch phân công cập nhật", "Số lần đổi/cọc mới", "Ảnh hưởng vận hành/tài chính", "Không nhận"],
+            ["No-show", "Nhắc nhẹ hoặc chính sách lần lặp", "Ca được giải phóng", "Chăm sóc lại/cọc không bảo lưu", "Theo dõi tỷ lệ no-show", "Không nhận"],
+            ["Hoàn tất Bill", "Đã thanh toán đầy đủ", "Tip nếu có", "Doanh thu và trạng thái", "Sổ tài chính cập nhật", "Chỉ qua báo cáo tổng hợp"],
+            ["Tip đã chi", "Không cần", "Đã nhận/đã chi", "Đã chốt cuối ngày", "Đã đối soát", "Không nhận"],
+            ["Hoa hồng Affiliate", "Affiliate thấy thu nhập", "Không nhận", "Chi phí Marketing", "Hiệu quả nguồn khách", "Không nhận"],
+            ["Chi phí phát sinh", "Không nhận", "Không nhận", "Nếu thuộc cơ sở", "Luôn nhận theo quyền", "Chỉ phản ánh trong tổng hợp"],
+            ["Đánh giá thấp", "Cảm ơn đã phản hồi", "Nhận qua quy trình phù hợp", "Cần chăm sóc lại", "Theo dõi chất lượng", "Không nhận"],
+            ["Cơ hội đầu tư mới", "Không nhận", "Không nhận", "Không nhận", "Admin phát hành", "Nhận bản tin cơ hội"]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Bộ lọc theo vai trò"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "Khách: Tất cả, Chưa đọc, Booking, Khuyến mãi, Lời mời, Nhắc lịch.",
+            "Admin/Quản lý: Tất cả, Chưa đọc, Booking, Cơ sở, Mối quan hệ/VIP, Tài chính; Chủ có thêm lọc theo cơ sở và Chi hệ thống.",
+            "KTV: Lịch công việc, thay đổi ca, Tip và phản hồi cần biết.",
+            "Nhà đầu tư: Tài chính, Cơ hội mới, Đặc quyền và Cập nhật hệ thống.",
+            "Mỗi thông báo lưu trạng thái Đã đọc riêng theo người; Đọc tất cả chỉ ảnh hưởng tài khoản hiện tại."
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Nguyên tắc chống quá tải"
+        },
+        {
+          "type": "numbered",
+          "items": [
+            "Không gửi cùng một sự kiện nhiều lần nếu trạng thái không đổi.",
+            "Gộp thông báo tổng hợp khi nhiều sự kiện nhỏ cùng loại xảy ra trong thời gian ngắn.",
+            "Ưu tiên cảnh báo cần hành động; khuyến mãi không được che booking và thanh toán.",
+            "Cho phép chọn kênh: trong app, push, Zalo/SMS hoặc email tùy mức quan trọng.",
+            "Tôn trọng giờ nghỉ và quy định liên lạc, ngoại trừ sự kiện vận hành khẩn cấp đã định nghĩa.",
+            "Đo tỷ lệ mở, bấm và hoàn thành hành động để cải thiện chất lượng thông báo."
+          ]
+        },
+        {
+          "type": "callout",
+          "title": "THÔNG BÁO CÓ TRÁCH NHIỆM",
+          "text": "Một thông báo tốt giúp con người bớt lo hoặc làm đúng việc nhanh hơn. Nếu nó chỉ làm tăng số chấm đỏ, đó là gánh nặng chứ không phải giá trị.",
+          "tone": "green"
+        }
+      ]
+    },
+    {
+      "number": "13",
+      "title": "Giá trị đối với xã hội",
+      "subtitle": "Một nền tảng chỉ thực sự có giá trị khi tăng trưởng kinh doanh đồng thời cải thiện chất lượng sống và chất lượng nghề nghiệp.",
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Tác động với cá nhân và gia đình"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "Giảm rào cản tiếp cận chăm sóc thư giãn và phục hồi thường xuyên.",
+            "Khuyến khích thói quen chăm sóc trước khi căng mỏi trở thành vấn đề kéo dài.",
+            "Tạo một hoạt động kết nối lành mạnh giữa bạn bè, gia đình, đồng nghiệp và đối tác.",
+            "Tăng hiểu biết tài chính dịch vụ nhờ Bill và Tip minh bạch.",
+            "Trao quyền cho người dùng kiểm soát lịch, dữ liệu và quyền lợi của mình."
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Tác động với người lao động KTV"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "Chuyên nghiệp hóa lịch làm việc và hồ sơ tay nghề.",
+            "Ghi nhận khách đặt lại, điểm đánh giá và Tip một cách có hệ thống.",
+            "Tạo căn cứ công bằng hơn cho đào tạo, thưởng và lộ trình nghề nghiệp.",
+            "Giảm giao tiếp rời rạc và nhầm lịch gây áp lực không cần thiết.",
+            "Mở rộng cơ hội phục vụ tại doanh nghiệp và các chương trình định kỳ."
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Tác động với doanh nghiệp nhỏ và ngành dịch vụ"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "Đưa quản trị CRM, công suất và lãi/lỗ đến một mô hình dịch vụ vốn thường vận hành bằng kinh nghiệm cá nhân.",
+            "Tạo chuẩn minh bạch có thể nâng niềm tin chung của thị trường.",
+            "Giúp mô hình tốt có thể nhân rộng mà không phụ thuộc hoàn toàn vào một người chủ luôn có mặt.",
+            "Khuyến khích cạnh tranh bằng chất lượng, trải nghiệm và khả năng quay lại thay vì giảm giá thiếu bền vững.",
+            "Tạo một ngôn ngữ chung giữa vận hành, tài chính và nhà đầu tư."
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Khung đo lường tác động"
+        },
+        {
+          "type": "table",
+          "style": "dark",
+          "headers": ["Trụ cột", "Chỉ số gợi ý", "Ý nghĩa", "Tần suất"],
+          "rows": [
+            ["Tiếp cận", "Số khách mới từ QR/không đăng nhập", "Đo mức giảm rào cản", "Tuần/Tháng"],
+            ["Chăm sóc chủ động", "Tỷ lệ khách quay lại 30/60/90 ngày", "Đo thói quen chăm sóc bền vững", "Tháng"],
+            ["Sức khỏe nơi làm việc", "Nhân sự tham gia Business và tỷ lệ sử dụng", "Đo độ phủ tại doanh nghiệp", "Theo chương trình/Quý"],
+            ["Chất lượng nghề KTV", "Điểm, lượt đặt lại, thu nhập Tip, giờ phục vụ", "Đo sự công nhận và phát triển nghề", "Tháng"],
+            ["Minh bạch", "Tỷ lệ Bill/chi phí đối soát đầy đủ", "Đo kỷ luật dữ liệu và tài chính", "Ngày/Tháng"],
+            ["Công bằng", "Phân bổ lịch giữa KTV và tỷ lệ quá tải", "Phát hiện chênh lệch không hợp lý", "Tuần"],
+            ["Hiệu quả nguồn lực", "Công suất ghế/giường và KTV", "Giảm lãng phí tài nguyên", "Ngày/Tháng"],
+            ["Niềm tin", "Khiếu nại tài chính và thời gian xử lý", "Đo khả năng giải quyết minh bạch", "Tháng"]
+          ]
+        },
+        {
+          "type": "callout",
+          "title": "GIÁ TRỊ XÃ HỘI KHÔNG PHẢI KHẨU HIỆU",
+          "text": "Tuệ Tâm chỉ nên tuyên bố tác động mà hệ thống có thể đo, giải thích và cải thiện. Một chỉ số nhỏ nhưng có nguồn đáng tin hơn một thông điệp lớn không kiểm chứng.",
+          "tone": "red"
+        }
+      ]
+    },
+    {
+      "number": "14",
+      "title": "Động cơ tăng trưởng và khung KPI",
+      "subtitle": "Tăng trưởng tốt là kết quả của trải nghiệm tốt, vận hành tốt và kinh tế đơn vị tốt — không phải chỉ của nhiều lượt truy cập.",
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Bánh đà tăng trưởng"
+        },
+        {
+          "type": "steps",
+          "items": [
+            "Trải nghiệm đáng tin",
+            "Đánh giá & quay lại",
+            "Giới thiệu tự nhiên",
+            "Công suất tốt hơn",
+            "Lợi nhuận tái đầu tư",
+            "Chất lượng cao hơn"
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "Affiliate, gói thành viên và Business là các động cơ tăng trưởng khác nhau nhưng phải cùng phục vụ bánh đà này. Affiliate tạo khách mới có niềm tin; gói tạo thói quen và doanh thu lặp lại; Business mở nhu cầu tại nơi làm việc; dữ liệu vận hành đảm bảo tăng trưởng không vượt quá năng lực phục vụ."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "North Star Metric"
+        },
+        {
+          "type": "callout",
+          "title": "SỐ BUỔI CHĂM SÓC HOÀN TẤT MINH BẠCH VÀ CÓ KHẢ NĂNG QUAY LẠI",
+          "text": "Chỉ số trung tâm không nên là số booking tạo ra, vì booking có thể bị hủy hoặc no-show. Một buổi hoàn tất, được thanh toán đúng, có chất lượng tốt và dẫn tới khả năng quay lại mới phản ánh giá trị thật cho cả khách và doanh nghiệp.",
+          "tone": "green"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "KPI theo tầng"
+        },
+        {
+          "type": "table",
+          "style": "standard",
+          "headers": ["Tầng", "Chỉ số chính", "Chỉ số cảnh báo", "Câu hỏi quản trị"],
+          "rows": [
+            ["Thu hút", "QR→đặt lịch, khách mới theo nguồn", "Chi phí/booking, nguồn gian lận", "Nguồn nào mang khách phù hợp?"],
+            ["Chuyển đổi", "Tỷ lệ cọc, tỷ lệ xác nhận", "Bỏ dở thanh toán", "Ma sát nằm ở bước nào?"],
+            ["Xuất hiện", "Tỷ lệ check-in đúng lịch", "No-show, đổi lịch lần 2", "Chính sách và nhắc lịch có hiệu quả?"],
+            ["Trải nghiệm", "Hoàn tất, điểm đánh giá, khách muốn đặt lại", "Điểm ≤3, khiếu nại", "Chất lượng nào cần cải thiện ngay?"],
+            ["Giữ chân", "Quay lại 30/60/90 ngày, mua gói", "Gói hết hạn chưa dùng", "Ai có nguy cơ rời bỏ?"],
+            ["Vận hành", "Công suất ghế/KTV, thời gian chờ", "Quá tải, xung đột phòng", "Cần thêm người hay tối ưu lịch?"],
+            ["Tài chính", "Doanh thu, chi phí, lợi nhuận, dòng tiền", "Bill chưa khớp, chi bất thường", "Tăng trưởng có tạo tiền và lợi nhuận?"],
+            ["Đội ngũ", "Lượt phục vụ, đặt lại, Tip, điểm", "Chênh lệch phân ca, quá tải", "Ai cần ghi nhận, ai cần hỗ trợ?"],
+            ["Đầu tư", "ROIC, phân phối, tiến độ hoàn vốn", "Biên lợi nhuận giảm, dự báo lệch", "Tài sản đang đi đúng kế hoạch?" ]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Mục tiêu gợi ý cho giai đoạn thí điểm"
+        },
+        {
+          "type": "table",
+          "style": "dark",
+          "headers": ["Chỉ số", "Mục tiêu tham khảo", "Lưu ý"],
+          "rows": [
+            ["Tỷ lệ xác nhận sau đặt cọc", "≥ 95%", "Cần webhook ngân hàng để đo chính xác"],
+            ["No-show", "≤ 5%", "Theo dõi riêng khách mới và khách quay lại"],
+            ["Hoàn tất/booking đã xác nhận", "≥ 90%", "Loại trừ hủy do cơ sở"],
+            ["Đánh giá trung bình", "≥ 4,7/5", "Quan trọng hơn là tốc độ xử lý điểm thấp"],
+            ["Tip chốt đúng ngày", "100%", "Khoản ngoại lệ phải có lý do"],
+            ["Khoản chi có chứng từ/ghi chú", "≥ 98%", "Tùy ngưỡng bắt buộc theo số tiền"],
+            ["Thông báo vận hành quan trọng được xử lý", "≥ 95% trong SLA", "Không chỉ đo Đã đọc"],
+            ["Độ khớp sổ–ngân hàng", "100%", "Điều kiện trước khi mở rộng"]
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "Các mục tiêu trên là ngưỡng tham khảo cho giai đoạn pilot, không phải cam kết cố định. Sau 4–8 tuần dữ liệu thật, Tuệ Tâm cần thiết lập đường cơ sở riêng theo ngày trong tuần, khung giờ, cơ sở và loại khách trước khi đặt mục tiêu chính thức."
+        }
+      ]
+    },
+    {
+      "number": "15",
+      "title": "Bảy tình huống sử dụng tiêu biểu",
+      "subtitle": "Cách dễ nhất để hiểu giá trị hệ thống là nhìn nó vận hành trong những câu chuyện đời thực.",
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "1. Khách văn phòng lần đầu"
+        },
+        {
+          "type": "paragraph",
+          "text": "Minh quét QR tại quán cà phê đối tác, xem gói vai gáy 60 phút, chọn Cơ sở 1 lúc 19:00 và đặt cọc 10% mà chưa cần tài khoản. Minh nhận mã lịch. Sau đó hệ thống mời tạo tài khoản để nhận ưu đãi 100.000đ và đồng bộ thông báo. Chủ Tuệ Tâm biết nguồn QR, tỷ lệ chuyển đổi và doanh thu sau khi Minh hoàn tất."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "2. Mời sếp sau một tuần làm việc căng thẳng"
+        },
+        {
+          "type": "paragraph",
+          "text": "Lan chọn Mời sếp, đặt hai dịch vụ cùng khung giờ và ghi chú cần không gian yên tĩnh. Quản lý nhìn thấy quan hệ để xếp hai ghế gần nhau nhưng vẫn giữ sự riêng tư. Lời mời trở thành một cử chỉ chăm sóc chuyên nghiệp, còn Tuệ Tâm có cơ hội phục vụ một nhóm khách giá trị cao mà không dùng ngôn ngữ bán hàng thô."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "3. Affiliate giới thiệu khách mới"
+        },
+        {
+          "type": "paragraph",
+          "text": "Minh Anh chia sẻ mã Affiliate. Người bạn đặt lịch và cọc nhưng hoa hồng vẫn ở trạng thái dự kiến. Chỉ sau khi buổi đầu hoàn tất, hệ thống ghi 50.000đ thu nhập cho Minh Anh và đồng thời ghi 50.000đ chi phí Marketing cho cơ sở. Admin nhìn thấy chi phí/khách thật thay vì chỉ nhìn số click."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "4. Chương trình sức khỏe buổi trưa"
+        },
+        {
+          "type": "paragraph",
+          "text": "Một công ty 20 người chọn trải nghiệm 20 phút, hai buổi mỗi tuần. Hệ thống tính số KTV, phí điều phối, ưu đãi gói và cọc 10%. Nhân sự chọn khung giờ cá nhân. Trước sự kiện, quản lý nhận danh sách và kế hoạch nhân lực; sau chương trình, HR nhận báo cáo tổng hợp."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "5. Khách đổi lịch lần hai"
+        },
+        {
+          "type": "paragraph",
+          "text": "Hùng đã dùng quyền đổi lịch một lần trong tháng. Ở lần hai, hệ thống giải thích cọc cũ trở thành chi phí giữ khung giờ và yêu cầu cọc mới trước khi đổi. Sổ ghi rõ cọc mới và cọc không bảo lưu; quản lý nhận thông báo tài chính. Không bên nào phải tự nhớ chính sách hoặc tính tay."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "6. Khách chuyển 400.000đ cho dịch vụ 250.000đ"
+        },
+        {
+          "type": "paragraph",
+          "text": "Quầy chỉ xác nhận đúng tiền Bill dịch vụ là 250.000đ. Nếu hài lòng, khách Tip tùy tâm trực tiếp cho KTV bằng một khoản riêng; nền tảng không cộng Tip vào Bill, không tạo doanh thu cơ sở và không làm phồng báo cáo lợi nhuận."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "7. Nhà đầu tư xem cơ hội mới"
+        },
+        {
+          "type": "paragraph",
+          "text": "Nhà đầu tư đang góp vốn tại Cơ sở 1 mở Trung tâm Nhà đầu tư, lọc riêng Cơ sở 1 và xem hiệu quả tháng. Chuông báo có hồ sơ khảo sát Đống Đa cần vốn. Cơ hội này được đánh dấu rõ là ngoài danh mục đang hoạt động, có tiến độ thẩm định, nhu cầu vốn và rủi ro; nhà đầu tư không nhầm nó với tài sản hiện có."
+        },
+        {
+          "type": "callout",
+          "title": "ĐIỂM CHUNG CỦA BẢY CÂU CHUYỆN",
+          "text": "Người dùng chỉ làm một việc đơn giản. Hệ thống âm thầm nối ngữ cảnh, quyền hạn, tài chính và thông báo để việc đó trở thành một phần có trật tự của toàn doanh nghiệp.",
+          "tone": "gold"
+        }
+      ]
+    },
+    {
+      "number": "16",
+      "title": "Quản trị, phân quyền và bảo vệ niềm tin",
+      "subtitle": "Một hệ sinh thái nhiều vai trò chỉ có thể mở rộng khi quyền hạn rõ, dữ liệu có chủ và hành động được truy vết.",
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Ma trận quyền hạn"
+        },
+        {
+          "type": "table",
+          "style": "standard",
+          "headers": ["Năng lực", "Khách", "KTV", "Lễ tân", "Quản lý", "Chủ/Admin", "Nhà đầu tư"],
+          "rows": [
+            ["Đặt/đổi lịch cá nhân", "Có", "Không", "Hỗ trợ", "Hỗ trợ", "Có quyền giám sát", "Không"],
+            ["Bắt đầu ca", "Check-in của mình", "Booking được giao", "Có theo quy trình", "Có", "Có", "Không"],
+            ["Hoàn tất thanh toán", "Bill của mình theo xác thực", "Không", "Có", "Có", "Có", "Không"],
+            ["Xem CRM chi tiết", "Hồ sơ của mình", "Phần cần chăm sóc", "Theo cơ sở", "Theo cơ sở", "Toàn hệ thống", "Không"],
+            ["Ghi chi phí", "Không", "Không", "Không", "Cơ sở mình", "Cơ sở/hệ thống", "Không"],
+            ["Xem lãi/lỗ", "Không", "Không", "Không", "Cơ sở mình", "Toàn hệ thống", "Tổng hợp phạm vi đầu tư"],
+            ["Cấu hình hệ thống", "Không", "Không", "Không", "Một phần theo ủy quyền", "Có", "Không"],
+            ["Thông báo", "Cá nhân", "Cá nhân", "Cơ sở", "Cơ sở", "Toàn hệ thống", "Đầu tư" ]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Bảo vệ dữ liệu"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "Thu thập tối thiểu: chỉ lưu dữ liệu cần cho đặt lịch, chăm sóc, đối soát và quyền lợi.",
+            "Mục đích rõ: ghi chú sức khỏe không dùng cho quảng cáo nếu chưa có sự đồng ý phù hợp.",
+            "Phân quyền máy chủ: không dựa vào việc ẩn nút trên giao diện; API luôn kiểm tra người dùng và phạm vi.",
+            "Dữ liệu đầu tư tổng hợp: loại trừ danh tính khách, Bill chi tiết, Tip cá nhân và ghi chú nhân sự.",
+            "Nhật ký thay đổi: giao dịch tài chính, quyền và cấu hình quan trọng cần biết ai làm, khi nào, trước/sau ra sao.",
+            "Thời hạn lưu: xác định thời gian lưu hồ sơ theo quy định pháp luật và nhu cầu hợp lý.",
+            "Quyền của người dùng: có kênh xem, sửa thông tin sai, rút đồng ý marketing và yêu cầu hỗ trợ dữ liệu."
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Kiểm soát gian lận và sai sót"
+        },
+        {
+          "type": "table",
+          "style": "dark",
+          "headers": ["Rủi ro", "Kiểm soát trong sản phẩm", "Kiểm soát vận hành"],
+          "rows": [
+            ["Ghi trùng giao dịch", "Khóa chống trùng theo mã sự kiện", "Đối soát cuối ngày"],
+            ["Sửa số tiền từ giao diện", "Máy chủ tính lại giá và cọc", "Bảng giá có phê duyệt"],
+            ["KTV xử lý booking người khác", "Khóa theo tài khoản, cơ sở, phân công", "Quy trình đổi KTV có quản lý duyệt"],
+            ["Quản lý xem cơ sở khác", "Phạm vi dữ liệu bắt buộc ở máy chủ", "Rà soát quyền định kỳ"],
+            ["Hoa hồng Affiliate ảo", "Chỉ ghi sau lần hoàn tất đầu", "Đối soát trường hợp bất thường"],
+            ["Chứng từ chi phí thiếu", "Trường chứng từ và trạng thái đối soát", "Ngưỡng bắt buộc theo số tiền"],
+            ["Thông báo nhầm người", "Tạo bản ghi riêng theo người nhận", "Kiểm thử ma trận sự kiện–vai trò"],
+            ["Dự báo đầu tư bị hiểu là cam kết", "Hiển thị biên ±10% và chú thích", "Tài liệu pháp lý, phê duyệt nội dung"]
+          ]
+        },
+        {
+          "type": "callout",
+          "title": "NGUYÊN TẮC QUẢN TRỊ",
+          "text": "Quyền truy cập không phải đặc quyền vĩnh viễn. Nó là trách nhiệm gắn với vai trò hiện tại, phải được cấp tối thiểu, rà soát định kỳ và thu hồi ngay khi không còn cần thiết.",
+          "tone": "red"
+        }
+      ]
+    },
+    {
+      "number": "17",
+      "title": "Mức độ sẵn sàng và lộ trình chạy thật",
+      "subtitle": "Bản hiện tại đã nối dữ liệu giao dịch thật trong môi trường demo; thương mại hóa cần thêm các lớp tích hợp, kiểm soát và vận hành production.",
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Những gì đã hoạt động xuyên luồng"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "Booking, xác nhận, check-in, bắt đầu phục vụ, hoàn tất và trạng thái thanh toán lưu trong cơ sở dữ liệu.",
+            "Cọc 10%, Bill dịch vụ, Tip ngoài Bill, chi phí, Affiliate, gói thành viên và Business đi vào sổ có ngữ cảnh.",
+            "Đổi lịch lần 1/lần 2 và no-show nối với chính sách theo khách/tháng.",
+            "Thông báo Khách, KTV, Quản lý, Admin, Affiliate và Nhà đầu tư lưu trạng thái đọc thật.",
+            "Phân quyền theo vai trò và cơ sở được kiểm tra phía máy chủ.",
+            "Dashboard, tài chính, CRM, lịch và danh mục quản trị đọc dữ liệu từ cơ sở dữ liệu thay vì bản ghi giả trong trình duyệt.",
+            "Báo giá Business được tính lại phía máy chủ; giao diện không thể tự sửa số tiền.",
+            "Đánh giá chỉ mở sau hoàn tất và cập nhật điểm KTV cùng thông báo chăm sóc lại."
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Khoảng cách trước khi thương mại hóa"
+        },
+        {
+          "type": "table",
+          "style": "standard",
+          "headers": ["Hạng mục", "Hiện trạng", "Cần làm", "Điều kiện nghiệm thu"],
+          "rows": [
+            ["Thanh toán", "Demo xác nhận bằng CTA", "Tài khoản thật, VietQR/SePay, webhook, hoàn tiền", "Sổ khớp sao kê 100%, chống trùng"],
+            ["Đăng nhập", "Tài khoản demo và xác thực cơ bản", "OTP/Zalo, chính sách mật khẩu, thu hồi phiên", "Kiểm thử quyền và bảo mật"],
+            ["Chứng từ chi", "Tên file và trạng thái chờ", "Cloud storage, OCR/AI, đối soát", "Ảnh có nguồn, phân quyền, lưu vết"],
+            ["Thông báo ngoài app", "Feed trong hệ thống", "Push, Zalo/SMS/email và lịch gửi nền", "SLA, chống gửi trùng, opt-out"],
+            ["Danh mục Admin", "Đọc CSDL; khóa thao tác giả", "Form CRUD riêng cho dịch vụ, KTV, phòng, voucher, chính sách", "Phê duyệt và audit đầy đủ"],
+            ["Cơ sở dữ liệu", "Môi trường demo cục bộ", "PostgreSQL production, backup, phục hồi", "Diễn tập backup/restore"],
+            ["Quan sát hệ thống", "Log ứng dụng", "Monitoring, cảnh báo, error tracking", "Có người trực và quy trình xử lý"],
+            ["Pháp lý", "Khung sản phẩm", "Điều khoản, riêng tư, hóa đơn, đầu tư, lao động", "Luật sư/kế toán phê duyệt"],
+            ["Vận hành", "Dữ liệu và quy trình mẫu", "SOP, đào tạo, hỗ trợ khách", "Chạy thử có biên bản và KPI"]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Lộ trình bốn giai đoạn"
+        },
+        {
+          "type": "table",
+          "style": "dark",
+          "headers": ["Giai đoạn", "Mục tiêu", "Phạm vi", "Cổng quyết định"],
+          "rows": [
+            ["1. UAT nội bộ", "Đúng luồng và đúng số", "Tài khoản demo, dữ liệu kịch bản, 2 cơ sở", "Không còn lỗi nghiêm trọng; sổ khớp kịch bản"],
+            ["2. Pilot có kiểm soát", "Chứng minh vận hành thật", "Một cơ sở, nhóm khách giới hạn, thanh toán thật", "KPI chất lượng, đối soát và hỗ trợ đạt ngưỡng"],
+            ["3. Go-live hai cơ sở", "Chuẩn hóa toàn hệ thống", "Khách thật, KTV thật, CRM và tài chính thật", "Vận hành ổn định 4–8 tuần"],
+            ["4. Mở rộng", "Nhân rộng và gọi vốn có kỷ luật", "Nhiều cơ sở, Business, đối tác và Nhà đầu tư", "Kinh tế đơn vị dương, dữ liệu đáng tin"]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Checklist trước ngày mở cửa số"
+        },
+        {
+          "type": "numbered",
+          "items": [
+            "Chốt tên, địa chỉ, tài khoản ngân hàng, dịch vụ, giá, ưu đãi và danh sách KTV thật.",
+            "Nhập ca KTV, phòng/ghế, năng lực dịch vụ và quy tắc phân công.",
+            "Kết nối thanh toán và chạy đối soát giả lập đủ tình huống thiếu/thừa/trùng/hoàn.",
+            "Thiết lập người dùng thật, quyền thật và quy trình bàn giao khi nghỉ việc.",
+            "Kiểm thử xuyên vai trò trên điện thoại thật tại từng cơ sở.",
+            "Đào tạo lễ tân, quản lý và KTV bằng kịch bản ngày thường và ngoại lệ.",
+            "Chốt nội dung Zalo/SMS, giờ gửi và người chịu trách nhiệm xử lý phản hồi.",
+            "Kiểm tra backup, monitoring, hotline hỗ trợ và quy trình sự cố.",
+            "Phê duyệt điều khoản, quyền riêng tư, chính sách cọc/đổi lịch và nội dung đầu tư.",
+            "Chạy soft launch, quan sát một tuần và chỉ mở rộng khi số liệu khớp."
+          ]
+        },
+        {
+          "type": "callout",
+          "title": "ĐỊNH NGHĨA SẴN SÀNG",
+          "text": "Sẵn sàng không có nghĩa là giao diện đã đẹp. Sẵn sàng nghĩa là mỗi hành động thật tạo đúng dữ liệu, đúng tiền, đúng thông báo, đúng người chịu trách nhiệm và có cách phục hồi khi xảy ra sai sót.",
+          "tone": "green"
+        }
+      ]
+    },
+    {
+      "number": "18",
+      "title": "Thông điệp giá trị theo đối tượng",
+      "subtitle": "Cùng một hệ sinh thái nhưng cần một cách kể phù hợp với điều mỗi người thực sự quan tâm.",
+      "blocks": [
+        {
+          "type": "table",
+          "style": "standard",
+          "headers": ["Đối tượng", "Thông điệp một câu", "Bằng chứng sản phẩm", "Lời mời hành động"],
+          "rows": [
+            ["Xã hội", "Chăm sóc sức khỏe chủ động trở nên gần gũi, minh bạch và dễ tiếp cận hơn", "QR không bắt buộc đăng nhập, Business tại văn phòng, chính sách rõ", "Trải nghiệm và lan tỏa thói quen chăm sóc"],
+            ["Khách hàng", "Bạn được chăm sóc đúng lúc mà không phải lo về quy trình", "Lịch trống, cọc 10%, QR, Bill, Tip, thông báo", "Chọn hình thức đặt lịch phù hợp"],
+            ["Doanh nghiệp", "Sức khỏe định kỳ cho cả công ty có thể được tổ chức gọn gàng và đo lường", "Báo giá, phân ca, đăng ký slot, báo cáo", "Khởi động một chương trình pilot"],
+            ["Affiliate", "Giới thiệu điều tốt và nhận giá trị minh bạch khi kết quả thật xảy ra", "Mã riêng, trạng thái, hoa hồng sau hoàn tất", "Chia sẻ với người phù hợp"],
+            ["KTV", "Tay nghề của bạn được nhìn thấy và ghi nhận công bằng", "Lịch cá nhân, đặt lại, đánh giá, Tip", "Xây hồ sơ nghề nghiệp bằng chất lượng"],
+            ["Quản lý", "Mỗi ca làm việc có thể được điều phối bằng cùng một nguồn sự thật", "Lịch, CRM, công suất, chi phí, thông báo", "Bắt đầu ngày bằng bảng điều hành"],
+            ["Chủ Tuệ Tâm", "Bạn sở hữu một hệ điều hành tăng trưởng chứ không chỉ một ứng dụng đặt lịch", "Tài chính, vận hành, khách, đội ngũ, đầu tư", "Điều hành từ dữ liệu đến hành động"],
+            ["Nhà đầu tư", "Hiệu quả vốn được trình bày minh bạch theo đúng tài sản bạn tham gia", "Bộ lọc cơ sở, đồ thị, hoàn vốn, cơ hội mới", "Đánh giá hiệu quả và lựa chọn cơ hội"]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Bài giới thiệu 30 giây"
+        },
+        {
+          "type": "callout",
+          "title": "ELEVATOR PITCH",
+          "text": "Tuệ Tâm Care là hệ sinh thái chăm sóc sức khỏe chủ động kết nối khách hàng, KTV, cơ sở, doanh nghiệp và nhà đầu tư trên cùng một nền tảng minh bạch. Khách đặt lịch và thanh toán dễ dàng; đội ngũ phục vụ đúng ngữ cảnh; Chủ doanh nghiệp thấy Thu–Chi–lãi/lỗ theo từng cơ sở; nhà đầu tư theo dõi hiệu quả vốn mà không xâm phạm dữ liệu riêng tư. Công nghệ đứng phía sau để sự chăm sóc ở phía trước trở nên tử tế và nhất quán hơn.",
+          "tone": "gold"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Tuyên ngôn Master Value"
+        },
+        {
+          "type": "numbered",
+          "items": [
+            "Chúng tôi tin chăm sóc sức khỏe nên bắt đầu trước khi con người kiệt sức.",
+            "Chúng tôi tin sự tử tế cần được hỗ trợ bằng một hệ thống kỷ luật.",
+            "Chúng tôi tin minh bạch tài chính là một phần của trải nghiệm chăm sóc.",
+            "Chúng tôi tin KTV xứng đáng được ghi nhận như những chuyên gia tạo giá trị.",
+            "Chúng tôi tin mối quan hệ có thể lan tỏa sức khỏe nếu được phục vụ tinh tế.",
+            "Chúng tôi tin công nghệ tốt không làm con người thấy mình đang làm việc với máy móc.",
+            "Chúng tôi tin tăng trưởng chỉ bền vững khi khách, đội ngũ, doanh nghiệp và nhà đầu tư cùng có lợi.",
+            "Chúng tôi xây Tuệ Tâm để mỗi dữ liệu đều có ý nghĩa, mỗi thông báo đều có trách nhiệm và mỗi lần chăm sóc đều đáng được tin cậy."
+          ]
+        }
+      ]
+    },
+    {
+      "number": "19",
+      "title": "Phụ lục — Chính sách, thuật ngữ và bản đồ tính năng",
+      "subtitle": "Một ngôn ngữ chung để đội ngũ và đối tác hiểu hệ thống theo cùng cách.",
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Thông số vận hành nền tảng"
+        },
+        {
+          "type": "table",
+          "style": "dark",
+          "headers": ["Thông số", "Thiết lập hiện tại", "Ý nghĩa"],
+          "rows": [
+            ["Giờ mở cửa", "09:00", "Bắt đầu khung phục vụ trong ngày"],
+            ["Giờ đóng cửa", "24:00", "Dịch vụ phải kết thúc không muộn hơn mốc này"],
+            ["Ca nhận khách cuối", "23:00", "Chỉ nhận dịch vụ tối đa 60 phút"],
+            ["Cơ sở 1", "18 giường (3 gội, 6 Foot, 9 Body), 8 KTV", "Phạm vi công suất và phân bổ vận hành"],
+            ["Cơ sở 2", "18 giường (3 gội, 6 Foot, 9 Body), 8 KTV", "Phạm vi công suất và phân bổ vận hành"],
+            ["Tiền cọc", "10% giá trị Bill ban đầu trước ưu đãi, chuyển vào tài khoản nền tảng", "Giữ chỗ và giảm no-show"],
+            ["Đổi lịch", "1 lần/tháng/khách được bảo lưu cọc", "Cân bằng linh hoạt và bảo vệ công suất"],
+            ["No-show", "Lần đầu nhắc lại; lặp trong tháng không bảo lưu cọc", "Chăm sóc lại có giới hạn"],
+            ["Tip KTV", "Tùy tâm, khách trao trực tiếp", "Không đi qua Bill hoặc doanh thu dịch vụ"],
+            ["Khách vãng lai", "Có thể xem và đặt không cần tài khoản", "Giảm rào cản tiếp cận"],
+            ["Tài khoản mới", "Ưu đãi chào mừng 100.000đ theo chính sách", "Khuyến khích đồng bộ dữ liệu và quay lại"]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Thuật ngữ"
+        },
+        {
+          "type": "table",
+          "style": "standard",
+          "headers": ["Thuật ngữ", "Giải thích dễ hiểu"],
+          "rows": [
+            ["Booking", "Một lịch đặt dịch vụ có thời gian, cơ sở, khách và trạng thái cụ thể"],
+            ["Bill dịch vụ", "Tổng giá trị dịch vụ sau ưu đãi; không bao gồm Tip KTV"],
+            ["Cọc", "Một phần của Bill được thanh toán trước để giữ lịch"],
+            ["Tip KTV", "Khoản tự nguyện dành cho KTV, tách ngoài Bill"],
+            ["CRM", "Hồ sơ quan hệ khách hàng giúp đội ngũ chăm sóc nhất quán"],
+            ["Affiliate", "Đối tác giới thiệu khách và nhận hoa hồng khi điều kiện thật được hoàn tất"],
+            ["No-show", "Khách không đến theo lịch đã xác nhận"],
+            ["Công suất", "Mức độ sử dụng ghế/giường và KTV trong một phạm vi thời gian"],
+            ["Sổ cái", "Danh sách các dòng tiền được phân loại để tạo báo cáo"],
+            ["IQ Care", "Lớp hỗ trợ phân tích và gợi ý quyết định dựa trên dữ liệu có nguồn"],
+            ["UAT", "Giai đoạn người dùng nội bộ kiểm thử hệ thống theo kịch bản thực tế"],
+            ["Pilot", "Giai đoạn chạy thật trong phạm vi nhỏ để chứng minh quy trình và chỉ số"]
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Bản đồ tính năng theo không gian"
+        },
+        {
+          "type": "table",
+          "style": "dark",
+          "headers": ["Không gian", "Tính năng chính", "Người dùng"],
+          "rows": [
+            ["Trang chủ khách", "Ưu đãi, lợi ích, dịch vụ, KTV, cơ sở, Business", "Mọi người"],
+            ["Đặt lịch nhanh", "Cá nhân, Mời bạn, Mời sếp, Business", "Khách"],
+            ["Đặt lịch", "Dịch vụ, ngày giờ, KTV, cơ sở, voucher, cọc", "Khách/Lễ tân"],
+            ["Đơn của tôi", "Sắp tới, đổi lịch, lịch sử, đánh giá", "Khách"],
+            ["Ví/Tài chính khách", "Bill, cọc, hoàn tất, Tip, gói, Affiliate", "Khách"],
+            ["Thông báo khách", "Booking, ưu đãi, lời mời, nhắc lịch", "Khách"],
+            ["Affiliate", "Mã, khách mời, đơn, hoa hồng, báo cáo", "Đối tác/khách"],
+            ["Tuệ Tâm Business", "Báo giá, cọc, chương trình, đăng ký slot", "Doanh nghiệp/HR"],
+            ["Cổng KTV", "Lịch cá nhân, booking, ghi chú, Tip, thông báo", "KTV"],
+            ["Admin Tổng quan", "KPI, tài chính, công suất, bộ lọc", "Quản lý/Chủ"],
+            ["Admin Booking/Lịch", "Xác nhận, điều phối, trạng thái", "Lễ tân/Quản lý/Chủ"],
+            ["Admin CRM", "Khách, phân nhóm, dòng thời gian", "Lễ tân/Quản lý/Chủ"],
+            ["Trung tâm tài chính", "Tổng quan, doanh thu, chi phí, Tip, Bill", "Quản lý/Chủ"],
+            ["Chi phí phát sinh", "Số tiền, danh mục, cơ sở/hệ thống, chứng từ", "Quản lý/Chủ"],
+            ["Thông báo Admin", "Booking, cơ sở, VIP, tài chính", "Lễ tân/Quản lý/Chủ"],
+            ["Trung tâm Nhà đầu tư", "Hiệu quả, cơ hội, đặc quyền, cập nhật", "Nhà đầu tư/Chủ"],
+            ["IQ Care", "Tóm tắt, cảnh báo, dự báo và gợi ý", "Quản lý/Chủ"]
+          ]
+        },
+        {
+          "type": "callout",
+          "title": "KẾT LUẬN",
+          "text": "Master Value của Tuệ Tâm không nằm trong một màn hình riêng lẻ. Nó nằm ở khả năng biến sự quan tâm thành trải nghiệm, trải nghiệm thành niềm tin, niềm tin thành mối quan hệ dài hạn và mối quan hệ thành tăng trưởng minh bạch có ích cho xã hội.",
+          "tone": "gold"
+        }
+      ]
+    }
+  ]
+}
