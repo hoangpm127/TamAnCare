@@ -5,7 +5,6 @@ import { usePathname, useRouter } from "next/navigation";
 import {
   Bell,
   BadgePercent,
-  CalendarCheck,
   ChevronLeft,
   CircleDollarSign,
   CircleUserRound,
@@ -16,7 +15,7 @@ import {
 } from "lucide-react";
 import { useAllNotifications } from "@/lib/notification-store";
 import { cn } from "@/lib/utils";
-import { BookingFab } from "@/components/booking-fab";
+import { BookingNavCta } from "@/components/booking-fab";
 import { clearBookingUiDraft } from "@/lib/booking-ui-draft";
 import { ActiveServiceBanner } from "@/components/active-service-banner";
 import { NavigationPendingIndicator } from "@/components/navigation-pending-indicator";
@@ -25,22 +24,12 @@ import { FreeConsultationPopup } from "@/components/free-consultation-popup";
 const NAV_ITEMS = [
   { href: "/", label: "Trang chủ", icon: Home },
   { href: "/uu-dai", label: "Ưu đãi", icon: Gift },
-  { href: "/booking", label: "Đặt lịch", icon: CalendarCheck },
+  { href: "/booking", label: "Đặt lịch", icon: null },
   { href: "/ru-ban", label: "Affiliate", icon: BadgePercent },
   { href: "/toi", label: "Tôi", icon: CircleUserRound },
 ];
 
 const HIDE_BOTTOM_NAV_PREFIXES = ["/booking/success", "/review", "/office", "/chat"];
-const HIDE_FAB_PREFIXES = [
-  ...HIDE_BOTTOM_NAV_PREFIXES,
-  "/booking",
-  "/doanh-nghiep",
-  "/tai-khoan",
-  "/dieu-khoan",
-  "/chinh-sach-rieng-tu",
-  "/chinh-sach-dat-lich",
-];
-
 function CustomerTopbar({ pathname }: { pathname: string }) {
   const router = useRouter();
   const notificationsList = useAllNotifications();
@@ -118,6 +107,8 @@ function CustomerBottomNav({ pathname }: { pathname: string }) {
       <div className="mx-auto flex max-w-md items-stretch justify-around">
         {NAV_ITEMS.map((item) => {
           const active = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
+          if (item.href === "/booking") return <BookingNavCta key={item.href} active={active} />;
+
           const Icon = item.icon;
 
           return (
@@ -133,7 +124,7 @@ function CustomerBottomNav({ pathname }: { pathname: string }) {
                   active ? "bg-gradient-to-br from-[#d13f1f] to-[#8f151a] shadow-sm shadow-[#9f1d20]/30" : ""
                 )}
               >
-                <Icon size={19} className={active ? "text-white" : "text-[#8a7a72]"} />
+                {Icon ? <Icon size={19} className={active ? "text-white" : "text-[#8a7a72]"} /> : null}
               </span>
               <span className={cn("text-[11px] transition-colors", active ? "font-semibold text-[#a92f18]" : "font-medium text-[#8a7a72]")}>
                 {item.label}
@@ -150,7 +141,6 @@ function CustomerBottomNav({ pathname }: { pathname: string }) {
 export function CustomerShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const showBottomNav = !HIDE_BOTTOM_NAV_PREFIXES.some((prefix) => pathname.startsWith(prefix));
-  const showFab = !HIDE_FAB_PREFIXES.some((prefix) => pathname.startsWith(prefix));
 
   return (
     <div className="flex min-h-dvh flex-col bg-[#fffaf6]">
@@ -168,7 +158,6 @@ export function CustomerShell({ children }: { children: React.ReactNode }) {
         </div>
       </footer>
       {showBottomNav ? <CustomerBottomNav pathname={pathname} /> : null}
-      {showFab ? <BookingFab /> : null}
       <FreeConsultationPopup />
     </div>
   );

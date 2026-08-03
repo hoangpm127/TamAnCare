@@ -1,140 +1,45 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { ArrowRight, Briefcase, Handshake, Loader2, Plus, Sparkles, UserPlus, UserRound, Users, X } from "lucide-react";
 import { clearBookingUiDraft } from "@/lib/booking-ui-draft";
 
-const BOTTOM_NAV_HEIGHT = 84;
-const FAB_SIZE = 48;
-const FAB_MARGIN = 8;
-const FAB_POSITION_KEY = "tam-an-booking-fab-position-v1";
-
-type FabPosition = { x: number; y: number };
-
-function clampFabPosition(position: FabPosition): FabPosition {
-  const maxX = Math.max(FAB_MARGIN, window.innerWidth - FAB_SIZE - FAB_MARGIN);
-  const maxY = Math.max(FAB_MARGIN, window.innerHeight - BOTTOM_NAV_HEIGHT - FAB_SIZE - FAB_MARGIN);
-  return {
-    x: Math.min(Math.max(position.x, FAB_MARGIN), maxX),
-    y: Math.min(Math.max(position.y, FAB_MARGIN), maxY),
-  };
-}
-
-function BookingChoice({ trigger }: { trigger: "fab" | "hero" }) {
+function BookingChoice({ trigger, active = false }: { trigger: "nav" | "hero"; active?: boolean }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [navigatingTo, setNavigatingTo] = useState<string | null>(null);
-  const [fabPosition, setFabPosition] = useState<FabPosition | null>(null);
-  const dragState = useRef<{
-    pointerId: number;
-    startX: number;
-    startY: number;
-    originX: number;
-    originY: number;
-    moved: boolean;
-    lastPosition: FabPosition;
-  } | null>(null);
-  const suppressClickUntil = useRef(0);
-
-  useEffect(() => {
-    if (trigger !== "fab") return;
-    let active = true;
-    queueMicrotask(() => {
-      if (!active) return;
-      try {
-        const raw = window.localStorage.getItem(FAB_POSITION_KEY);
-        if (raw) setFabPosition(clampFabPosition(JSON.parse(raw) as FabPosition));
-      } catch {
-        window.localStorage.removeItem(FAB_POSITION_KEY);
-      }
-    });
-    function handleResize() {
-      setFabPosition((current) => current ? clampFabPosition(current) : current);
-    }
-    window.addEventListener("resize", handleResize);
-    return () => {
-      active = false;
-      window.removeEventListener("resize", handleResize);
-    };
-  }, [trigger]);
-
-  function startFabDrag(event: React.PointerEvent<HTMLButtonElement>) {
-    if (event.button !== 0) return;
-    const rect = event.currentTarget.getBoundingClientRect();
-    const origin = { x: rect.left, y: rect.top };
-    dragState.current = {
-      pointerId: event.pointerId,
-      startX: event.clientX,
-      startY: event.clientY,
-      originX: origin.x,
-      originY: origin.y,
-      moved: false,
-      lastPosition: origin,
-    };
-    event.currentTarget.setPointerCapture(event.pointerId);
-  }
-
-  function moveFab(event: React.PointerEvent<HTMLButtonElement>) {
-    const drag = dragState.current;
-    if (!drag || drag.pointerId !== event.pointerId) return;
-    const deltaX = event.clientX - drag.startX;
-    const deltaY = event.clientY - drag.startY;
-    if (!drag.moved && Math.hypot(deltaX, deltaY) < 5) return;
-    event.preventDefault();
-    drag.moved = true;
-    const next = clampFabPosition({ x: drag.originX + deltaX, y: drag.originY + deltaY });
-    drag.lastPosition = next;
-    setFabPosition(next);
-  }
-
-  function finishFabDrag(event: React.PointerEvent<HTMLButtonElement>) {
-    const drag = dragState.current;
-    if (!drag || drag.pointerId !== event.pointerId) return;
-    if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
-    if (drag.moved) {
-      suppressClickUntil.current = Date.now() + 350;
-      window.localStorage.setItem(FAB_POSITION_KEY, JSON.stringify(drag.lastPosition));
-    }
-    dragState.current = null;
-  }
 
   function goTo(path: string) {
     if (navigatingTo) return;
     setNavigatingTo(path);
     if (path.startsWith("/booking")) clearBookingUiDraft(true);
     router.push(path);
+    window.setTimeout(() => {
+      setOpen(false);
+      setNavigatingTo(null);
+    }, 250);
   }
 
   return (
     <>
-      {trigger === "fab" ? (
-        <div
-          className={open ? "hidden" : "fixed z-50"}
-          style={fabPosition ? { left: fabPosition.x, top: fabPosition.y } : { bottom: BOTTOM_NAV_HEIGHT + 10, right: FAB_MARGIN }}
+      {trigger === "nav" ? (
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          aria-label="Mở lựa chọn đặt lịch"
+          aria-haspopup="dialog"
+          aria-expanded={open}
+          className="tap-feedback relative -mt-3 flex flex-1 flex-col items-center justify-center gap-0.5 pb-2 pt-0.5"
         >
-          <button
-            type="button"
-            onClick={(event) => {
-              if (Date.now() < suppressClickUntil.current) {
-                event.preventDefault();
-                return;
-              }
-              setOpen(true);
-            }}
-            onPointerDown={startFabDrag}
-            onPointerMove={moveFab}
-            onPointerUp={finishFabDrag}
-            onPointerCancel={finishFabDrag}
-            aria-label="Đặt dịch vụ; giữ và kéo để di chuyển nút"
-            title="Chạm để đặt lịch · Giữ và kéo để di chuyển"
-            className="relative flex h-12 w-12 touch-none select-none items-center justify-center rounded-full bg-[#d13f1f] text-white shadow-lg shadow-[#d13f1f]/40 transition active:cursor-grabbing active:scale-95"
-          >
-            <span className="absolute top-1.5 flex gap-0.5" aria-hidden="true"><i className="h-0.5 w-0.5 rounded-full bg-white/55" /><i className="h-0.5 w-0.5 rounded-full bg-white/55" /><i className="h-0.5 w-0.5 rounded-full bg-white/55" /></span>
-            <Plus size={19} />
-          </button>
-        </div>
+          <span className="flex h-12 w-12 items-center justify-center rounded-full border-[3px] border-white bg-gradient-to-br from-[#e24a28] to-[#9f171b] text-white shadow-[0_7px_18px_rgba(159,23,27,0.42)] ring-1 ring-[#d13f1f]/15 transition-transform active:scale-95">
+            <Plus size={25} strokeWidth={2.6} />
+          </span>
+          <span className={`text-[11px] font-semibold transition-colors ${active ? "text-[#a92f18]" : "text-[#8a7a72]"}`}>
+            Đặt lịch
+          </span>
+        </button>
       ) : (
         <button
           type="button"
@@ -148,7 +53,7 @@ function BookingChoice({ trigger }: { trigger: "fab" | "hero" }) {
       {open && typeof document !== "undefined" ? createPortal((
         <div className="fixed inset-0 z-[60] flex items-center justify-center px-4 pb-[max(16px,env(safe-area-inset-bottom))] pt-[max(16px,env(safe-area-inset-top))]">
           <button type="button" aria-label="Đóng" className="absolute inset-0 bg-[#191414]/55 backdrop-blur-sm" onClick={() => setOpen(false)} />
-          <div className="relative max-h-[92dvh] w-full max-w-sm overflow-y-auto rounded-[2rem] border border-[#d8b46a]/55 bg-gradient-to-b from-[#fffdf9] to-[#fff8f2] px-4 pb-5 pt-5 shadow-[0_24px_70px_rgba(44,24,19,0.38)] ring-1 ring-white/70">
+          <div role="dialog" aria-modal="true" aria-labelledby="booking-choice-title" className="relative max-h-[92dvh] w-full max-w-sm overflow-y-auto rounded-[2rem] border border-[#d8b46a]/55 bg-gradient-to-b from-[#fffdf9] to-[#fff8f2] px-4 pb-5 pt-5 shadow-[0_24px_70px_rgba(44,24,19,0.38)] ring-1 ring-white/70">
             {navigatingTo ? (
               <div className="absolute inset-0 z-30 flex flex-col items-center justify-center gap-2 bg-[#fffaf6]/90 text-center backdrop-blur-sm" role="status" aria-live="polite">
                 <Loader2 className="animate-spin text-[#d13f1f]" size={27} />
@@ -168,7 +73,7 @@ function BookingChoice({ trigger }: { trigger: "fab" | "hero" }) {
               <span className="inline-flex items-center gap-1.5 rounded-full bg-[#f2e3d4] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#8f241d]">
                 <Sparkles size={11} /> Đặt lịch nhanh
               </span>
-              <h2 className="mt-2 whitespace-nowrap text-[17px] font-semibold tracking-tight text-[#241615]">Hình thức đặt lịch bạn muốn?</h2>
+              <h2 id="booking-choice-title" className="mt-2 whitespace-nowrap text-[17px] font-semibold tracking-tight text-[#241615]">Hình thức đặt lịch bạn muốn?</h2>
             </div>
 
             <div className="mx-auto w-full max-w-[320px]">
@@ -235,6 +140,6 @@ export function BookingHeroCta() {
   return <BookingChoice trigger="hero" />;
 }
 
-export function BookingFab() {
-  return <BookingChoice trigger="fab" />;
+export function BookingNavCta({ active }: { active: boolean }) {
+  return <BookingChoice trigger="nav" active={active} />;
 }
