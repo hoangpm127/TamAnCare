@@ -57,8 +57,8 @@ type Stage = "scan" | "options" | "detail";
 type CheckinState = "idle" | "submitting";
 
 function bookingStatus(status: BookingStatus) {
-  if (status === "IN_SERVICE") return { label: "Đang phục vụ", className: "bg-[#eafaf1] text-[#16784a]", icon: PlayCircle };
-  if (status === "CHECKED_IN") return { label: "Đang phục vụ · đã nhận QR", className: "bg-[#eafaf1] text-[#16784a]", icon: Hourglass };
+  if (status === "IN_SERVICE") return { label: "Đang phục vụ", className: "bg-[#fff4e6] text-[#b42f20]", icon: PlayCircle };
+  if (status === "CHECKED_IN") return { label: "Đang phục vụ · đã nhận QR", className: "bg-[#fff4e6] text-[#b42f20]", icon: Hourglass };
   if (status === "PENDING") return { label: "Đã cọc · sẵn sàng dùng", className: "bg-[#fff7df] text-[#805914]", icon: CreditCard };
   return { label: "Sẵn sàng sử dụng", className: "bg-[#eef5ff] text-[#28669b]", icon: CheckCircle2 };
 }
@@ -72,7 +72,7 @@ function BillLines({ booking }: { booking: CheckinBooking }) {
           <span className="shrink-0 font-semibold text-[#191414]">{booking.usedPackage ? "Lượt gói" : formatMoney(item.amount)}</span>
         </div>
       ))}
-      {booking.discount && !booking.usedPackage ? <div className="flex items-center justify-between gap-3 font-medium text-[#1d8f55]"><span>Ưu đãi</span><span>-{formatMoney(booking.discount)}</span></div> : null}
+      {booking.discount && !booking.usedPackage ? <div className="flex items-center justify-between gap-3 font-medium text-[#b86b1f]"><span>Ưu đãi</span><span>-{formatMoney(booking.discount)}</span></div> : null}
     </div>
   );
 }
@@ -116,7 +116,7 @@ function ServiceTimer({
   const suggestedTip = suggestedTipForDuration(durationMin);
 
   return (
-    <div className="overflow-hidden rounded-2xl bg-gradient-to-br from-[#0f5134] via-[#16784a] to-[#1d8f55] p-4 text-center text-white shadow-lg shadow-[#16784a]/20">
+    <div className="overflow-hidden rounded-2xl bg-gradient-to-br from-[#4d0c10] via-[#b42f20] to-[#b86b1f] p-4 text-center text-white shadow-lg shadow-[#b42f20]/20">
       <p className="flex items-center justify-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-white/80"><Hourglass className={endedAt ? "" : "animate-pulse"} size={14} /> {endedAt ? "Đồng hồ đã dừng" : "Dịch vụ đang được tính giờ"}</p>
       <p className="mt-2 font-mono text-4xl font-bold tracking-wider tabular-nums">{elapsed}</p>
       <p className="mt-1 text-[10px] font-medium text-white/75">Thời gian đã phục vụ</p>
@@ -360,7 +360,7 @@ export function CheckinFlow({
           ) : (
             <>
               <div className="mt-3 flex items-center justify-between border-t border-dashed border-[#eadbd1] pt-3 font-semibold"><span>Tổng dịch vụ</span><span className="text-[#d13f1f]">{formatMoney(selectedBooking.totalAmount)}</span></div>
-              <div className="mt-1.5 flex items-center justify-between text-xs text-[#8a7a72]"><span>Đã đặt cọc</span><span className="font-semibold text-[#1d8f55]">-{formatMoney(selectedBooking.depositAmount)}</span></div>
+              <div className="mt-1.5 flex items-center justify-between text-xs text-[#8a7a72]"><span>Đã đặt cọc</span><span className="font-semibold text-[#b86b1f]">-{formatMoney(selectedBooking.depositAmount)}</span></div>
               <div className="mt-1 flex items-center justify-between text-xs text-[#8a7a72]"><span>Còn lại sau dịch vụ</span><span className="font-semibold text-[#4d403a]">{formatMoney(selectedBooking.dueAmount)}</span></div>
             </>
           )}
@@ -391,7 +391,7 @@ export function CheckinFlow({
             <div className="mt-3 rounded-2xl bg-[#fff7df] p-3.5 text-center text-xs leading-5 text-[#805914]"><CheckCircle2 className="mx-auto mb-1" size={18} /><strong>Đã dừng giờ và báo cho cơ sở/KTV.</strong><br />Quầy đang kiểm tra thời lượng, thanh toán và xác nhận đóng Bill.{!selectedBooking.usedPackage ? <Link href={`/thanh-toan/${encodeURIComponent(selectedBooking.bookingCode)}`} className="mt-3 inline-flex w-full items-center justify-center rounded-full bg-[#d13f1f] px-4 py-2.5 font-semibold text-white">Thanh toán phần còn lại</Link> : null}</div>
           ) : null}
           {checkinError ? <p className="mt-3 rounded-xl bg-red-50 p-3 text-xs font-medium text-red-700">{checkinError}</p> : null}
-          <div className="mt-3 rounded-xl bg-[#f8f4f1] p-3 text-[10px] leading-4 text-[#665b55]"><ShieldCheck className="mr-1 inline text-[#1d8f55]" size={13} /> Mỗi lần chuyển trạng thái đều được lưu lịch sử và gửi thông báo hai chiều cho khách, cơ sở và KTV phụ trách.</div>
+          <div className="mt-3 rounded-xl bg-[#f8f4f1] p-3 text-[10px] leading-4 text-[#665b55]"><ShieldCheck className="mr-1 inline text-[#b86b1f]" size={13} /> Mỗi lần chuyển trạng thái đều được lưu lịch sử và gửi thông báo hai chiều cho khách, cơ sở và KTV phụ trách.</div>
           <button type="button" onClick={() => { setStage("options"); setSelectedBookingCode(null); setShowEarlyCheckoutConfirm(false); }} className="mt-3 w-full text-center text-xs font-semibold text-[#8a7a72]">Chọn Bill/thẻ khác</button>
         </section>
       </div>
@@ -406,7 +406,7 @@ export function CheckinFlow({
     return (
       <div className="space-y-3">
         <section className="rounded-2xl border border-[#eadbd1] bg-white p-4 shadow-sm">
-          <div className="flex items-center gap-3"><span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#eafaf1] text-[#1d8f55]">{scannedTherapistId ? <UserRound size={18} /> : <MapPin size={18} />}</span><div><p className="text-xs text-[#8a7a72]">{scannedTherapistId ? "Đã nhận diện QR KTV" : "Đã nhận diện địa điểm"}</p><h2 className="text-base font-semibold">{scannedTherapistId ? `${initialTherapist?.name ?? "KTV Tâm An"} · ${scannedBranchLabel}` : scannedBranchLabel}</h2></div></div>
+          <div className="flex items-center gap-3"><span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#fff4e6] text-[#b86b1f]">{scannedTherapistId ? <UserRound size={18} /> : <MapPin size={18} />}</span><div><p className="text-xs text-[#8a7a72]">{scannedTherapistId ? "Đã nhận diện QR KTV" : "Đã nhận diện địa điểm"}</p><h2 className="text-base font-semibold">{scannedTherapistId ? `${initialTherapist?.name ?? "KTV Tâm An"} · ${scannedBranchLabel}` : scannedBranchLabel}</h2></div></div>
           <p className="mt-3 text-xs leading-5 text-[#665b55]">{scannedTherapistId ? "Hệ thống chỉ hiển thị Bill đã phân công đúng KTV này. Chọn Bill để bắt đầu hoặc xem ngay đồng hồ phục vụ." : "Chọn Bill hoặc lượt thẻ bạn muốn sử dụng. Hệ thống chỉ hiển thị quyền sử dụng đã được xác thực trên tài khoản hoặc thiết bị này."}</p>
         </section>
 

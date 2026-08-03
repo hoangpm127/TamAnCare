@@ -14,7 +14,7 @@ const STATUS_LABEL: Record<string, string> = {
 };
 
 const STATUS_STYLE: Record<string, string> = {
-  COMPLETED: "bg-[#eafaf1] text-[#1d8f55]",
+  COMPLETED: "bg-[#fff4e6] text-[#b86b1f]",
   PENDING: "bg-[#f3efec] text-[#8a7a72]",
 };
 
@@ -207,7 +207,7 @@ export default function ReferralPage() {
               onClick={copyCode}
               className={cn(
                 "inline-flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1.5 text-xs font-semibold transition",
-                copied ? "bg-[#1d8f55] text-white" : "bg-[#d13f1f] text-white"
+                copied ? "bg-[#b86b1f] text-white" : "bg-[#d13f1f] text-white"
               )}
             >
               {copied ? <Check size={13} /> : <Copy size={13} />}

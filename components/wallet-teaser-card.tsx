@@ -24,9 +24,9 @@ export function WalletTeaserCard() {
         <span>
           <span className="block text-sm font-semibold">Thu - Chi của tôi</span>
           <span className="mt-0.5 flex items-center gap-2 text-xs">
-            <span className="text-[#1d8f55]">Thu {formatMoney(referral.totalEarned)}</span>
+            <span className="text-[#b86b1f]">Thu {formatMoney(referral.totalEarned)}</span>
             <span className="text-[#8a7a72]">·</span>
-            <span className={cn(walletNet >= 0 ? "text-[#1d8f55]" : "text-[#d13f1f]")}>
+            <span className={cn(walletNet >= 0 ? "text-[#b86b1f]" : "text-[#d13f1f]")}>
               {walletNet >= 0 ? "+" : ""}
               {formatMoney(walletNet)}
             </span>

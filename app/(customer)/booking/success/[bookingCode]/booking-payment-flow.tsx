@@ -340,12 +340,12 @@ export function BookingPaymentFlow({ referenceCode }: { referenceCode: string })
                 </div>
               ))}
               {summary.packageName ? (
-                <div className="flex items-center justify-between font-medium text-[#1d8f55]">
+                <div className="flex items-center justify-between font-medium text-[#b86b1f]">
                   <span>Đã dùng {summary.packageName}</span>
                   <span>-{formatMoney(summary.discount ?? summary.subtotal)}</span>
                 </div>
               ) : summary.discount ? (
-                <div className="flex items-center justify-between font-medium text-[#1d8f55]">
+                <div className="flex items-center justify-between font-medium text-[#b86b1f]">
                   <span>Giảm {summary.voucherCode ? `(${summary.voucherCode})` : ""}</span>
                   <span>-{formatMoney(summary.discount)}</span>
                 </div>
@@ -356,12 +356,12 @@ export function BookingPaymentFlow({ referenceCode }: { referenceCode: string })
                 <span>Tổng dịch vụ</span><span>{formatMoney(summary.total)}</span>
               </div>
               {summary.packageName ? (
-                <div className="flex items-center justify-between rounded-xl bg-[#eef9f2] px-3 py-2.5 text-[#16784a]">
+                <div className="flex items-center justify-between rounded-xl bg-[#eef9f2] px-3 py-2.5 text-[#b42f20]">
                   <span>Thanh toán thêm</span><span className="font-bold">0đ</span>
                 </div>
               ) : (
                 <>
-                  <div className="flex items-center justify-between text-[#1d8f55]">
+                  <div className="flex items-center justify-between text-[#b86b1f]">
                     <span>Đã đặt cọc</span><span className="font-semibold">-{formatMoney(summary.depositAmount)}</span>
                   </div>
                   <div className="flex items-center justify-between rounded-xl bg-[#fff2ef] px-3 py-2.5 text-[#d13f1f]">

@@ -151,10 +151,10 @@ export function BusinessScanClient({ token }: { token: string }) {
 
           {canStart ? (
             <div className="mt-4 rounded-3xl border border-[#c9dfd1] bg-[#f1faf5] p-4 text-center">
-              <Play className="mx-auto text-[#17744b]" size={30} />
+              <Play className="mx-auto text-[#9a5a16]" size={30} />
               <h2 className="mt-2 text-lg font-semibold">Xác nhận bắt đầu phục vụ</h2>
               <p className="mt-1 text-xs leading-5 text-[#5e6e64]">Thao tác này ghi nhận giờ thực tế, địa điểm và KTV trưởng vào hồ sơ vận hành.</p>
-              <button disabled={busy} onClick={() => void act("START")} className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#17744b] px-4 py-3 text-sm font-semibold text-white disabled:opacity-60">{busy ? <Loader2 size={16} className="animate-spin" /> : <Play size={16} />} Bắt đầu tính giờ</button>
+              <button disabled={busy} onClick={() => void act("START")} className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#9a5a16] px-4 py-3 text-sm font-semibold text-white disabled:opacity-60">{busy ? <Loader2 size={16} className="animate-spin" /> : <Play size={16} />} Bắt đầu tính giờ</button>
             </div>
           ) : null}
 
@@ -174,11 +174,11 @@ export function BusinessScanClient({ token }: { token: string }) {
           ) : null}
 
           {event.status === "COMPLETED" ? (
-            <div className="mt-4 rounded-3xl border border-[#bcdcc9] bg-[#effaf4] p-5 text-center">
-              <CheckCircle2 className="mx-auto text-[#17744b]" size={38} />
+            <div className="mt-4 rounded-3xl border border-[#e3b23c] bg-[#fff7ec] p-5 text-center">
+              <CheckCircle2 className="mx-auto text-[#9a5a16]" size={38} />
               <h2 className="mt-2 text-xl font-semibold">Dịch vụ đã hoàn tất</h2>
               <p className="mt-1 text-xs leading-5 text-[#5e6e64]">Thời gian và thanh toán đã được đối soát. Admin, cơ sở phụ trách và KTV trưởng đã nhận cập nhật.</p>
-              <Link href={`/doanh-nghiep/${event.eventCode}`} className="mt-4 inline-flex rounded-full bg-[#17744b] px-5 py-2.5 text-sm font-semibold text-white">Xem Bill & đánh giá</Link>
+              <Link href={`/doanh-nghiep/${event.eventCode}`} className="mt-4 inline-flex rounded-full bg-[#9a5a16] px-5 py-2.5 text-sm font-semibold text-white">Xem Bill & đánh giá</Link>
             </div>
           ) : null}
 

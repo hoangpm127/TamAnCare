@@ -66,11 +66,11 @@ export function CustomerPasswordRecovery({ initialPhone, onClose }: { initialPho
 
   if (step === "success") {
     return (
-      <section className="mt-4 rounded-2xl bg-emerald-50 p-4 text-center ring-1 ring-emerald-200">
-        <CheckCircle2 className="mx-auto text-emerald-700" size={28} />
-        <h2 className="mt-2 text-sm font-semibold text-emerald-950">Khôi phục tài khoản thành công</h2>
-        <p className="mt-1 text-xs leading-5 text-emerald-800">{message}</p>
-        <button type="button" onClick={onClose} className="mt-3 rounded-full bg-emerald-700 px-5 py-2.5 text-xs font-semibold text-white">Quay lại đăng nhập</button>
+      <section className="mt-4 rounded-2xl bg-amber-50 p-4 text-center ring-1 ring-amber-200">
+        <CheckCircle2 className="mx-auto text-amber-700" size={28} />
+        <h2 className="mt-2 text-sm font-semibold text-amber-950">Khôi phục tài khoản thành công</h2>
+        <p className="mt-1 text-xs leading-5 text-amber-800">{message}</p>
+        <button type="button" onClick={onClose} className="mt-3 rounded-full bg-amber-700 px-5 py-2.5 text-xs font-semibold text-white">Quay lại đăng nhập</button>
       </section>
     );
   }

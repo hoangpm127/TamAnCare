@@ -30,9 +30,24 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Bạn đã tạo quá nhiều yêu cầu mua gói. Vui lòng thử lại sau." }, { status: 429 });
   }
 
-  const plan = await db.packagePlan.findUnique({ where: { id: parsed.data.planId } });
+  const plan = await db.packagePlan.findFirst({
+    where: {
+      id: parsed.data.planId,
+      isActive: true,
+      OR: [
+        { serviceId: null },
+        { service: { is: { isActive: true, isOnline: true } } },
+      ],
+    },
+  });
   if (!plan) return NextResponse.json({ error: "Không tìm thấy gói thành viên." }, { status: 404 });
-  const branch = await db.branch.findUnique({ where: { id: "cs1" } });
+  const accountingBranchSetting = await db.systemSetting.findUnique({
+    where: { scopeKey: "GLOBAL:business.accounting_branch_id" },
+    select: { value: true },
+  });
+  const branch = accountingBranchSetting?.value
+    ? await db.branch.findUnique({ where: { id: accountingBranchSetting.value } })
+    : await db.branch.findFirst({ orderBy: [{ createdAt: "asc" }, { id: "asc" }] });
   if (!branch) return NextResponse.json({ error: "Chưa cấu hình cơ sở hạch toán." }, { status: 503 });
 
   const result = await db.$transaction(async (tx) => {

@@ -156,7 +156,7 @@ export function CustomerAccountClient({
             <p className="mt-1 text-xs text-white/70">{account.phone}</p>
           </div>
           <div className="p-5">
-            {oauthMessage ? <p className="mb-4 rounded-2xl bg-emerald-50 p-3 text-center text-xs font-semibold text-emerald-700">{oauthMessage}</p> : null}
+            {oauthMessage ? <p className="mb-4 rounded-2xl bg-amber-50 p-3 text-center text-xs font-semibold text-amber-700">{oauthMessage}</p> : null}
             {!account.phoneVerified ? (
               <div className="mb-4">
                 <CustomerPhoneVerification

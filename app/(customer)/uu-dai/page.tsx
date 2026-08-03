@@ -2,7 +2,7 @@
 
 import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { addDays, format } from "date-fns";
 import {
   CheckCircle2,
@@ -26,6 +26,7 @@ const EMPTY_PLANS: PublicCatalog["packagePlans"] = [];
 const EMPTY_VOUCHERS: PublicCatalog["vouchers"] = [];
 
 function OffersContent() {
+  const router = useRouter();
   const params = useSearchParams();
   const membership = useMembership();
   const [catalog, setCatalog] = useState<PublicCatalog | null>(null);
@@ -38,6 +39,7 @@ function OffersContent() {
   const packagePlans = catalog?.packagePlans ?? EMPTY_PLANS;
   const vouchers = catalog?.vouchers ?? EMPTY_VOUCHERS;
   const selectedPlan = packagePlans.find((plan) => plan.id === selectedPlanId);
+  const selectedPlanService = catalog?.services.find((service) => service.id === selectedPlan?.serviceId);
   const recommendedPlans = useMemo(() => [...packagePlans].sort((a, b) => a.price - b.price), [packagePlans]);
 
   useEffect(() => {
@@ -106,6 +108,10 @@ function OffersContent() {
         body: JSON.stringify({ planId: selectedPlan.id, paymentCode }),
       });
       const data = await response.json();
+      if (response.status === 401) {
+        router.push(`/tai-khoan?returnTo=${encodeURIComponent(`/uu-dai?plan=${selectedPlan.id}`)}`);
+        return;
+      }
       if (!response.ok || !data.persisted) throw new Error(data.error ?? "Không thể tạo yêu cầu mua gói.");
       setPendingPayment(data.payment as PendingPackagePayment);
       if (data.payment?.status === "CONFIRMED" && data.packageStatus === "ACTIVE") activateConfirmedPackage();
@@ -151,10 +157,14 @@ function OffersContent() {
       <p className="mb-2.5 flex items-center gap-1.5 text-sm font-semibold">
         <PackagePlus size={16} className="text-[#d13f1f]" /> Gói dài hạn — càng mua nhiều, càng tiết kiệm
       </p>
+      <p className="mb-3 text-xs leading-5 text-[#8a7a72]">
+        Thanh toán một lần qua VietQR; thẻ chỉ kích hoạt sau khi SePay xác nhận. Mỗi lượt áp dụng đúng dịch vụ ghi trên gói và không cộng thêm voucher.
+      </p>
       <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
         {recommendedPlans.map((plan) => {
           const totalSessions = plan.paidSessions + plan.bonusSessions;
           const pricePerSession = Math.round(plan.price / totalSessions);
+          const planService = catalog?.services.find((service) => service.id === plan.serviceId);
           const selected = selectedPlanId === plan.id;
           return (
             <button
@@ -162,7 +172,7 @@ function OffersContent() {
               type="button"
               onClick={() => choosePlan(plan.id)}
               className={cn(
-                "relative flex aspect-square min-h-0 flex-col items-center justify-center overflow-hidden rounded-xl border p-2.5 text-center transition",
+                "relative flex min-h-[196px] flex-col items-center justify-center overflow-hidden rounded-xl border p-2.5 text-center transition",
                 selected
                   ? "border-[#d13f1f] bg-[#fff2ef]"
                   : plan.highlight
@@ -174,13 +184,20 @@ function OffersContent() {
                 {plan.badge ?? "Gói linh hoạt"}
               </span>
               <p className="line-clamp-2 min-h-8 text-[13px] font-semibold leading-4">{plan.name}</p>
+              <p className="mt-1 line-clamp-2 min-h-7 text-[10px] leading-3.5 text-[#715943]">
+                Áp dụng: {planService?.name ?? "dịch vụ ghi trên thẻ"}
+              </p>
               <div className="mt-1 grid w-full grid-cols-2 gap-1 rounded-lg bg-white/80 px-1.5 py-1 text-[9px] text-[#715943] ring-1 ring-[#eadbd1]/70">
-                <span><strong className="block text-xs text-[#4a2d16]">{totalSessions}</strong> Lượt sử dụng</span>
+                <span>
+                  <strong className="block text-xs text-[#4a2d16]">{plan.bonusSessions > 0 ? `${plan.paidSessions}+${plan.bonusSessions}` : plan.sessions}</strong>
+                  {plan.bonusSessions > 0 ? "Mua + tặng" : "Lượt sử dụng"}
+                </span>
                 <span><strong className="block text-xs text-[#4a2d16]">{plan.validityDays}</strong> Ngày hiệu lực</span>
               </div>
               <div className="mt-1.5">
                 <p className="text-sm font-bold text-[#d13f1f]">{formatMoney(plan.price)}</p>
                 <p className="text-[9px] text-[#8a7a72]">~{formatMoney(pricePerSession)}/buổi</p>
+                <p className="mt-0.5 text-[9px] font-medium text-[#7a1718]">{plan.shareable ? "Dùng được cho nhóm" : "Dành cho chủ thẻ"}</p>
               </div>
             </button>
           );
@@ -198,10 +215,17 @@ function OffersContent() {
                 Thanh toán đủ {formatMoney(selectedPlan.price)} để kích hoạt thẻ ngay — hệ thống ghi nhớ hạng thẻ và tự động trừ buổi
                 mỗi lần check-in, không cần đặt cọc riêng lẻ từng buổi.
               </p>
+              <div className="mt-2.5 space-y-1.5 rounded-xl border border-[#eadbd1] bg-white p-3 text-[11px] leading-5 text-[#665b55]">
+                <p><strong className="text-[#4a2d16]">Dịch vụ:</strong> {selectedPlanService?.name ?? "Theo dịch vụ ghi trên thẻ"}</p>
+                <p><strong className="text-[#4a2d16]">Quyền lợi:</strong> {selectedPlan.paidSessions} buổi mua + {selectedPlan.bonusSessions} buổi tặng · tổng {selectedPlan.sessions} buổi.</p>
+                <p><strong className="text-[#4a2d16]">Sử dụng:</strong> {selectedPlan.shareable ? "Chủ thẻ có thể đặt nhóm trong cùng booking." : "Chỉ dùng cho chủ thẻ, không chuyển nhượng."}</p>
+                <p><strong className="text-[#4a2d16]">Hiệu lực:</strong> {selectedPlan.validityDays} ngày tính từ lúc ngân hàng xác nhận thanh toán.</p>
+              </div>
               <div className="mt-2.5 flex items-center justify-between rounded-lg bg-white px-3 py-2">
                 <span className="text-xs text-[#8a7a72]">Số tiền kích hoạt</span>
                 <span className="text-base font-bold text-[#d13f1f]">{formatMoney(selectedPlan.price)}</span>
               </div>
+              {paymentError ? <p className="mt-2 rounded-xl bg-red-50 p-3 text-xs font-medium text-red-700">{paymentError}</p> : null}
               <button
                 type="button"
                 onClick={() => void preparePayment()}
@@ -245,8 +269,8 @@ function OffersContent() {
 
           {step === "done" ? (
             <div className="flex flex-col items-center gap-2 p-6 text-center">
-              <CheckCircle2 className="text-[#1d8f55]" size={32} />
-              <p className="text-sm font-semibold text-[#1d8f55]">Đã kích hoạt thẻ {selectedPlan.name}!</p>
+              <CheckCircle2 className="text-[#b86b1f]" size={32} />
+              <p className="text-sm font-semibold text-[#8a4f14]">Đã kích hoạt thẻ {selectedPlan.name}!</p>
               <p className="text-xs leading-5 text-[#8a7a72]">
                 Thẻ có {selectedPlan.paidSessions + selectedPlan.bonusSessions} buổi, hạn dùng {selectedPlan.validityDays} ngày. Hệ
                 thống sẽ tự động trừ buổi mỗi lần bạn check-in tại quán.

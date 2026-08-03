@@ -188,7 +188,7 @@ export function RescheduleClient({
     return (
       <main className="mx-auto max-w-xl px-4 py-8 text-[#191414] sm:px-6">
         <section className="overflow-hidden rounded-3xl border border-[#eadbd1] bg-white shadow-lg">
-          <div className="bg-gradient-to-br from-[#1d8f55] via-[#166b41] to-[#0f3d26] px-6 pb-7 pt-6 text-center text-white">
+          <div className="bg-gradient-to-br from-[#b86b1f] via-[#8f151a] to-[#4d0c10] px-6 pb-7 pt-6 text-center text-white">
             <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-white/15">
               <CheckCircle2 size={26} />
             </span>
@@ -206,7 +206,7 @@ export function RescheduleClient({
                 Cọc mới {formatMoney(depositAmount)} đã được ghi nhận cho lịch hẹn mới.
               </p>
             ) : (
-              <p className="rounded-xl bg-[#eafaf1] p-3 text-xs leading-5 text-[#1d6c40]">
+              <p className="rounded-xl bg-[#fff4e6] p-3 text-xs leading-5 text-[#1d6c40]">
                 Đây là lượt đổi lịch miễn phí đầu tiên của bạn cho đơn này — không mất phí.
               </p>
             )}

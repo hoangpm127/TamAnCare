@@ -193,7 +193,7 @@ export function CorporateClient() {
     return (
       <main className="min-h-screen bg-[radial-gradient(circle_at_top,#ecd2b4_0,#fffaf6_42%,#f7ede5_100%)] px-4 py-8 text-[#191414] sm:px-6">
         <section className="mx-auto max-w-xl overflow-hidden rounded-3xl border border-[#eadbd1] bg-white shadow-lg">
-          <div className="relative overflow-hidden bg-gradient-to-br from-[#1d8f55] via-[#166b41] to-[#0f3d26] px-6 pb-8 pt-7 text-center text-white">
+          <div className="relative overflow-hidden bg-gradient-to-br from-[#b86b1f] via-[#8f151a] to-[#4d0c10] px-6 pb-8 pt-7 text-center text-white">
             <div className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-white/10 blur-2xl" />
             <div className="pointer-events-none absolute -bottom-12 -left-8 h-28 w-28 rounded-full bg-white/10 blur-2xl" />
             <span className="relative mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-white/15 backdrop-blur">
@@ -218,7 +218,7 @@ export function CorporateClient() {
             <div className="mt-5 space-y-2.5 border-t border-dashed border-[#eadbd1] pt-5">
               <p className="text-xs font-semibold uppercase tracking-wide text-[#8a7a72]">Các bước tiếp theo</p>
               <div className="flex items-start gap-3">
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#eafaf1] text-xs font-bold text-[#1d6c40]">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#fff4e6] text-xs font-bold text-[#1d6c40]">
                   1
                 </span>
                 <p className="mt-0.5 text-xs leading-5 text-[#4d403a]">
@@ -226,7 +226,7 @@ export function CorporateClient() {
                 </p>
               </div>
               <div className="flex items-start gap-3">
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#eafaf1] text-xs font-bold text-[#1d6c40]">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#fff4e6] text-xs font-bold text-[#1d6c40]">
                   2
                 </span>
                 <p className="mt-0.5 text-xs leading-5 text-[#4d403a]">
@@ -234,7 +234,7 @@ export function CorporateClient() {
                 </p>
               </div>
               <div className="flex items-start gap-3">
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#eafaf1] text-xs font-bold text-[#1d6c40]">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#fff4e6] text-xs font-bold text-[#1d6c40]">
                   3
                 </span>
                 <p className="mt-0.5 text-xs leading-5 text-[#4d403a]">

@@ -42,7 +42,7 @@ const RANGE_PRESETS: { id: RangePreset; label: string }[] = [
 const CATEGORY_META: Record<ReferralOrderCategory, { label: string; color: string; badge: string; icon: typeof UserRound }> = {
   INDIVIDUAL: { label: "Affiliate cá nhân", color: "#d13f1f", badge: "bg-[#fff2ef] text-[#d13f1f]", icon: UserRound },
   GROUP: { label: "Theo nhóm", color: "#b9862c", badge: "bg-[#fff7ec] text-[#8a5a12]", icon: Users },
-  BUSINESS: { label: "Tâm An Business", color: "#1d6c40", badge: "bg-[#eafaf1] text-[#1d6c40]", icon: Briefcase },
+  BUSINESS: { label: "Tâm An Business", color: "#1d6c40", badge: "bg-[#fff4e6] text-[#1d6c40]", icon: Briefcase },
 };
 
 function toIsoDateInput(date: Date) {
@@ -158,8 +158,8 @@ export function IncomeSection({ detailed }: { detailed: boolean }) {
 
       <div className="grid grid-cols-2 gap-2.5">
         <div className="rounded-xl border border-[#eadbd1] bg-white p-3.5 text-center">
-          <p className="text-[11px] font-semibold uppercase tracking-wide text-[#1d8f55]">Đã xác nhận</p>
-          <p className="mt-1 text-lg font-bold text-[#1d8f55]">{formatMoney(confirmedTotal)}</p>
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-[#b86b1f]">Đã xác nhận</p>
+          <p className="mt-1 text-lg font-bold text-[#b86b1f]">{formatMoney(confirmedTotal)}</p>
         </div>
         <div className="rounded-xl border border-dashed border-[#e3b23c] bg-[#fff7ec] p-3.5 text-center">
           <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8a5a12]">Dự kiến</p>
@@ -175,7 +175,7 @@ export function IncomeSection({ detailed }: { detailed: boolean }) {
               <div key={item.key} className="flex min-w-[28px] flex-1 flex-col items-center gap-1.5">
                 <div className="flex h-20 w-full items-end">
                   <div
-                    className="w-full rounded-t-md bg-[#1d8f55]"
+                    className="w-full rounded-t-md bg-[#b86b1f]"
                     style={{ height: `${Math.max(4, Math.round((item.amount / maxBar) * 100))}%` }}
                     title={formatMoney(item.amount)}
                   />
@@ -409,7 +409,7 @@ function FriendCard({
             <span
               className={cn(
                 "inline-flex rounded-full px-2 py-0.5 text-[10px] font-semibold",
-                friend.status === "COMPLETED" ? "bg-[#eafaf1] text-[#1d8f55]" : "bg-[#fff7ec] text-[#8a5a12]"
+                friend.status === "COMPLETED" ? "bg-[#fff4e6] text-[#b86b1f]" : "bg-[#fff7ec] text-[#8a5a12]"
               )}
             >
               {friend.status === "COMPLETED" ? "Đã hoàn thành" : "Đang chờ"}
@@ -419,7 +419,7 @@ function FriendCard({
           </span>
         </span>
         <span className="flex shrink-0 items-center gap-1.5">
-          <span className="text-sm font-semibold text-[#1d8f55]">{rewardInRange > 0 ? `+${formatMoney(rewardInRange)}` : "—"}</span>
+          <span className="text-sm font-semibold text-[#b86b1f]">{rewardInRange > 0 ? `+${formatMoney(rewardInRange)}` : "—"}</span>
           <ChevronDown size={14} className={cn("text-[#8a7a72] transition", expanded && "rotate-180")} />
         </span>
       </button>
@@ -449,7 +449,7 @@ function FriendCard({
                     </span>
                   </span>
                   <span className="shrink-0 text-right">
-                    <span className={cn("block text-sm font-semibold", order.status === "COMPLETED" ? "text-[#1d8f55]" : "text-[#8a5a12]")}>
+                    <span className={cn("block text-sm font-semibold", order.status === "COMPLETED" ? "text-[#b86b1f]" : "text-[#8a5a12]")}>
                       +{formatMoney(order.commission)}
                     </span>
                     <span className="text-[9px] text-[#8a7a72]">{order.status === "COMPLETED" ? "Đã xác nhận" : "Dự kiến"}</span>

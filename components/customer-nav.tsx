@@ -48,7 +48,7 @@ function CustomerTopbar({ pathname }: { pathname: string }) {
   const showBack = pathname !== "/";
 
   return (
-    <header className="sticky top-0 z-40 border-b border-[#d8e6df] bg-white/95 shadow-[0_1px_12px_rgba(11,87,71,0.08)] backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-[#eadbd1] bg-white/95 shadow-[0_1px_12px_rgba(122,23,24,0.08)] backdrop-blur">
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-10">
         <div className="flex min-w-0 items-center gap-1">
           {showBack ? (
@@ -61,10 +61,10 @@ function CustomerTopbar({ pathname }: { pathname: string }) {
               <ChevronLeft size={20} />
             </button>
           ) : null}
-          <Link href="/" className="tap-feedback relative flex min-w-0 items-center gap-2 rounded-xl text-base font-semibold tracking-wide">
+          <Link href="/" className="tap-feedback relative flex min-w-0 items-center gap-2 rounded-xl text-sm font-semibold tracking-normal sm:text-base sm:tracking-wide">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/icon-64.png" alt="" width={28} height={28} className="h-7 w-7 shrink-0" />
-            <span className="truncate font-serif text-[#0a493c]">Tâm An Center</span>
+            <img src="/tam-an-center-mark-transparent.png" alt="" width={34} height={34} className="h-8 w-8 shrink-0 object-contain drop-shadow-sm" />
+            <span className="truncate font-serif text-[#7a1718]">Tâm An Center</span>
             <NavigationPendingIndicator />
           </Link>
         </div>
@@ -130,12 +130,12 @@ function CustomerBottomNav({ pathname }: { pathname: string }) {
               <span
                 className={cn(
                   "flex h-9 w-9 items-center justify-center rounded-full transition-all",
-                  active ? "bg-[#0b5747] shadow-sm shadow-[#0b5747]/30" : ""
+                  active ? "bg-gradient-to-br from-[#d13f1f] to-[#8f151a] shadow-sm shadow-[#9f1d20]/30" : ""
                 )}
               >
                 <Icon size={19} className={active ? "text-white" : "text-[#8a7a72]"} />
               </span>
-              <span className={cn("text-[11px] transition-colors", active ? "font-semibold text-[#0b5747]" : "font-medium text-[#8a7a72]")}>
+              <span className={cn("text-[11px] transition-colors", active ? "font-semibold text-[#a92f18]" : "font-medium text-[#8a7a72]")}>
                 {item.label}
               </span>
               <NavigationPendingIndicator className="rounded-none" />
@@ -157,9 +157,10 @@ export function CustomerShell({ children }: { children: React.ReactNode }) {
       <CustomerTopbar pathname={pathname} />
       <ActiveServiceBanner />
       <div className="customer-app">{children}</div>
-      <footer className={cn("border-t border-[#2f7163] bg-gradient-to-br from-[#062f28] via-[#0b4b3e] to-[#0e5d4d] px-4 py-4 text-center text-[11px] font-medium leading-5 text-[#f7f0d9]", showBottomNav && "mb-[calc(68px+env(safe-area-inset-bottom))] md:mb-0")}>
+      <footer className={cn("border-t border-[#a64d2d] bg-gradient-to-br from-[#4d0c10] via-[#7a1718] to-[#b83d22] px-4 py-4 text-center text-[11px] font-medium leading-5 text-[#fff4df]", showBottomNav && "mb-[calc(68px+env(safe-area-inset-bottom))] md:mb-0")}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/tam-an-center-signature.jpg" alt="Tâm An Center" width={108} height={90} className="mx-auto mb-1 h-[72px] w-auto rounded-xl object-cover" />
+        <img src="/tam-an-center-mark-transparent.png" alt="Tâm An Center" width={58} height={58} className="mx-auto mb-1 h-12 w-12 object-contain drop-shadow" />
+        <p className="font-serif text-sm font-semibold tracking-[0.12em] text-[#f5dc8f]">TÂM AN CENTER</p>
         <div className="mt-0.5 flex flex-wrap justify-center gap-x-4 gap-y-1">
           <Link href="/dieu-khoan" className="transition-colors hover:text-[#f5d982]">Điều khoản</Link>
           <Link href="/chinh-sach-rieng-tu" className="transition-colors hover:text-[#f5d982]">Bảo vệ dữ liệu</Link>

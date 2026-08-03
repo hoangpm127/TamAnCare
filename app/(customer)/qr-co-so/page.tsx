@@ -34,7 +34,7 @@ export default async function BranchQrPage() {
     <main className="min-h-screen bg-[#f7f3ef] px-4 py-6 text-[#191414] sm:px-6">
       <section className="mx-auto max-w-3xl">
         <header className="text-center">
-          <span className="mx-auto flex h-11 w-11 items-center justify-center rounded-2xl bg-[#1d8f55] text-white shadow-lg"><QrCodeIcon size={22} /></span>
+          <span className="mx-auto flex h-11 w-11 items-center justify-center rounded-2xl bg-[#b86b1f] text-white shadow-lg"><QrCodeIcon size={22} /></span>
           <h1 className="mt-3 text-2xl font-semibold tracking-tight">QR check-in Tâm An Center</h1>
           <p className="mx-auto mt-1 max-w-xl text-sm leading-6 text-[#665b55]">Mở trang này trên máy tính hoặc in từng mã đặt tại quầy. Khách dùng điện thoại quét đúng mã của cơ sở đang đến.</p>
         </header>
@@ -42,11 +42,11 @@ export default async function BranchQrPage() {
         <div className="mt-5 grid gap-4 sm:grid-cols-2">
           {qrCards.map((branch) => (
             <article key={branch.id} className="rounded-3xl border border-[#d5eadc] bg-white p-5 text-center shadow-[0_14px_36px_rgba(23,61,54,0.10)]">
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#1d8f55]">Tâm An Center</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#b86b1f]">Tâm An Center</p>
               <h2 className="mt-1 text-xl font-semibold">{branch.label}</h2>
               <Image unoptimized width={420} height={420} src={branch.dataUrl} alt={`QR check-in ${branch.label}`} className="mx-auto mt-3 h-auto w-full max-w-[300px] rounded-2xl" priority />
-              <p className="mx-auto mt-3 flex max-w-xs items-start justify-center gap-1.5 text-xs leading-5 text-[#665b55]"><MapPin size={14} className="mt-0.5 shrink-0 text-[#1d8f55]" /> {branch.address}</p>
-              <a href={branch.dataUrl} download={`taman-care-${branch.id}.png`} className="mt-3 inline-flex items-center justify-center gap-1.5 rounded-full border border-[#1d8f55] px-4 py-2 text-xs font-semibold text-[#1d8f55]"><Download size={14} /> Tải QR {branch.label}</a>
+              <p className="mx-auto mt-3 flex max-w-xs items-start justify-center gap-1.5 text-xs leading-5 text-[#665b55]"><MapPin size={14} className="mt-0.5 shrink-0 text-[#b86b1f]" /> {branch.address}</p>
+              <a href={branch.dataUrl} download={`taman-care-${branch.id}.png`} className="mt-3 inline-flex items-center justify-center gap-1.5 rounded-full border border-[#b86b1f] px-4 py-2 text-xs font-semibold text-[#b86b1f]"><Download size={14} /> Tải QR {branch.label}</a>
             </article>
           ))}
         </div>

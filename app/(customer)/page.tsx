@@ -61,7 +61,7 @@ export default async function Home() {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#170b0a]/92 via-[#170b0a]/45 to-transparent" />
           <div className="relative z-10 flex min-h-[300px] flex-col items-center justify-end px-4 py-5 text-center sm:min-h-[340px] sm:px-6 sm:py-6">
-            <Image src="/tam-an-center-mark.png" alt="Biểu tượng Tâm An Center" width={58} height={58} className="mb-2 h-[58px] w-[58px] rounded-2xl object-cover shadow-lg ring-1 ring-[#f0d371]/45" />
+            <Image src="/tam-an-center-mark-transparent.png" alt="Biểu tượng Tâm An Center" width={66} height={66} className="mb-2 h-[66px] w-[66px] object-contain drop-shadow-[0_8px_18px_rgba(0,0,0,0.34)]" />
             <p className="mb-2 inline-flex w-fit items-center gap-1.5 rounded-full border border-white/25 bg-white/10 px-3 py-1 text-[11px] font-medium">
               <Sparkles size={12} /> Chăm sóc chỉn chu · đặt lịch minh bạch
             </p>
@@ -90,9 +90,9 @@ export default async function Home() {
       </section>
 
       <section className="mx-auto max-w-7xl px-4 pt-3 sm:px-6 lg:px-10">
-        <Link href="/tai-khoan" className="flex items-center justify-between gap-3 rounded-2xl bg-gradient-to-r from-[#06372e] via-[#0b5747] to-[#16725e] px-4 py-3.5 text-white shadow-md">
+        <Link href="/tai-khoan" className="flex items-center justify-between gap-3 rounded-2xl bg-gradient-to-r from-[#7a1718] via-[#b42f20] to-[#d55a28] px-4 py-3.5 text-white shadow-md">
           <span className="flex min-w-0 items-center gap-3">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#f5dc8f] text-[#0a493c]"><Gift size={19} /></span>
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#f5dc8f] text-[#7a1718]"><Gift size={19} /></span>
             <span className="min-w-0"><strong className="block text-sm">Tạo tài khoản nhận ưu đãi 100K</strong><small className="mt-0.5 block text-[11px] text-white/70">Đặt lịch không cần đăng nhập · đăng ký để giữ quyền lợi riêng</small></span>
           </span>
           <ArrowRight className="shrink-0 text-[#f5d982]" size={18} />
@@ -134,12 +134,12 @@ export default async function Home() {
           {[
             { title: "Giá rõ ràng", body: "Hiển thị đúng giá dịch vụ trước khi đặt, không phát sinh.", accent: "#d13f1f" },
             { title: "Chọn KTV", body: "Chọn KTV yêu thích hoặc để hệ thống gợi ý người còn slot.", accent: "#b9862c" },
-            { title: "Không trùng lịch", body: "Kiểm tra KTV và phòng/giường với buffer 15 phút.", accent: "#0f766e" },
+            { title: "Không trùng lịch", body: "Kiểm tra KTV và phòng/giường với buffer 15 phút.", accent: "#8f241d" },
             { title: "Không làm phiền", body: "Chỉ nhắc lịch đúng lúc theo cài đặt của bạn, không gọi quảng cáo.", accent: "#7c3fae" },
           ].map(({ title, body, accent }) => (
             <div
               key={title}
-              className="flex flex-col overflow-hidden rounded-2xl border bg-gradient-to-br from-[#073d33] via-[#0b4b3e] to-[#116956] text-white shadow-md transition hover:-translate-y-0.5 hover:shadow-xl"
+              className="flex flex-col overflow-hidden rounded-2xl border bg-gradient-to-br from-[#4d0c10] via-[#7a1718] to-[#b43a22] text-white shadow-md transition hover:-translate-y-0.5 hover:shadow-xl"
               style={{ borderColor: `${accent}30` }}
             >
               <div className="border-b border-white/10 px-3.5 py-2.5" style={{ backgroundColor: `${accent}28` }}>

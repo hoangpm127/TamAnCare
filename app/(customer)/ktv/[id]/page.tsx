@@ -99,7 +99,7 @@ export default async function TherapistProfilePage({ params }: { params: Promise
         <ul className="mt-2.5 space-y-2">
           {["Đào tạo quy trình chăm sóc và an toàn Tâm An Center", "Tái kiểm định tay nghề định kỳ", "Chỉ nhận dịch vụ nằm trong kỹ năng đã được cấu hình"].map((cert) => (
             <li key={cert} className="flex items-start gap-2 text-xs leading-5 text-[#665b55]">
-              <ShieldCheck size={14} className="mt-0.5 shrink-0 text-[#1d8f55]" /> {cert}
+              <ShieldCheck size={14} className="mt-0.5 shrink-0 text-[#b86b1f]" /> {cert}
             </li>
           ))}
         </ul>

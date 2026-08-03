@@ -94,7 +94,7 @@ export function PwaInstallPrompt() {
 
   if (installed) {
     return (
-      <div className="flex items-center gap-2 rounded-2xl bg-emerald-50 px-3.5 py-3 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-200">
+      <div className="flex items-center gap-2 rounded-2xl bg-amber-50 px-3.5 py-3 text-xs font-semibold text-amber-700 ring-1 ring-amber-200">
         <CheckCircle2 size={17} className="shrink-0" />
         Tâm An Center đã ở trên màn hình chính của bạn.
       </div>

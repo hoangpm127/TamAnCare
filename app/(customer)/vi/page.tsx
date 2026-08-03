@@ -136,7 +136,7 @@ export default function WalletPage() {
             onClick={() => setTab("thu")}
             className={cn(
               "flex items-center justify-center gap-1.5 rounded-xl py-3 text-sm font-semibold transition",
-              tab === "thu" ? "bg-[#1d8f55] text-white shadow-sm" : "bg-[#fdf8f5] text-[#4d403a]"
+              tab === "thu" ? "bg-[#b86b1f] text-white shadow-sm" : "bg-[#fdf8f5] text-[#4d403a]"
             )}
           >
             <TrendingUp size={16} /> Thu nhập

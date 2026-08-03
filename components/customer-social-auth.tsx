@@ -36,7 +36,7 @@ export function CustomerSocialAuthButtons({
       {providers.filter((provider) => availableProviders.includes(provider.slug as "google" | "facebook") || (linkMode && linkedProviders.includes(provider.id))).map((provider) => {
         const linked = linkedProviders.includes(provider.id);
         return linked ? (
-          <div key={provider.id} className="flex items-center justify-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-xs font-semibold text-emerald-700">
+          <div key={provider.id} className="flex items-center justify-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-4 py-2.5 text-xs font-semibold text-amber-700">
             <CheckCircle2 size={15} /> Đã liên kết {provider.label}
           </div>
         ) : (

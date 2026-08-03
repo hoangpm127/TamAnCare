@@ -52,7 +52,7 @@ export function ReferralLandingClient({ code, offer }: { code: string; offer: Re
             </div>
 
             <div className="space-y-2.5 text-xs leading-5 text-[#554842]">
-              <p className="flex items-start gap-2"><CheckCircle2 size={16} className="mt-0.5 shrink-0 text-emerald-600" /><span>Mã đã lưu trên điện thoại này trong 30 ngày và tự gắn vào booking.</span></p>
+              <p className="flex items-start gap-2"><CheckCircle2 size={16} className="mt-0.5 shrink-0 text-amber-700" /><span>Mã đã lưu trên điện thoại này trong 30 ngày và tự gắn vào booking.</span></p>
               <p className="flex items-start gap-2"><ShieldCheck size={16} className="mt-0.5 shrink-0 text-[#d13f1f]" /><span>Bạn chỉ cần đăng nhập và xác minh OTP một lần khi muốn sử dụng ưu đãi.</span></p>
             </div>
 

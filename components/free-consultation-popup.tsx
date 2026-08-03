@@ -68,7 +68,7 @@ export function FreeConsultationPopup() {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[80] flex items-end justify-center bg-[#062f28]/72 p-0 backdrop-blur-sm sm:items-center sm:p-5" role="presentation">
+    <div className="fixed inset-0 z-[80] flex items-end justify-center bg-[#2c0909]/74 p-0 backdrop-blur-sm sm:items-center sm:p-5" role="presentation">
       <section
         role="dialog"
         aria-modal="true"
@@ -76,7 +76,7 @@ export function FreeConsultationPopup() {
         aria-describedby="free-consultation-description"
         className="max-h-[92dvh] w-full max-w-lg overflow-y-auto rounded-t-[2rem] bg-[#fffdf7] shadow-2xl ring-1 ring-[#e1bb58]/45 sm:rounded-[2rem]"
       >
-        <div className="relative overflow-hidden bg-gradient-to-br from-[#073d33] via-[#0c5949] to-[#116956] px-5 pb-5 pt-6 text-white sm:px-6">
+        <div className="relative overflow-hidden bg-gradient-to-br from-[#4d0c10] via-[#8f151a] to-[#d13f1f] px-5 pb-5 pt-6 text-white sm:px-6">
           <div className="absolute -right-10 -top-14 h-36 w-36 rounded-full border-[18px] border-[#d8b449]/15" />
           <div className="relative">
             <span className="inline-flex items-center gap-1.5 rounded-full border border-[#f2d477]/35 bg-white/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.12em] text-[#f5dc8f]">
@@ -100,7 +100,7 @@ export function FreeConsultationPopup() {
                   key={option.value}
                   type="button"
                   onClick={() => setPreferredTime(option.value)}
-                  className={`rounded-2xl border px-2 py-3 text-center transition ${active ? "border-[#0d5b4a] bg-[#e8f4ef] text-[#084638] shadow-sm" : "border-[#e8ddc7] bg-white text-[#665b55]"}`}
+                  className={`rounded-2xl border px-2 py-3 text-center transition ${active ? "border-[#b4232b] bg-[#fff2ef] text-[#7a1718] shadow-sm" : "border-[#e8ddc7] bg-white text-[#665b55]"}`}
                 >
                   <Clock3 className="mx-auto" size={16} />
                   <strong className="mt-1.5 block text-xs">{option.label}</strong>
@@ -112,7 +112,7 @@ export function FreeConsultationPopup() {
           </div>
 
           <div className="rounded-2xl bg-[#f7f1df] p-3 text-[11px] leading-5 text-[#66563f] ring-1 ring-[#e7d6aa]">
-            <p className="flex items-start gap-2"><ShieldCheck className="mt-0.5 shrink-0 text-[#0d5b4a]" size={15} /><span>Bằng việc đăng ký, bạn đồng ý để đội ngũ liên hệ số điện thoại tài khoản nhằm xác nhận lịch. Buổi tư vấn giúp định hướng chăm sóc, không thay thế khám, chẩn đoán hoặc điều trị y khoa.</span></p>
+            <p className="flex items-start gap-2"><ShieldCheck className="mt-0.5 shrink-0 text-[#a92f18]" size={15} /><span>Bằng việc đăng ký, bạn đồng ý để đội ngũ liên hệ số điện thoại tài khoản nhằm xác nhận lịch. Buổi tư vấn giúp định hướng chăm sóc, không thay thế khám, chẩn đoán hoặc điều trị y khoa.</span></p>
           </div>
 
           {error ? <p role="alert" className="rounded-xl bg-red-50 px-3 py-2 text-xs font-medium text-red-700">{error}</p> : null}
@@ -121,7 +121,7 @@ export function FreeConsultationPopup() {
             type="button"
             disabled={submitting !== null}
             onClick={() => void saveDecision("INTERESTED")}
-            className="flex w-full items-center justify-center gap-2 rounded-full bg-[#0b5747] px-5 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#0b5747]/20 disabled:opacity-60"
+            className="flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-b from-[#d13f1f] to-[#8f151a] px-5 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#8f151a]/20 disabled:opacity-60"
           >
             {submitting === "INTERESTED" ? <Loader2 className="animate-spin" size={17} /> : <CalendarCheck size={17} />}
             Đăng ký tư vấn miễn phí

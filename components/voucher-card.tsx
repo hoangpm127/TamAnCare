@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Check, Clock, Copy, Percent, Tag } from "lucide-react";
 import type { CatalogVoucher } from "@/lib/catalog-types";
-import { cn } from "@/lib/utils";
+import { cn, formatMoney } from "@/lib/utils";
 import { useVoucherInventory } from "@/lib/voucher-inventory";
 
 function hexToRgba(hex: string, alpha: number) {
@@ -50,14 +50,17 @@ export function VoucherCard({ voucher, className, compact, showAllLink = false }
           <p className="text-sm font-bold" style={{ color: voucher.accent }}>
             {voucher.type === "PERCENT" ? `Giảm ${voucher.value}%` : `Giảm ${voucher.value.toLocaleString("vi-VN")}đ`}
           </p>
-          <p className="mt-1 line-clamp-2 text-[11px] leading-4 text-[#665b55]">{voucher.name}</p>
+          <p className="mt-1 line-clamp-2 text-[11px] font-medium leading-4 text-[#665b55]">{voucher.name}</p>
+          <p className="mt-1 line-clamp-2 text-[10px] leading-3.5 text-[#8a7a72]">
+            Đơn từ {formatMoney(voucher.minSpend)} · {voucher.constraint}
+          </p>
           <p className="mt-1 truncate text-[10px] text-[#8a7a72]">HSD {voucher.expiresAt}</p>
           <button
             type="button"
             onClick={copyCode}
             disabled={!available}
             className="mt-2 inline-flex items-center justify-center gap-1 rounded-full px-2 py-1.5 text-[11px] font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-50"
-            style={{ backgroundColor: copied ? "#1d8f55" : voucher.accent }}
+            style={{ backgroundColor: copied ? "#8a5a12" : voucher.accent }}
           >
             {copied ? <Check size={11} /> : <Copy size={11} />}
             {!available ? "Hết lượt" : copied ? "Đã chép" : voucher.code}
@@ -105,7 +108,7 @@ export function VoucherCard({ voucher, className, compact, showAllLink = false }
               onClick={copyCode}
               disabled={!available}
               className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-50"
-              style={{ backgroundColor: copied ? "#1d8f55" : voucher.accent }}
+              style={{ backgroundColor: copied ? "#8a5a12" : voucher.accent }}
             >
               {copied ? <Check size={12} /> : <Copy size={12} />}
               {!available ? "Hết lượt" : copied ? "Đã chép" : "Chép mã"}

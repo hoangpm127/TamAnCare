@@ -159,8 +159,8 @@ export function ExpenseSection({ detailed }: { detailed: boolean }) {
     <section className="mt-4 space-y-5">
       <div>
         <p className="mb-2.5 flex items-center gap-2 text-sm font-semibold">
-          <Hourglass size={15} className={inServiceBills.length ? "animate-pulse text-[#16784a]" : "text-[#e3b23c]"} /> Đang diễn ra
-          {inServiceBills.length ? <span className="rounded-full bg-[#16784a] px-2.5 py-1 text-[10px] font-bold text-white shadow-sm">{inServiceBills.length} đang phục vụ</span> : null}
+          <Hourglass size={15} className={inServiceBills.length ? "animate-pulse text-[#b42f20]" : "text-[#e3b23c]"} /> Đang diễn ra
+          {inServiceBills.length ? <span className="rounded-full bg-[#b42f20] px-2.5 py-1 text-[10px] font-bold text-white shadow-sm">{inServiceBills.length} đang phục vụ</span> : null}
         </p>
         {inServiceBills.length > 0 || unusedBills.length > 0 ? (
           <div className="space-y-2.5">
@@ -189,12 +189,12 @@ export function ExpenseSection({ detailed }: { detailed: boolean }) {
 
       {refundEntries.length > 0 ? (
         <div>
-          <p className="mb-2.5 flex items-center gap-1.5 text-sm font-semibold text-[#16784a]">
+          <p className="mb-2.5 flex items-center gap-1.5 text-sm font-semibold text-[#b42f20]">
             <RotateCcw size={15} /> Khoản tiền đã hoàn
           </p>
           <div className="space-y-2.5">
-            {refundEntries.map((entry) => <div key={entry.id} className="rounded-xl border border-[#b8dfc9] bg-[#edf9f2] p-3.5">
-              <div className="flex items-start justify-between gap-3"><span className="min-w-0"><strong className="block text-sm text-[#165e3d]">{entry.label}</strong><small className="mt-1 block text-[10px] text-[#567063]">{entry.branchLabel}{entry.bookingCode ? ` · ${displayBookingCode(entry.bookingCode)}` : ""}</small></span><strong className="shrink-0 text-sm text-[#16784a]">+{formatMoney(Math.abs(entry.amount))}</strong></div>
+            {refundEntries.map((entry) => <div key={entry.id} className="rounded-xl border border-[#b8dfc9] bg-[#fff4e6] p-3.5">
+              <div className="flex items-start justify-between gap-3"><span className="min-w-0"><strong className="block text-sm text-[#165e3d]">{entry.label}</strong><small className="mt-1 block text-[10px] text-[#567063]">{entry.branchLabel}{entry.bookingCode ? ` · ${displayBookingCode(entry.bookingCode)}` : ""}</small></span><strong className="shrink-0 text-sm text-[#b42f20]">+{formatMoney(Math.abs(entry.amount))}</strong></div>
               <div className="mt-2 border-t border-dashed border-[#b8dfc9] pt-2 text-[10px] leading-4 text-[#567063]"><p>{entry.note}</p><p className="mt-1 font-medium">Đã chuyển lúc {entry.time} · {entry.date}</p></div>
             </div>)}
           </div>
@@ -217,15 +217,15 @@ export function ExpenseSection({ detailed }: { detailed: boolean }) {
 
 const STATUS_CARD_STYLE: Record<BillStatus, string> = {
   UNUSED: "border-[#e3b23c] bg-[#fff7ec]",
-  IN_SERVICE: "border-2 border-[#16784a] bg-gradient-to-br from-[#eafaf1] via-white to-[#f4fff8] shadow-[0_8px_22px_rgba(22,120,74,0.16)] ring-2 ring-[#b8dfc9]/60",
+  IN_SERVICE: "border-2 border-[#b42f20] bg-gradient-to-br from-[#fff4e6] via-white to-[#f4fff8] shadow-[0_8px_22px_rgba(22,120,74,0.16)] ring-2 ring-[#b8dfc9]/60",
   COMPLETED: "border-[#eadbd1] bg-white",
   ATTENTION: "border-[#e8d39e] bg-[#fffaf0]",
 };
 
 const STATUS_BADGE_STYLE: Record<BillStatus, string> = {
   UNUSED: "bg-[#e3b23c]/20 text-[#8a5a12]",
-  IN_SERVICE: "bg-[#16784a] text-white shadow-sm",
-  COMPLETED: "bg-[#eafaf1] text-[#1d8f55]",
+  IN_SERVICE: "bg-[#b42f20] text-white shadow-sm",
+  COMPLETED: "bg-[#fff4e6] text-[#b86b1f]",
   ATTENTION: "bg-[#f5e8bf] text-[#805914]",
 };
 
@@ -310,7 +310,7 @@ export function BillCard({ data, expanded, onToggle }: { data: BillCardData; exp
       {data.status === "IN_SERVICE" && !data.isBusiness ? (
         <Link
           href={`/check-in?bookingCode=${encodeURIComponent(data.bookingCode)}`}
-          className="mt-2.5 inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-gradient-to-b from-[#1d8f55] to-[#126b42] px-4 py-2.5 text-xs font-semibold text-white shadow-sm"
+          className="mt-2.5 inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-gradient-to-b from-[#b86b1f] to-[#8f151a] px-4 py-2.5 text-xs font-semibold text-white shadow-sm"
         >
           <Hourglass className={data.checkoutRequestedAt ? "" : "animate-pulse"} size={13} /> {data.checkoutRequestedAt ? "Xem check-out sớm" : "Xem đồng hồ đang phục vụ"}
         </Link>
@@ -340,7 +340,7 @@ export function BillCard({ data, expanded, onToggle }: { data: BillCardData; exp
           {data.depositAmount ? (
             <div className="flex items-center justify-between gap-3">
               <span>Đã đặt cọc</span>
-              <span className="font-medium text-[#1d8f55]">{formatMoney(data.depositAmount)}</span>
+              <span className="font-medium text-[#b86b1f]">{formatMoney(data.depositAmount)}</span>
             </div>
           ) : null}
           {paidInFull && data.totalAmount && data.depositAmount ? (
@@ -356,7 +356,7 @@ export function BillCard({ data, expanded, onToggle }: { data: BillCardData; exp
             </div>
           ) : null}
           {refunded && data.refundAmount ? (
-            <><div className="flex items-center justify-between gap-3 text-[#16784a]"><span>Đã được hoàn qua ngân hàng</span><span className="font-semibold">+{formatMoney(data.refundAmount)}</span></div><div className="flex items-center justify-between gap-3"><span>Chi phí ròng sau hoàn</span><span className="font-semibold text-[#4d403a]">{formatMoney(Math.max(0, (data.totalAmount ?? data.amount) - data.refundAmount))}</span></div></>
+            <><div className="flex items-center justify-between gap-3 text-[#b42f20]"><span>Đã được hoàn qua ngân hàng</span><span className="font-semibold">+{formatMoney(data.refundAmount)}</span></div><div className="flex items-center justify-between gap-3"><span>Chi phí ròng sau hoàn</span><span className="font-semibold text-[#4d403a]">{formatMoney(Math.max(0, (data.totalAmount ?? data.amount) - data.refundAmount))}</span></div></>
           ) : null}
           {(depositOnly || data.status === "IN_SERVICE") && data.totalAmount ? (
             <div className="flex items-center justify-between gap-3">
@@ -367,7 +367,7 @@ export function BillCard({ data, expanded, onToggle }: { data: BillCardData; exp
           {paidInFull ? (
             <div className="flex items-center justify-between gap-3">
               <span>Còn phải thanh toán</span>
-              <span className="font-semibold text-[#1d8f55]">0 ₫ · Đã đối soát đủ</span>
+              <span className="font-semibold text-[#b86b1f]">0 ₫ · Đã đối soát đủ</span>
             </div>
           ) : null}
           {data.therapistName ? (
@@ -433,7 +433,7 @@ export function BillCard({ data, expanded, onToggle }: { data: BillCardData; exp
                 <span
                   className={cn(
                     "inline-flex rounded-full px-2 py-0.5 text-[10px] font-semibold",
-                    durationStatusGood ? "bg-[#eafaf1] text-[#1d8f55]" : "bg-[#fff2ef] text-[#d13f1f]"
+                    durationStatusGood ? "bg-[#fff4e6] text-[#b86b1f]" : "bg-[#fff2ef] text-[#d13f1f]"
                   )}
                 >
                   {durationStatusLabel}

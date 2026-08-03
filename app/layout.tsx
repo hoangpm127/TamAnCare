@@ -32,13 +32,13 @@ export const metadata: Metadata = {
     siteName: "Tâm An Center",
     title: "Tâm An Center",
     description: "Đặt lịch massage, chăm sóc cơ thể và theo dõi quyền lợi trực tuyến.",
-    images: [{ url: "/tam-an-center-brand.jpg", alt: "Logo Tâm An Center" }],
+    images: [{ url: "/tam-an-center-brand-red.jpg", alt: "Logo Tâm An Center" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Tâm An Center",
     description: "Đặt lịch và theo dõi quyền lợi trực tuyến tại Tâm An Center.",
-    images: ["/tam-an-center-brand.jpg"],
+    images: ["/tam-an-center-brand-red.jpg"],
   },
   icons: {
     icon: "/favicon.png",
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0b5747",
+  themeColor: "#a92f18",
   colorScheme: "light",
 };
 

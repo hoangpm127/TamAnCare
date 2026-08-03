@@ -782,9 +782,9 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
                         className={cn(
                           "flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-lg border px-1 py-2 text-xs font-semibold transition",
                           active
-                            ? "border-[#16784a] bg-[#16784a] text-white shadow-sm"
+                            ? "border-[#b42f20] bg-[#b42f20] text-white shadow-sm"
                             : canBook
-                              ? "border-[#8fd3ad] bg-[#edf9f2] text-[#12683f] hover:border-[#16784a]"
+                              ? "border-[#8fd3ad] bg-[#fff4e6] text-[#12683f] hover:border-[#b42f20]"
                               : "cursor-not-allowed border-[#efb5b2] bg-[#fff0ef] text-[#a93434] opacity-85"
                         )}
                       >
@@ -980,7 +980,7 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
                 </div>
               ))}
               {voucherDiscount > 0 ? (
-                <div className="flex items-center justify-between gap-3 font-medium text-[#1d8f55]">
+                <div className="flex items-center justify-between gap-3 font-medium text-[#b86b1f]">
                   <span>Giảm ({effectiveVoucherCode})</span>
                   <span>-{formatMoney(voucherDiscount)}</span>
                 </div>

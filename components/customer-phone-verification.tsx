@@ -106,7 +106,7 @@ export function CustomerPhoneVerification({
     return <p role="alert" className="rounded-xl bg-amber-50 p-3 text-[11px] leading-5 text-amber-900 ring-1 ring-amber-200">Kênh SMS đang được hoàn thiện. Bạn vẫn có thể đặt lịch không cần tài khoản; quyền lợi thành viên sẽ mở khi kênh xác minh sẵn sàng.</p>;
   }
   if (verified) {
-    return <p className="flex items-center gap-2 rounded-xl bg-emerald-50 p-3 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-200"><CheckCircle2 size={16} /> Đã xác minh số điện thoại</p>;
+    return <p className="flex items-center gap-2 rounded-xl bg-amber-50 p-3 text-xs font-semibold text-amber-700 ring-1 ring-amber-200"><CheckCircle2 size={16} /> Đã xác minh số điện thoại</p>;
   }
 
   return (

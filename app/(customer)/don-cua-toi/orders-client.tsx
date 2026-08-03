@@ -17,7 +17,7 @@ const STATUS_BADGE_STYLE: Record<string, string> = {
   PENDING: "bg-[#fff7df] text-[#805914]",
   CHECKED_IN: "bg-[#eef4ff] text-[#2452b8]",
   IN_SERVICE: "bg-[#eef4ff] text-[#2452b8]",
-  COMPLETED: "bg-[#eafaf1] text-[#1d8f55]",
+  COMPLETED: "bg-[#fff4e6] text-[#b86b1f]",
   CANCELLED: "bg-[#f3efec] text-[#8a7a72]",
 };
 
