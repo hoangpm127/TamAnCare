@@ -153,11 +153,11 @@ export function CustomerShell({ children }: { children: React.ReactNode }) {
   const showFab = !HIDE_FAB_PREFIXES.some((prefix) => pathname.startsWith(prefix));
 
   return (
-    <>
+    <div className="flex min-h-dvh flex-col bg-[#fffaf6]">
       <CustomerTopbar pathname={pathname} />
       <ActiveServiceBanner />
-      <div className="customer-app">{children}</div>
-      <footer className={cn("border-t border-[#a64d2d] bg-gradient-to-br from-[#4d0c10] via-[#7a1718] to-[#b83d22] px-4 py-4 text-center text-[11px] font-medium leading-5 text-[#fff4df]", showBottomNav && "mb-[calc(68px+env(safe-area-inset-bottom))] md:mb-0")}>
+      <div className="customer-app flex-1">{children}</div>
+      <footer className={cn("shrink-0 border-t border-[#a64d2d] bg-gradient-to-br from-[#4d0c10] via-[#7a1718] to-[#b83d22] px-4 py-4 text-center text-[11px] font-medium leading-5 text-[#fff4df]", showBottomNav && "mb-[calc(68px+env(safe-area-inset-bottom))] md:mb-0")}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/tam-an-center-mark-transparent.png" alt="Tâm An Center" width={58} height={58} className="mx-auto mb-1 h-12 w-12 object-contain drop-shadow" />
         <p className="font-serif text-sm font-semibold tracking-[0.12em] text-[#f5dc8f]">TÂM AN CENTER</p>
@@ -170,6 +170,6 @@ export function CustomerShell({ children }: { children: React.ReactNode }) {
       {showBottomNav ? <CustomerBottomNav pathname={pathname} /> : null}
       {showFab ? <BookingFab /> : null}
       <FreeConsultationPopup />
-    </>
+    </div>
   );
 }
