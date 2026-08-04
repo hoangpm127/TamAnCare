@@ -142,7 +142,7 @@ export function CustomerLanguageProvider({
     if (rootRef.current) rootRef.current.style.visibility = "visible";
   }, [language]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     apply();
   }, [apply]);
 
