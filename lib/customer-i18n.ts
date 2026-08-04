@@ -1272,6 +1272,8 @@ const KOREAN_REPLACEMENTS: Array<[string, string]> = [
 ];
 
 const EXACT_ENGLISH_OVERRIDES: Record<string, string> = {
+  "Hết lượt": "Fully claimed",
+  "Đào tạo & tái kiểm định định kỳ": "Ongoing training & quality checks",
   "Chăm sóc chỉn chu · đặt lịch minh bạch": "Thoughtful care · transparent booking",
   "GIÚP BẠN VUI KHỎE MỖI NGÀY": "FEEL BETTER EVERY DAY",
   "Đặt trước massage Body, cổ vai gáy, chân, lưng hông và các liệu trình chăm sóc chuyên sâu trong dưới 60 giây.": "Book full-body, neck & shoulder, foot, back & hip massage and specialized wellness programs in under 60 seconds.",
@@ -1383,6 +1385,7 @@ const EXACT_ENGLISH_OVERRIDES: Record<string, string> = {
 };
 
 const EXACT_CHINESE_OVERRIDES: Record<string, string> = {
+  "Hết lượt": "已领完",
   "Chăm sóc chỉn chu · đặt lịch minh bạch": "贴心护理 · 透明预约",
   "GIÚP BẠN VUI KHỎE MỖI NGÀY": "让您每天更舒适、更有活力",
   "Đặt trước massage Body, cổ vai gáy, chân, lưng hông và các liệu trình chăm sóc chuyên sâu trong dưới 60 giây.": "不到60秒即可预约全身、颈肩、足部、腰背与髋部按摩，以及专业健康护理项目。",
@@ -1501,8 +1504,8 @@ const EXACT_CHINESE_OVERRIDES: Record<string, string> = {
 
 const ENGLISH_REPLACEMENTS: Array<[string, string]> = [
   ["HSD", "Expires"],
-  ["cơ sở đang nhận lịch", "location(s) accepting bookings"],
-  ["KTV chuyên nghiệp", "professional therapist(s)"],
+  ["cơ sở đang nhận lịch", "booking location"],
+  ["KTV chuyên nghiệp", "professional therapists"],
   ["Chọn cơ sở & kỹ thuật viên", "Choose location & therapist"],
   ["Chọn ngày và giờ", "Choose date & time"],
   ["Chọn dịch vụ", "Choose services"],

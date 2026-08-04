@@ -38,6 +38,7 @@ const criticalCopy = [
   ["Thử tải lại", "Try again", "重试"],
   ["Đặt trước massage Body, cổ vai gáy, chân, lưng hông và các liệu trình chăm sóc chuyên sâu trong dưới 60 giây.", "Book full-body, neck & shoulder, foot, back & hip massage and specialized wellness programs in under 60 seconds.", "不到60秒即可预约全身、颈肩、足部、腰背与髋部按摩，以及专业健康护理项目。"],
   ["Tăng cường sức khỏe vào Buổi Trưa ngay tại Văn Phòng", "Midday wellness at your office", "午间到企健康护理"],
+  ["Hết lượt", "Fully claimed", "已领完"],
 ] as const;
 
 for (const [source, expectedEnglish, expectedChinese] of criticalCopy) {
