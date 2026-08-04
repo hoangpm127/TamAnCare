@@ -26,6 +26,7 @@ import { VoucherCard } from "@/components/voucher-card";
 import { TherapistAvatar } from "@/components/therapist-avatar";
 import { BookingHeroCta } from "@/components/booking-fab";
 import { BrandWordmark } from "@/components/brand-wordmark";
+import { GoogleMapEmbed } from "@/components/google-map-embed";
 
 const QUICK_ACTIONS: { href: string; label: string; icon: LucideIcon; tone: string }[] = [
   { href: "/don-cua-toi?tab=upcoming", label: "Lịch đã đặt", icon: CalendarClock, tone: "bg-[#fae9e4] text-[#c64b32] ring-[#c64b32]/10" },
@@ -312,9 +313,12 @@ export default async function Home() {
                 </p>
                 <div className="mt-1.5 space-y-1.5">
                   {branches.map((item) => (
-                    <p key={item.id} className="text-[#68574f]">
-                      <span className="font-semibold text-[#4c191b]">{item.label}:</span> {item.address}
-                    </p>
+                    <div key={item.id}>
+                      <p className="text-[#68574f]">
+                        <span className="font-semibold text-[#4c191b]">{item.label}:</span> {item.address}
+                      </p>
+                      <GoogleMapEmbed address={item.address} branchLabel={item.label} className="mt-3" />
+                    </div>
                   ))}
                 </div>
               </div>

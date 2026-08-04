@@ -84,8 +84,8 @@ export default function WalletPage() {
         <div className="flex items-start gap-2.5 border-t border-white/10 bg-white/5 px-4 py-3 text-xs leading-5 text-white/85 sm:px-5">
           <Sparkles size={15} className="mt-0.5 shrink-0 text-[#c59a3d]" />
           <p>
-            Thu nhập Affiliate đã bù đắp <strong className="text-white">{offsetPercent}%</strong> chi phí trải nghiệm của bạn tại Tuệ
-            Tâm{net >= 0 ? " — đi massage mà vẫn mang tiền về!" : "."}
+            Thu nhập Affiliate đã bù đắp <strong className="text-white">{offsetPercent}%</strong> chi phí trải nghiệm của bạn tại Tâm An Center
+            {net >= 0 ? " — đi massage mà vẫn mang tiền về!" : "."}
           </p>
         </div>
       </section>

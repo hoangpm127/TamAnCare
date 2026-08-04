@@ -93,6 +93,8 @@ export function CustomerLanguageProvider({ children }: { children: React.ReactNo
 
   const apply = useCallback(() => {
     if (rootRef.current) applyLanguage(rootRef.current, language);
+    const titleNode = document.querySelector("title")?.firstChild;
+    if (titleNode instanceof Text) translateTextNode(titleNode, language);
     document.documentElement.lang = language;
   }, [language]);
 
@@ -117,11 +119,14 @@ export function CustomerLanguageProvider({ children }: { children: React.ReactNo
       attributes: true,
       attributeFilter: [...TRANSLATABLE_ATTRIBUTES],
     });
+    const headObserver = new MutationObserver(() => apply());
+    headObserver.observe(document.head, { subtree: true, childList: true, characterData: true });
     return () => {
       observer.disconnect();
+      headObserver.disconnect();
       if (frameRef.current !== null) window.cancelAnimationFrame(frameRef.current);
     };
-  }, [language]);
+  }, [language, apply]);
 
   const setLanguage = useCallback((nextLanguage: CustomerLanguage) => {
     try {
