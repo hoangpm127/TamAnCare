@@ -1272,6 +1272,42 @@ const KOREAN_REPLACEMENTS: Array<[string, string]> = [
 ];
 
 const EXACT_ENGLISH_OVERRIDES: Record<string, string> = {
+  "Chăm sóc chỉn chu · đặt lịch minh bạch": "Thoughtful care · transparent booking",
+  "GIÚP BẠN VUI KHỎE MỖI NGÀY": "FEEL BETTER EVERY DAY",
+  "Đặt trước massage Body, cổ vai gáy, chân, lưng hông và các liệu trình chăm sóc chuyên sâu trong dưới 60 giây.": "Book full-body, neck & shoulder, foot, back & hip massage and specialized wellness programs in under 60 seconds.",
+  "Đặt lịch ngay": "Book now",
+  "Tạo tài khoản nhận ưu đãi 100K": "Create an account and receive a 100K voucher",
+  "Đặt lịch không cần đăng nhập · đăng ký để giữ quyền lợi riêng": "Book without signing in · create an account to save your benefits",
+  "Lịch đã đặt": "Upcoming bookings",
+  "Đang áp dụng": "Active",
+  "Ưu đãi khách mới 60 phút": "New guest · 60-minute service",
+  "Thư giãn buổi sáng trước 12h": "Morning relaxation before noon",
+  "Ưu điểm tại Tâm An Center": "Why choose TÂM AN CENTER",
+  "Giá rõ ràng": "Transparent pricing",
+  "Hiển thị đúng giá dịch vụ trước khi đặt, không phát sinh.": "See the full service price before booking, with no hidden charges.",
+  "Chọn KTV yêu thích hoặc để hệ thống gợi ý người còn slot.": "Choose your preferred therapist or let the system suggest one with availability.",
+  "Không trùng lịch": "No double-booking",
+  "Kiểm tra KTV và phòng/giường với buffer 15 phút.": "Therapist and room/bed availability includes a 15-minute buffer.",
+  "Không làm phiền": "No unwanted calls",
+  "Chỉ nhắc lịch đúng lúc theo cài đặt của bạn, không gọi quảng cáo.": "Timely appointment reminders based on your settings, with no marketing calls.",
+  "Chọn nhanh gói phù hợp": "Find the right service quickly",
+  "Gói dài hạn nổi bật": "Featured long-term package",
+  "Đội ngũ KTV tại Tâm An Center": "Therapists at TÂM AN CENTER",
+  "Tăng cường sức khỏe vào Buổi Trưa ngay tại Văn Phòng": "Midday wellness at your office",
+  "KTV đến tận nơi vào giờ nghỉ trưa, điều phối theo đầu người và xuất báo cáo rõ ràng cho HR. Doanh nghiệp có thể bắt đầu bằng một buổi trải nghiệm rồi nâng cấp gói tháng.": "Therapists come to your workplace during the lunch break, provide care for each employee and send clear reports to HR. Start with a trial session, then upgrade to a monthly plan.",
+  "Quy trình triển khai": "Service process",
+  "Chọn quy mô, khung giờ và gói trải nghiệm": "Choose your team size, time slot and trial package",
+  "Hệ thống tính số KTV, chi phí và tiền cọc": "The system calculates staffing, cost and deposit",
+  "Tâm An xác nhận, phục vụ và báo cáo cho HR": "TÂM AN CENTER confirms the plan, provides the service and reports to HR",
+  "Đặt lịch trải nghiệm ngay": "Book a trial session",
+  "• Không quảng cáo ảo, không nội dung nhạy cảm": "• Honest, appropriate content",
+  "• Mọi booking được theo dõi minh bạch qua hệ thống": "• Every booking is tracked transparently in the system",
+  "• Khách quay lại luôn được chăm sóc lại tự động": "• Returning guests receive seamless follow-up care",
+  "Quy trình": "How it works",
+  "Chọn dịch vụ → đặt lịch → đến đúng giờ.": "Choose a service → book a time → arrive on time.",
+  "Voucher đang chạy": "Available voucher codes",
+  "Mở vị trí thật trên Google Maps": "View on Google Maps",
+  "Xem đường đi và thời gian di chuyển": "View directions and travel time",
   "Màn hình vừa gặp sự cố": "Something went wrong",
   "Dữ liệu giao dịch chưa được tự động thay đổi. Bạn có thể thử tải lại; nếu lỗi lặp lại, hãy báo lễ tân hoặc quản lý.": "Your transaction data has not been changed. Try again; if the problem continues, please contact reception or a manager.",
   "Mã tra soát:": "Reference code:",
@@ -1347,6 +1383,42 @@ const EXACT_ENGLISH_OVERRIDES: Record<string, string> = {
 };
 
 const EXACT_CHINESE_OVERRIDES: Record<string, string> = {
+  "Chăm sóc chỉn chu · đặt lịch minh bạch": "贴心护理 · 透明预约",
+  "GIÚP BẠN VUI KHỎE MỖI NGÀY": "让您每天更舒适、更有活力",
+  "Đặt trước massage Body, cổ vai gáy, chân, lưng hông và các liệu trình chăm sóc chuyên sâu trong dưới 60 giây.": "不到60秒即可预约全身、颈肩、足部、腰背与髋部按摩，以及专业健康护理项目。",
+  "Đặt lịch ngay": "立即预约",
+  "Tạo tài khoản nhận ưu đãi 100K": "创建账户即享100K优惠券",
+  "Đặt lịch không cần đăng nhập · đăng ký để giữ quyền lợi riêng": "无需登录即可预约 · 创建账户以保存专属权益",
+  "Lịch đã đặt": "已预约",
+  "Đang áp dụng": "可用",
+  "Ưu đãi khách mới 60 phút": "新客60分钟服务优惠",
+  "Thư giãn buổi sáng trước 12h": "中午12点前晨间放松",
+  "Ưu điểm tại Tâm An Center": "选择 TÂM AN CENTER 的理由",
+  "Giá rõ ràng": "价格透明",
+  "Hiển thị đúng giá dịch vụ trước khi đặt, không phát sinh.": "预约前显示完整服务价格，无隐藏费用。",
+  "Chọn KTV yêu thích hoặc để hệ thống gợi ý người còn slot.": "选择您偏好的理疗师，或由系统推荐有空档的理疗师。",
+  "Không trùng lịch": "避免预约冲突",
+  "Kiểm tra KTV và phòng/giường với buffer 15 phút.": "理疗师与房间/床位的可预约时间均预留15分钟缓冲。",
+  "Không làm phiền": "安心无打扰",
+  "Chỉ nhắc lịch đúng lúc theo cài đặt của bạn, không gọi quảng cáo.": "按您的设置及时发送预约提醒，不拨打营销电话。",
+  "Chọn nhanh gói phù hợp": "快速找到合适服务",
+  "Gói dài hạn nổi bật": "精选长期套餐",
+  "Đội ngũ KTV tại Tâm An Center": "TÂM AN CENTER 理疗师团队",
+  "Tăng cường sức khỏe vào Buổi Trưa ngay tại Văn Phòng": "午间到企健康护理",
+  "KTV đến tận nơi vào giờ nghỉ trưa, điều phối theo đầu người và xuất báo cáo rõ ràng cho HR. Doanh nghiệp có thể bắt đầu bằng một buổi trải nghiệm rồi nâng cấp gói tháng.": "理疗师在午休时段到达企业，为每位员工提供护理，并向HR提交清晰报告。企业可先预约体验场，再升级为月度方案。",
+  "Quy trình triển khai": "服务流程",
+  "Chọn quy mô, khung giờ và gói trải nghiệm": "选择团队规模、服务时段和体验方案",
+  "Hệ thống tính số KTV, chi phí và tiền cọc": "系统计算所需人员、费用和订金",
+  "Tâm An xác nhận, phục vụ và báo cáo cho HR": "TÂM AN CENTER 确认方案、提供服务并向HR提交报告",
+  "Đặt lịch trải nghiệm ngay": "立即预约体验",
+  "• Không quảng cáo ảo, không nội dung nhạy cảm": "• 宣传真实，不含不当内容",
+  "• Mọi booking được theo dõi minh bạch qua hệ thống": "• 每笔预约均在系统内透明追踪",
+  "• Khách quay lại luôn được chăm sóc lại tự động": "• 回访顾客可获得持续关怀",
+  "Quy trình": "预约流程",
+  "Chọn dịch vụ → đặt lịch → đến đúng giờ.": "选择服务 → 预约时段 → 按时到店。",
+  "Voucher đang chạy": "可用优惠码",
+  "Mở vị trí thật trên Google Maps": "在 Google Maps 中查看",
+  "Xem đường đi và thời gian di chuyển": "查看路线和预计用时",
   "Màn hình vừa gặp sự cố": "页面出现问题",
   "Dữ liệu giao dịch chưa được tự động thay đổi. Bạn có thể thử tải lại; nếu lỗi lặp lại, hãy báo lễ tân hoặc quản lý.": "您的交易数据尚未发生更改。请重试；如果问题仍然存在，请联系前台或门店管理人员。",
   "Mã tra soát:": "查询编号：",
@@ -1572,8 +1644,12 @@ function preserveOuterWhitespace(source: string, translated: string) {
 }
 
 function normalizeTranslatedCopy(translated: string, language: CustomerLanguage) {
-  if (language === "en") return translated.replace(/\bKTV\b/g, "therapist");
-  if (language === "zh") return translated.replaceAll("KTV", "理疗师").replaceAll("比尔", "账单");
+  if (language === "en") return translated.replace(/\bKTV\b/g, "therapist").replaceAll("HSD ", "Expires ");
+  if (language === "zh") return translated
+    .replaceAll("KTV", "理疗师")
+    .replaceAll("比尔", "账单")
+    .replaceAll("HSD ", "有效期至 ")
+    .replace(/TÂM AN CENTER(?=[\u3400-\u9fff])/g, "TÂM AN CENTER ");
   return translated;
 }
 
