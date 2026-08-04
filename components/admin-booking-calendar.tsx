@@ -6,7 +6,6 @@ import { Bot, Building2, CalendarClock, ChevronLeft, ChevronRight, Loader2, Plus
 import type { AdminAccount } from "@/lib/admin-auth";
 import type { AdminBookingRequest, AdminBusinessRequest } from "@/lib/admin-booking-store";
 import { usePublicCatalog } from "@/lib/catalog-store";
-import { branches as demoBranches } from "@/lib/demo-data";
 import { cn } from "@/lib/utils";
 
 const WEEKDAYS = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
@@ -107,7 +106,7 @@ export function AdminBookingCalendar({
   onCreate: () => void;
 }) {
   const catalog = usePublicCatalog();
-  const branches = catalog?.branches ?? demoBranches;
+  const branches = catalog.branches;
   const today = useMemo(() => new Date(), []);
   const [visibleMonth, setVisibleMonth] = useState(() => startOfMonth(today));
   const allowedBranch = session.role === "OWNER" ? branchId : session.branchId ?? branches[0].id;

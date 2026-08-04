@@ -47,6 +47,7 @@ next-env.d.ts
 
 # local QA and device-debug artifacts
 /.codex-next-logs/
+/.codex-tmp/
 /*.png
 /*.xml
 /*.log

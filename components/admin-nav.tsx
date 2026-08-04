@@ -39,7 +39,6 @@ import { useAdminSession } from "@/components/admin-session-provider";
 import { useAdminBookingRequests } from "@/lib/admin-booking-store";
 import { AdminCustomerFab, AdminExpenseAction } from "@/components/admin-quick-actions";
 import { usePublicCatalog } from "@/lib/catalog-store";
-import { branches as demoBranches } from "@/lib/demo-data";
 import { NavigationPendingIndicator } from "@/components/navigation-pending-indicator";
 
 const PRIORITY_ITEMS = [
@@ -85,7 +84,7 @@ function notificationTime(value: string) {
 
 export function AdminNav() {
   const catalog = usePublicCatalog();
-  const branches = catalog?.branches ?? demoBranches;
+  const branches = catalog.branches;
   const pathname = usePathname();
   const router = useRouter();
   const { session, signOut } = useAdminSession();

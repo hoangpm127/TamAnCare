@@ -1,6 +1,6 @@
 {
   "name": "tam-an-center",
-  "version": "1.4.4",
+  "version": "1.5.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -25,7 +25,8 @@
     "test:capacity": "tsx scripts/verify-tam-an-room-capacity.ts",
     "test:catalog": "tsx scripts/verify-tam-an-service-catalog.ts",
     "test:i18n": "tsx scripts/verify-customer-translations.ts",
-    "test:flows": "npm run test:scheduling && npm run test:core && npm run test:expenses && npm run test:refunds && npm run test:security && npm run test:business && npm run test:xgroup",
+    "test:data-boundaries": "tsx scripts/verify-production-data-boundaries.ts",
+    "test:flows": "npm run test:data-boundaries && npm run test:scheduling && npm run test:core && npm run test:expenses && npm run test:refunds && npm run test:security && npm run test:business && npm run test:xgroup",
     "uat:accounts": "tsx scripts/provision-uat-accounts.ts",
     "uat:business-demo": "tsx scripts/provision-business-demo.ts",
     "uat:xgroup": "tsx scripts/provision-xgroup-control.ts",
@@ -43,7 +44,7 @@
     "clsx": "^2.1.1",
     "date-fns": "^4.4.0",
     "lucide-react": "^1.23.0",
-    "next": "^16.2.11",
+    "next": "^16.3.0",
     "oauth4webapi": "3.8.6",
     "pg": "^8.22.0",
     "qrcode": "^1.5.4",
@@ -63,7 +64,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "^16.2.11",
+    "eslint-config-next": "^16.3.0",
     "prisma": "^7.8.0",
     "tailwindcss": "^4",
     "tsx": "^4.23.0",
@@ -73,7 +74,7 @@
     "seed": "tsx prisma/seed.ts"
   },
   "overrides": {
-    "postcss": "8.5.18",
+    "postcss": "8.5.25",
     "valibot": "1.4.2",
     "sharp": "0.35.0",
     "@hono/node-server": "2.0.11"

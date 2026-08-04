@@ -11,7 +11,9 @@ const marker = `E2E${Date.now().toString(36).toUpperCase()}`;
 const testIp = `198.18.${Number(String(Date.now()).slice(-4, -2)) % 250 + 1}.${Number(String(Date.now()).slice(-2)) % 250 + 1}`;
 const customerPhone = `09${String(Date.now()).slice(-8)}`;
 const guestPhone = `08${String(Date.now() + 1).slice(-8)}`;
+const voucherPhone = `07${String(Date.now() + 2).slice(-8)}`;
 const customerPassword = `Care!${marker}`;
+const voucherPassword = `Welcome!${marker}`;
 const adminUsername = `owner_${marker.toLowerCase()}`;
 const adminPassword = `Owner!${marker}`;
 const receptionUsername = `reception_${marker.toLowerCase()}`;
@@ -24,6 +26,7 @@ const guestSessionIds = new Set<string>();
 const adminUserIds: string[] = [];
 let initialBranchAutomationSetting: { id: string; value: string; isActive: boolean } | null = null;
 let branchAutomationTouched = false;
+let branchAutomationScopeKey = "";
 
 type CookieJar = Map<string, string>;
 
@@ -249,14 +252,13 @@ async function cleanup() {
     }
     if (guestSessionIds.size) await tx.guestSession.deleteMany({ where: { id: { in: [...guestSessionIds] } } });
     if (branchAutomationTouched) {
-      const scopeKey = `cs1:booking.auto_confirm`;
       if (initialBranchAutomationSetting) {
         await tx.systemSetting.update({
           where: { id: initialBranchAutomationSetting.id },
           data: { value: initialBranchAutomationSetting.value, isActive: initialBranchAutomationSetting.isActive },
         });
       } else {
-        await tx.systemSetting.deleteMany({ where: { scopeKey } });
+        await tx.systemSetting.deleteMany({ where: { scopeKey: branchAutomationScopeKey } });
       }
     }
   });
@@ -264,10 +266,12 @@ async function cleanup() {
 
 async function main() {
   const customerJar: CookieJar = new Map();
+  const voucherJar: CookieJar = new Map();
   const adminJar: CookieJar = new Map();
   const receptionJar: CookieJar = new Map();
   const guestJar: CookieJar = new Map();
-  const branch = await db.branch.findUniqueOrThrow({ where: { id: "cs1" } });
+  const branch = await db.branch.findFirstOrThrow({ orderBy: { createdAt: "asc" } });
+  branchAutomationScopeKey = `${branch.id}:booking.auto_confirm`;
   const service = await db.service.findFirst({
     where: {
       isActive: true,
@@ -466,14 +470,28 @@ async function main() {
   assert(!tipLedger && !tipPayout, "Tip trực tiếp cho KTV vẫn bị đưa vào sổ Bill hoặc lịch chi của hệ thống.");
 
   const voucherReference = `${marker}-WELCOME`;
+  const voucherRegistration = await jsonRequest<{ account: { customerId: string } }>("/api/customer-auth/register", {
+    jar: voucherJar,
+    body: {
+      fullName: `Khách mới ${marker}`,
+      phone: voucherPhone,
+      password: voucherPassword,
+      passwordConfirmation: voucherPassword,
+      acceptTerms: true,
+      acceptPrivacy: true,
+      marketingOptIn: false,
+    },
+  });
+  const voucherCustomerId = voucherRegistration.payload.account.customerId;
+  createdCustomerIds.push(voucherCustomerId);
   const voucherBooking = await createBooking({
     referenceCode: voucherReference,
     serviceId: service.id,
     branchId: branch.id,
     startTime: await availableSlot(service.id, branch.id),
-    customerName: `Khách ${marker}`,
-    customerPhone,
-    jar: customerJar,
+    customerName: `Khách mới ${marker}`,
+    customerPhone: voucherPhone,
+    jar: voucherJar,
     voucherCode: "WELCOME150",
   });
   assert(!voucherBooking.usedPackage && voucherBooking.depositPayment?.status === "PENDING", "WELCOME150 không tạo đúng yêu cầu cọc.");
@@ -481,22 +499,22 @@ async function main() {
     voucherBooking.depositAmount === Math.round((service.basePrice + service.therapistFee) * 0.1),
     "Tiền cọc voucher chưa bằng 10% giá trị Bill ban đầu trước ưu đãi.",
   );
-  let account = await db.customerAccount.findUniqueOrThrow({ where: { customerId } });
+  let account = await db.customerAccount.findUniqueOrThrow({ where: { customerId: voucherCustomerId } });
   let voucherUsage = await db.voucherUsage.findFirstOrThrow({ where: { booking: { group: { referenceCode: voucherReference } } } });
-  assert(account.creditBalance === 100_000 && voucherUsage.status === "RESERVED", "Voucher đã bị trừ trước khi đối soát cọc.");
+  assert(account.creditBalance === 150_000 && voucherUsage.status === "RESERVED", "Voucher đã bị trừ trước khi đối soát cọc.");
   createdPaymentIds.push(voucherBooking.depositPayment.id);
   await sendWebhook(voucherBooking.depositPayment.paymentCode, voucherBooking.depositPayment.amount, "WELCOME");
-  account = await db.customerAccount.findUniqueOrThrow({ where: { customerId } });
+  account = await db.customerAccount.findUniqueOrThrow({ where: { customerId: voucherCustomerId } });
   voucherUsage = await db.voucherUsage.findFirstOrThrow({ where: { booking: { group: { referenceCode: voucherReference } } } });
   const welcomeLedger = await db.ledgerEntry.findFirst({ where: { bookingGroup: { referenceCode: voucherReference }, category: "WELCOME_CREDIT" } });
   const voucherGroup = await db.bookingGroup.findUniqueOrThrow({ where: { referenceCode: voucherReference } });
   assert(account.creditBalance === 0 && voucherUsage.status === "CONFIRMED", "Voucher chưa được xác nhận sau webhook.");
   assert(welcomeLedger?.amount === 150_000 && voucherGroup.holdExpiresAt === null && voucherGroup.status === "CONFIRMED", "Quyền lợi WELCOME150 hoặc AI xác nhận lịch chưa được kết sổ.");
   const autoConfirmationNotice = await db.notification.findFirst({
-    where: { customerId, title: { contains: "AI xác nhận" }, body: { contains: voucherReference } },
+    where: { customerId: voucherCustomerId, title: { contains: "AI xác nhận" }, body: { contains: voucherReference } },
   });
   assert(autoConfirmationNotice?.actionUrl === `/booking/success/${voucherReference}`, "Khách chưa nhận thông báo chúc mừng sau khi AI xác nhận lịch.");
-  const venueCheckin = await updateStatus(voucherReference, "IN_SERVICE", customerJar, branch.id, true);
+  const venueCheckin = await updateStatus(voucherReference, "IN_SERVICE", voucherJar, branch.id, true);
   assert(
     venueCheckin.status === "IN_SERVICE" && venueCheckin.paymentStatus === "DEPOSITED",
     "Bill đã được AI xác nhận chưa bắt đầu tính giờ sau khi quét đúng QR cơ sở.",

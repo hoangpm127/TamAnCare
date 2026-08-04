@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { Building2, CalendarClock, ChevronDown, ChevronRight, CircleDollarSign, ExternalLink, Search, ShieldCheck, Sparkles, UserRound, UsersRound } from "lucide-react";
 import { usePublicCatalog } from "@/lib/catalog-store";
-import { branches as demoBranches } from "@/lib/demo-data";
 import { useAdminSession } from "@/components/admin-session-provider";
 import { CompactSelect } from "@/components/compact-select";
 import { cn, formatMoney } from "@/lib/utils";
@@ -53,7 +52,7 @@ function customerGroups(customer: { segment: string; totalVisits: number; totalS
 
 export function AdminCustomerTimeline() {
   const catalog = usePublicCatalog();
-  const branches = catalog?.branches ?? demoBranches;
+  const branches = catalog.branches;
   const { session } = useAdminSession();
   const [customerRecords, setCustomerRecords] = useState<CustomerRecord[]>([]);
   const [query, setQuery] = useState("");

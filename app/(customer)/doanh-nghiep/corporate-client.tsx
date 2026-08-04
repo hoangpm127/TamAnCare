@@ -21,18 +21,11 @@ import {
   Users,
   Wallet,
 } from "lucide-react";
-import {
-  branches as defaultBranches,
-  corporatePackageTiers as defaultPackageTiers,
-  corporateTrialPackages as defaultTrialPackages,
-  corporateTransportFee as defaultTransportFee,
-  depositPolicy as defaultDepositPolicy,
-} from "@/lib/demo-data";
 import { BankTransferDetails } from "@/components/bank-transfer-details";
 import { CompactSelect } from "@/components/compact-select";
+import type { BusinessCatalog } from "@/lib/business-catalog-types";
 import { cn, formatMoney, makeBookingCode } from "@/lib/utils";
 import { calculatePaymentBreakdown } from "@/lib/payment-policy";
-import { useBusinessCatalog } from "@/lib/business-catalog-store";
 import { usePublicCatalog } from "@/lib/catalog-store";
 
 const TIME_WINDOWS = ["11:00 - 12:00", "11:30 - 12:30", "12:00 - 13:00", "12:30 - 13:30", "13:00 - 14:00"];
@@ -40,15 +33,14 @@ const TIME_WINDOWS = ["11:00 - 12:00", "11:30 - 12:30", "12:00 - 13:00", "12:30 
 type Stage = "form" | "deposit" | "payment" | "confirming" | "done";
 type CorporatePayment = { id: string; status: string; amount: number; paymentCode?: string | null };
 
-export function CorporateClient() {
+export function CorporateClient({ businessCatalog }: { businessCatalog: BusinessCatalog }) {
   const searchParams = useSearchParams();
   const publicCatalog = usePublicCatalog();
-  const runtimeBusinessCatalog = useBusinessCatalog();
-  const branches = publicCatalog?.branches ?? defaultBranches;
-  const corporateTrialPackages = runtimeBusinessCatalog?.trialPackages ?? defaultTrialPackages;
-  const corporatePackageTiers = runtimeBusinessCatalog?.packageTiers ?? defaultPackageTiers;
-  const corporateTransportFee = runtimeBusinessCatalog?.transportFee ?? defaultTransportFee;
-  const depositPolicy = runtimeBusinessCatalog?.depositPolicy ?? defaultDepositPolicy;
+  const branches = publicCatalog.branches;
+  const corporateTrialPackages = businessCatalog.trialPackages;
+  const corporatePackageTiers = businessCatalog.packageTiers;
+  const corporateTransportFee = businessCatalog.transportFee;
+  const depositPolicy = businessCatalog.depositPolicy;
 
   const [companyName, setCompanyName] = useState("");
   const [taxCode, setTaxCode] = useState("");
@@ -64,9 +56,9 @@ export function CorporateClient() {
   const [timeWindow, setTimeWindow] = useState(TIME_WINDOWS[1]);
   const [headcount, setHeadcount] = useState(10);
 
-  const [trialId, setTrialId] = useState(defaultTrialPackages[1].id);
+  const [trialId, setTrialId] = useState(corporateTrialPackages[1]?.id ?? corporateTrialPackages[0]?.id ?? "");
   const [wantsCorporatePackage, setWantsCorporatePackage] = useState(false);
-  const [tierId, setTierId] = useState(defaultPackageTiers[1].id);
+  const [tierId, setTierId] = useState(corporatePackageTiers[1]?.id ?? corporatePackageTiers[0]?.id ?? "");
 
   const [stage, setStage] = useState<Stage>("form");
   const [inquiryCode, setInquiryCode] = useState("");

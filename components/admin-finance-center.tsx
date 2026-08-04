@@ -24,7 +24,6 @@ import {
 import { useAdminSession } from "@/components/admin-session-provider";
 import { CompactSelect } from "@/components/compact-select";
 import { usePublicCatalog } from "@/lib/catalog-store";
-import { branches as demoBranches } from "@/lib/demo-data";
 import { cn, displayBookingCode, formatMoney } from "@/lib/utils";
 
 type Period = "day" | "week" | "month" | "year" | "custom" | "all";
@@ -97,7 +96,7 @@ type FinanceBill = {
 export function AdminFinanceCenter() {
   const { session } = useAdminSession();
   const catalog = usePublicCatalog();
-  const branches = catalog?.branches ?? demoBranches;
+  const branches = catalog.branches;
   const [period, setPeriod] = useState<Period>("month");
   const [branchId, setBranchId] = useState("all");
   const [customerQuery, setCustomerQuery] = useState("");

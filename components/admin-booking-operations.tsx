@@ -22,7 +22,6 @@ import {
   XCircle,
 } from "lucide-react";
 import { usePublicCatalog } from "@/lib/catalog-store";
-import { branches as demoBranches, services as demoServices } from "@/lib/demo-data";
 import { displayBookingCode, formatMoney, makeBookingCode } from "@/lib/utils";
 import { useAdminSession } from "@/components/admin-session-provider";
 import { CompactSelect } from "@/components/compact-select";
@@ -65,8 +64,8 @@ function businessStatusMeta(status: string) {
 
 function ManualBookingDialog({ onClose }: { onClose: () => void }) {
   const catalog = usePublicCatalog();
-  const branches = catalog?.branches ?? demoBranches;
-  const services = catalog?.services ?? demoServices;
+  const branches = catalog.branches;
+  const services = catalog.services;
   const { session } = useAdminSession();
   const [code, setCode] = useState(() => makeBookingCode("HD"));
   const [customerName, setCustomerName] = useState("");
@@ -229,7 +228,7 @@ function CheckoutRecordDialog({ request, onClose, onSaved }: { request: AdminBoo
 
 export function AdminBookingOperations() {
   const catalog = usePublicCatalog();
-  const branches = catalog?.branches ?? demoBranches;
+  const branches = catalog.branches;
   const { session } = useAdminSession();
   const requests = useAdminBookingRequests();
   const businessRequests = useAdminBusinessRequests();

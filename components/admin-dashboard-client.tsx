@@ -32,7 +32,6 @@ import {
   X,
 } from "lucide-react";
 import { usePublicCatalog } from "@/lib/catalog-store";
-import { branches as demoBranches } from "@/lib/demo-data";
 import { CompactSelect } from "@/components/compact-select";
 import { bookingStatusLabel } from "@/lib/labels";
 import { cn, formatMoney } from "@/lib/utils";
@@ -97,7 +96,7 @@ function rangeFor(period: Period, anchor: Date, customFrom: string, customTo: st
 
 export function AdminDashboardClient() {
   const catalog = usePublicCatalog();
-  const branches = catalog?.branches ?? demoBranches;
+  const branches = catalog.branches;
   const { session } = useAdminSession();
   const today = useMemo(() => new Date(), []);
   const [selectedKpi, setSelectedKpi] = useState<number | null>(null);

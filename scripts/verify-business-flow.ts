@@ -1,6 +1,7 @@
 import { createHmac } from "node:crypto";
 import { loadEnvConfig } from "@next/env";
 import { db } from "../lib/db";
+import { hashPassword } from "../lib/password";
 
 loadEnvConfig(process.cwd());
 
@@ -14,6 +15,7 @@ const eventCode = `${marker}-OFFICE`;
 const customerPhone = `09${String(Date.now()).slice(-8)}`;
 const employeePhone = `08${String(Date.now() + 17).slice(-8)}`;
 const guestSessionIds = new Set<string>();
+const fixtureUserIds: string[] = [];
 
 type CookieJar = Map<string, string>;
 
@@ -109,6 +111,7 @@ async function cleanup() {
   });
   if (!event) {
     await db.customer.deleteMany({ where: { phone: { in: [customerPhone, employeePhone] } } });
+    if (fixtureUserIds.length) await db.user.deleteMany({ where: { id: { in: fixtureUserIds } } });
     return;
   }
   const paymentIds = event.payments.map((payment) => payment.id);
@@ -144,17 +147,44 @@ async function cleanup() {
     if (guestSessionIds.size) {
       await tx.guestSession.deleteMany({ where: { id: { in: [...guestSessionIds] } } });
     }
+    if (fixtureUserIds.length) await tx.user.deleteMany({ where: { id: { in: fixtureUserIds } } });
   });
   await db.customer.deleteMany({ where: { phone: employeePhone } });
 }
 
 async function main() {
   assert(WEBHOOK_SECRET && ACCOUNT_NUMBER && QR_SECRET, "Thiếu biến môi trường để chạy Business E2E.");
-  const branch = await db.branch.findUniqueOrThrow({ where: { id: "cs1" } });
+  const branch = await db.branch.findFirstOrThrow({ orderBy: { createdAt: "asc" } });
   const lead = await db.therapist.findFirstOrThrow({
     where: { branchId: branch.id, status: "ACTIVE" },
     orderBy: { createdAt: "asc" },
   });
+  const fixturePasswordHash = hashPassword(`Business!${marker}`);
+  const [owner, therapistUser] = await Promise.all([
+    db.user.create({
+      data: {
+        name: `Owner QA ${marker}`,
+        username: `owner_${marker.toLowerCase()}`,
+        email: `owner-${marker.toLowerCase()}@business.tests`,
+        passwordHash: fixturePasswordHash,
+        passwordChangedAt: new Date(),
+        role: "OWNER",
+      },
+    }),
+    db.user.create({
+      data: {
+        name: lead.fullName,
+        username: `therapist_${marker.toLowerCase()}`,
+        email: `therapist-${marker.toLowerCase()}@business.tests`,
+        passwordHash: fixturePasswordHash,
+        passwordChangedAt: new Date(),
+        role: "THERAPIST",
+        branchId: branch.id,
+        therapistId: lead.id,
+      },
+    }),
+  ]);
+  fixtureUserIds.push(owner.id, therapistUser.id);
   const customer = await db.customer.create({
     data: { fullName: `Khách Business ${marker}`, phone: customerPhone, firstSource: `BUSINESS_E2E:${marker}` },
   });

@@ -32,14 +32,23 @@ const tierSchema = z.array(z.object({
 
 const transportSchema = z.object({ feePerTherapist: z.number().int().nonnegative(), note: z.string() });
 
-function parseJson<T>(value: string | undefined, schema: z.ZodType<T>, fallback: T) {
-  if (!value) return fallback;
-  try {
-    const parsed = schema.safeParse(JSON.parse(value));
-    return parsed.success ? parsed.data : fallback;
-  } catch {
+function configurationError(label: string): never {
+  throw new Error(`Cấu hình production không hợp lệ: ${label}.`);
+}
+
+function parseJson<T>(value: string | undefined, schema: z.ZodType<T>, fallback: T, label: string) {
+  if (!value) {
+    if (process.env.APP_ENV === "production") return configurationError(label);
     return fallback;
   }
+  try {
+    const parsed = schema.safeParse(JSON.parse(value));
+    if (parsed.success) return parsed.data;
+  } catch {
+    // Xử lý fail-closed ở dưới để production không hiển thị dữ liệu mẫu.
+  }
+  if (process.env.APP_ENV === "production") return configurationError(label);
+  return fallback;
 }
 
 export async function getBusinessCatalog(): Promise<BusinessCatalog> {
@@ -53,15 +62,19 @@ export async function getBusinessCatalog(): Promise<BusinessCatalog> {
   const settings = await db.systemSetting.findMany({ where: { scopeKey: { in: keys }, isActive: true } });
   const value = (key: string) => settings.find((item) => item.scopeKey === `GLOBAL:${key}`)?.value;
   const depositPercent = Number(value("business.deposit_percent"));
+  const validDepositPercent = Number.isFinite(depositPercent) && depositPercent >= 0 && depositPercent <= 100;
+  const accountingBranchId = value("business.accounting_branch_id");
+  if (process.env.APP_ENV === "production" && !validDepositPercent) configurationError("tỷ lệ đặt cọc doanh nghiệp");
+  if (process.env.APP_ENV === "production" && !accountingBranchId) configurationError("cơ sở hạch toán doanh nghiệp");
   return {
-    trialPackages: parseJson(value("business.trial_packages"), trialSchema, defaultTrialPackages),
-    packageTiers: parseJson(value("business.package_tiers"), tierSchema, defaultPackageTiers),
-    transportFee: parseJson(value("business.transport"), transportSchema, defaultTransportFee),
+    trialPackages: parseJson(value("business.trial_packages"), trialSchema, defaultTrialPackages, "gói dùng thử doanh nghiệp"),
+    packageTiers: parseJson(value("business.package_tiers"), tierSchema, defaultPackageTiers, "gói dài hạn doanh nghiệp"),
+    transportFee: parseJson(value("business.transport"), transportSchema, defaultTransportFee, "phí di chuyển doanh nghiệp"),
     depositPolicy: {
       ...defaultDepositPolicy,
-      percent: Number.isFinite(depositPercent) && depositPercent >= 0 && depositPercent <= 100 ? depositPercent : defaultDepositPolicy.percent,
+      percent: validDepositPercent ? depositPercent : defaultDepositPolicy.percent,
     },
-    accountingBranchId: value("business.accounting_branch_id") || "cs1",
+    accountingBranchId: accountingBranchId || "cs1",
     demoMode: process.env.APP_ENV !== "production",
   };
 }

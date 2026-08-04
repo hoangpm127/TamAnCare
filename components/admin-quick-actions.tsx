@@ -4,7 +4,6 @@ import { useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Building2, CheckCircle2, ChevronDown, FileCheck2, Handshake, ImagePlus, Loader2, MapPin, Phone, Plus, ReceiptText, ScanLine, Sparkles, UserPlus, UserRound, X } from "lucide-react";
 import { usePublicCatalog } from "@/lib/catalog-store";
-import { branches as demoBranches } from "@/lib/demo-data";
 import { useAdminSession } from "@/components/admin-session-provider";
 import { formatMoney } from "@/lib/utils";
 
@@ -89,7 +88,7 @@ function CompactPicker({
 
 export function AdminExpenseAction() {
   const catalog = usePublicCatalog();
-  const branches = catalog?.branches ?? demoBranches;
+  const branches = catalog.branches;
   const { session } = useAdminSession();
   const [open, setOpen] = useState(false);
   const [category, setCategory] = useState("AUTO");
@@ -283,7 +282,7 @@ export function AdminExpenseAction() {
 
 export function AdminCustomerFab() {
   const catalog = usePublicCatalog();
-  const branches = catalog?.branches ?? demoBranches;
+  const branches = catalog.branches;
   const { session } = useAdminSession();
   const [open, setOpen] = useState(false);
   const [position, setPosition] = useState<{ left: number; top: number } | null>(null);

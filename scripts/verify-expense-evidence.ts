@@ -6,6 +6,7 @@ const BASE_URL = process.env.TEST_BASE_URL ?? "http://127.0.0.1:3000";
 const marker = `EVIDENCE${Date.now().toString(36).toUpperCase()}`;
 const userIds: string[] = [];
 const expenseIds: string[] = [];
+let temporaryBranchId: string | null = null;
 
 function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
@@ -86,11 +87,28 @@ async function cleanup() {
     await tx.adminAuditLog.deleteMany({ where: { actorUserId: { in: userIds } } });
     await tx.adminSession.deleteMany({ where: { userId: { in: userIds } } });
     await tx.user.deleteMany({ where: { id: { in: userIds } } });
+    if (temporaryBranchId) await tx.branch.delete({ where: { id: temporaryBranchId } });
   });
 }
 
 async function main() {
   const branches = await db.branch.findMany({ orderBy: { id: "asc" }, take: 2 });
+  if (branches.length === 1) {
+    const temporaryBranch = await db.branch.create({
+      data: {
+        id: `qa-branch-${marker.toLowerCase()}`,
+        name: `Cơ sở QA ${marker}`,
+        address: "Chỉ dùng kiểm thử phân quyền nội bộ",
+        openTime: "09:00",
+        closeTime: "21:00",
+        lastBookingTime: "20:45",
+        seatCapacity: 1,
+        bufferMinutes: 5,
+      },
+    });
+    temporaryBranchId = temporaryBranch.id;
+    branches.push(temporaryBranch);
+  }
   assert(branches.length === 2, "Cần hai cơ sở để kiểm thử phân quyền chứng từ.");
   const ownerCookie = await createSession("OWNER", null);
   const otherManagerCookie = await createSession("MANAGER", branches[1].id);
