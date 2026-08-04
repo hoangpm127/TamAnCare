@@ -34,6 +34,12 @@ function shouldSkip(node: Node) {
   return Boolean(parent?.closest("script, style, code, pre, textarea, [contenteditable='true'], [data-no-translate]"));
 }
 
+function shouldSkipAttribute(element: Element) {
+  // Form values must never be translated, but their instructional placeholder,
+  // title and accessible label still need to follow the selected language.
+  return Boolean(element.closest("script, style, code, pre, [contenteditable='true'], [data-no-translate]"));
+}
+
 function translateTextNode(node: Text, language: CustomerLanguage) {
   if (shouldSkip(node)) return;
   const current = node.nodeValue ?? "";
@@ -50,7 +56,7 @@ function translateTextNode(node: Text, language: CustomerLanguage) {
 }
 
 function translateAttributes(element: Element, language: CustomerLanguage) {
-  if (shouldSkip(element)) return;
+  if (shouldSkipAttribute(element)) return;
   const states = attributeStates.get(element) ?? new Map<string, { source: string; translated: string }>();
   for (const attribute of TRANSLATABLE_ATTRIBUTES) {
     const current = element.getAttribute(attribute);
@@ -92,7 +98,10 @@ export function CustomerLanguageProvider({ children }: { children: React.ReactNo
   }, []);
 
   const apply = useCallback(() => {
-    if (rootRef.current) applyLanguage(rootRef.current, language);
+    // Portals (booking, authentication and payment dialogs) are mounted directly
+    // under <body>, outside the provider wrapper. Translating the customer page
+    // body keeps those deep CTA states in the selected language as well.
+    if (document.body) applyLanguage(document.body, language);
     const titleNode = document.querySelector("title")?.firstChild;
     if (titleNode instanceof Text) translateTextNode(titleNode, language);
     document.documentElement.lang = language;
@@ -103,8 +112,8 @@ export function CustomerLanguageProvider({ children }: { children: React.ReactNo
   }, [apply]);
 
   useEffect(() => {
-    if (!rootRef.current) return;
-    const root = rootRef.current;
+    if (!rootRef.current || !document.body) return;
+    const root = document.body;
     const observer = new MutationObserver(() => {
       if (frameRef.current !== null) window.cancelAnimationFrame(frameRef.current);
       frameRef.current = window.requestAnimationFrame(() => {

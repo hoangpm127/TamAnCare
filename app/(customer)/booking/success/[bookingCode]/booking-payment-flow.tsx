@@ -292,7 +292,7 @@ export function BookingPaymentFlow({ referenceCode }: { referenceCode: string })
         <section className="w-full max-w-md overflow-hidden rounded-2xl border border-[#e7d6ca] bg-white shadow-lg">
           <div className="bg-gradient-to-br from-[#8c332a] to-[#231514] px-5 py-5 text-center text-white">
             <CheckCircle2 className="mx-auto text-[#c59a3d]" size={32} />
-            <p className="mt-2 text-xs font-semibold uppercase tracking-[0.16em] text-[#f4c2b6]">{adminConfirmed ? "Đã xác nhận · Sẵn sàng check-in" : summary.packageName ? "Đã giữ lượt gói · IQ Care đang xếp lịch" : "Đã nhận cọc · IQ Care đang xếp lịch"}</p>
+            <p className="mt-2 text-xs font-semibold uppercase tracking-[0.16em] text-[#f4c2b6]">{adminConfirmed ? "Đã xác nhận · Sẵn sàng check-in" : summary.packageName ? "Đã giữ lượt gói · TÂM AN CENTER đang xếp lịch" : "Đã nhận cọc · TÂM AN CENTER đang xếp lịch"}</p>
             <h1 className="mt-1 text-lg font-semibold tracking-tight">{adminConfirmed ? "Chúc mừng! Lịch đã được sắp xếp" : summary.serviceLabel}</h1>
             {adminConfirmed ? <p className="mt-1 text-xs text-white/75">{summary.serviceLabel} · {summary.therapistLabel}</p> : null}
           </div>
@@ -322,7 +322,7 @@ export function BookingPaymentFlow({ referenceCode }: { referenceCode: string })
               </Link>
             ) : (
               <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-[#eee0d6] px-4 py-2.5 text-xs font-semibold text-[#826f66]">
-                <Clock3 size={14} /> QR mở ngay khi IQ Care xếp xong KTV & giường
+                <Clock3 size={14} /> QR mở ngay khi TÂM AN CENTER xếp xong KTV & giường
               </span>
             )}
             {adminConfirmed ? <p className="mx-auto mt-2 max-w-xs text-[10px] leading-4 text-[#826f66]">QR được đặt tại cơ sở hoặc trên thiết bị KTV. Tài khoản khách chỉ mở Camera để quét, không hiển thị mã QR riêng.</p> : null}

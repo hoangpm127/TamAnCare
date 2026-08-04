@@ -190,7 +190,7 @@ export function OrdersClient() {
                     {isBusiness ? businessLabel[booking.status] ?? booking.status : booking.status === "PENDING" && booking.paymentStatus === "UNPAID"
                       ? "Chờ đối soát cọc"
                       : booking.status === "PENDING" && booking.paymentStatus === "DEPOSITED"
-                        ? "Đã cọc · IQ Care đang xếp lịch"
+                        ? "Đã cọc · TÂM AN CENTER đang xếp lịch"
                         : bookingDisplayStatusLabel(booking.status, booking.paidAmount)}
                   </span>
                 </div>
@@ -215,7 +215,7 @@ export function OrdersClient() {
                       </Link>
                     ) : null}
                     {!isBusiness && booking.status === "PENDING" && ["DEPOSITED", "PAID"].includes(booking.paymentStatus) ? (
-                      <span className="text-[10px] font-medium text-[#826f66]">QR mở ngay khi IQ Care xếp xong KTV & giường</span>
+                      <span className="text-[10px] font-medium text-[#826f66]">QR mở ngay khi TÂM AN CENTER xếp xong KTV & giường</span>
                     ) : null}
                     {!isBusiness && (booking.status === "CHECKED_IN" || booking.status === "IN_SERVICE") ? (
                       <Link href={`/thanh-toan/${booking.bookingCode}`} className="rounded-full bg-[#c64b32] px-3 py-1.5 text-xs font-semibold text-white">
