@@ -105,6 +105,7 @@ export function CustomerLanguageProvider({
   const rootRef = useRef<HTMLDivElement>(null);
   const frameRef = useRef<number | null>(null);
   const bootstrapFrameRef = useRef<number | null>(null);
+  const bootstrapTimerRef = useRef<number | null>(null);
 
   useLayoutEffect(() => {
     const stored = storedLanguage(initialLanguage);
@@ -158,12 +159,17 @@ export function CustomerLanguageProvider({
       });
     };
 
-    if (document.readyState === "complete") start();
-    else window.addEventListener("load", start, { once: true });
+    const schedule = () => {
+      bootstrapTimerRef.current = window.setTimeout(start, 500);
+    };
+
+    if (document.readyState === "complete") schedule();
+    else window.addEventListener("load", schedule, { once: true });
 
     return () => {
       cancelled = true;
-      window.removeEventListener("load", start);
+      window.removeEventListener("load", schedule);
+      if (bootstrapTimerRef.current !== null) window.clearTimeout(bootstrapTimerRef.current);
       if (bootstrapFrameRef.current !== null) window.cancelAnimationFrame(bootstrapFrameRef.current);
     };
   }, [apply]);
