@@ -24,6 +24,13 @@ const EXACT_KOREAN: Record<string, string> = {
   "Thử tải lại": "다시 시도",
   "Hôm nay": "오늘",
   "Ngày mai": "내일",
+  "T2": "월",
+  "T3": "화",
+  "T4": "수",
+  "T5": "목",
+  "T6": "금",
+  "T7": "토",
+  "CN": "일",
   "Buổi sáng": "오전",
   "Buổi chiều": "오후",
   "Buổi tối": "저녁",
@@ -40,6 +47,10 @@ const EXACT_KOREAN: Record<string, string> = {
   "Chọn KTV": "테라피스트 선택",
   "Không trùng lịch": "중복 없는 예약",
   "Không làm phiền": "불필요한 연락 없음",
+  "Đào tạo & tái kiểm định định kỳ": "정기 교육 및 재검증",
+  "Đang áp dụng": "적용 중",
+  "GIẢM": "할인",
+  "Giảm": "할인",
   "Hiển thị đúng giá dịch vụ trước khi đặt, không phát sinh.": "예약 전에 정확한 서비스 가격을 확인하며 추가 비용이 없습니다.",
   "Chọn KTV yêu thích hoặc để hệ thống gợi ý người còn slot.": "선호 테라피스트를 선택하거나 가능한 담당자를 추천받으세요.",
   "Kiểm tra KTV và phòng/giường với buffer 15 phút.": "테라피스트와 룸을 15분 준비 시간까지 포함해 확인합니다.",
@@ -80,6 +91,14 @@ const EXACT_KOREAN: Record<string, string> = {
   "Mua + tặng": "구매 + 증정",
   "Dành cho chủ thẻ": "카드 소유자 전용",
   "Dùng được cho nhóm": "그룹 사용 가능",
+  "Cổ Vai Gáy 3 buổi": "목·어깨 3회",
+  "Thư giãn Chân 5 buổi": "발 릴랙스 5회",
+  "Chăm sóc Body 5 buổi": "전신 케어 5회",
+  "Dài hạn Cổ Vai Gáy 9+1": "목·어깨 장기 9+1",
+  "Dài hạn Body 9+1": "전신 장기 9+1",
+  "Đồng hành Body 15+2": "전신 동행 15+2",
+  "Mua 9 tặng 1": "9회 구매 + 1회 증정",
+  "Mua 15 tặng 2": "15회 구매 + 2회 증정",
   "Gói linh hoạt": "자유 패키지",
   "Kích hoạt thẻ": "패키지 활성화",
   "Dịch vụ:": "서비스:",
@@ -123,6 +142,10 @@ const EXACT_KOREAN: Record<string, string> = {
   "KTV yêu thích": "선호 테라피스트",
   "Tiến độ hạng thành viên": "멤버십 등급 진행률",
   "Chưa chọn": "선택 안 함",
+  "Chưa có thẻ thành viên": "멤버십 카드가 없습니다",
+  "Mua gói dài hạn để nhận ưu đãi tốt nhất": "장기 패키지로 가장 좋은 혜택을 받으세요",
+  "Thu - Chi của tôi": "나의 수입·지출",
+  "Lịch hẹn & ưu đãi mới": "새 예약 및 혜택",
   "Cài đặt thông tin cá nhân": "개인정보 설정",
   "Cài đặt tài khoản": "계정 설정",
   "Thông tin dùng để đặt lịch và cá nhân hóa dịch vụ.": "예약과 맞춤 서비스를 위한 정보입니다.",
@@ -168,8 +191,11 @@ const EXACT_KOREAN: Record<string, string> = {
   "Tiếp tục": "계속",
   "Hoàn tất": "완료",
   "Chọn dịch vụ": "서비스 선택",
+  "(có thể chọn nhiều)": "(여러 개 선택 가능)",
   "Chọn cơ sở": "지점 선택",
+  "Chọn cơ sở & kỹ thuật viên": "지점 및 테라피스트 선택",
   "Chọn ngày": "날짜 선택",
+  "Chọn ngày và giờ": "날짜와 시간 선택",
   "Chọn giờ": "시간 선택",
   "Chọn kỹ thuật viên": "테라피스트 선택",
   "Chọn KTV yêu thích": "선호 테라피스트 선택",
@@ -178,6 +204,24 @@ const EXACT_KOREAN: Record<string, string> = {
   "Đã kín": "예약 마감",
   "Đang rảnh": "가능",
   "Đang bận": "이용 중",
+  "Rảnh": "가능",
+  "Bận": "이용 중",
+  "Lịch còn nhận đặt": "예약 가능한 시간",
+  "Kỹ thuật viên: Ngẫu nhiên": "테라피스트: 자동 배정",
+  "Ngẫu nhiên": "자동 배정",
+  "Thông tin khách": "고객 정보",
+  "Tên hiển thị (Nick name)": "표시 이름 (닉네임)",
+  "Thông tin được lấy từ phần Cài đặt và dùng để xác nhận, nhắc lịch.": "설정에 저장된 정보를 예약 확인과 알림에 사용합니다.",
+  "Sổ voucher": "바우처 목록",
+  "Nhập mã khác": "다른 코드 입력",
+  "Ghi chú": "메모",
+  "Đặt cọc giữ chỗ": "예약 보증금",
+  "(bắt buộc)": "(필수)",
+  "Đặt cọc xác nhận giữ chỗ": "예약 확정 보증금",
+  "Tài khoản mới · xác minh số điện thoại một lần": "신규 계정 · 전화번호 1회 인증",
+  "Khách mới · dịch vụ từ 60 phút": "신규 고객 · 60분 이상 서비스",
+  "Lịch bắt đầu trước 12:00": "12:00 이전 시작 예약",
+  "Trong 7 ngày sau lần ghé · trừ cuối tuần": "방문 후 7일 이내 · 주말 제외",
   "Tổng tiền": "총 금액",
   "Tiền cọc": "보증금",
   "Thanh toán": "결제",
@@ -196,6 +240,16 @@ const EXACT_KOREAN: Record<string, string> = {
 };
 
 const KOREAN_REPLACEMENTS: Array<[string, string]> = [
+  ["cơ sở đang nhận lịch", "개 지점 예약 가능"],
+  ["KTV chuyên nghiệp", "명의 전문 테라피스트"],
+  ["Chọn cơ sở & kỹ thuật viên", "지점 및 테라피스트 선택"],
+  ["Chọn ngày và giờ", "날짜와 시간 선택"],
+  ["Chọn dịch vụ", "서비스 선택"],
+  ["Thông tin khách", "고객 정보"],
+  ["Đặt cọc giữ chỗ", "예약 보증금"],
+  ["Thư giãn Chân", "발 릴랙스"],
+  ["Chăm sóc Body", "전신 케어"],
+  ["Đồng hành Body", "전신 동행"],
   ["Massage Cổ Vai Gáy", "목·어깨 마사지"],
   ["Massage Lưng Hông", "허리·골반 마사지"],
   ["Massage Chân", "발 마사지"],
@@ -208,6 +262,7 @@ const KOREAN_REPLACEMENTS: Array<[string, string]> = [
   ["Đắp Bùn Ngải", "쑥 머드팩"],
   ["Xông Hơi", "사우나"],
   ["Cổ Vai Gáy", "목·어깨"],
+  ["Dài hạn", "장기"],
   ["Gói dài hạn", "장기 패키지"],
   ["Gói thành viên", "멤버십 패키지"],
   ["Áp dụng:", "적용:"],
@@ -217,6 +272,17 @@ const KOREAN_REPLACEMENTS: Array<[string, string]> = [
   ["Ngày hiệu lực", "유효기간(일)"],
   ["Lượt sử dụng", "이용 횟수"],
   ["Mua + tặng", "구매 + 증정"],
+  ["Đang áp dụng", "적용 중"],
+  ["Kỹ thuật viên", "테라피스트"],
+  ["chỗ rảnh", "자리 가능"],
+  ["Tên hiển thị", "표시 이름"],
+  ["Tài khoản mới", "신규 계정"],
+  ["Khách mới", "신규 고객"],
+  ["Đơn từ", "최소 주문"],
+  ["Giảm", "할인"],
+  ["GIẢM", "할인"],
+  ["Mua", "구매"],
+  ["tặng", "증정"],
   ["giá từ", "최저가"],
   ["mỗi nhân sự", "1인당"],
   ["người/buổi", "명/회"],
@@ -236,6 +302,10 @@ const KOREAN_REPLACEMENTS: Array<[string, string]> = [
   ["mật khẩu", "비밀번호"],
   ["cơ sở", "지점"],
   ["KTV", "테라피스트"],
+  ["/buổi", "/회"],
+  ["phút", "분"],
+  ["buổi", "회"],
+  ["ngày", "일"],
 ];
 
 function preserveOuterWhitespace(source: string, translated: string) {
@@ -253,6 +323,17 @@ export function translateCustomerText(source: string, language: CustomerLanguage
 
   let translated = core;
   let changed = false;
+  const vipProgress = translated.match(/^Thêm (.+) để lên hạng VIP\.$/);
+  if (vipProgress) {
+    translated = `VIP 등급까지 ${vipProgress[1]}가 더 필요합니다.`;
+    changed = true;
+  } else if (/^Thu\s+/.test(translated)) {
+    translated = translated.replace(/^Thu\s+/, "수입 ");
+    changed = true;
+  } else if (/^Chi\s+/.test(translated)) {
+    translated = translated.replace(/^Chi\s+/, "지출 ");
+    changed = true;
+  }
   for (const [from, to] of KOREAN_REPLACEMENTS) {
     if (!translated.includes(from)) continue;
     translated = translated.replaceAll(from, to);
@@ -261,7 +342,8 @@ export function translateCustomerText(source: string, language: CustomerLanguage
   const withUnits = translated
     .replace(/(\d+(?:[.,]\d+)?)\s*phút/gi, "$1분")
     .replace(/(\d+(?:[.,]\d+)?)\s*buổi/gi, "$1회")
-    .replace(/(\d+(?:[.,]\d+)?)\s*ngày/gi, "$1일");
+    .replace(/(\d+(?:[.,]\d+)?)\s*ngày/gi, "$1일")
+    .replace(/(\d+(?:[.,]\d+)?)\s+(개|명의|자리|분|회|일)/g, "$1$2");
   changed ||= withUnits !== translated;
   return changed ? preserveOuterWhitespace(source, withUnits) : source;
 }
