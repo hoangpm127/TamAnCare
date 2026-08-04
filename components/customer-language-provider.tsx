@@ -101,8 +101,10 @@ export function CustomerLanguageProvider({
   initialLanguage: CustomerLanguage;
 }) {
   const [language, setLanguageState] = useState<CustomerLanguage>(initialLanguage);
+  const [translationReady, setTranslationReady] = useState(initialLanguage === "vi");
   const rootRef = useRef<HTMLDivElement>(null);
   const frameRef = useRef<number | null>(null);
+  const bootstrapFrameRef = useRef<number | null>(null);
 
   useLayoutEffect(() => {
     const stored = storedLanguage(initialLanguage);
@@ -143,11 +145,31 @@ export function CustomerLanguageProvider({
   }, [language]);
 
   useEffect(() => {
-    apply();
+    let cancelled = false;
+
+    const start = () => {
+      bootstrapFrameRef.current = window.requestAnimationFrame(() => {
+        bootstrapFrameRef.current = window.requestAnimationFrame(() => {
+          bootstrapFrameRef.current = null;
+          if (cancelled) return;
+          apply();
+          setTranslationReady(true);
+        });
+      });
+    };
+
+    if (document.readyState === "complete") start();
+    else window.addEventListener("load", start, { once: true });
+
+    return () => {
+      cancelled = true;
+      window.removeEventListener("load", start);
+      if (bootstrapFrameRef.current !== null) window.cancelAnimationFrame(bootstrapFrameRef.current);
+    };
   }, [apply]);
 
   useEffect(() => {
-    if (!rootRef.current || !document.body) return;
+    if (!translationReady || !rootRef.current || !document.body) return;
     const root = document.body;
     const observer = new MutationObserver(() => {
       if (frameRef.current !== null) window.cancelAnimationFrame(frameRef.current);
@@ -170,7 +192,7 @@ export function CustomerLanguageProvider({
       headObserver.disconnect();
       if (frameRef.current !== null) window.cancelAnimationFrame(frameRef.current);
     };
-  }, [language, apply]);
+  }, [language, apply, translationReady]);
 
   const setLanguage = useCallback((nextLanguage: CustomerLanguage) => {
     try {
@@ -179,6 +201,7 @@ export function CustomerLanguageProvider({
       // The cookie below remains the persistence fallback.
     }
     writeLanguageCookie(nextLanguage);
+    setTranslationReady(nextLanguage === "vi");
     setLanguageState(nextLanguage);
   }, []);
 
@@ -191,7 +214,7 @@ export function CustomerLanguageProvider({
         lang={language}
         data-customer-language-root
         className="min-h-dvh"
-        style={language !== "vi" ? { visibility: "hidden" } : undefined}
+        style={language !== "vi" && !translationReady ? { visibility: "hidden" } : undefined}
       >
         {children}
       </div>
