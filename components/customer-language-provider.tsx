@@ -138,6 +138,7 @@ export function CustomerLanguageProvider({
     const titleNode = document.querySelector("title")?.firstChild;
     if (titleNode instanceof Text) translateTextNode(titleNode, language);
     document.documentElement.lang = language;
+    if (rootRef.current) rootRef.current.style.visibility = "visible";
   }, [language]);
 
   useLayoutEffect(() => {
@@ -184,7 +185,13 @@ export function CustomerLanguageProvider({
 
   return (
     <LanguageContext.Provider value={context}>
-      <div ref={rootRef} lang={language} data-customer-language-root className="min-h-dvh">
+      <div
+        ref={rootRef}
+        lang={language}
+        data-customer-language-root
+        className="min-h-dvh"
+        style={language === "ko" ? { visibility: "hidden" } : undefined}
+      >
         {children}
       </div>
     </LanguageContext.Provider>
