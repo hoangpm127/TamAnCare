@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CustomerLanguageProvider } from "@/components/customer-language-provider";
 import { RefreshCw, WifiOff } from "lucide-react";
 
 export const metadata = {
@@ -6,7 +7,7 @@ export const metadata = {
 };
 
 export default function OfflinePage() {
-  return (
+  return <CustomerLanguageProvider>{(
     <main className="flex min-h-[100dvh] items-center justify-center bg-[#fdf8f3] px-5 text-[#281b18]">
       <section className="w-full max-w-sm rounded-2xl border border-[#e7d6ca] bg-white p-6 text-center shadow-sm">
         <WifiOff className="mx-auto text-[#c64b32]" size={34} />
@@ -15,5 +16,5 @@ export default function OfflinePage() {
         <Link href="/" className="mt-5 inline-flex items-center justify-center gap-2 rounded-full bg-[#c64b32] px-5 py-3 text-sm font-semibold text-white"><RefreshCw size={16} /> Thử tải lại</Link>
       </section>
     </main>
-  );
+  )}</CustomerLanguageProvider>;
 }
