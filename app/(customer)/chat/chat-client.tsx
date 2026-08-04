@@ -38,10 +38,12 @@ export function ChatClient({ branches }: { branches: CatalogBranch[] }) {
   const [draft, setDraft] = useState("");
   const [typing, setTyping] = useState(false);
   const [assistantEnabled, setAssistantEnabled] = useState(true);
-  const bottomRef = useRef<HTMLDivElement>(null);
+  const messagesRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    const container = messagesRef.current;
+    if (!container) return;
+    container.scrollTo({ top: container.scrollHeight, behavior: "smooth" });
   }, [messages]);
 
   useEffect(() => {
@@ -80,7 +82,7 @@ export function ChatClient({ branches }: { branches: CatalogBranch[] }) {
   }
 
   return (
-    <div className="flex h-[100dvh] flex-col bg-[#fdf8f3] text-[#281b18]">
+    <div className="flex h-[calc(100dvh-3.5rem)] flex-col bg-[#fdf8f3] text-[#281b18]">
       <header className="flex items-center gap-3 border-b border-[#e7d6ca] bg-white/95 px-4 py-3 backdrop-blur">
         <button type="button" onClick={() => router.back()} className="text-[#51423b]" aria-label="Quay lại">
           <ArrowLeft size={20} />
@@ -98,7 +100,7 @@ export function ChatClient({ branches }: { branches: CatalogBranch[] }) {
         </a> : null}
       </header>
 
-      <div className="flex-1 space-y-3 overflow-y-auto px-4 py-4">
+      <div ref={messagesRef} className="flex-1 space-y-3 overflow-y-auto px-4 py-4">
         {messages.map((message) => (
           <div key={message.id} className={cn("flex", message.from === "customer" ? "justify-end" : "justify-start")}>
             <div
@@ -126,7 +128,6 @@ export function ChatClient({ branches }: { branches: CatalogBranch[] }) {
             </div>
           </div>
         ) : null}
-        <div ref={bottomRef} />
       </div>
 
       <div className="border-t border-[#e7d6ca] bg-white/95 px-4 pb-[env(safe-area-inset-bottom)] pt-3">
