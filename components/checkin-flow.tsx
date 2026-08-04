@@ -25,7 +25,6 @@ import {
 import { useMembership } from "@/lib/membership";
 import { QrScanner } from "@/components/qr-scanner";
 import { customerAudienceHeaders } from "@/lib/request-audience";
-import { suggestedTipForDuration } from "@/lib/tip-policy";
 import { cn, formatMoney } from "@/lib/utils";
 import { refreshWalletLedger } from "@/lib/wallet-ledger";
 
@@ -41,6 +40,7 @@ type CheckinBooking = {
   therapistIds: string[];
   timeLabel: string;
   durationMin: number;
+  suggestedTipAmount: number;
   totalAmount: number;
   depositAmount: number;
   dueAmount: number;
@@ -84,6 +84,7 @@ function ServiceTimer({
   bookingCode,
   dueAmount,
   usedPackage,
+  suggestedTipAmount,
 }: {
   startedAt?: string | null;
   endedAt?: string | null;
@@ -91,6 +92,7 @@ function ServiceTimer({
   bookingCode: string;
   dueAmount: number;
   usedPackage: boolean;
+  suggestedTipAmount: number;
 }) {
   const [now, setNow] = useState(() => Date.now());
 
@@ -113,7 +115,7 @@ function ServiceTimer({
   const remainingSecondsPart = remainingSeconds % 60;
   const remaining = [remainingHours, remainingMinutes, remainingSecondsPart].map((value) => String(value).padStart(2, "0")).join(":");
   const progress = Math.min(100, Math.round((elapsedSeconds / plannedSeconds) * 100));
-  const suggestedTip = suggestedTipForDuration(durationMin);
+  const suggestedTip = suggestedTipAmount;
 
   return (
     <div className="overflow-hidden rounded-2xl bg-gradient-to-br from-[#4c191b] via-[#ad432f] to-[#a85f29] p-4 text-center text-white shadow-lg shadow-[#ad432f]/20">
@@ -375,7 +377,7 @@ export function CheckinFlow({
               {checkinState === "submitting" ? <Loader2 className="animate-spin" size={15} /> : <Check size={15} />} {checkinState === "submitting" ? "Đang bắt đầu tính giờ…" : "Sử dụng dịch vụ"}
             </button>
           ) : null}
-          {["CHECKED_IN", "IN_SERVICE"].includes(selectedBooking.status) ? <div className="mt-4"><ServiceTimer startedAt={selectedBooking.checkedInAt} endedAt={selectedBooking.checkoutRequestedAt} durationMin={selectedBooking.durationMin} bookingCode={selectedBooking.bookingCode} dueAmount={selectedBooking.dueAmount} usedPackage={selectedBooking.usedPackage} /></div> : null}
+          {["CHECKED_IN", "IN_SERVICE"].includes(selectedBooking.status) ? <div className="mt-4"><ServiceTimer startedAt={selectedBooking.checkedInAt} endedAt={selectedBooking.checkoutRequestedAt} durationMin={selectedBooking.durationMin} bookingCode={selectedBooking.bookingCode} dueAmount={selectedBooking.dueAmount} usedPackage={selectedBooking.usedPackage} suggestedTipAmount={selectedBooking.suggestedTipAmount} /></div> : null}
           {["CHECKED_IN", "IN_SERVICE"].includes(selectedBooking.status) && !selectedBooking.checkoutRequestedAt ? (
             <button type="button" onClick={() => setShowEarlyCheckoutConfirm(true)} className="mt-3 inline-flex w-full items-center justify-center gap-1.5 rounded-full border border-[#c64b32] bg-white px-4 py-2.5 text-xs font-semibold text-[#c64b32]">
               <LogOut size={14} /> Check-out sớm

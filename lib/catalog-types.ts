@@ -7,6 +7,7 @@ export type CatalogService = {
   durationMin: number;
   basePrice: number;
   therapistFee: number;
+  suggestedTip: number;
   popular: boolean;
 };
 

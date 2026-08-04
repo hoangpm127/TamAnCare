@@ -23,9 +23,6 @@ export function bookingWindowError(input: BookingWindowInput) {
   if (input.startMinute < openMinute || input.startMinute > lastBookingMinute) {
     return `Khung giờ nằm ngoài giờ nhận khách ${input.openTime}–${input.lastBookingTime}.`;
   }
-  if (input.startMinute === lastBookingMinute && input.durationMinutes !== 60) {
-    return `Ca ${input.lastBookingTime} chỉ nhận dịch vụ 60 phút.`;
-  }
   if (serviceEndMinute(input.startMinute, input.durationMinutes) > closeMinute) {
     return `Dịch vụ phải kết thúc trước giờ đóng cửa ${input.closeTime}.`;
   }

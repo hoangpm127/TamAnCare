@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { DEFAULT_AFFILIATE_COMMISSION } from "@/lib/referral-policy";
+import { affiliateCommissionAmount, AFFILIATE_RECONCILIATION_DAYS } from "@/lib/referral-policy";
 import { getCustomerSession } from "@/lib/server/customer-session";
 import { ledgerReportWhere } from "@/lib/server/ledger-reporting";
 import { phoneVerificationRequired } from "@/lib/server/otp-delivery";
@@ -26,10 +26,16 @@ function displayDate(value: Date) {
 export async function GET() {
   const account = await getCustomerSession();
   if (!account) return NextResponse.json({ authenticated: false, summary: null });
-  const campaigns = await db.campaign.findMany({
-    where: { source: `AFFILIATE:${account.customerId}` },
-    orderBy: { createdAt: "asc" },
-  });
+  const [campaigns, affiliateProfile] = await Promise.all([
+    db.campaign.findMany({
+      where: { source: `AFFILIATE:${account.customerId}` },
+      orderBy: { createdAt: "asc" },
+    }),
+    db.customerAccount.findUnique({
+      where: { customerId: account.customerId },
+      select: { affiliateArea: true, affiliateBankName: true, affiliateBankAccount: true, affiliateBankHolder: true },
+    }),
+  ]);
   const activationRequired = phoneVerificationRequired() && !account.phoneVerifiedAt;
   const code = activationRequired ? "" : campaigns[0]?.code ?? "";
   if (!campaigns.length) {
@@ -38,8 +44,9 @@ export async function GET() {
       summary: {
         code,
         activationRequired,
-        rewardForYou: "50.000đ khi bạn mình hoàn thành buổi đầu tiên",
-        rewardForFriend: "Giảm ngay 50.000đ cho lần đặt lịch đầu tiên",
+        rewardForYou: `10% doanh thu dịch vụ/gói đủ điều kiện · đối soát ${AFFILIATE_RECONCILIATION_DAYS} ngày`,
+        rewardForFriend: "Đặt lịch nhanh qua link/QR và vẫn dùng ưu đãi đang đủ điều kiện",
+        profile: affiliateProfile,
         totalEarned: 0,
         monthlyEarnings: [],
         invited: [],
@@ -74,7 +81,7 @@ export async function GET() {
       friendTotalVisits: booking.customer.totalVisits,
       serviceLabel: booking.group ? `${groupBookings.length} dịch vụ cùng lịch` : booking.service.name,
       amount: booking.group?.totalAmount ?? booking.totalAmount,
-      commission: commission?.amount ?? booking.campaign?.manualCost ?? DEFAULT_AFFILIATE_COMMISSION,
+      commission: commission?.amount ?? affiliateCommissionAmount(booking.group?.totalAmount ?? booking.totalAmount),
       status: commission ? "COMPLETED" as const : "SCHEDULED" as const,
       bookingStatus: booking.group?.status ?? booking.status,
       date: displayDate(booking.startTime),
@@ -85,13 +92,12 @@ export async function GET() {
     };
   });
 
-  // Một khách được giới thiệu chỉ tạo một khoản thưởng: ưu tiên giao dịch đã hạch toán;
-  // nếu chưa có, chỉ hiển thị một booking đang còn hiệu lực làm khoản dự kiến.
+  // Giữ toàn bộ khoản đã hạch toán; với khách chưa phát sinh hoa hồng, chỉ hiển thị
+  // booking còn hiệu lực gần nhất làm dự kiến để tránh đếm trùng các lần giữ chỗ.
   const orders = [...new Set(candidateOrders.map((order) => order.friendId))].flatMap((friendId) => {
     const friendOrders = candidateOrders.filter((order) => order.friendId === friendId);
-    const rewarded = friendOrders.find((order) => order.rewarded);
-    if (rewarded) return [rewarded];
-    if ((friendOrders[0]?.friendTotalVisits ?? 0) > 0) return [];
+    const rewarded = friendOrders.filter((order) => order.rewarded);
+    if (rewarded.length) return rewarded;
     const projected = friendOrders
       .filter((order) => ["PENDING", "CONFIRMED", "CHECKED_IN", "IN_SERVICE"].includes(order.bookingStatus))
       .sort((a, b) => a.startTime.getTime() - b.startTime.getTime())[0];
@@ -130,8 +136,9 @@ export async function GET() {
     summary: {
       code,
       activationRequired,
-      rewardForYou: "50.000đ khi bạn mình hoàn thành buổi đầu tiên",
-      rewardForFriend: "Giảm ngay 50.000đ cho lần đặt lịch đầu tiên",
+      rewardForYou: `10% doanh thu dịch vụ/gói đủ điều kiện · đối soát ${AFFILIATE_RECONCILIATION_DAYS} ngày`,
+      rewardForFriend: "Đặt lịch nhanh qua link/QR và vẫn dùng ưu đãi đang đủ điều kiện",
+      profile: affiliateProfile,
       totalEarned: commissions.reduce((sum, item) => sum + item.amount, 0),
       monthlyEarnings,
       invited: friends,

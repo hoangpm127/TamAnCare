@@ -289,14 +289,14 @@ async function provision() {
     const referralCode = `UAT${item.source === "UAT_NEW" ? "NEW" : "AFF"}${item.phone.replace(/\D/g, "").slice(-4)}`;
     await prisma.campaign.upsert({
       where: { code: referralCode },
-      create: { code: referralCode, name: `Affiliate · ${item.name}`, source: `AFFILIATE:${customer.id}`, manualCost: 50_000 },
-      update: { name: `Affiliate · ${item.name}`, source: `AFFILIATE:${customer.id}`, manualCost: 50_000 },
+      create: { code: referralCode, name: `Affiliate · ${item.name}`, source: `AFFILIATE:${customer.id}`, manualCost: 0 },
+      update: { name: `Affiliate · ${item.name}`, source: `AFFILIATE:${customer.id}`, manualCost: 0 },
     });
     credentials.push({
       role: item.source === "UAT_NEW" ? "CUSTOMER_NEW" : "CUSTOMER_AFFILIATE",
       login: item.phone,
       password,
-      scope: item.source === "UAT_NEW" ? "Khách chưa có lượt sử dụng, còn quyền lợi 100K" : "Khách quay lại có mã Affiliate",
+      scope: item.source === "UAT_NEW" ? "Khách chưa có lượt sử dụng, còn quyền lợi 150K" : "Khách quay lại có mã Affiliate",
       firstAction: "Đăng nhập bằng số điện thoại và mật khẩu; không dùng số này ngoài UAT.",
     });
   }

@@ -1,13 +1,21 @@
 import assert from "node:assert/strict";
 import {
   affiliateCustomerId,
+  affiliateCommissionAmount,
   affiliateOwnerEligible,
-  DEFAULT_AFFILIATE_COMMISSION,
+  affiliateVisitEligible,
+  AFFILIATE_COMMISSION_RATE_BPS,
+  AFFILIATE_RECONCILIATION_DAYS,
   normalizeAffiliateCode,
 } from "../lib/referral-policy";
 import { safeCustomerReturnPath } from "../lib/safe-return-path";
 
-assert.equal(DEFAULT_AFFILIATE_COMMISSION, 50_000);
+assert.equal(AFFILIATE_COMMISSION_RATE_BPS, 1_000);
+assert.equal(AFFILIATE_RECONCILIATION_DAYS, 15);
+assert.equal(affiliateCommissionAmount(450_000), 45_000);
+assert.equal(affiliateVisitEligible({ totalVisits: 0, lastVisitAt: null, completedAt: new Date() }), true);
+assert.equal(affiliateVisitEligible({ totalVisits: 1, lastVisitAt: new Date("2026-08-01T00:00:00Z"), completedAt: new Date("2026-08-07T00:00:00Z") }), true);
+assert.equal(affiliateVisitEligible({ totalVisits: 1, lastVisitAt: new Date("2026-08-01T00:00:00Z"), completedAt: new Date("2026-08-09T00:00:01Z") }), false);
 assert.equal(affiliateCustomerId("AFFILIATE:customer-123"), "customer-123");
 assert.equal(affiliateCustomerId("CAMPAIGN:customer-123"), null);
 assert.equal(normalizeAffiliateCode("  aff_2026-01  "), "AFF_2026-01");
@@ -21,4 +29,4 @@ assert.equal(affiliateOwnerEligible({ phoneVerifiedAt: null }, true), false);
 assert.equal(affiliateOwnerEligible({ phoneVerifiedAt: null }, false), true);
 assert.equal(affiliateOwnerEligible(null, false), false);
 
-console.log("Affiliate policy verified: owner identity, OTP gate, code normalization and commission baseline.");
+console.log("Affiliate policy verified: owner identity, OTP gate, code normalization, 10% revenue share and 7-day return window.");

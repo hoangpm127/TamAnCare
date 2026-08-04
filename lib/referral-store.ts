@@ -11,6 +11,12 @@ export type ReferralSummary = {
   totalEarned: number;
   monthlyEarnings: Array<{ month: string; amount: number }>;
   invited: ReferralFriend[];
+  profile: {
+    affiliateArea: string | null;
+    affiliateBankName: string | null;
+    affiliateBankAccount: string | null;
+    affiliateBankHolder: string | null;
+  } | null;
 };
 
 const EMPTY: ReferralSummary = {
@@ -18,11 +24,12 @@ const EMPTY: ReferralSummary = {
   authenticated: false,
   activationRequired: false,
   code: "",
-  rewardForYou: "50.000đ khi bạn mình hoàn thành buổi đầu tiên",
-  rewardForFriend: "Giảm ngay 50.000đ cho lần đặt lịch đầu tiên",
+  rewardForYou: "10% doanh thu dịch vụ/gói đủ điều kiện · đối soát 15 ngày",
+  rewardForFriend: "Đặt lịch nhanh qua link/QR và vẫn dùng ưu đãi đang đủ điều kiện",
   totalEarned: 0,
   monthlyEarnings: [],
   invited: [],
+  profile: null,
 };
 const listeners = new Set<() => void>();
 let snapshot = EMPTY;

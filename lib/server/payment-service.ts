@@ -5,6 +5,8 @@ import type { Prisma, TransactionType } from "@/app/generated/prisma/client";
 import { maybeAutoConfirmBookingGroup, type BookingAutomationResult } from "@/lib/server/booking-automation";
 import { money, notifyCustomer, notifyOperations, notifyTherapist } from "@/lib/server/notification-service";
 import { markBusinessLeadStage } from "@/lib/server/xgroup-attribution";
+import { affiliateCommissionAmount, affiliateCustomerId, affiliateOwnerEligible, AFFILIATE_RECONCILIATION_DAYS } from "@/lib/referral-policy";
+import { phoneVerificationRequired } from "@/lib/server/otp-delivery";
 
 type PaymentClient = Prisma.TransactionClient;
 
@@ -53,7 +55,7 @@ export async function confirmIncomingPayment(
       },
       booking: { include: { customer: true, service: true, therapist: true } },
       officeEvent: { include: { customer: true, leadTherapist: true } },
-      customerPackage: { include: { packagePlan: true } },
+      customerPackage: { include: { packagePlan: true, campaign: true } },
     },
   });
   if (!payment) throw new PaymentReconciliationError("PAYMENT_NOT_FOUND", "Không tìm thấy yêu cầu thanh toán.", 404);
@@ -110,12 +112,12 @@ export async function confirmIncomingPayment(
         include: { voucher: true },
       })
     : [];
-  if (group && reservedVoucherUsages.some((usage) => usage.voucher.code === "WELCOME100") && group.discountAmount > 0) {
+  if (group && reservedVoucherUsages.some((usage) => usage.voucher.code === "WELCOME150") && group.discountAmount > 0) {
     const account = await tx.customerAccount.findUnique({ where: { customerId: group.customerId } });
     if (!account || account.creditBalance < group.discountAmount) {
       throw new PaymentReconciliationError(
         "PAYMENT_NOT_PENDING",
-        "Quyền lợi WELCOME100 không còn đủ để xác nhận booking; cần nhân viên kiểm tra.",
+        "Quyền lợi WELCOME150 không còn đủ để xác nhận booking; cần nhân viên kiểm tra.",
       );
     }
   }
@@ -178,7 +180,7 @@ export async function confirmIncomingPayment(
           where: { id: usage.id },
           data: { status: "CONFIRMED", confirmedAt: confirmation.paidAt, expiresAt: null },
         });
-        if (usage.voucher.code === "WELCOME100" && group.discountAmount > 0) {
+        if (usage.voucher.code === "WELCOME150" && group.discountAmount > 0) {
           await tx.customerAccount.update({
             where: { customerId: group.customerId },
             data: { creditBalance: { decrement: group.discountAmount } },
@@ -198,7 +200,7 @@ export async function confirmIncomingPayment(
                 category: "WELCOME_CREDIT",
                 direction: "OUT",
                 amount: group.discountAmount,
-                description: `Quyền lợi thành viên mới WELCOME100 · ${referenceCode}`,
+                description: `Quyền lợi thành viên mới WELCOME150 · ${referenceCode}`,
                 occurredAt: confirmation.paidAt,
               },
             });
@@ -309,6 +311,53 @@ export async function confirmIncomingPayment(
           occurredAt: confirmation.paidAt,
         },
       });
+    }
+    const affiliateCampaign = customerPackage.campaign;
+    if (affiliateCampaign?.source.startsWith("AFFILIATE:") && payment.amount > 0) {
+      const affiliateOwnerCustomerId = affiliateCustomerId(affiliateCampaign.source);
+      if (affiliateOwnerCustomerId && affiliateOwnerCustomerId !== customerId) {
+        const affiliate = await tx.customer.findUnique({
+          where: { id: affiliateOwnerCustomerId },
+          include: { account: { select: { phoneVerifiedAt: true } } },
+        });
+        const commissionExists = await tx.ledgerEntry.findFirst({
+          where: { paymentTransactionId: payment.id, category: "OPERATING_EXPENSE", description: { startsWith: "Hoa hồng Affiliate" } },
+          select: { id: true },
+        });
+        if (affiliate && !commissionExists && affiliateOwnerEligible(affiliate.account, phoneVerificationRequired())) {
+          const commissionAmount = affiliateCommissionAmount(payment.amount);
+          const expense = await tx.expense.create({
+            data: {
+              branchId: payment.branchId,
+              category: "MARKETING",
+              description: `Hoa hồng Affiliate gói · ${affiliateCampaign.code} · ${customerPackage.packagePlan.name}`,
+              amount: commissionAmount,
+              vendor: affiliate.fullName,
+              occurredAt: confirmation.paidAt,
+            },
+          });
+          await tx.ledgerEntry.create({
+            data: {
+              branchId: payment.branchId,
+              customerId: affiliate.id,
+              paymentTransactionId: payment.id,
+              expenseId: expense.id,
+              category: "OPERATING_EXPENSE",
+              direction: "OUT",
+              amount: commissionAmount,
+              description: expense.description,
+              occurredAt: confirmation.paidAt,
+            },
+          });
+          await notifyCustomer(tx, affiliate.id, {
+            branchId: payment.branchId,
+            type: "FINANCE",
+            title: `Đã ghi nhận hoa hồng Affiliate ${money(commissionAmount)}`,
+            body: `${customerName} đã mua ${customerPackage.packagePlan.name} qua mã ${affiliateCampaign.code}. Đối soát theo kỳ ${AFFILIATE_RECONCILIATION_DAYS} ngày.`,
+            actionUrl: "/vi?tab=income",
+          });
+        }
+      }
     }
     if (customerId) {
       await notifyCustomer(tx, customerId, {

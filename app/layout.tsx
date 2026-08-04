@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: siteUrl(),
   title: "Tâm An Center",
-  description: "Đặt lịch massage và chăm sóc cơ thể tại Tâm An Center, mở cửa hằng ngày từ 08:00 đến 22:00.",
+  description: "Đặt lịch massage và chăm sóc cơ thể tại Tâm An Center, mở cửa hằng ngày từ 09:00 đến 21:00.",
   manifest: "/manifest.webmanifest",
   applicationName: "Tâm An Center",
   alternates: { canonical: "/" },

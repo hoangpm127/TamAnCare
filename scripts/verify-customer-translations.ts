@@ -39,12 +39,18 @@ const criticalCopy = [
   ["Đặt trước massage Body, cổ vai gáy, chân, lưng hông và các liệu trình chăm sóc chuyên sâu trong dưới 60 giây.", "Book full-body, neck & shoulder, foot, back & hip massage and specialized wellness programs in under 60 seconds.", "不到60秒即可预约全身、颈肩、足部、腰背与髋部按摩，以及专业健康护理项目。"],
   ["Tăng cường sức khỏe vào Buổi Trưa ngay tại Văn Phòng", "Midday wellness at your office", "午间到企健康护理"],
   ["Hết lượt", "Fully claimed", "已领完"],
+  ["Chạm sóc toàn diện, nâng niu từng cảm giác", "Complete care, thoughtfully tending to every sensation", "全方位呵护，细致照顾每一处感受"],
+  ["Tạo tài khoản nhận ưu đãi 150K", "Create an account and receive a 150K voucher", "创建账户即享150K优惠券"],
+  ["Kiểm tra KTV và phòng/giường với thời gian chuẩn bị 5 phút.", "Therapist and room/bed availability includes a 5-minute preparation buffer.", "理疗师与房间/床位的可预约时间均预留5分钟准备时间。"],
+  ["10% doanh thu dịch vụ/gói đủ điều kiện · đối soát 15 ngày", "10% of eligible service/package revenue · 15-day payout cycle", "符合条件的服务/套餐收入10% · 15天结算"],
 ] as const;
 
 for (const [source, expectedEnglish, expectedChinese] of criticalCopy) {
   assert.equal(translateCustomerText(source, "en"), expectedEnglish, `Unexpected English copy for: ${source}`);
   assert.equal(translateCustomerText(source, "zh"), expectedChinese, `Unexpected Chinese copy for: ${source}`);
 }
+assert.equal(translateCustomerText("Tạo tài khoản nhận ưu đãi 150K", "ko"), "계정을 만들고 150K 혜택 받기");
+assert.equal(translateCustomerText("Hồ sơ nhận đối soát", "ko"), "정산 수령 정보");
 
 const dynamicGreeting = "Xin chào! Mình là trợ lý tự động của Tâm An Center · Tây Hồ. Nội dung chỉ mang tính hướng dẫn và không được chuyển trực tiếp cho lễ tân.";
 assert.match(translateCustomerText(dynamicGreeting, "en"), /automated assistant.+guidance only/i);

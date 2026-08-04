@@ -78,11 +78,11 @@ export async function POST(request: Request) {
     customer,
   });
   if (ruleError) return NextResponse.json({ valid: false, code, discountAmount: 0, message: ruleError });
-  if (code === "WELCOME100") {
-    if (!customerSession) return NextResponse.json({ valid: false, code, discountAmount: 0, message: "Hãy đăng nhập để dùng quyền lợi WELCOME100." });
+  if (code === "WELCOME150") {
+    if (!customerSession) return NextResponse.json({ valid: false, code, discountAmount: 0, message: "Hãy đăng nhập để dùng quyền lợi WELCOME150." });
     const account = await db.customerAccount.findUnique({ where: { customerId: customerSession.customerId } });
     if (!account || account.creditBalance <= 0) {
-      return NextResponse.json({ valid: false, code, discountAmount: 0, message: "Quyền lợi WELCOME100 không còn khả dụng." });
+      return NextResponse.json({ valid: false, code, discountAmount: 0, message: "Quyền lợi WELCOME150 không còn khả dụng." });
     }
   }
 

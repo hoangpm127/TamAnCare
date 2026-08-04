@@ -61,6 +61,7 @@ async function loadPublicCatalog(): Promise<PublicCatalog> {
       durationMin: item.durationMin,
       basePrice: item.basePrice,
       therapistFee: item.therapistFee,
+      suggestedTip: item.suggestedTip,
       popular: index < 3,
     })),
     therapists: therapists.map((item) => ({
@@ -113,6 +114,6 @@ async function loadPublicCatalog(): Promise<PublicCatalog> {
 // roundtrips from the main customer routes without making operational data stale.
 export const getPublicCatalog = unstable_cache(
   loadPublicCatalog,
-  ["public-catalog-v5"],
+  ["public-catalog-v6"],
   { revalidate: 30, tags: ["public-catalog"] },
 );

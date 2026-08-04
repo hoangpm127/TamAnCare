@@ -164,10 +164,11 @@ async function databaseChecks() {
 
     const migrationCount = Number(migrationRows[0]?.count ?? 0);
     add("CSDL", "Migration", migrationCount > 0 ? "PASS" : "FAIL", `${migrationCount} migration đã hoàn tất`);
-    add("Danh mục", "Số cơ sở", branches.length >= 2 ? "PASS" : "FAIL", `${branches.length} cơ sở`);
+    add("Danh mục", "Số cơ sở đang cấu hình", branches.some((branch) => branch.id === "tam-an-center-tay-ho") ? "PASS" : "FAIL", `${branches.length} cơ sở; cơ sở 2 mới ở trạng thái đề xuất`);
     add("Danh mục", "Dịch vụ online", serviceCount > 0 ? "PASS" : "FAIL", `${serviceCount} dịch vụ đang nhận lịch`);
-    for (const [index, branch] of branches.entries()) {
-      const expectedSeats = index < 2 ? 18 : 1;
+    for (const branch of branches) {
+      const isTamAnCenter = branch.id === "tam-an-center-tay-ho";
+      const expectedSeats = isTamAnCenter ? 6 : branch.seatCapacity;
       add(
         "Danh mục",
         `${branch.name} · sức chứa`,
@@ -177,13 +178,13 @@ async function databaseChecks() {
       add(
         "Danh mục",
         `${branch.name} · KTV`,
-        branch._count.therapists >= 8 ? "PASS" : "FAIL",
-        `${branch._count.therapists} KTV hoạt động; yêu cầu tối thiểu 8`,
+        branch._count.therapists >= (isTamAnCenter ? 3 : 1) ? "PASS" : "FAIL",
+        `${branch._count.therapists} KTV hoạt động; yêu cầu tối thiểu ${isTamAnCenter ? 3 : 1}`,
       );
       add(
         "Danh mục",
         `${branch.name} · giờ hoạt động`,
-        branch.openTime === "09:00" && branch.closeTime === "24:00" && branch.lastBookingTime === "23:00" ? "PASS" : "FAIL",
+        !isTamAnCenter || (branch.openTime === "09:00" && branch.closeTime === "21:00" && branch.lastBookingTime === "20:45") ? "PASS" : "FAIL",
         `${branch.openTime}–${branch.closeTime}; ca cuối ${branch.lastBookingTime}`,
       );
       add(
@@ -192,16 +193,16 @@ async function databaseChecks() {
         branch._count.rooms === expectedSeats ? "PASS" : "FAIL",
         `${branch._count.rooms}/${expectedSeats} giường đang hoạt động`,
       );
-      if (index < 2) {
+      if (isTamAnCenter) {
         const headSpaBeds = branch.rooms.filter((room) => room.type === "HEAD_SPA_BED").length;
         const footBeds = branch.rooms.filter((room) => room.type === "FOOT_CHAIR").length;
         const bodyBeds = branch.rooms.filter((room) => room.type === "MASSAGE_BED").length;
-        const layoutMatches = headSpaBeds === 3 && footBeds === 6 && bodyBeds === 9;
+        const layoutMatches = headSpaBeds === 0 && footBeds === 0 && bodyBeds === 6;
         add(
           "Danh mục",
           `${branch.name} · cơ cấu giường`,
           layoutMatches ? "PASS" : "FAIL",
-          `${headSpaBeds} gội · ${footBeds} Foot · ${bodyBeds} Body; yêu cầu 3/6/9`,
+          `${headSpaBeds} gội · ${footBeds} Foot · ${bodyBeds} massage; yêu cầu 0/0/6`,
         );
       }
     }

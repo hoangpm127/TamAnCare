@@ -190,7 +190,7 @@ export function CustomerSocialCompletion({
           {error ? <p className="rounded-xl bg-red-50 p-3 text-xs font-medium text-red-700">{error}</p> : null}
           <button disabled={submitting || (phoneVerificationRequired && !phoneVerificationToken)} className="flex w-full items-center justify-center gap-2 rounded-full bg-[#c64b32] px-5 py-3 text-sm font-semibold text-white disabled:opacity-60">
             {submitting ? <Loader2 className="animate-spin" size={16} /> : <ShieldCheck size={16} />}
-            Hoàn tất &amp; nhận ưu đãi 100K
+            Hoàn tất &amp; nhận ưu đãi 150K
           </button>
         </form>
       </section>

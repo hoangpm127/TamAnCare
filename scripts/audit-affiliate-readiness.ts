@@ -1,12 +1,12 @@
 import { db } from "../lib/db";
 import { BUSINESS_DISTRIBUTION_RATES, calculateBusinessDistribution } from "../lib/business-distribution";
-import { affiliateCustomerId, DEFAULT_AFFILIATE_COMMISSION } from "../lib/referral-policy";
+import { affiliateCommissionAmount, affiliateCustomerId } from "../lib/referral-policy";
 
 async function main() {
   const [campaigns, commissions, businessAffiliates, businessAssets, businessAttributions] = await Promise.all([
     db.campaign.findMany({
       where: { source: { startsWith: "AFFILIATE:" } },
-      select: { id: true, source: true, manualCost: true, bookings: { select: { id: true, groupId: true, customerId: true, status: true } } },
+      select: { id: true, source: true, bookings: { select: { id: true, groupId: true, customerId: true, status: true, totalAmount: true, group: { select: { totalAmount: true } } } } },
     }),
     db.ledgerEntry.findMany({
       where: { category: "OPERATING_EXPENSE", description: { startsWith: "Hoa hồng Affiliate" } },
@@ -40,7 +40,7 @@ async function main() {
       bookingOwner.set(targetId, {
         referredCustomerId: booking.customerId,
         affiliateCustomerId: affiliateId,
-        expectedCommission: campaign.manualCost || DEFAULT_AFFILIATE_COMMISSION,
+        expectedCommission: affiliateCommissionAmount(booking.group?.totalAmount ?? booking.totalAmount),
       });
       if (affiliateId === booking.customerId) selfReferralBookings += 1;
     }

@@ -9,7 +9,13 @@ import { money, notifyCustomer, notifyOperations, notifyTherapist } from "@/lib/
 import { getGuestSession } from "@/lib/server/guest-session";
 import { isSameOriginMutation, privateIdentifierDigest, requestIp } from "@/lib/server/request-security";
 import { isCustomerAudienceRequest } from "@/lib/request-audience";
-import { affiliateCustomerId, affiliateOwnerEligible, DEFAULT_AFFILIATE_COMMISSION } from "@/lib/referral-policy";
+import {
+  affiliateCommissionAmount,
+  affiliateCustomerId,
+  affiliateOwnerEligible,
+  affiliateVisitEligible,
+  AFFILIATE_RECONCILIATION_DAYS,
+} from "@/lib/referral-policy";
 import { phoneVerificationRequired } from "@/lib/server/otp-delivery";
 
 const ALLOWED_TRANSITIONS: Record<BookingStatus, BookingStatus[]> = {
@@ -77,7 +83,6 @@ export async function PATCH(request: Request, context: { params: Promise<{ booki
         const totalAmount = group?.totalAmount ?? bookings.reduce((sum, item) => sum + item.totalAmount, 0);
         const depositAmount = group?.depositAmount ?? bookings.reduce((sum, item) => sum + item.depositAmount, 0);
         const currentPaymentStatus = group?.paymentStatus ?? bookings[0].paymentStatus;
-        const isFirstCompletedVisit = (customer?.totalVisits ?? 0) === 0;
         const paidVenueAccess = parsed.data.venueBranchId === branchId
           && ["DEPOSITED", "PAID"].includes(currentPaymentStatus);
         const venueQrServiceStart = nextStatus === "IN_SERVICE"
@@ -415,7 +420,12 @@ export async function PATCH(request: Request, context: { params: Promise<{ booki
             },
           });
           const affiliateCampaign = bookings[0].campaign;
-          if (isFirstCompletedVisit && affiliateCampaign?.source.startsWith("AFFILIATE:")) {
+          const affiliateEligible = affiliateVisitEligible({
+            totalVisits: customer?.totalVisits ?? 0,
+            lastVisitAt: customer?.lastVisitAt ?? null,
+            completedAt: now,
+          });
+          if (affiliateEligible && totalAmount > 0 && affiliateCampaign?.source.startsWith("AFFILIATE:")) {
             const affiliateOwnerCustomerId = affiliateCustomerId(affiliateCampaign.source);
             if (affiliateOwnerCustomerId && affiliateOwnerCustomerId !== customerId) {
               const affiliate = await tx.customer.findUnique({
@@ -432,7 +442,7 @@ export async function PATCH(request: Request, context: { params: Promise<{ booki
                   },
                 });
                 if (!commissionExists) {
-                  const commissionAmount = affiliateCampaign.manualCost || DEFAULT_AFFILIATE_COMMISSION;
+                  const commissionAmount = affiliateCommissionAmount(totalAmount);
                   const commissionExpense = await tx.expense.create({
                     data: {
                       branchId,
@@ -461,7 +471,7 @@ export async function PATCH(request: Request, context: { params: Promise<{ booki
                     branchId,
                     type: "FINANCE",
                     title: `Đã ghi nhận hoa hồng Affiliate ${money(commissionAmount)}`,
-                    body: `${customer?.fullName ?? "Khách được giới thiệu"} đã hoàn tất buổi đầu tiên qua mã ${affiliateCampaign.code}.`,
+                    body: `${customer?.fullName ?? "Khách được giới thiệu"} đã hoàn tất lượt đủ điều kiện qua mã ${affiliateCampaign.code}. Đối soát theo kỳ ${AFFILIATE_RECONCILIATION_DAYS} ngày.`,
                     actionUrl: "/vi?tab=income",
                   });
                   await notifyOperations(tx, {

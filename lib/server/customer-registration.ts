@@ -49,7 +49,7 @@ export async function createCustomerMembership(tx: Prisma.TransactionClient, inp
       phone: input.phone,
       passwordHash: input.passwordHash,
       phoneVerifiedAt: input.phoneVerifiedAt,
-      creditBalance: 100000,
+      creditBalance: 150000,
       freeConsultationEligible: true,
     },
     include: { customer: { include: { oauthIdentities: true } } },
@@ -90,19 +90,19 @@ export async function createCustomerMembership(tx: Prisma.TransactionClient, inp
       code,
       name: `Affiliate · ${customer.fullName}`,
       source: `AFFILIATE:${customer.id}`,
-      manualCost: 50000,
+      manualCost: 0,
     },
   });
   await notifyCustomer(tx, customer.id, {
     type: "PROMOTION",
-    title: "Bạn đã nhận ưu đãi 100K",
-    body: "WELCOME100 sẽ tự động được ưu tiên khi bạn đặt dịch vụ lần đầu.",
+    title: "Bạn đã nhận ưu đãi 150K",
+    body: "WELCOME150 sẽ tự động được ưu tiên khi bạn đặt dịch vụ lần đầu.",
     actionUrl: "/booking",
   });
   await notifyOperations(tx, {
     type: "INVITATION",
     title: `Thành viên mới · ${customer.fullName}`,
-    body: `${customer.phone} vừa tạo tài khoản và nhận ưu đãi thành viên mới 100K.`,
+    body: `${customer.phone} vừa tạo tài khoản và nhận ưu đãi thành viên mới 150K.`,
     actionUrl: "/admin/customers",
   });
 

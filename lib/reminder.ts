@@ -3,10 +3,10 @@ import { addDays, addHours } from "date-fns";
 export function reminderSchedule(completedAt: Date) {
   return [
     {
-      type: "REVIEW_2H",
+      type: "REVIEW_1H",
       title: "Xin đánh giá sau buổi",
       message: "Hỏi khách về trải nghiệm và đánh giá KTV.",
-      dueAt: addHours(completedAt, 2),
+      dueAt: addHours(completedAt, 1),
     },
     {
       type: "POST_CARE_3D",

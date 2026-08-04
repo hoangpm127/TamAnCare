@@ -152,7 +152,7 @@ async function findAvailability(
   const now = new Date();
   const slots = [];
 
-  for (let minute = openMinute; minute <= lastBookingMinute; minute += 30) {
+  for (let minute = openMinute; minute <= lastBookingMinute; minute += BOOKING_POLICY.slotMinutes) {
     if (bookingWindowError({
       startMinute: minute,
       durationMinutes: duration,
@@ -162,7 +162,7 @@ async function findAvailability(
     })) continue;
     const start = addMinutes(day.start, minute);
     const end = addMinutes(start, duration);
-    if (start < now) continue;
+    if (start < addMinutes(now, BOOKING_POLICY.minimumLeadMinutes)) continue;
 
     const availableTherapists = therapists.filter((therapist) =>
       !dayBookings.some((booking) => booking.therapistId === therapist.id && intervalsOverlapWithBuffer(start, end, booking.startTime, booking.endTime, branch.bufferMinutes)),
@@ -256,7 +256,9 @@ export async function createBookingGroup(input: BookingGroupInput) {
 
       const branch = await tx.branch.findUnique({ where: { id: input.branchId } });
       if (!branch) throw new BookingConflictError("Cơ sở không tồn tại hoặc đang tạm ngưng nhận lịch.");
-      if (input.units.length < 1 || input.units.length > 16) throw new BookingConflictError("Số người trong một booking phải từ 1 đến 16.");
+      if (input.units.length < 1 || input.units.length > BOOKING_POLICY.maximumGroupSize) {
+        throw new BookingConflictError(`Số người trong một booking phải từ 1 đến ${BOOKING_POLICY.maximumGroupSize}.`);
+      }
 
       const serviceIds = [...new Set(input.units.map((unit) => unit.serviceId))];
       const serviceRecords = await tx.service.findMany({ where: { id: { in: serviceIds }, isActive: true, isOnline: true } });
@@ -312,7 +314,7 @@ export async function createBookingGroup(input: BookingGroupInput) {
       if (voucher?.serviceId && serviceIds.some((serviceId) => serviceId !== voucher.serviceId)) {
         throw new BookingConflictError("Ưu đãi này không áp dụng cho dịch vụ đã chọn.");
       }
-      const customerAccount = voucher && input.authenticatedCustomerId && (voucher.requiresVerifiedPhone || voucher.code === "WELCOME100")
+      const customerAccount = voucher && input.authenticatedCustomerId && (voucher.requiresVerifiedPhone || voucher.code === "WELCOME150")
         ? await tx.customerAccount.findUnique({ where: { customerId: customer.id } })
         : null;
       if (voucher) {
@@ -341,10 +343,10 @@ export async function createBookingGroup(input: BookingGroupInput) {
         if (used >= voucher.maxPerCustomer) throw new BookingConflictError("Khách hàng đã sử dụng hoặc đang giữ ưu đãi này.");
       }
       if (
-        voucher?.code === "WELCOME100"
+        voucher?.code === "WELCOME150"
         && (!input.authenticatedCustomerId || !customerAccount || customerAccount.creditBalance <= 0)
       ) {
-        throw new BookingConflictError("Ưu đãi 100K chỉ dành cho tài khoản thành viên mới.");
+        throw new BookingConflictError("Ưu đãi 150K chỉ dành cho tài khoản thành viên mới.");
       }
 
       const packageCandidates = !voucher && input.authenticatedCustomerId
@@ -440,7 +442,9 @@ export async function createBookingGroup(input: BookingGroupInput) {
         const end = addMinutes(start, service.durationMin);
         const startParts = businessParts(start);
         const startMinute = startParts.minuteOfDay;
-        if (start < new Date()) throw new BookingConflictError("Khung giờ đã qua, vui lòng chọn lại.");
+        if (start < addMinutes(new Date(), BOOKING_POLICY.minimumLeadMinutes)) {
+          throw new BookingConflictError(`Vui lòng đặt trước ít nhất ${BOOKING_POLICY.minimumLeadMinutes} phút.`);
+        }
         const scheduleError = bookingWindowError({
           startMinute,
           durationMinutes: service.durationMin,
@@ -561,7 +565,7 @@ export async function createBookingGroup(input: BookingGroupInput) {
             confirmedAt: voucherConfirmedImmediately ? now : null,
           },
         });
-        if (voucherConfirmedImmediately && voucher.code === "WELCOME100" && customerAccount) {
+        if (voucherConfirmedImmediately && voucher.code === "WELCOME150" && customerAccount) {
           await tx.customerAccount.update({
             where: { id: customerAccount.id },
             data: { creditBalance: Math.max(0, customerAccount.creditBalance - discountAmount) },
@@ -576,7 +580,7 @@ export async function createBookingGroup(input: BookingGroupInput) {
                 category: "WELCOME_CREDIT",
                 direction: "OUT",
                 amount: discountAmount,
-                description: `Quyền lợi thành viên mới WELCOME100 · ${group.referenceCode}`,
+                description: `Quyền lợi thành viên mới WELCOME150 · ${group.referenceCode}`,
               },
             });
           }
@@ -728,6 +732,7 @@ export function bookingGroupToDto(group: NonNullable<Awaited<ReturnType<typeof g
     roomName: group.bookings.map((item) => item.room?.name).filter(Boolean).join(", "),
     timeIso: first?.startTime.toISOString(),
     durationMin: Math.max(...group.bookings.map((item) => item.durationMin), 0),
+    suggestedTipAmount: group.bookings.reduce((sum, item) => sum + item.service.suggestedTip, 0),
     minimumTipAmount: minimumTipForBookings(group.bookings),
     serviceId: first?.serviceId,
     rescheduleCount: Math.max(...group.bookings.map((item) => item.rescheduleCount), 0),
@@ -807,7 +812,7 @@ export function bookingToDto(booking: {
   createdAt: Date;
   branch: { name: string; address: string };
   customer: { fullName: string; phone: string };
-  service: { name: string };
+  service: { name: string; suggestedTip: number };
   therapist: { fullName: string } | null;
   therapistId: string | null;
   room: { name: string } | null;
@@ -828,6 +833,7 @@ export function bookingToDto(booking: {
     roomName: booking.room?.name ?? "",
     timeIso: booking.startTime.toISOString(),
     durationMin: booking.durationMin,
+    suggestedTipAmount: booking.service.suggestedTip,
     minimumTipAmount: minimumTipForDuration(booking.durationMin),
     serviceId: booking.serviceId,
     rescheduleCount: booking.rescheduleCount,

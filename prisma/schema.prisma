@@ -487,6 +487,7 @@ model Service {
   durationMin  Int
   basePrice    Int
   therapistFee Int             @default(0)
+  suggestedTip Int             @default(0)
   imageUrl     String?
   isActive     Boolean         @default(true)
   isOnline     Boolean         @default(true)
@@ -602,6 +603,7 @@ model Campaign {
   updatedAt  DateTime  @updatedAt
   bookings   Booking[]
   vouchers   Voucher[]
+  packagePurchases CustomerPackage[]
 }
 
 model Voucher {
@@ -623,6 +625,7 @@ model Voucher {
   bookingStartMinuteMax         Int?
   excludeWeekend                Boolean        @default(false)
   validWithinDaysAfterLastVisit Int?
+  validAfterDaysAfterLastVisit  Int?
   maxUsage                      Int?
   maxPerCustomer                Int?
   startsAt                      DateTime?
@@ -680,6 +683,7 @@ model CustomerPackage {
   customerId           String
   packagePlanId        String
   paymentTransactionId String?             @unique
+  campaignId            String?
   sessionsTotal        Int
   sessionsRemaining    Int
   sessionsReserved     Int                 @default(0)
@@ -691,7 +695,10 @@ model CustomerPackage {
   bookings             Booking[]
   customer             Customer            @relation(fields: [customerId], references: [id])
   packagePlan          PackagePlan         @relation(fields: [packagePlanId], references: [id])
+  campaign             Campaign?           @relation(fields: [campaignId], references: [id])
   paymentTransaction   PaymentTransaction? @relation(fields: [paymentTransactionId], references: [id])
+
+  @@index([campaignId, createdAt])
 }
 
 model Booking {
@@ -1005,13 +1012,17 @@ model CustomerAccount {
   phone                         String                    @unique
   passwordHash                  String?
   phoneVerifiedAt               DateTime?
-  creditBalance                 Int                       @default(100000)
+  creditBalance                 Int                       @default(150000)
   welcomeCreditGrantedAt        DateTime?                 @default(now())
   bookingReminders              Boolean                   @default(true)
   freeConsultationEligible      Boolean                   @default(false)
   freeConsultationDecision      FreeConsultationDecision?
   freeConsultationPreferredTime String?
   freeConsultationRespondedAt   DateTime?
+  affiliateArea                 String?
+  affiliateBankName             String?
+  affiliateBankAccount          String?
+  affiliateBankHolder           String?
   createdAt                     DateTime                  @default(now())
   updatedAt                     DateTime                  @updatedAt
   customer                      Customer                  @relation(fields: [customerId], references: [id])

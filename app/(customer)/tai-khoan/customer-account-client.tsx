@@ -173,7 +173,7 @@ export function CustomerAccountClient({
               <Gift className="mx-auto text-[#c64b32]" size={24} />
               <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-[#76551d]">Ưu đãi đang có</p>
               <p className="mt-1 text-2xl font-bold text-[#c64b32]">{formatMoney(account.creditBalance)}</p>
-              <p className="mt-1 text-xs leading-5 text-[#715943]">Hệ thống tự ưu tiên WELCOME100 cho lần đặt dịch vụ đầu tiên đủ điều kiện.</p>
+              <p className="mt-1 text-xs leading-5 text-[#715943]">Hệ thống tự ưu tiên WELCOME150 cho lần đặt dịch vụ đầu tiên đủ điều kiện.</p>
             </div>
             <Link href="/booking" className="mt-4 flex w-full items-center justify-center rounded-full bg-[#c64b32] px-5 py-3 text-sm font-semibold text-white">Đặt lịch và dùng ưu đãi</Link>
             <button type="button" onClick={() => void logout()} className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-full border border-[#e7d6ca] px-5 py-2.5 text-xs font-semibold text-[#68574f]"><LogOut size={14} /> Đăng xuất</button>
@@ -218,7 +218,7 @@ export function CustomerAccountClient({
       <section className="overflow-hidden rounded-3xl bg-white shadow-xl ring-1 ring-[#e7d6ca]">
         <div className="bg-gradient-to-br from-[#2b1815] via-[#5c2718] to-[#93352d] px-5 py-6 text-white">
           <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.15em] text-[#e7c878]"><Gift size={15} /> Thành viên mới</p>
-          <h1 className="mt-2 text-2xl font-semibold">Tạo tài khoản, nhận ngay 100K</h1>
+          <h1 className="mt-2 text-2xl font-semibold">Tạo tài khoản, nhận ngay 150K</h1>
           <p className="mt-2 text-sm leading-6 text-white/75">Bạn vẫn có thể xem và đặt lịch không cần đăng nhập. Tài khoản chỉ giúp giữ ưu đãi, lịch sử và chăm sóc cá nhân hóa.</p>
         </div>
         <div className="p-5">
@@ -272,7 +272,7 @@ export function CustomerAccountClient({
               </>
             ) : null}
             {error ? <p role="alert" aria-live="polite" className="rounded-xl bg-red-50 p-3 text-xs font-medium text-red-700">{error}</p> : null}
-            <button disabled={submitting || (mode === "register" && (password !== passwordConfirmation || (phoneVerificationRequired && !phoneVerificationToken)))} className="flex w-full items-center justify-center gap-2 rounded-full bg-[#c64b32] px-5 py-3 text-sm font-semibold text-white disabled:opacity-60">{submitting ? <Loader2 className="animate-spin" size={16} /> : <ShieldCheck size={16} />}{mode === "register" ? "Tạo tài khoản & nhận 100K" : "Đăng nhập"}</button>
+            <button disabled={submitting || (mode === "register" && (password !== passwordConfirmation || (phoneVerificationRequired && !phoneVerificationToken)))} className="flex w-full items-center justify-center gap-2 rounded-full bg-[#c64b32] px-5 py-3 text-sm font-semibold text-white disabled:opacity-60">{submitting ? <Loader2 className="animate-spin" size={16} /> : <ShieldCheck size={16} />}{mode === "register" ? "Tạo tài khoản & nhận 150K" : "Đăng nhập"}</button>
           </form>
           {mode === "login" ? (
             recoveryOpen

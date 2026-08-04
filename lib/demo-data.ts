@@ -62,9 +62,9 @@ export const branch = {
   phone: "0963 039 273",
   zalo: "0963 039 273",
   facebook: "facebook.com/tamancenter.official",
-  openTime: "08:00",
-  closeTime: "22:00",
-  lastBookingTime: "21:00",
+  openTime: "09:00",
+  closeTime: "21:00",
+  lastBookingTime: "20:45",
   bufferMinutes: 15,
   ratingAvg: 4.9,
   reviewCount: 512,
@@ -625,7 +625,7 @@ export const notifications: DemoNotification[] = [
     id: "noti-4",
     type: "SYSTEM",
     title: "Cập nhật giờ mở cửa dịp lễ",
-    body: "Tâm An Center mở cửa 08:00 - 22:00 hằng ngày.",
+    body: "Tâm An Center mở cửa 09:00 - 21:00 hằng ngày.",
     createdAt: addDays(today, -6),
     read: true,
   },
@@ -664,8 +664,8 @@ export type ReferralFriend = {
 
 export const referral = {
   code: "MINHANH4567",
-  rewardForYou: "50.000đ khi bạn mình hoàn thành buổi đầu tiên",
-  rewardForFriend: "Giảm ngay 50.000đ cho lần đặt lịch đầu tiên",
+  rewardForYou: "10% doanh thu dịch vụ/gói đủ điều kiện · đối soát 15 ngày",
+  rewardForFriend: "Đặt lịch nhanh qua link/QR và vẫn dùng ưu đãi đang đủ điều kiện",
   totalEarned: 6450000,
   monthlyEarnings: [
     { month: "T2", amount: 700000 },
@@ -1192,9 +1192,9 @@ export const walletSpending = {
 
 export const vouchers = [
   {
-    code: "WELCOME100",
-    name: "Thành viên mới nhận 100K",
-    description: "Tạo tài khoản để nhận 100.000đ cho lần đặt dịch vụ đầu tiên tại Tâm An Center.",
+    code: "WELCOME150",
+    name: "Thành viên mới nhận 150K",
+    description: "Tạo tài khoản để nhận 150.000đ cho lần đặt dịch vụ đầu tiên tại Tâm An Center.",
     type: "FIXED" as const,
     value: 100000,
     usage: "0/500",

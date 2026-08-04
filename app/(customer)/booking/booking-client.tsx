@@ -167,7 +167,7 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
   const firstVisitEligible = account ? account.totalVisits === 0 : Boolean(attributionCode);
   const automaticVoucherCode = !voucherOptOut
     ? account?.welcomeCreditAvailable
-      ? "WELCOME100"
+      ? "WELCOME150"
       : attributionCode && firstVisitEligible
         ? "FIRST60"
         : ""
@@ -263,8 +263,8 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
       setNameInput(null);
       if (account.welcomeCreditAvailable) {
         setVoucherOptOut(false);
-        setVoucherCode("WELCOME100");
-      } else if (voucherCode === "WELCOME100") {
+        setVoucherCode("WELCOME150");
+      } else if (voucherCode === "WELCOME150") {
         setVoucherCode("");
       }
     });
@@ -400,7 +400,7 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
 
   function changePeople(lineId: string, delta: number) {
     setCart((current) =>
-      current.map((line) => (line.id === lineId ? { ...line, people: Math.max(1, Math.min(10, line.people + delta)) } : line))
+      current.map((line) => (line.id === lineId ? { ...line, people: Math.max(1, Math.min(6, line.people + delta)) } : line))
     );
   }
 
@@ -571,6 +571,7 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
                     ) : null}
                     <p className="line-clamp-2 text-xs font-semibold leading-tight">{stripDurationFromName(item.name)}</p>
                     <p className="mt-1.5 text-xs font-bold text-[#c64b32]">{formatMoney(item.basePrice + item.therapistFee)}</p>
+                    {item.suggestedTip > 0 ? <p className="mt-0.5 text-[9px] leading-3.5 text-[#826f66]">Tip gợi ý {formatMoney(item.suggestedTip)} · trao trực tiếp</p> : null}
                     <p className="flex items-center gap-1 text-[10px] text-[#826f66]">
                       <Clock size={10} /> {item.durationMin} phút
                     </p>

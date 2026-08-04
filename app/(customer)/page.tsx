@@ -48,7 +48,7 @@ export default async function Home() {
     .filter((therapist) => therapist.status === "ACTIVE")
     .sort((a, b) => b.ratingAvg - a.ratingAvg);
   const activeTherapistCount = therapists.filter((therapist) => therapist.status === "ACTIVE").length;
-  const bestPackage = packagePlans.find((plan) => plan.id === "pkg-body-15") ?? packagePlans[0];
+  const bestPackage = packagePlans.find((plan) => plan.id === "pkg-5") ?? packagePlans[0];
 
   return (
     <main className="bg-[#fdf8f3] text-[#281b18]">
@@ -65,7 +65,7 @@ export default async function Home() {
           <div className="relative z-10 flex min-h-[300px] flex-col items-center justify-end px-4 py-5 text-center sm:min-h-[340px] sm:px-6 sm:py-6">
             <Image src="/tam-an-center-mark-transparent.png" alt="" width={66} height={66} className="mb-2 h-[66px] w-[66px] object-contain drop-shadow-[0_8px_18px_rgba(0,0,0,0.34)]" />
             <p className="mb-2 inline-flex w-fit items-center gap-1.5 rounded-full border border-white/25 bg-white/10 px-3 py-1 text-[11px] font-medium">
-              <Sparkles size={12} /> Chăm sóc chỉn chu · đặt lịch minh bạch
+              <Sparkles size={12} /> Chạm sóc toàn diện, nâng niu từng cảm giác
             </p>
             <h1 className="max-w-md text-xl font-semibold leading-tight tracking-tight sm:text-2xl lg:text-3xl">
               <BrandWordmark className="mx-auto mb-1 h-[29px] w-[220px] text-[#e8cf8a] sm:h-[35px] sm:w-[270px]" />
@@ -95,7 +95,7 @@ export default async function Home() {
         <Link href="/tai-khoan" className="flex items-center justify-between gap-3 rounded-2xl border border-[#e8cf8a]/30 bg-gradient-to-r from-[#7c2927] via-[#a64032] to-[#c85a38] px-4 py-3.5 text-white shadow-[0_10px_24px_rgba(76,25,27,0.16)]">
           <span className="flex min-w-0 items-center gap-3">
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#e8cf8a] text-[#7c2927]"><Gift size={19} /></span>
-            <span className="min-w-0"><strong className="block text-sm">Tạo tài khoản nhận ưu đãi 100K</strong><small className="mt-0.5 block text-[11px] text-white/70">Đặt lịch không cần đăng nhập · đăng ký để giữ quyền lợi riêng</small></span>
+            <span className="min-w-0"><strong className="block text-sm">Tạo tài khoản nhận ưu đãi 150K</strong><small className="mt-0.5 block text-[11px] text-white/70">Đặt lịch không cần đăng nhập · đăng ký để giữ quyền lợi riêng</small></span>
           </span>
           <ArrowRight className="shrink-0 text-[#e7c878]" size={18} />
         </Link>
@@ -136,7 +136,7 @@ export default async function Home() {
           {[
             { title: "Giá rõ ràng", body: "Hiển thị đúng giá dịch vụ trước khi đặt, không phát sinh.", accent: "#c64b32" },
             { title: "Chọn KTV", body: "Chọn KTV yêu thích hoặc để hệ thống gợi ý người còn slot.", accent: "#76551d" },
-            { title: "Không trùng lịch", body: "Kiểm tra KTV và phòng/giường với buffer 15 phút.", accent: "#9f7428" },
+            { title: "Không trùng lịch", body: "Kiểm tra KTV và phòng/giường với thời gian chuẩn bị 5 phút.", accent: "#9f7428" },
             { title: "Không làm phiền", body: "Chỉ nhắc lịch đúng lúc theo cài đặt của bạn, không gọi quảng cáo.", accent: "#7c2927" },
           ].map(({ title, body, accent }) => (
             <div
@@ -174,6 +174,7 @@ export default async function Home() {
               </div>
               <h3 className="mt-2 line-clamp-2 text-sm font-semibold leading-tight tracking-tight">{stripDurationFromName(service.name)}</h3>
               <p className="mt-2 text-sm font-semibold">{formatMoney(service.basePrice + service.therapistFee)}</p>
+              {service.suggestedTip > 0 ? <p className="mt-1 text-[10px] leading-4 text-[#826f66]">Tip gợi ý {formatMoney(service.suggestedTip)} · trao trực tiếp</p> : null}
             </Link>
           ))}
         </div>

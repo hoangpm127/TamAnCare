@@ -17,7 +17,7 @@ const responseSchema = z.discriminatedUnion("decision", [
 ]);
 
 const preferredTimeLabels = {
-  MORNING: "Buổi sáng (08:00–12:00)",
+  MORNING: "Buổi sáng (09:00–12:00)",
   AFTERNOON: "Buổi chiều (12:00–18:00)",
   EVENING: "Buổi tối (18:00–21:00)",
 } as const;

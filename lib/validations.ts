@@ -49,7 +49,7 @@ export const bookingGroupSchema = z.object({
     customerPhone: z.string().optional(),
     note: z.string().max(1000).optional(),
     source: z.string().optional(),
-  })).min(1).max(16),
+  })).min(1).max(6),
 });
 
 export const statusSchema = z

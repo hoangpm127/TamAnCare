@@ -14,6 +14,7 @@ type VoucherRules = {
   bookingStartMinuteMax: number | null;
   excludeWeekend: boolean;
   validWithinDaysAfterLastVisit: number | null;
+  validAfterDaysAfterLastVisit: number | null;
 };
 
 type VoucherContext = {
@@ -60,6 +61,11 @@ export function voucherRuleError(voucher: VoucherRules, context: VoucherContext)
       if (!context.customer?.lastVisitAt) return "Ưu đãi này chỉ dành cho khách quay lại sau lần sử dụng gần nhất.";
       const deadline = new Date(context.customer.lastVisitAt.getTime() + voucher.validWithinDaysAfterLastVisit * 86_400_000);
       if (bookingDate > deadline) return `Lịch mới cần nằm trong ${voucher.validWithinDaysAfterLastVisit} ngày kể từ lần sử dụng gần nhất.`;
+    }
+    if (voucher.validAfterDaysAfterLastVisit !== null) {
+      if (!context.customer?.lastVisitAt) return "Ưu đãi này chỉ dành cho khách quay lại sau lần sử dụng gần nhất.";
+      const availableAt = new Date(context.customer.lastVisitAt.getTime() + voucher.validAfterDaysAfterLastVisit * 86_400_000);
+      if (bookingDate < availableAt) return `Ưu đãi bắt đầu áp dụng từ ngày thứ ${voucher.validAfterDaysAfterLastVisit} sau lần sử dụng gần nhất.`;
     }
   }
   return null;

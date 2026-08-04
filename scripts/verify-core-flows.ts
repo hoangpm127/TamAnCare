@@ -474,9 +474,9 @@ async function main() {
     customerName: `Khách ${marker}`,
     customerPhone,
     jar: customerJar,
-    voucherCode: "WELCOME100",
+    voucherCode: "WELCOME150",
   });
-  assert(!voucherBooking.usedPackage && voucherBooking.depositPayment?.status === "PENDING", "WELCOME100 không tạo đúng yêu cầu cọc.");
+  assert(!voucherBooking.usedPackage && voucherBooking.depositPayment?.status === "PENDING", "WELCOME150 không tạo đúng yêu cầu cọc.");
   assert(
     voucherBooking.depositAmount === Math.round((service.basePrice + service.therapistFee) * 0.1),
     "Tiền cọc voucher chưa bằng 10% giá trị Bill ban đầu trước ưu đãi.",
@@ -491,7 +491,7 @@ async function main() {
   const welcomeLedger = await db.ledgerEntry.findFirst({ where: { bookingGroup: { referenceCode: voucherReference }, category: "WELCOME_CREDIT" } });
   const voucherGroup = await db.bookingGroup.findUniqueOrThrow({ where: { referenceCode: voucherReference } });
   assert(account.creditBalance === 0 && voucherUsage.status === "CONFIRMED", "Voucher chưa được xác nhận sau webhook.");
-  assert(welcomeLedger?.amount === 100_000 && voucherGroup.holdExpiresAt === null && voucherGroup.status === "CONFIRMED", "Quyền lợi WELCOME100 hoặc AI xác nhận lịch chưa được kết sổ.");
+  assert(welcomeLedger?.amount === 150_000 && voucherGroup.holdExpiresAt === null && voucherGroup.status === "CONFIRMED", "Quyền lợi WELCOME150 hoặc AI xác nhận lịch chưa được kết sổ.");
   const autoConfirmationNotice = await db.notification.findFirst({
     where: { customerId, title: { contains: "AI xác nhận" }, body: { contains: voucherReference } },
   });

@@ -57,7 +57,7 @@ export function generateAvailableSlots(input: SlotInput): AvailableSlot[] {
   const matchingRooms = rooms.filter((room) => room.status === "ACTIVE" && room.suitableCategories.includes(service.category));
 
   const slots: AvailableSlot[] = [];
-  for (let minute = open; minute <= lastBooking; minute += 30) {
+  for (let minute = open; minute <= lastBooking; minute += 15) {
     if (bookingWindowError({
       startMinute: minute,
       durationMinutes: duration,

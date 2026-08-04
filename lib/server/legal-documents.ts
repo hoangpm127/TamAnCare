@@ -18,19 +18,19 @@ export type LegalDocument = {
 };
 
 export const LEGAL_APPROVAL_REQUIRED =
-  "Bản dự thảo vận hành. Tâm An Center phải bổ sung thông tin pháp nhân, đầu mối liên hệ và được người có thẩm quyền cùng tư vấn pháp lý phê duyệt trước khi mở bán thật.";
+  "Bản dự thảo vận hành. Tâm An Center đã bổ sung đầu mối cơ sở nhưng vẫn phải hoàn thiện thông tin pháp nhân và được người có thẩm quyền cùng tư vấn pháp lý phê duyệt trước khi mở bán thật.";
 
 const TERMS: LegalDocument = {
   type: "TERMS",
   title: "Điều khoản sử dụng",
-  version: "2026-07-22-draft.1",
-  effectiveDate: "22/07/2026 (dự thảo)",
+  version: "2026-08-04-draft.2",
+  effectiveDate: "04/08/2026 (dự thảo)",
   summary: "Quy định cách khách hàng truy cập, đặt dịch vụ và sử dụng nền tảng Tâm An Center.",
   sections: [
     {
       heading: "1. Chủ thể cung cấp dịch vụ",
       paragraphs: [
-        "Tên pháp lý, mã số thuế, địa chỉ trụ sở, số điện thoại và email tiếp nhận khiếu nại của đơn vị vận hành đang chờ Chủ doanh nghiệp bổ sung. Các thông tin này là điều kiện phải hoàn thiện trước khi công bố chính thức.",
+        "Đầu mối cơ sở: Nguyễn Văn Ngọc · 0938648439 · Centertaman@gmail.com. Hotline/Zalo phục vụ khách: 0963039273. Tên pháp lý, mã số thuế và địa chỉ trụ sở của đơn vị vận hành vẫn cần được người có thẩm quyền xác nhận trước khi công bố chính thức.",
       ],
     },
     {
@@ -75,14 +75,14 @@ const TERMS: LegalDocument = {
 const PRIVACY: LegalDocument = {
   type: "PRIVACY",
   title: "Chính sách bảo vệ dữ liệu cá nhân",
-  version: "2026-07-22-draft.1",
-  effectiveDate: "22/07/2026 (dự thảo)",
+  version: "2026-08-04-draft.2",
+  effectiveDate: "04/08/2026 (dự thảo)",
   summary: "Giải thích dữ liệu nào được xử lý, vì sao cần dùng và khách hàng có thể thực hiện quyền của mình như thế nào.",
   sections: [
     {
       heading: "1. Bên kiểm soát dữ liệu và đầu mối liên hệ",
       paragraphs: [
-        "Đơn vị vận hành Tâm An Center dự kiến là bên quyết định mục đích và phương thức xử lý dữ liệu trên nền tảng. Tên pháp lý, địa chỉ, email bảo vệ dữ liệu và số điện thoại tiếp nhận yêu cầu đang chờ Chủ doanh nghiệp phê duyệt; chưa được phép mở bán thật khi thiếu các thông tin này.",
+        "Đơn vị vận hành Tâm An Center dự kiến là bên quyết định mục đích và phương thức xử lý dữ liệu trên nền tảng. Yêu cầu dữ liệu hiện được tiếp nhận qua 0963039273 và Centertaman@gmail.com; tên pháp lý, địa chỉ trụ sở và đầu mối bảo vệ dữ liệu chính thức vẫn cần được phê duyệt trước khi mở bán thật.",
       ],
     },
     {
@@ -139,29 +139,30 @@ const PRIVACY: LegalDocument = {
 const BOOKING_POLICY: LegalDocument = {
   type: "BOOKING_POLICY",
   title: "Chính sách đặt lịch, đặt cọc và sử dụng dịch vụ",
-  version: "2026-07-22-draft.1",
-  effectiveDate: "22/07/2026 (dự thảo)",
+  version: "2026-08-04-draft.2",
+  effectiveDate: "04/08/2026 (dự thảo)",
   summary: "Các quy tắc vận hành được áp dụng khi khách giữ chỗ, đổi lịch, check-in và hoàn tất thanh toán.",
   sections: [
     {
       heading: "1. Khung giờ phục vụ",
       bullets: [
-        "Cơ sở mở cửa từ 08:00 đến 22:00 hằng ngày.",
-        "Giờ nhận lịch cuối dự kiến là 21:00; hệ thống chỉ hiển thị khung giờ phù hợp với thời lượng dịch vụ và năng lực còn trống.",
+        "Cơ sở mở cửa từ 09:00 đến 21:00 hằng ngày.",
+        "Khung bắt đầu muộn nhất là 20:45 đối với dịch vụ 15 phút; dịch vụ dài hơn chỉ hiện khi có thể kết thúc trước 21:00.",
         "Khung giờ hiển thị phụ thuộc đồng thời vào ghế/phòng, KTV, thời gian đệm và trạng thái booking đang giữ chỗ.",
       ],
     },
     {
       heading: "2. Giá và tiền đặt cọc",
       paragraphs: [
-        "Tiền cọc bằng 10% tổng Bill sau khi trừ ưu đãi hợp lệ. Hệ thống hiển thị rõ tổng trước giảm, khoản giảm, tổng sau giảm, cọc và số còn lại trước khi khách chuyển khoản.",
+        "Tiền cọc bằng 10% giá trị Bill ban đầu trước ưu đãi và không vượt quá số tiền thực trả. Hệ thống hiển thị rõ tổng trước giảm, khoản giảm, tổng sau giảm, cọc và số còn lại trước khi khách chuyển khoản.",
         "Khung giờ chỉ được giữ trong thời hạn hiển thị. Booking chưa nhận được khoản cọc hợp lệ có thể tự hết hạn để trả lại năng lực phục vụ. Trạng thái thanh toán căn cứ vào giao dịch ngân hàng đã đối soát.",
       ],
     },
     {
       heading: "3. Đổi lịch và khách không đến",
       bullets: [
-        "Mỗi khách được đổi lịch một lần trong một tháng mà không bị mất khoản cọc, với điều kiện thực hiện theo thời hạn thông báo được Tâm An Center công bố.",
+        "Mỗi khách được đổi lịch một lần trong một tháng mà không bị mất khoản cọc khi báo trước ít nhất 30 phút.",
+        "Khách đến muộn từ 15 phút có thể bị xử lý hủy/no-show tùy khả năng phục vụ thực tế của cơ sở.",
         "Từ lần đổi thứ hai trong cùng tháng, khoản cọc trước có thể bị khấu trừ và khách cần đặt cọc lại cho lịch mới.",
         "Khách không đến được áp dụng nguyên tắc tương tự; hệ thống gửi một lời nhắc hỗ trợ đặt lại trong tháng và nhắc lịch tiếp theo theo cách phù hợp.",
         "Nếu khách đến đúng lịch thì không áp dụng phạt cọc theo quy tắc đổi lịch/no-show. Trường hợp lỗi từ cơ sở, bất khả kháng, sức khỏe khẩn cấp hoặc tình huống đặc biệt phải có quy trình xem xét công bằng trước khi khấu trừ.",
@@ -170,13 +171,13 @@ const BOOKING_POLICY: LegalDocument = {
     {
       heading: "4. Check-in, người đi cùng và bố trí phục vụ",
       paragraphs: [
-        "Khách có thể dùng QR hoặc mã booking còn hiệu lực để check-in đúng cơ sở. Khi chọn Mời bạn/Mời sếp, thông tin quan hệ và ghi chú bố trí được chuyển cho cơ sở trong phạm vi cần thiết để chủ động xếp vị trí gần nhau; đây không phải cam kết tuyệt đối nếu năng lực phục vụ thay đổi.",
+        "Khách có thể dùng QR hoặc mã booking còn hiệu lực để check-in đúng cơ sở. Mỗi booking nhóm tối đa 6 người. Khi chọn Mời bạn/Mời sếp, thông tin quan hệ và ghi chú bố trí được chuyển cho cơ sở trong phạm vi cần thiết để chủ động xếp vị trí gần nhau; đây không phải cam kết tuyệt đối nếu năng lực phục vụ thay đổi.",
       ],
     },
     {
       heading: "5. Thanh toán còn lại, Tip và chứng từ",
       paragraphs: [
-        "Số còn lại của dịch vụ được thanh toán theo Bill sau khi trừ khoản cọc đã đối soát. Tip KTV là tự nguyện, nằm ngoài Bill dịch vụ và được hạch toán riêng để chi trả cho KTV vào cuối ngày theo quy trình nội bộ.",
+        "Số còn lại của dịch vụ được thanh toán theo Bill sau khi trừ khoản cọc đã đối soát. Tip KTV là tự nguyện, nằm ngoài Bill dịch vụ và được khách trao trực tiếp hoặc gửi qua quầy theo hướng dẫn riêng của cơ sở.",
       ],
     },
     {
@@ -191,8 +192,8 @@ const BOOKING_POLICY: LegalDocument = {
 const MARKETING: LegalDocument = {
   type: "MARKETING",
   title: "Lựa chọn nhận thông tin ưu đãi",
-  version: "2026-07-22-draft.1",
-  effectiveDate: "22/07/2026 (dự thảo)",
+  version: "2026-08-04-draft.2",
+  effectiveDate: "04/08/2026 (dự thảo)",
   summary: "Sự đồng ý riêng cho nội dung ưu đãi và chăm sóc không thiết yếu đối với việc thực hiện booking.",
   sections: [
     {

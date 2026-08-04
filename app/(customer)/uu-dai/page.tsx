@@ -19,6 +19,7 @@ import { refreshWalletLedger } from "@/lib/wallet-ledger";
 import { BankTransferDetails } from "@/components/bank-transfer-details";
 import { VoucherCard } from "@/components/voucher-card";
 import { cn, formatMoney, makeBookingCode } from "@/lib/utils";
+import { useReferralAttribution } from "@/lib/referral-attribution";
 
 type PurchaseStep = "select" | "bank" | "bill" | "confirming" | "done";
 type PendingPackagePayment = { id: string; status: string; amount: number; paymentCode?: string | null };
@@ -29,6 +30,7 @@ function OffersContent() {
   const router = useRouter();
   const params = useSearchParams();
   const membership = useMembership();
+  const attributionCode = useReferralAttribution();
   const [catalog, setCatalog] = useState<PublicCatalog | null>(null);
   const [catalogError, setCatalogError] = useState("");
   const [firstVisitEligible, setFirstVisitEligible] = useState(true);
@@ -105,7 +107,7 @@ function OffersContent() {
       const response = await fetch("/api/packages/purchase", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ planId: selectedPlan.id, paymentCode }),
+        body: JSON.stringify({ planId: selectedPlan.id, paymentCode, campaignCode: attributionCode ?? undefined }),
       });
       const data = await response.json();
       if (response.status === 401) {

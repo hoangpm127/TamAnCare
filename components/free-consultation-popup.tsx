@@ -7,7 +7,7 @@ import { CUSTOMER_ACCOUNT_CHANGED_EVENT, type CustomerAccountView } from "@/lib/
 type PreferredTime = "MORNING" | "AFTERNOON" | "EVENING";
 
 const TIME_OPTIONS: Array<{ value: PreferredTime; label: string; detail: string }> = [
-  { value: "MORNING", label: "Buổi sáng", detail: "08:00–12:00" },
+  { value: "MORNING", label: "Buổi sáng", detail: "09:00–12:00" },
   { value: "AFTERNOON", label: "Buổi chiều", detail: "12:00–18:00" },
   { value: "EVENING", label: "Buổi tối", detail: "18:00–21:00" },
 ];

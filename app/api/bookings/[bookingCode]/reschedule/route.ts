@@ -11,6 +11,7 @@ import { isSameOriginMutation, privateIdentifierDigest, requestIp } from "@/lib/
 import { buildPaymentCode } from "@/lib/server/payment-service";
 import { bookingWindowError } from "@/lib/scheduling-policy";
 import { isCustomerAudienceRequest } from "@/lib/request-audience";
+import { BOOKING_POLICY } from "@/lib/business-policy";
 
 const schema = z.object({
   newStartTime: z.string().min(16),
@@ -92,13 +93,19 @@ export async function POST(request: Request, context: { params: Promise<{ bookin
             }))
           : false;
         if (!ownsBooking && !guestVerified) throw new RescheduleError("Cần đăng nhập hoặc mở booking trên đúng thiết bị đã đặt lịch.", 401);
+        const currentStart = bookings.reduce((earliest, item) => item.startTime < earliest ? item.startTime : earliest, bookings[0].startTime);
+        if (currentStart.getTime() - Date.now() < BOOKING_POLICY.rescheduleNoticeMinutes * 60_000) {
+          throw new RescheduleError(`Cần báo đổi lịch trước ít nhất ${BOOKING_POLICY.rescheduleNoticeMinutes} phút.`, 409);
+        }
       }
       const key = monthKey(new Date());
       const existingPolicy = await tx.customerMonthlyPolicy.findUnique({ where: { customerId_monthKey: { customerId, monthKey: key } } });
       const requiresAdditionalDeposit = (existingPolicy?.rescheduleCount ?? 0) >= 1;
 
       const firstStart = parseBusinessDateTime(parsed.data.newStartTime);
-      if (firstStart <= new Date()) throw new Error("Khung giờ mới phải nằm trong tương lai.");
+      if (firstStart < addMinutes(new Date(), BOOKING_POLICY.minimumLeadMinutes)) {
+        throw new Error(`Khung giờ mới cần cách hiện tại ít nhất ${BOOKING_POLICY.minimumLeadMinutes} phút.`);
+      }
       const branch = await tx.branch.findUniqueOrThrow({ where: { id: branchId } });
       const startParts = businessParts(firstStart);
       const reservedTherapists = new Set<string>();
