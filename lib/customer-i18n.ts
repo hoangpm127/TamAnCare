@@ -813,6 +813,7 @@ const COMPLETE_KOREAN: Record<string, string> = {
   "Ưu đãi | Tâm An Center": "혜택 | TÂM AN CENTER",
   "hằng ngày · nhận lịch cuối lúc": "매일 · 마지막 예약",
   "Khuyến nghị tối thiểu": "최소 권장 인원:",
+  "Khuyến nghị tối thiểu 5 người/buổi. Hệ thống dự kiến điều phối": "회당 최소 5명을 권장합니다. 예상 배정:",
   "người/buổi. Hệ thống dự kiến điều phối": "명/회 · 예상 배정:",
   "KTV cho đơn này.": "명의 테라피스트",
   "phút/người": "분/명",
