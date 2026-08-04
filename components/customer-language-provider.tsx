@@ -4,6 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useLayoutEffect, use
 import {
   CUSTOMER_LANGUAGE_COOKIE_KEY,
   CUSTOMER_LANGUAGE_STORAGE_KEY,
+  isCustomerLanguage,
   translateCustomerText,
   type CustomerLanguage,
 } from "@/lib/customer-i18n";
@@ -22,7 +23,7 @@ const LANGUAGE_COOKIE_SYNC_KEY = "tam-an-language-cookie-synced";
 function storedLanguage(fallback: CustomerLanguage): CustomerLanguage {
   try {
     const stored = window.localStorage.getItem(CUSTOMER_LANGUAGE_STORAGE_KEY);
-    if (stored === "ko" || stored === "vi") return stored;
+    if (isCustomerLanguage(stored)) return stored;
   } catch {
     // The server-provided cookie value remains the fallback when storage is blocked.
   }
@@ -137,7 +138,7 @@ export function CustomerLanguageProvider({
     if (document.body) applyLanguage(document.body, language);
     const titleNode = document.querySelector("title")?.firstChild;
     if (titleNode instanceof Text) translateTextNode(titleNode, language);
-    document.documentElement.lang = language;
+    document.documentElement.lang = language === "zh" ? "zh-CN" : language;
     if (rootRef.current) rootRef.current.style.visibility = "visible";
   }, [language]);
 
@@ -190,7 +191,7 @@ export function CustomerLanguageProvider({
         lang={language}
         data-customer-language-root
         className="min-h-dvh"
-        style={language === "ko" ? { visibility: "hidden" } : undefined}
+        style={language !== "vi" ? { visibility: "hidden" } : undefined}
       >
         {children}
       </div>

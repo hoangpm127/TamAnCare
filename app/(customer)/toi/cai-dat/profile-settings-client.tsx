@@ -56,10 +56,12 @@ export function ProfileSettingsClient() {
       <section className="mb-4 rounded-2xl border border-[#d2ad5d]/55 bg-gradient-to-br from-[#fffdf9] to-[#fbf2e7] p-4 shadow-sm">
         <h2 className="flex items-center gap-2 text-sm font-semibold"><Languages size={17} className="text-[#a85f29]" /> Ngôn ngữ</h2>
         <p className="mt-1 text-xs leading-5 text-[#826f66]">Chọn ngôn ngữ hiển thị cho toàn bộ khu vực khách hàng.</p>
-        <div className="mt-3 grid grid-cols-2 gap-2" role="radiogroup" aria-label="Ngôn ngữ">
+        <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4" role="radiogroup" aria-label="Ngôn ngữ">
           {([
             { value: "vi" as const, label: "Tiếng Việt", short: "VI" },
             { value: "ko" as const, label: "Tiếng Hàn", short: "KO" },
+            { value: "en" as const, label: "Tiếng Anh", short: "EN" },
+            { value: "zh" as const, label: "Tiếng Trung", short: "中文" },
           ]).map((option) => {
             const selected = language === option.value;
             return (

@@ -1,9 +1,20 @@
-export type CustomerLanguage = "vi" | "ko";
+import { EXACT_ENGLISH } from "@/lib/customer-i18n-en.generated";
+import { EXACT_CHINESE } from "@/lib/customer-i18n-zh.generated";
+
+export const CUSTOMER_LANGUAGES = ["vi", "ko", "en", "zh"] as const;
+export type CustomerLanguage = (typeof CUSTOMER_LANGUAGES)[number];
+
+export function isCustomerLanguage(value: string | null | undefined): value is CustomerLanguage {
+  return CUSTOMER_LANGUAGES.includes(value as CustomerLanguage);
+}
 
 export const CUSTOMER_LANGUAGE_STORAGE_KEY = "tam-an-customer-language";
 export const CUSTOMER_LANGUAGE_COOKIE_KEY = "tam_customer_language";
 
 const EXACT_KOREAN: Record<string, string> = {
+  "Màn hình vừa gặp sự cố": "오류가 발생했습니다",
+  "Dữ liệu giao dịch chưa được tự động thay đổi. Bạn có thể thử tải lại; nếu lỗi lặp lại, hãy báo lễ tân hoặc quản lý.": "거래 데이터는 변경되지 않았습니다. 다시 시도해 주세요. 오류가 반복되면 리셉션 또는 관리자에게 문의해 주세요.",
+  "Mã tra soát:": "조회 코드:",
   "Trang chủ": "홈",
   "Ưu đãi": "혜택",
   "Đặt lịch": "예약",
@@ -153,6 +164,9 @@ const EXACT_KOREAN: Record<string, string> = {
   "Chọn ngôn ngữ hiển thị cho toàn bộ khu vực khách hàng.": "고객용 화면에 표시할 언어를 선택하세요.",
   "Tiếng Việt": "베트남어",
   "Tiếng Hàn": "한국어",
+  "Tiếng Anh": "영어",
+  "Tiếng Trung": "중국어",
+  "Thông tin cá nhân, thông báo, Tiếng Việt / English / 中文 / 한국어": "개인정보, 알림, 베트남어 / 영어 / 중국어 / 한국어",
   "Lựa chọn được ghi nhớ trên thiết bị này và có thể đổi lại bất cứ lúc nào.": "선택한 언어는 이 기기에 저장되며 언제든 변경할 수 있습니다.",
   "Thông tin cá nhân": "개인정보",
   "Họ và tên": "이름",
@@ -1184,6 +1198,10 @@ const COMPLETE_KOREAN: Record<string, string> = {
   "Mua 49 tặng 10": "49회 구매 + 10회 증정",
 };
 
+export const CUSTOMER_TRANSLATION_SOURCE_KEYS = Object.freeze([
+  ...new Set([...Object.keys(EXACT_KOREAN), ...Object.keys(COMPLETE_KOREAN)]),
+]);
+
 const KOREAN_REPLACEMENTS: Array<[string, string]> = [
   ["cơ sở đang nhận lịch", "개 지점 예약 가능"],
   ["KTV chuyên nghiệp", "명의 전문 테라피스트"],
@@ -1253,18 +1271,322 @@ const KOREAN_REPLACEMENTS: Array<[string, string]> = [
   ["ngày", "일"],
 ];
 
+const EXACT_ENGLISH_OVERRIDES: Record<string, string> = {
+  "Màn hình vừa gặp sự cố": "Something went wrong",
+  "Dữ liệu giao dịch chưa được tự động thay đổi. Bạn có thể thử tải lại; nếu lỗi lặp lại, hãy báo lễ tân hoặc quản lý.": "Your transaction data has not been changed. Try again; if the problem continues, please contact reception or a manager.",
+  "Mã tra soát:": "Reference code:",
+  "Thử tải lại": "Try again",
+  "Thông báo": "Notifications",
+  "Check-in tại cơ sở": "Check in at the location",
+  "Chat với cơ sở": "Contact the location",
+  "Thu - Chi của tôi": "My income & expenses",
+  "Quay lại trang Tôi": "Back to My account",
+  "Thông tin dùng để đặt lịch và cá nhân hóa dịch vụ.": "Information used to book appointments and personalize your service.",
+  "Chọn ngôn ngữ hiển thị cho toàn bộ khu vực khách hàng.": "Choose the display language for the entire customer app.",
+  "Tiếng Trung": "Simplified Chinese",
+  "Lựa chọn được ghi nhớ trên thiết bị này và có thể đổi lại bất cứ lúc nào.": "Your choice is saved on this device and can be changed at any time.",
+  "Lực massage ưa thích": "Preferred massage pressure",
+  "Nhắc lịch hẹn": "Appointment reminders",
+  "Nhận thông báo trước giờ massage.": "Receive a reminder before your appointment.",
+  "Ưu đãi phù hợp": "Offers for you",
+  "Nhận voucher theo lịch sử sử dụng.": "Receive vouchers based on your service history.",
+  "Đặt lịch nhanh": "Quick booking",
+  "Hình thức đặt lịch bạn muốn?": "How would you like to book?",
+  "RIÊNG TƯ": "PRIVATE",
+  "Tự chọn dịch vụ & KTV": "Choose your service & therapist",
+  "Chủ động khung giờ phù hợp": "Choose the time that suits you",
+  "Cá nhân": "Personal booking",
+  "Đặt lịch theo đúng nhu cầu và nhịp nghỉ ngơi của riêng bạn.": "Book around your needs and preferred pace.",
+  "Chọn lịch": "View times",
+  "Mời bạn": "Invite a friend",
+  "Đi cùng vui hơn": "Better together",
+  "Mời sếp": "Invite your manager",
+  "Kín đáo · gần nhau": "Private · together",
+  "Tâm An Business": "TÂM AN BUSINESS",
+  "Sức khỏe định kỳ cho cả công ty": "Recurring wellness for your company",
+  "Hơn 500 khách hàng & doanh nghiệp đã tin dùng.": "Trusted by 500+ guests and businesses.",
+  "0đ": "0 ₫",
+  "0 ₫ · Đã đối soát đủ": "0 ₫ · Fully reconciled",
+  "· Đã hết lượt": "· Fully used",
+  "Đã hết lượt": "Fully used",
+  "Đã đối soát": "Reconciled",
+  "Bill đã đặt chỗ": "Reserved bill",
+  "Bill Tâm An Business": "TÂM AN BUSINESS bill",
+  "Đơn của tôi | Tâm An Center": "My bookings | TÂM AN CENTER",
+  "Tôi | Tâm An Center": "Me | TÂM AN CENTER",
+  "Thông báo | Tâm An Center": "Notifications | TÂM AN CENTER",
+  "Khách Tâm An": "TÂM AN CENTER guest",
+  "Đang chờ quầy xác nhận đã nhận đủ Bill.": "Waiting for reception to confirm the bill has been paid in full.",
+  "Affiliate Tâm An": "TÂM AN CENTER Affiliate",
+  "Địa chỉ ở đâu?": "Where are you located?",
+  "Cổ Vai Gáy 3 buổi": "Neck & shoulder care · 3 sessions",
+  "Khởi động Cổ Vai Gáy 3 buổi": "Neck & shoulder starter package · 3 sessions",
+  "Dài hạn Cổ Vai Gáy 9+1": "Neck & shoulder package · 9+1 sessions",
+  "Dài hạn Body 9+1": "Full-body package · 9+1 sessions",
+  "Đồng hành Body 15+2": "Full-body companion package · 15+2 sessions",
+  "Massage Body · Chăm sóc lưng hông · Lực khá có kiểm soát": "Full-body massage · Back & hip care · Controlled firm pressure",
+  "Massage Body, cổ vai gáy, chân, lưng hông và các liệu trình chăm sóc chuyên sâu.": "Full-body, neck & shoulder, foot, back & hip massage, plus specialized wellness programs.",
+  "1 buổi onsite / tuần": "1 onsite wellness session / week",
+  "2 buổi onsite / tuần": "2 onsite wellness sessions / week",
+  "3 buổi onsite / tuần": "3 onsite wellness sessions / week",
+  "Xem đồng hồ Tâm An Business": "View the TÂM AN BUSINESS timer",
+  "Tâm An Center hỗ trợ xem thông tin, đặt lịch chăm sóc sức khỏe, thanh toán/đối soát, quản lý quyền lợi thành viên, Affiliate và trao đổi với cơ sở. Dịch vụ chăm sóc không thay thế việc khám, chẩn đoán hoặc điều trị y khoa.": "TÂM AN CENTER lets guests view information, book wellness services, make and reconcile payments, manage membership and Affiliate benefits, and contact the location. Wellness services do not replace medical examination, diagnosis or treatment.",
+  "KTV": "Therapist",
+  "KTV mới": "New therapist",
+  "Chọn KTV": "Choose a therapist",
+  "Chọn KTV yêu thích": "Choose your preferred therapist",
+  "Gửi mã OTP": "Send OTP",
+  "Gửi mã SMS": "Send SMS code",
+  "Đang chờ ngân hàng đối soát qua SePay...": "Waiting for SePay to reconcile the bank transfer…",
+  "Tâm An Center · Tây Hồ": "TÂM AN CENTER · Tây Hồ",
+  "Xin chào! Mình là trợ lý tự động của Tâm An Center · Tây Hồ. Nội dung chỉ mang tính hướng dẫn và không được chuyển trực tiếp cho lễ tân.": "Hello! I’m the automated assistant for TÂM AN CENTER · Tây Hồ. This chat is for guidance only and is not sent directly to reception.",
+  "Thông tin cơ sở đang được cập nhật. Vui lòng mở mục Liên hệ để kiểm tra lại.": "Location information is being updated. Please open Contact to check again.",
+  "Giá và lịch trống thay đổi theo dịch vụ, cơ sở và thời điểm. Vui lòng mở Đặt lịch để xem dữ liệu còn chỗ theo thời gian thực; trợ lý này không tự giữ lịch.": "Prices and availability vary by service, location and time. Open Booking for real-time availability; this assistant does not hold a slot automatically.",
+  "Xin chào! Mình là trợ lý tự động của Tâm An Center. Mình có thể hướng dẫn bạn xem dịch vụ, lịch trống, địa chỉ và hotline; đây không phải cuộc chat trực tiếp với lễ tân.": "Hello! I’m the TÂM AN CENTER automated assistant. I can help with services, availability, the address and hotline; this is not a live chat with reception.",
+  "Mình chỉ có thể hướng dẫn thông tin cơ bản. Để được tư vấn trực tiếp, bạn vui lòng mở mục Liên hệ và gọi hotline của cơ sở phù hợp.": "I can provide basic guidance only. For direct support, open Contact and call the relevant location.",
+};
+
+const EXACT_CHINESE_OVERRIDES: Record<string, string> = {
+  "Màn hình vừa gặp sự cố": "页面出现问题",
+  "Dữ liệu giao dịch chưa được tự động thay đổi. Bạn có thể thử tải lại; nếu lỗi lặp lại, hãy báo lễ tân hoặc quản lý.": "您的交易数据尚未发生更改。请重试；如果问题仍然存在，请联系前台或门店管理人员。",
+  "Mã tra soát:": "查询编号：",
+  "Thử tải lại": "重试",
+  "Thông báo": "通知",
+  "Check-in tại cơ sở": "门店签到",
+  "Chat với cơ sở": "联系门店",
+  "Thu - Chi của tôi": "我的收支",
+  "Quay lại trang Tôi": "返回“我的”",
+  "Thông tin dùng để đặt lịch và cá nhân hóa dịch vụ.": "用于预约和个性化服务的信息。",
+  "Chọn ngôn ngữ hiển thị cho toàn bộ khu vực khách hàng.": "选择整个客户端的显示语言。",
+  "Tiếng Trung": "简体中文",
+  "Lựa chọn được ghi nhớ trên thiết bị này và có thể đổi lại bất cứ lúc nào.": "您的选择将保存在此设备上，并可随时更改。",
+  "Lực massage ưa thích": "偏好的按摩力度",
+  "Nhẹ": "轻柔",
+  "Vừa": "适中",
+  "Mạnh": "较强",
+  "Tình trạng sức khỏe hoặc vùng cần lưu ý": "健康状况或需注意部位",
+  "Nhắc lịch hẹn": "预约提醒",
+  "Nhận thông báo trước giờ massage.": "在预约开始前接收提醒。",
+  "Ưu đãi phù hợp": "为您推荐的优惠",
+  "Nhận voucher theo lịch sử sử dụng.": "根据您的服务记录接收优惠券。",
+  "Đặt lịch nhanh": "快速预约",
+  "Hình thức đặt lịch bạn muốn?": "您想选择哪种预约方式？",
+  "RIÊNG TƯ": "私享",
+  "Riêng tư": "私享",
+  "Tự chọn dịch vụ & KTV": "自选服务与理疗师",
+  "Chủ động khung giờ phù hợp": "主动选择合适时段",
+  "Cá nhân": "个人预约",
+  "Đặt lịch theo đúng nhu cầu và nhịp nghỉ ngơi của riêng bạn.": "根据您的需求和休息节奏预约。",
+  "Chọn lịch": "选择时段",
+  "Mời bạn": "邀请朋友",
+  "Đi cùng vui hơn": "结伴更放松",
+  "Mời sếp": "邀请上司",
+  "Kín đáo · gần nhau": "私密 · 相邻安排",
+  "Tâm An Business": "TÂM AN BUSINESS",
+  "Sức khỏe định kỳ cho cả công ty": "企业定期健康护理",
+  "Hơn 500 khách hàng & doanh nghiệp đã tin dùng.": "深受500多位顾客与企业信赖。",
+  "0đ": "0 ₫",
+  "0 ₫ · Đã đối soát đủ": "0 ₫ · 已完成对账",
+  "· Đã hết lượt": "· 已全部使用",
+  "Đã hết lượt": "已全部使用",
+  "Đã đối soát": "已对账",
+  "Bill đã đặt chỗ": "已预约账单",
+  "Bill Tâm An Business": "TÂM AN BUSINESS 账单",
+  "Đơn của tôi | Tâm An Center": "我的预约 | TÂM AN CENTER",
+  "Tôi | Tâm An Center": "我的 | TÂM AN CENTER",
+  "Thông báo | Tâm An Center": "通知 | TÂM AN CENTER",
+  "Khách Tâm An": "TÂM AN CENTER 顾客",
+  "Đang chờ quầy xác nhận đã nhận đủ Bill.": "正在等待前台确认账单已全额支付。",
+  "Affiliate Tâm An": "TÂM AN CENTER 推广合作",
+  "Địa chỉ ở đâu?": "地址在哪里？",
+  "Cổ Vai Gáy 3 buổi": "颈肩护理 · 3次",
+  "Khởi động Cổ Vai Gáy 3 buổi": "颈肩入门套餐 · 3次",
+  "Dài hạn Cổ Vai Gáy 9+1": "颈肩长期套餐 · 9+1次",
+  "Dài hạn Body 9+1": "全身长期套餐 · 9+1次",
+  "Đồng hành Body 15+2": "全身陪伴套餐 · 15+2次",
+  "Massage Body · Chăm sóc lưng hông · Lực khá có kiểm soát": "全身按摩 · 腰背与髋部护理 · 可控的较强力度",
+  "Massage Body, cổ vai gáy, chân, lưng hông và các liệu trình chăm sóc chuyên sâu.": "提供全身、颈肩、足部、腰背与髋部按摩及专业健康护理项目。",
+  "1 buổi onsite / tuần": "每周1次上门健康护理",
+  "2 buổi onsite / tuần": "每周2次上门健康护理",
+  "3 buổi onsite / tuần": "每周3次上门健康护理",
+  "Xem đồng hồ Tâm An Business": "查看 TÂM AN BUSINESS 计时器",
+  "Tâm An sẽ chuyển ghi chú tế nhị tới quản lý cơ sở để ưu tiên không gian lịch sự, yên tĩnh và giường gần nhau.": "TÂM AN CENTER 会将您的私密备注转达给门店管理人员，优先安排安静、舒适且相邻的床位。",
+  "Tâm An Center hỗ trợ xem thông tin, đặt lịch chăm sóc sức khỏe, thanh toán/đối soát, quản lý quyền lợi thành viên, Affiliate và trao đổi với cơ sở. Dịch vụ chăm sóc không thay thế việc khám, chẩn đoán hoặc điều trị y khoa.": "TÂM AN CENTER 支持查看信息、预约健康护理、支付与对账、管理会员及推广权益，并联系门店。健康护理服务不能替代医疗检查、诊断或治疗。",
+  "KTV": "理疗师",
+  "KTV mới": "新理疗师",
+  "Chọn KTV": "选择理疗师",
+  "Chọn KTV yêu thích": "选择您偏好的理疗师",
+  "Gửi mã OTP": "发送验证码",
+  "Gửi mã SMS": "发送短信验证码",
+  "Đang chờ ngân hàng đối soát qua SePay...": "正在等待 SePay 完成银行转账对账…",
+  "Tâm An Center · Tây Hồ": "TÂM AN CENTER · Tây Hồ",
+  "Xin chào! Mình là trợ lý tự động của Tâm An Center · Tây Hồ. Nội dung chỉ mang tính hướng dẫn và không được chuyển trực tiếp cho lễ tân.": "您好！我是 TÂM AN CENTER · Tây Hồ 的自动咨询助手。本对话仅供指引，不会直接转发给前台。",
+  "Thông tin cơ sở đang được cập nhật. Vui lòng mở mục Liên hệ để kiểm tra lại.": "门店信息正在更新，请打开“联系我们”再次确认。",
+  "Giá và lịch trống thay đổi theo dịch vụ, cơ sở và thời điểm. Vui lòng mở Đặt lịch để xem dữ liệu còn chỗ theo thời gian thực; trợ lý này không tự giữ lịch.": "价格和可预约时间会因服务、门店及时间而变化。请打开“预约”查看实时余位；本助手不会自动保留时段。",
+  "Xin chào! Mình là trợ lý tự động của Tâm An Center. Mình có thể hướng dẫn bạn xem dịch vụ, lịch trống, địa chỉ và hotline; đây không phải cuộc chat trực tiếp với lễ tân.": "您好！我是 TÂM AN CENTER 的自动咨询助手，可为您介绍服务、可预约时间、地址和热线；这里不是与前台的实时聊天。",
+  "Mình chỉ có thể hướng dẫn thông tin cơ bản. Để được tư vấn trực tiếp, bạn vui lòng mở mục Liên hệ và gọi hotline của cơ sở phù hợp.": "我只能提供基本指引。如需人工咨询，请打开“联系我们”并拨打相应门店热线。",
+};
+
+const ENGLISH_REPLACEMENTS: Array<[string, string]> = [
+  ["cơ sở đang nhận lịch", "location(s) accepting bookings"],
+  ["KTV chuyên nghiệp", "professional therapist(s)"],
+  ["Chọn cơ sở & kỹ thuật viên", "Choose location & therapist"],
+  ["Chọn ngày và giờ", "Choose date & time"],
+  ["Chọn dịch vụ", "Choose services"],
+  ["Thông tin khách", "Guest details"],
+  ["Đặt cọc giữ chỗ", "Reservation deposit"],
+  ["Thư giãn Chân", "Foot relaxation"],
+  ["Chăm sóc Body", "Full-body care"],
+  ["Đồng hành Body", "Full-body companion"],
+  ["Massage Cổ Vai Gáy", "Neck & shoulder massage"],
+  ["Massage Lưng Hông", "Back & hip massage"],
+  ["Massage Chân", "Foot massage"],
+  ["Massage Bụng", "Abdominal massage"],
+  ["Massage Body", "Full-body massage"],
+  ["Chườm Ngải Nóng, Thảo Dược", "Warm mugwort & herbal compress"],
+  ["Bổ Sung Năng Lượng Đầu", "Head relaxation care"],
+  ["Cạo Gió Giác Hơi", "Gua sha & cupping"],
+  ["Chườm Đá Nóng", "Hot-stone compress"],
+  ["Đắp Bùn Ngải", "Mugwort mud pack"],
+  ["Xông Hơi", "Steam sauna"],
+  ["Cổ Vai Gáy", "Neck & shoulder"],
+  ["Gói dài hạn", "Long-term package"],
+  ["Gói thành viên", "Membership package"],
+  ["Dài hạn", "Long-term"],
+  ["Áp dụng:", "Applies to:"],
+  ["Tiết kiệm", "Save"],
+  ["Dành cho chủ thẻ", "Cardholder only"],
+  ["Dùng được cho nhóm", "Group use available"],
+  ["Ngày hiệu lực", "Validity (days)"],
+  ["Lượt sử dụng", "Sessions"],
+  ["Mua + tặng", "Buy + bonus"],
+  ["Đang áp dụng", "Active"],
+  ["Kỹ thuật viên", "Therapist"],
+  ["KTV", "therapist"],
+  ["chỗ rảnh", "available slot(s)"],
+  ["Tên hiển thị", "Display name"],
+  ["Tài khoản mới", "New account"],
+  ["Khách mới", "New guest"],
+  ["Đơn từ", "Orders from"],
+  ["GIẢM", "SAVE"],
+  ["Giảm", "Save"],
+  ["Mua", "Buy"],
+  ["tặng", "bonus"],
+  ["giá từ", "from"],
+  ["mỗi nhân sự", "per employee"],
+  ["người/buổi", "people/session"],
+  ["khách hàng", "guest"],
+  ["doanh nghiệp", "business"],
+  ["dịch vụ", "service"],
+  ["đặt lịch", "booking"],
+  ["thanh toán", "payment"],
+  ["tài khoản", "account"],
+  ["thông báo", "notification"],
+  ["lịch hẹn", "appointment"],
+  ["hóa đơn", "bill"],
+  ["hoá đơn", "bill"],
+  ["số điện thoại", "phone number"],
+  ["đăng nhập", "sign in"],
+  ["đăng ký", "sign up"],
+  ["mật khẩu", "password"],
+  ["cơ sở", "location"],
+  ["/buổi", "/session"],
+  ["phút", "minutes"],
+  ["buổi", "sessions"],
+  ["ngày", "days"],
+];
+
+const CHINESE_REPLACEMENTS: Array<[string, string]> = [
+  ["cơ sở đang nhận lịch", "家门店可预约"],
+  ["KTV chuyên nghiệp", "名专业理疗师"],
+  ["Chọn cơ sở & kỹ thuật viên", "选择门店和理疗师"],
+  ["Chọn ngày và giờ", "选择日期和时间"],
+  ["Chọn dịch vụ", "选择服务"],
+  ["Thông tin khách", "顾客信息"],
+  ["Đặt cọc giữ chỗ", "预约订金"],
+  ["Thư giãn Chân", "足部放松"],
+  ["Chăm sóc Body", "全身护理"],
+  ["Đồng hành Body", "全身陪伴"],
+  ["Massage Cổ Vai Gáy", "颈肩按摩"],
+  ["Massage Lưng Hông", "腰背与髋部按摩"],
+  ["Massage Chân", "足部按摩"],
+  ["Massage Bụng", "腹部按摩"],
+  ["Massage Body", "全身按摩"],
+  ["Chườm Ngải Nóng, Thảo Dược", "温热艾草与草本热敷"],
+  ["Bổ Sung Năng Lượng Đầu", "头部舒缓护理"],
+  ["Cạo Gió Giác Hơi", "刮痧与拔罐"],
+  ["Chườm Đá Nóng", "热石热敷"],
+  ["Đắp Bùn Ngải", "艾草泥敷"],
+  ["Xông Hơi", "蒸汽桑拿"],
+  ["Cổ Vai Gáy", "颈肩"],
+  ["Gói dài hạn", "长期套餐"],
+  ["Gói thành viên", "会员套餐"],
+  ["Dài hạn", "长期"],
+  ["Áp dụng:", "适用于："],
+  ["Tiết kiệm", "节省"],
+  ["Dành cho chủ thẻ", "仅限持卡人"],
+  ["Dùng được cho nhóm", "可供多人使用"],
+  ["Ngày hiệu lực", "有效期（天）"],
+  ["Lượt sử dụng", "使用次数"],
+  ["Mua + tặng", "购买 + 赠送"],
+  ["Đang áp dụng", "使用中"],
+  ["Kỹ thuật viên", "理疗师"],
+  ["KTV", "理疗师"],
+  ["chỗ rảnh", "个可用时段"],
+  ["Tên hiển thị", "显示名称"],
+  ["Tài khoản mới", "新账户"],
+  ["Khách mới", "新顾客"],
+  ["Đơn từ", "订单满"],
+  ["GIẢM", "优惠"],
+  ["Giảm", "优惠"],
+  ["Mua", "购买"],
+  ["tặng", "赠送"],
+  ["giá từ", "起价"],
+  ["mỗi nhân sự", "每位员工"],
+  ["người/buổi", "人/次"],
+  ["khách hàng", "顾客"],
+  ["doanh nghiệp", "企业"],
+  ["dịch vụ", "服务"],
+  ["đặt lịch", "预约"],
+  ["thanh toán", "支付"],
+  ["tài khoản", "账户"],
+  ["thông báo", "通知"],
+  ["lịch hẹn", "预约"],
+  ["hóa đơn", "账单"],
+  ["hoá đơn", "账单"],
+  ["số điện thoại", "电话号码"],
+  ["đăng nhập", "登录"],
+  ["đăng ký", "注册"],
+  ["mật khẩu", "密码"],
+  ["cơ sở", "门店"],
+  ["/buổi", "/次"],
+  ["phút", "分钟"],
+  ["buổi", "次"],
+  ["ngày", "天"],
+];
+
 function preserveOuterWhitespace(source: string, translated: string) {
   const leading = source.match(/^\s*/)?.[0] ?? "";
   const trailing = source.match(/\s*$/)?.[0] ?? "";
   return `${leading}${translated}${trailing}`;
 }
 
+function normalizeTranslatedCopy(translated: string, language: CustomerLanguage) {
+  if (language === "en") return translated.replace(/\bKTV\b/g, "therapist");
+  if (language === "zh") return translated.replaceAll("KTV", "理疗师").replaceAll("比尔", "账单");
+  return translated;
+}
+
 export function translateCustomerText(source: string, language: CustomerLanguage) {
   if (language === "vi") return source;
   const core = source.trim();
   if (!core) return source;
-  const exact = COMPLETE_KOREAN[core] ?? EXACT_KOREAN[core];
-  if (exact) return preserveOuterWhitespace(source, exact);
+  const exact = language === "ko"
+    ? COMPLETE_KOREAN[core] ?? EXACT_KOREAN[core]
+    : language === "en"
+      ? EXACT_ENGLISH_OVERRIDES[core] ?? EXACT_ENGLISH[core]
+      : EXACT_CHINESE_OVERRIDES[core] ?? EXACT_CHINESE[core];
+  if (exact) return preserveOuterWhitespace(source, normalizeTranslatedCopy(exact, language));
 
   let translated = core;
   let changed = false;
@@ -1272,28 +1594,48 @@ export function translateCustomerText(source: string, language: CustomerLanguage
   const vipProgress = translated.match(/^Thêm (.+) để lên hạng VIP\.$/);
   if (chatGreeting) {
     const branchName = chatGreeting[1].replace("Tâm An Center", "TÂM AN CENTER");
-    translated = `안녕하세요! 저는 ${branchName}의 자동 안내 도우미입니다. 이 대화는 안내용이며 리셉션에 직접 전달되지 않습니다.`;
+    translated = language === "ko"
+      ? `안녕하세요! 저는 ${branchName}의 자동 안내 도우미입니다. 이 대화는 안내용이며 리셉션에 직접 전달되지 않습니다.`
+      : language === "en"
+        ? `Hello! I’m the automated assistant for ${branchName}. This chat is for guidance only and is not sent directly to reception.`
+        : `您好！我是 ${branchName} 的自动咨询助手。本对话仅供指引，不会直接转发给前台。`;
     changed = true;
   } else if (vipProgress) {
-    translated = `VIP 등급까지 ${vipProgress[1]}가 더 필요합니다.`;
+    translated = language === "ko"
+      ? `VIP 등급까지 ${vipProgress[1]}가 더 필요합니다.`
+      : language === "en"
+        ? `Spend ${vipProgress[1]} more to reach VIP status.`
+        : `再消费 ${vipProgress[1]} 即可升级为 VIP。`;
     changed = true;
   } else if (/^Thu\s+(?=[+\-]?\d|₫)/.test(translated)) {
-    translated = translated.replace(/^Thu\s+/, "수입 ");
+    translated = translated.replace(/^Thu\s+/, language === "ko" ? "수입 " : language === "en" ? "Income " : "收入 ");
     changed = true;
   } else if (/^Chi\s+/.test(translated)) {
-    translated = translated.replace(/^Chi\s+/, "지출 ");
+    translated = translated.replace(/^Chi\s+/, language === "ko" ? "지출 " : language === "en" ? "Expense " : "支出 ");
     changed = true;
   }
-  for (const [from, to] of KOREAN_REPLACEMENTS) {
+  const replacements = language === "ko" ? KOREAN_REPLACEMENTS : language === "en" ? ENGLISH_REPLACEMENTS : CHINESE_REPLACEMENTS;
+  for (const [from, to] of replacements) {
     if (!translated.includes(from)) continue;
     translated = translated.replaceAll(from, to);
     changed = true;
   }
-  const withUnits = translated
-    .replace(/(\d+(?:[.,]\d+)?)\s*phút/gi, "$1분")
-    .replace(/(\d+(?:[.,]\d+)?)\s*buổi/gi, "$1회")
-    .replace(/(\d+(?:[.,]\d+)?)\s*ngày/gi, "$1일")
-    .replace(/(\d+(?:[.,]\d+)?)\s+(개|명의|자리|분|회|일)/g, "$1$2");
+  const withUnits = language === "ko"
+    ? translated
+      .replace(/(\d+(?:[.,]\d+)?)\s*phút/gi, "$1분")
+      .replace(/(\d+(?:[.,]\d+)?)\s*buổi/gi, "$1회")
+      .replace(/(\d+(?:[.,]\d+)?)\s*ngày/gi, "$1일")
+      .replace(/(\d+(?:[.,]\d+)?)\s+(개|명의|자리|분|회|일)/g, "$1$2")
+    : language === "en"
+      ? translated
+        .replace(/(\d+(?:[.,]\d+)?)\s*phút/gi, "$1 minutes")
+        .replace(/(\d+(?:[.,]\d+)?)\s*buổi/gi, "$1 sessions")
+        .replace(/(\d+(?:[.,]\d+)?)\s*ngày/gi, "$1 days")
+      : translated
+        .replace(/(\d+(?:[.,]\d+)?)\s*phút/gi, "$1分钟")
+        .replace(/(\d+(?:[.,]\d+)?)\s*buổi/gi, "$1次")
+        .replace(/(\d+(?:[.,]\d+)?)\s*ngày/gi, "$1天")
+        .replace(/(\d+(?:[.,]\d+)?)\s+(家|名|个|分钟|次|天)/g, "$1$2");
   changed ||= withUnits !== translated;
   return changed ? preserveOuterWhitespace(source, withUnits) : source;
 }
