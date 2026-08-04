@@ -17,6 +17,7 @@ const LanguageContext = createContext<LanguageContextValue>({ language: "vi", se
 const textStates = new WeakMap<Text, { source: string; translated: string }>();
 const attributeStates = new WeakMap<Element, Map<string, { source: string; translated: string }>>();
 const TRANSLATABLE_ATTRIBUTES = ["aria-label", "placeholder", "title"] as const;
+const LANGUAGE_COOKIE_SYNC_KEY = "tam-an-language-cookie-synced";
 
 function storedLanguage(fallback: CustomerLanguage): CustomerLanguage {
   try {
@@ -26,6 +27,11 @@ function storedLanguage(fallback: CustomerLanguage): CustomerLanguage {
     // The server-provided cookie value remains the fallback when storage is blocked.
   }
   return fallback;
+}
+
+function writeLanguageCookie(language: CustomerLanguage) {
+  const secure = window.location.protocol === "https:" ? "; Secure" : "";
+  document.cookie = `${CUSTOMER_LANGUAGE_COOKIE_KEY}=${language}; Max-Age=31536000; Path=/; SameSite=Lax${secure}`;
 }
 
 function shouldSkip(node: Node) {
@@ -97,6 +103,26 @@ export function CustomerLanguageProvider({
   const rootRef = useRef<HTMLDivElement>(null);
   const frameRef = useRef<number | null>(null);
 
+  useLayoutEffect(() => {
+    const stored = storedLanguage(initialLanguage);
+    if (stored === initialLanguage) return;
+
+    let shouldReload = true;
+    try {
+      const marker = `${LANGUAGE_COOKIE_SYNC_KEY}:${stored}`;
+      shouldReload = window.sessionStorage.getItem(marker) !== "1";
+      window.sessionStorage.setItem(marker, "1");
+    } catch {
+      // Avoid a reload loop in browsers that block both sessionStorage and cookies.
+      shouldReload = false;
+    }
+
+    if (!shouldReload) return;
+    writeLanguageCookie(stored);
+    document.documentElement.style.visibility = "hidden";
+    window.location.reload();
+  }, [initialLanguage]);
+
   useEffect(() => {
     const stored = storedLanguage(initialLanguage);
     if (stored === initialLanguage) return;
@@ -150,8 +176,7 @@ export function CustomerLanguageProvider({
     } catch {
       // The cookie below remains the persistence fallback.
     }
-    const secure = window.location.protocol === "https:" ? "; Secure" : "";
-    document.cookie = `${CUSTOMER_LANGUAGE_COOKIE_KEY}=${nextLanguage}; Max-Age=31536000; Path=/; SameSite=Lax${secure}`;
+    writeLanguageCookie(nextLanguage);
     setLanguageState(nextLanguage);
   }, []);
 
