@@ -1231,11 +1231,66 @@ const COMPLETE_KOREAN: Record<string, string> = {
   "Mua 49 tặng 10": "49회 구매 + 10회 증정",
 };
 
+// Catalog copy is maintained in the database rather than JSX, so the static
+// customer-copy inventory cannot discover it. Keep the live catalog's
+// customer-facing fields together here to prevent mixed-language service,
+// voucher and therapist profiles after an operations update.
+const DYNAMIC_CATALOG_COPY = [
+  ["Chăm sóc toàn thân giúp thư giãn cơ bắp và phục hồi năng lượng.", "전신을 관리해 근육을 이완하고 에너지를 회복하도록 돕습니다.", "Full-body care that helps relax muscles and restore energy.", "全身护理，帮助放松肌肉并恢复活力。"],
+  ["Chăm sóc toàn thân với thời lượng mở rộng cho các vùng cơ căng mỏi.", "전신을 더 길게 관리해 긴장되고 뻐근한 근육 부위를 편안하게 풀어 줍니다.", "Extended full-body care for tense and tired muscle areas.", "延长全身护理时间，重点舒缓紧张和酸痛的肌肉部位。"],
+  ["Liệu trình toàn thân dài hơn, phù hợp nhu cầu thư giãn sâu.", "더 긴 전신 관리로 깊은 휴식이 필요한 고객에게 적합합니다.", "A longer full-body treatment suited to deeper relaxation.", "更长时长的全身护理，适合需要深度放松的顾客。"],
+  ["Thư giãn bàn chân và cẳng chân sau khi đứng, đi lại hoặc vận động nhiều.", "많이 서 있거나 걷거나 운동한 뒤 발과 종아리를 편안하게 풀어 줍니다.", "Relaxes the feet and lower legs after prolonged standing, walking or exercise.", "舒缓久站、行走或运动后的足部与小腿。"],
+  ["Chăm sóc bàn chân và cẳng chân kỹ hơn với thời lượng mở rộng.", "더 긴 시간 동안 발과 종아리를 꼼꼼하게 관리합니다.", "More thorough foot and lower-leg care with extended time.", "延长护理时间，更细致地放松足部与小腿。"],
+  ["Liệu trình chăm sóc chân dài hơn cho nhu cầu thư giãn chuyên sâu.", "깊은 휴식이 필요한 고객을 위한 장시간 다리 관리입니다.", "A longer foot and leg treatment for deeper relaxation.", "更长时长的足腿护理，满足深度放松需求。"],
+  ["Tập trung vùng cổ, vai và gáy để hỗ trợ thư giãn cảm giác căng mỏi.", "목·어깨·뒷목의 뻐근함을 편안하게 완화하는 데 집중합니다.", "Focused neck and shoulder care to ease feelings of tension and fatigue.", "重点护理颈、肩和后颈，帮助缓解紧张与酸痛感。"],
+  ["Chăm sóc kéo dài cho vùng cổ vai gáy và các nhóm cơ liên quan.", "목·어깨·뒷목과 관련 근육을 더 길게 관리합니다.", "Extended care for the neck, shoulders and related muscle groups.", "延长颈肩及相关肌群的护理时间。"],
+  ["Liệu trình cổ vai gáy dài hơn, điều chỉnh theo cảm nhận thực tế của khách.", "고객의 실제 컨디션에 맞춰 조절하는 장시간 목·어깨 관리입니다.", "A longer neck and shoulder treatment adjusted to how the guest feels.", "更长时长的颈肩护理，并根据顾客的实际感受进行调整。"],
+  ["Cạo gió và giác hơi theo đánh giá tình trạng cơ thể; khách cần trao đổi trước với chuyên viên.", "컨디션 평가 후 괄사와 부항을 진행하며, 먼저 전문가와 상담해야 합니다.", "Gua sha and cupping are provided after an assessment; please consult the specialist first.", "评估身体状况后进行刮痧与拔罐；顾客需先与专业人员沟通。"],
+  ["Chăm sóc vùng đầu giúp thư giãn tinh thần và giảm cảm giác căng thẳng.", "두피와 머리 부위를 관리해 긴장을 풀고 편안한 휴식을 돕습니다.", "Head care that helps the mind relax and eases feelings of tension.", "头部护理，帮助放松身心并缓解紧张感。"],
+  ["Chăm sóc vùng đầu với thời lượng mở rộng và nhịp thư giãn sâu hơn.", "더 긴 시간과 깊은 휴식 리듬으로 머리 부위를 관리합니다.", "Extended head care with a slower, deeper relaxation rhythm.", "延长头部护理时间，带来更深层的放松节奏。"],
+  ["Liệu trình vùng đầu dài hơn, điều chỉnh theo nhu cầu thư giãn của khách.", "고객의 휴식 필요에 맞춰 조절하는 장시간 머리 부위 관리입니다.", "A longer head treatment adjusted to the guest's relaxation needs.", "更长时长的头部护理，并根据顾客的放松需求进行调整。"],
+  ["Xông hơi trong thời lượng ngắn để làm ấm cơ thể và hỗ trợ thư giãn.", "짧은 시간 동안 사우나로 몸을 따뜻하게 하고 휴식을 돕습니다.", "A short steam session to warm the body and support relaxation.", "短时蒸汽护理，帮助温暖身体并促进放松。"],
+  ["Chuyên gia đánh giá ban đầu các triệu chứng cơ xương khớp và gợi ý hướng chăm sóc; không thay thế chẩn đoán hoặc điều trị y khoa.", "전문가가 근골격계 증상을 1차로 평가하고 관리 방향을 제안합니다. 의료 진단이나 치료를 대체하지 않습니다.", "A specialist performs an initial musculoskeletal assessment and suggests a care direction; this does not replace medical diagnosis or treatment.", "专家对肌肉骨骼症状进行初步评估并建议护理方向；不能替代医学诊断或治疗。"],
+  ["Tặng 150.000đ cho lần đặt dịch vụ đầu tiên sau khi tạo tài khoản và xác minh số điện thoại.", "계정을 만들고 전화번호를 인증한 뒤 첫 예약에서 150.000 ₫ 혜택을 받으세요.", "Receive 150,000 ₫ off your first booking after creating an account and verifying your phone number.", "创建账户并验证手机号后，首次预约立减150,000 ₫。"],
+  ["Giá trải nghiệm Massage Body 60 phút còn 279.000đ cho lịch bắt đầu từ 10:00 đến 14:00.", "10:00~14:00에 시작하는 60분 전신 마사지 체험가는 279.000 ₫입니다.", "The 60-minute Body Massage trial price is 279,000 ₫ for appointments starting from 10:00 to 14:00.", "10:00至14:00开始的60分钟全身按摩，体验价为279,000 ₫。"],
+  ["Tặng 100.000đ khi khách quay lại từ ngày thứ 7 sau lần sử dụng gần nhất.", "최근 이용 후 7일째부터 재방문하면 100.000 ₫ 혜택을 받으세요.", "Receive 100,000 ₫ off when returning from the seventh day after your most recent visit.", "最近一次到店后的第7天起再次到店，可享100,000 ₫优惠。"],
+  ["Mỗi khách một lần · xác định bằng số điện thoại/Zalo/tài khoản", "고객당 1회 · 전화번호/Zalo/계정으로 확인", "Once per guest · identified by phone number/Zalo/account", "每位顾客限用一次 · 通过手机号/Zalo/账户识别"],
+  ["Body 60 phút · bắt đầu 10:00-14:00", "전신 마사지 60분 · 10:00~14:00 시작", "60-minute Body Massage · starts from 10:00-14:00", "60分钟全身按摩 · 10:00至14:00开始"],
+  ["KTV đa kỹ năng, nhận các dịch vụ Body, chân, cổ vai gáy, vùng đầu và chương trình onsite.", "다양한 기술을 갖춘 테라피스트로 전신, 발, 목·어깨, 두피 관리와 출장 프로그램을 담당합니다.", "A multi-skilled therapist providing Body, foot, neck and shoulder, head care and on-site programs.", "多技能理疗师，提供全身、足部、颈肩、头部护理及上门服务。"],
+  ["KTV đa kỹ năng, làm việc xuyên suốt khung giờ mở cửa và nhận chương trình onsite.", "영업시간 동안 근무하며 출장 프로그램도 담당하는 다기능 테라피스트입니다.", "A multi-skilled therapist available throughout opening hours and for on-site programs.", "多技能理疗师，营业时段均可服务，并承接上门项目。"],
+  ["Chuyên gia thăm khám ban đầu kiêm KTV, hỗ trợ đánh giá nhu cầu và gợi ý hướng chăm sóc phù hợp.", "초기 상담 전문가이자 테라피스트로서 고객의 필요를 평가하고 적합한 관리 방향을 제안합니다.", "An initial-assessment specialist and therapist who helps evaluate needs and suggests a suitable care direction.", "兼任初步评估专家与理疗师，帮助判断需求并建议合适的护理方向。"],
+] as const;
+
+type TranslatedCustomerLanguage = Exclude<CustomerLanguage, "vi">;
+
+const DYNAMIC_CATALOG_TRANSLATIONS: Record<TranslatedCustomerLanguage, Record<string, string>> = {
+  ko: Object.fromEntries(DYNAMIC_CATALOG_COPY.map(([source, korean]) => [source, korean])),
+  en: Object.fromEntries(DYNAMIC_CATALOG_COPY.map(([source, , english]) => [source, english])),
+  zh: Object.fromEntries(DYNAMIC_CATALOG_COPY.map(([source, , , chinese]) => [source, chinese])),
+};
+
+export const CUSTOMER_DYNAMIC_TRANSLATION_SOURCE_KEYS = Object.freeze(
+  DYNAMIC_CATALOG_COPY.map(([source]) => source),
+);
+
 export const CUSTOMER_TRANSLATION_SOURCE_KEYS = Object.freeze([
   ...new Set([...Object.keys(EXACT_KOREAN), ...Object.keys(COMPLETE_KOREAN)]),
 ]);
 
 const KOREAN_REPLACEMENTS: Array<[string, string]> = [
+  ["Tip gợi ý", "권장 팁"],
+  ["trao trực tiếp", "직접 전달"],
+  ["Mỗi khách một lần", "고객당 1회"],
+  ["xác định bằng", "확인 기준"],
+  ["bắt đầu", "시작"],
+  ["HSD", "유효기간"],
+  ["Cạo Gió + Giác Hơi", "괄사 + 부항"],
+  ["Thải Độc - Bổ Sung Năng Lượng Vùng Đầu", "두피 디톡스·에너지 케어"],
+  ["Thăm Khám Cơ Xương Khớp Với Chuyên Gia", "전문가 근골격계 상담"],
+  ["Chuyên gia thăm khám", "초기 상담 전문가"],
+  ["Đa kỹ năng", "다양한 기술"],
+  ["Onsite", "출장 서비스"],
+  ["Ca ", "근무 "],
   ["cơ sở đang nhận lịch", "개 지점 예약 가능"],
   ["KTV chuyên nghiệp", "명의 전문 테라피스트"],
   ["Chọn cơ sở & kỹ thuật viên", "지점 및 테라피스트 선택"],
@@ -1602,6 +1657,18 @@ const EXACT_CHINESE_OVERRIDES: Record<string, string> = {
 };
 
 const ENGLISH_REPLACEMENTS: Array<[string, string]> = [
+  ["Tip gợi ý", "Suggested tip"],
+  ["trao trực tiếp", "give directly"],
+  ["Mỗi khách một lần", "Once per guest"],
+  ["xác định bằng", "identified by"],
+  ["bắt đầu", "starts"],
+  ["Cạo Gió + Giác Hơi", "Gua sha + cupping"],
+  ["Thải Độc - Bổ Sung Năng Lượng Vùng Đầu", "Head detox & energy care"],
+  ["Thăm Khám Cơ Xương Khớp Với Chuyên Gia", "Musculoskeletal consultation with a specialist"],
+  ["Chuyên gia thăm khám", "Assessment specialist"],
+  ["Đa kỹ năng", "Multi-skilled"],
+  ["Onsite", "On-site"],
+  ["Ca ", "Shift "],
   ["HSD", "Expires"],
   ["cơ sở đang nhận lịch", "booking location"],
   ["KTV chuyên nghiệp", "professional therapists"],
@@ -1672,6 +1739,18 @@ const ENGLISH_REPLACEMENTS: Array<[string, string]> = [
 ];
 
 const CHINESE_REPLACEMENTS: Array<[string, string]> = [
+  ["Tip gợi ý", "建议小费"],
+  ["trao trực tiếp", "直接交给理疗师"],
+  ["Mỗi khách một lần", "每位顾客限用一次"],
+  ["xác định bằng", "识别方式"],
+  ["bắt đầu", "开始"],
+  ["Cạo Gió + Giác Hơi", "刮痧 + 拔罐"],
+  ["Thải Độc - Bổ Sung Năng Lượng Vùng Đầu", "头部净化与能量护理"],
+  ["Thăm Khám Cơ Xương Khớp Với Chuyên Gia", "专家肌肉骨骼咨询"],
+  ["Chuyên gia thăm khám", "评估专家"],
+  ["Đa kỹ năng", "多技能"],
+  ["Onsite", "上门服务"],
+  ["Ca ", "班次 "],
   ["HSD", "有效期至"],
   ["cơ sở đang nhận lịch", "家门店可预约"],
   ["KTV chuyên nghiệp", "名专业理疗师"],
@@ -1758,6 +1837,7 @@ function normalizeTranslatedCopy(translated: string, language: CustomerLanguage)
     .replaceAll("HSD ", "有效期至 ")
     .replace(/(\d[\d.]*)đ(?=\s|$|[·,.;)])/g, "$1 ₫")
     .replace(/TÂM AN CENTER(?=[\u3400-\u9fff])/g, "TÂM AN CENTER ");
+  if (language === "ko") return translated.replace(/(\d[\d.]*)đ(?=\s|$|[·,.;)])/g, "$1 ₫");
   return translated;
 }
 
@@ -1765,11 +1845,12 @@ export function translateCustomerText(source: string, language: CustomerLanguage
   if (language === "vi") return source;
   const core = source.trim();
   if (!core) return source;
-  const exact = language === "ko"
+  const dynamicExact = DYNAMIC_CATALOG_TRANSLATIONS[language as TranslatedCustomerLanguage][core];
+  const exact = dynamicExact ?? (language === "ko"
     ? COMPLETE_KOREAN[core] ?? EXACT_KOREAN[core]
     : language === "en"
       ? EXACT_ENGLISH_OVERRIDES[core] ?? EXACT_ENGLISH[core]
-      : EXACT_CHINESE_OVERRIDES[core] ?? EXACT_CHINESE[core];
+      : EXACT_CHINESE_OVERRIDES[core] ?? EXACT_CHINESE[core]);
   if (exact) return preserveOuterWhitespace(source, normalizeTranslatedCopy(exact, language));
 
   let translated = core;

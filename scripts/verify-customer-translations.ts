@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import {
   CUSTOMER_LANGUAGES,
+  CUSTOMER_DYNAMIC_TRANSLATION_SOURCE_KEYS,
   CUSTOMER_TRANSLATION_SOURCE_KEYS,
   isCustomerLanguage,
   translateCustomerText,
@@ -68,6 +69,20 @@ for (const language of ["en", "zh"] as const) {
   assert.ok(!translateCustomerText("Bill đã đặt chỗ", language).includes("比尔"));
   assert.equal(translateCustomerText("TÂM AN CENTER", language), "TÂM AN CENTER");
   assert.equal(translateCustomerText("Tây Hồ", language), "Tây Hồ");
+}
+
+for (const source of CUSTOMER_DYNAMIC_TRANSLATION_SOURCE_KEYS) {
+  for (const language of ["ko", "en", "zh"] as const) {
+    const translated = translateCustomerText(source, language);
+    assert.notEqual(translated, source, `Missing ${language} dynamic catalog copy: ${source}`);
+  }
+}
+
+for (const language of ["ko", "en", "zh"] as const) {
+  assert.ok(!translateCustomerText("Tip gợi ý 80.000đ · trao trực tiếp", language).includes("trao trực tiếp"));
+  assert.ok(!translateCustomerText("Mỗi khách một lần · xác định bằng số điện thoại/Zalo/tài khoản", language).includes("Mỗi khách"));
+  assert.ok(!translateCustomerText("Body 60 phút · bắt đầu 10:00-14:00", language).includes("bắt đầu"));
+  assert.ok(!translateCustomerText("Đa kỹ năng · Onsite · Ca 09:00-21:00", language).includes("Đa kỹ năng"));
 }
 
 console.log(`✓ English and Simplified Chinese cover ${CUSTOMER_TRANSLATION_SOURCE_KEYS.length} customer copy entries and all critical dynamic flows.`);
