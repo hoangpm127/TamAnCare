@@ -1,4 +1,4 @@
-const CACHE_NAME = "tamancenter-shell-v9";
+const CACHE_NAME = "tamancenter-shell-v10";
 const APP_SHELL = [
   "/offline",
   "/manifest.webmanifest",

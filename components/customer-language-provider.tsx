@@ -16,7 +16,7 @@ type LanguageContextValue = {
 const LanguageContext = createContext<LanguageContextValue>({ language: "vi", setLanguage: () => undefined });
 const textStates = new WeakMap<Text, { source: string; translated: string }>();
 const attributeStates = new WeakMap<Element, Map<string, { source: string; translated: string }>>();
-const TRANSLATABLE_ATTRIBUTES = ["aria-label", "placeholder", "title"] as const;
+const TRANSLATABLE_ATTRIBUTES = ["alt", "aria-label", "placeholder", "title"] as const;
 const LANGUAGE_COOKIE_SYNC_KEY = "tam-an-language-cookie-synced";
 
 function storedLanguage(fallback: CustomerLanguage): CustomerLanguage {
