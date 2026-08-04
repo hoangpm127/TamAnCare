@@ -1,13 +1,39 @@
 "use client";
 
 import { useEffect } from "react";
+import packageMetadata from "@/package.json";
+
+const RELOAD_KEY = `tam-an-pwa-reloaded:${packageMetadata.version}`;
 
 export function PwaRegistration() {
   useEffect(() => {
     if (process.env.NODE_ENV !== "production" || !("serviceWorker" in navigator)) return;
-    navigator.serviceWorker.register("/sw.js", { scope: "/" }).catch((error) => {
-      console.error("pwa.service_worker_registration_failed", error);
-    });
+
+    let refreshing = false;
+    const handleControllerChange = () => {
+      if (refreshing) return;
+      try {
+        if (window.sessionStorage.getItem(RELOAD_KEY) === "1") return;
+        window.sessionStorage.setItem(RELOAD_KEY, "1");
+      } catch {
+        // A single in-memory guard still prevents a reload loop when storage is blocked.
+      }
+      refreshing = true;
+      window.location.reload();
+    };
+
+    navigator.serviceWorker.addEventListener("controllerchange", handleControllerChange);
+    navigator.serviceWorker
+      .register(`/sw.js?v=${encodeURIComponent(packageMetadata.version)}`, {
+        scope: "/",
+        updateViaCache: "none",
+      })
+      .then((registration) => registration.update())
+      .catch((error) => {
+        console.error("pwa.service_worker_registration_failed", error);
+      });
+
+    return () => navigator.serviceWorker.removeEventListener("controllerchange", handleControllerChange);
   }, []);
 
   return null;

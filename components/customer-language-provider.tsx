@@ -18,15 +18,14 @@ const textStates = new WeakMap<Text, { source: string; translated: string }>();
 const attributeStates = new WeakMap<Element, Map<string, { source: string; translated: string }>>();
 const TRANSLATABLE_ATTRIBUTES = ["aria-label", "placeholder", "title"] as const;
 
-function storedLanguage(): CustomerLanguage {
+function storedLanguage(fallback: CustomerLanguage): CustomerLanguage {
   try {
     const stored = window.localStorage.getItem(CUSTOMER_LANGUAGE_STORAGE_KEY);
     if (stored === "ko" || stored === "vi") return stored;
   } catch {
-    // Cookie fallback below keeps the feature available when localStorage is blocked.
+    // The server-provided cookie value remains the fallback when storage is blocked.
   }
-  const cookie = document.cookie.split("; ").find((item) => item.startsWith(`${CUSTOMER_LANGUAGE_COOKIE_KEY}=`));
-  return cookie?.split("=")[1] === "ko" ? "ko" : "vi";
+  return fallback;
 }
 
 function shouldSkip(node: Node) {
@@ -87,15 +86,23 @@ function applyLanguage(root: HTMLElement, language: CustomerLanguage) {
   }
 }
 
-export function CustomerLanguageProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguageState] = useState<CustomerLanguage>("vi");
+export function CustomerLanguageProvider({
+  children,
+  initialLanguage,
+}: {
+  children: React.ReactNode;
+  initialLanguage: CustomerLanguage;
+}) {
+  const [language, setLanguageState] = useState<CustomerLanguage>(initialLanguage);
   const rootRef = useRef<HTMLDivElement>(null);
   const frameRef = useRef<number | null>(null);
 
   useEffect(() => {
-    const timer = window.setTimeout(() => setLanguageState(storedLanguage()), 0);
+    const stored = storedLanguage(initialLanguage);
+    if (stored === initialLanguage) return;
+    const timer = window.setTimeout(() => setLanguageState(stored), 0);
     return () => window.clearTimeout(timer);
-  }, []);
+  }, [initialLanguage]);
 
   const apply = useCallback(() => {
     // Portals (booking, authentication and payment dialogs) are mounted directly

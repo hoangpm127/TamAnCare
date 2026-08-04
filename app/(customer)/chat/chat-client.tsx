@@ -6,6 +6,8 @@ import { format } from "date-fns";
 import { ArrowLeft, Phone, Send } from "lucide-react";
 import type { CatalogBranch } from "@/lib/catalog-types";
 import { classifyAndReply } from "@/lib/chat-assistant";
+import { useCustomerLanguage } from "@/components/customer-language-provider";
+import { translateCustomerText } from "@/lib/customer-i18n";
 import { cn } from "@/lib/utils";
 
 type Message = {
@@ -29,6 +31,7 @@ function createInitialMessages(branchLabel: string): Message[] {
 
 export function ChatClient({ branches }: { branches: CatalogBranch[] }) {
   const router = useRouter();
+  const { language } = useCustomerLanguage();
   const primaryBranch = branches[0];
   const branchLabel = primaryBranch ? `Tâm An Center · ${primaryBranch.label}` : "Tâm An Center";
   const [messages, setMessages] = useState<Message[]>(() => createInitialMessages(branchLabel));
@@ -83,7 +86,7 @@ export function ChatClient({ branches }: { branches: CatalogBranch[] }) {
           <ArrowLeft size={20} />
         </button>
         <div className="min-w-0 flex-1">
-          <p className="truncate font-semibold">{branchLabel}</p>
+          <p className="truncate font-semibold">{translateCustomerText(branchLabel, language)}</p>
           <p className="text-xs text-[#826f66]">Trợ lý tự động · không phải chat trực tiếp</p>
         </div>
         {primaryBranch?.phone ? <a
@@ -104,7 +107,7 @@ export function ChatClient({ branches }: { branches: CatalogBranch[] }) {
                 message.from === "customer" ? "bg-[#c64b32] text-white" : "border border-[#e7d6ca] bg-white text-[#281b18]"
               )}
             >
-              <p>{message.text}</p>
+              <p>{translateCustomerText(message.text, language)}</p>
               <p
                 className={cn("mt-1 text-[10px]", message.from === "customer" ? "text-white/70" : "text-[#826f66]")}
                 suppressHydrationWarning
@@ -135,7 +138,7 @@ export function ChatClient({ branches }: { branches: CatalogBranch[] }) {
               onClick={() => send(reply)}
               className="shrink-0 rounded-full border border-[#e7d6ca] px-3 py-1.5 text-xs font-medium text-[#51423b] hover:border-[#c7a296]"
             >
-              {reply}
+              {translateCustomerText(reply, language)}
             </button>
           ))}
         </div>

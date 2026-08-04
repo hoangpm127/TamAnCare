@@ -1,13 +1,19 @@
 import Link from "next/link";
+import { cookies } from "next/headers";
 import { CustomerLanguageProvider } from "@/components/customer-language-provider";
+import { CUSTOMER_LANGUAGE_COOKIE_KEY, type CustomerLanguage } from "@/lib/customer-i18n";
 import { RefreshCw, WifiOff } from "lucide-react";
 
 export const metadata = {
   title: "Mất kết nối | Tâm An Center",
 };
 
-export default function OfflinePage() {
-  return <CustomerLanguageProvider>{(
+export default async function OfflinePage() {
+  const cookieStore = await cookies();
+  const initialLanguage: CustomerLanguage =
+    cookieStore.get(CUSTOMER_LANGUAGE_COOKIE_KEY)?.value === "ko" ? "ko" : "vi";
+
+  return <CustomerLanguageProvider initialLanguage={initialLanguage}>{(
     <main className="flex min-h-[100dvh] items-center justify-center bg-[#fdf8f3] px-5 text-[#281b18]">
       <section className="w-full max-w-sm rounded-2xl border border-[#e7d6ca] bg-white p-6 text-center shadow-sm">
         <WifiOff className="mx-auto text-[#c64b32]" size={34} />
