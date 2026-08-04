@@ -2,16 +2,18 @@
 
 import Link from "next/link";
 import { useState, type FormEvent } from "react";
-import { Bell, CheckCircle2, ChevronLeft, HeartPulse, Save, Settings2, UserRound } from "lucide-react";
+import { Bell, Check, CheckCircle2, ChevronLeft, HeartPulse, Languages, Save, Settings2, UserRound } from "lucide-react";
 import {
   saveCustomerProfile,
   useCustomerProfile,
   type CustomerProfile,
 } from "@/lib/customer-profile-store";
 import { cn } from "@/lib/utils";
+import { useCustomerLanguage } from "@/components/customer-language-provider";
 
 export function ProfileSettingsClient() {
   const profile = useCustomerProfile();
+  const { language, setLanguage } = useCustomerLanguage();
   const [draft, setDraft] = useState<Partial<CustomerProfile>>({});
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -50,6 +52,34 @@ export function ProfileSettingsClient() {
           <p className="mt-0.5 text-xs text-[#826f66]">Thông tin dùng để đặt lịch và cá nhân hóa dịch vụ.</p>
         </div>
       </div>
+
+      <section className="mb-4 rounded-2xl border border-[#d2ad5d]/55 bg-gradient-to-br from-[#fffdf9] to-[#fbf2e7] p-4 shadow-sm">
+        <h2 className="flex items-center gap-2 text-sm font-semibold"><Languages size={17} className="text-[#a85f29]" /> Ngôn ngữ</h2>
+        <p className="mt-1 text-xs leading-5 text-[#826f66]">Chọn ngôn ngữ hiển thị cho toàn bộ khu vực khách hàng.</p>
+        <div className="mt-3 grid grid-cols-2 gap-2" role="radiogroup" aria-label="Ngôn ngữ">
+          {([
+            { value: "vi" as const, label: "Tiếng Việt", short: "VI" },
+            { value: "ko" as const, label: "Tiếng Hàn", short: "KO" },
+          ]).map((option) => {
+            const selected = language === option.value;
+            return (
+              <button
+                key={option.value}
+                type="button"
+                role="radio"
+                aria-checked={selected}
+                onClick={() => setLanguage(option.value)}
+                className={cn("flex items-center gap-2.5 rounded-xl border px-3 py-3 text-left transition", selected ? "border-[#c64b32] bg-[#f8ebe5] text-[#7c2927] shadow-sm" : "border-[#e7d6ca] bg-white text-[#68574f]")}
+              >
+                <span className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[11px] font-bold", selected ? "bg-[#c64b32] text-white" : "bg-[#fbf2e7] text-[#76551d]")}>{option.short}</span>
+                <span className="min-w-0 flex-1 text-xs font-semibold">{option.label}</span>
+                {selected ? <Check size={15} className="shrink-0" /> : null}
+              </button>
+            );
+          })}
+        </div>
+        <p className="mt-2.5 text-[10px] leading-4 text-[#826f66]">Lựa chọn được ghi nhớ trên thiết bị này và có thể đổi lại bất cứ lúc nào.</p>
+      </section>
 
       <form onSubmit={submit} className="space-y-4">
         <section className="rounded-2xl border border-[#e7d6ca] bg-white p-4 shadow-sm">

@@ -4,6 +4,7 @@ import {
   CalendarClock,
   ChevronRight,
   Gift,
+  Languages,
   MessageCircle,
   Phone,
   QrCode,
@@ -98,6 +99,7 @@ export default async function AccountPage() {
 
       <p className="mb-2.5 mt-5 px-1 text-xs font-semibold uppercase tracking-[0.14em] text-[#826f66]">Tài khoản & quyền truy cập</p>
       <section className="overflow-hidden rounded-xl border border-[#e7d6ca] bg-white shadow-sm">
+        <MenuRow item={{ href: "/toi/cai-dat", label: "Cài đặt & Ngôn ngữ", description: "Thông tin cá nhân, thông báo, Tiếng Việt / 한국어", icon: Languages }} />
         <AccountRoleMenu />
       </section>
 

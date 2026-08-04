@@ -41,7 +41,7 @@ export function AccountProfileCard() {
           <p className="text-xs text-[#68574f]">{displayPhone}</p>
         </div>
         <Link
-          href={account ? "/toi/cai-dat" : "/tai-khoan"}
+          href="/toi/cai-dat"
           aria-label="Cài đặt thông tin cá nhân"
           className="ml-auto flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#f8ebe5] text-[#c64b32] transition hover:bg-[#f9ddd7]"
         >
