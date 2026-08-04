@@ -42,7 +42,7 @@ const EXACT_KOREAN: Record<string, string> = {
   "Lịch đã đặt": "예약 내역",
   "Lịch sử": "이용 내역",
   "Ưu đãi dành cho bạn": "고객님을 위한 혜택",
-  "Ưu điểm tại Tâm An Center": "Tâm An Center의 장점",
+  "Ưu điểm tại Tâm An Center": "TÂM AN CENTER의 장점",
   "Giá rõ ràng": "투명한 가격",
   "Chọn KTV": "테라피스트 선택",
   "Không trùng lịch": "중복 없는 예약",
@@ -57,7 +57,7 @@ const EXACT_KOREAN: Record<string, string> = {
   "Chỉ nhắc lịch đúng lúc theo cài đặt của bạn, không gọi quảng cáo.": "설정한 시간에만 예약을 알리며 광고 전화는 하지 않습니다.",
   "Chọn nhanh gói phù hợp": "맞춤 서비스 빠르게 선택",
   "Gói dài hạn nổi bật": "추천 장기 패키지",
-  "Đội ngũ KTV tại Tâm An Center": "Tâm An Center 테라피스트",
+  "Đội ngũ KTV tại Tâm An Center": "TÂM AN CENTER 테라피스트",
   "KTV mới": "신규 테라피스트",
   "Tâm An Business": "Tâm An Business",
   "Tăng cường sức khỏe vào Buổi Trưa ngay tại Văn Phòng": "점심시간, 사무실에서 누리는 건강 케어",
@@ -1124,6 +1124,17 @@ const COMPLETE_KOREAN: Record<string, string> = {
   "Mở vị trí thật trên Google Maps": "Google Maps에서 실제 위치 열기",
   "Xem đường đi và thời gian di chuyển": "경로와 이동 시간 확인",
   "Bản đồ vị trí TÂM AN CENTER": "TÂM AN CENTER 위치 지도",
+  "Đang hoạt động": "운영 중",
+  "Massage chân": "발 마사지",
+  "Phí di chuyển 50.000đ/KTV/lượt; miễn phí với Gói Toàn diện.": "출장비는 테라피스트 1명당 회당 50,000đ이며 올인원 패키지는 무료입니다.",
+  "Đang mở camera...": "카메라를 여는 중…",
+  "Không thể mở camera. Vui lòng cấp quyền camera cho trình duyệt hoặc dùng xác nhận thủ công bên dưới.": "카메라를 열 수 없습니다. 브라우저에 카메라 권한을 허용하거나 아래에서 직접 확인해 주세요.",
+  "Tâm An Center · Tây Hồ": "TÂM AN CENTER · Tây Hồ",
+  "Xin chào! Mình là trợ lý tự động của Tâm An Center · Tây Hồ. Nội dung chỉ mang tính hướng dẫn và không được chuyển trực tiếp cho lễ tân.": "안녕하세요! 저는 TÂM AN CENTER · Tây Hồ의 자동 안내 도우미입니다. 이 대화는 안내용이며 리셉션에 직접 전달되지 않습니다.",
+  "Thông tin cơ sở đang được cập nhật. Vui lòng mở mục Liên hệ để kiểm tra lại.": "지점 정보를 업데이트하고 있습니다. 문의 메뉴에서 다시 확인해 주세요.",
+  "Giá và lịch trống thay đổi theo dịch vụ, cơ sở và thời điểm. Vui lòng mở Đặt lịch để xem dữ liệu còn chỗ theo thời gian thực; trợ lý này không tự giữ lịch.": "가격과 예약 가능 시간은 서비스, 지점과 시점에 따라 달라집니다. 예약 메뉴에서 실시간 가능 여부를 확인해 주세요. 이 도우미는 일정을 자동으로 확보하지 않습니다.",
+  "Xin chào! Mình là trợ lý tự động của Tâm An Center. Mình có thể hướng dẫn bạn xem dịch vụ, lịch trống, địa chỉ và hotline; đây không phải cuộc chat trực tiếp với lễ tân.": "안녕하세요! 저는 TÂM AN CENTER의 자동 안내 도우미입니다. 서비스, 예약 가능 시간, 주소와 전화번호를 안내하며 리셉션과의 실시간 채팅은 아닙니다.",
+  "Mình chỉ có thể hướng dẫn thông tin cơ bản. Để được tư vấn trực tiếp, bạn vui lòng mở mục Liên hệ và gọi hotline của cơ sở phù hợp.": "기본 정보만 안내할 수 있습니다. 직접 상담이 필요하면 문의 메뉴에서 해당 지점으로 전화해 주세요.",
   "Thả lỏng cơ thể - Đánh thức năng lượng": "몸의 긴장을 풀고 활력을 깨우세요",
   "Giá trên chưa bao gồm tip cho KTV": "표시 가격에는 테라피스트 팁이 포함되지 않습니다",
   "Massage Body, cổ vai gáy, chân, lưng hông và các liệu trình chăm sóc chuyên sâu.": "전신, 목·어깨, 발, 허리·골반 마사지와 전문 케어 프로그램을 제공합니다.",
@@ -1256,8 +1267,13 @@ export function translateCustomerText(source: string, language: CustomerLanguage
 
   let translated = core;
   let changed = false;
+  const chatGreeting = translated.match(/^Xin chào! Mình là trợ lý tự động của (.+)\. Nội dung chỉ mang tính hướng dẫn và không được chuyển trực tiếp cho lễ tân\.$/);
   const vipProgress = translated.match(/^Thêm (.+) để lên hạng VIP\.$/);
-  if (vipProgress) {
+  if (chatGreeting) {
+    const branchName = chatGreeting[1].replace("Tâm An Center", "TÂM AN CENTER");
+    translated = `안녕하세요! 저는 ${branchName}의 자동 안내 도우미입니다. 이 대화는 안내용이며 리셉션에 직접 전달되지 않습니다.`;
+    changed = true;
+  } else if (vipProgress) {
     translated = `VIP 등급까지 ${vipProgress[1]}가 더 필요합니다.`;
     changed = true;
   } else if (/^Thu\s+(?=[+\-]?\d|₫)/.test(translated)) {
