@@ -1124,6 +1124,7 @@ const COMPLETE_KOREAN: Record<string, string> = {
   "Mở vị trí thật trên Google Maps": "Google Maps에서 실제 위치 열기",
   "Xem đường đi và thời gian di chuyển": "경로와 이동 시간 확인",
   "Bản đồ vị trí TÂM AN CENTER": "TÂM AN CENTER 위치 지도",
+  "Đang mở nội dung cho bạn…": "콘텐츠를 불러오는 중입니다…",
   "Đang hoạt động": "운영 중",
   "Massage chân": "발 마사지",
   "Phí di chuyển 50.000đ/KTV/lượt; miễn phí với Gói Toàn diện.": "출장비는 테라피스트 1명당 회당 50,000đ이며 올인원 패키지는 무료입니다.",

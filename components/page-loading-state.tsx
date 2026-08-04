@@ -1,4 +1,8 @@
+"use client";
+
 import { LoaderCircle } from "lucide-react";
+import { useCustomerLanguage } from "@/components/customer-language-provider";
+import { translateCustomerText } from "@/lib/customer-i18n";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -12,7 +16,9 @@ const COPY = {
 } as const;
 
 export function PageLoadingState({ context }: Props) {
+  const { language } = useCustomerLanguage();
   const adminLike = context !== "customer";
+  const copy = context === "customer" ? translateCustomerText(COPY.customer, language) : COPY[context];
 
   return (
     <div className="route-loading-state relative mx-auto w-full max-w-7xl px-4 py-5 sm:px-6 lg:px-10" role="status" aria-live="polite">
@@ -59,7 +65,7 @@ export function PageLoadingState({ context }: Props) {
 
         <p className="mt-4 flex items-center justify-center gap-2 text-xs font-medium text-[#826f66]">
           <LoaderCircle size={14} className="animate-spin text-[#c64b32]" />
-          {COPY[context]}
+          {copy}
         </p>
       </div>
     </div>
