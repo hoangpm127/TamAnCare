@@ -27,7 +27,7 @@ function isInDayPart(date: Date, dayPart: string) {
 }
 
 export async function GET(request: Request) {
-  const session = await requireAdminSession();
+  const session = await requireAdminSession(["OWNER", "BRANCH_MANAGER"]);
   if (!session) return NextResponse.json({ error: "Bạn không có quyền xem tài chính." }, { status: 401 });
   const url = new URL(request.url);
   const fallback = defaultRange();

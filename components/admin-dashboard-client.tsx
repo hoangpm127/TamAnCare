@@ -107,6 +107,7 @@ export function AdminDashboardClient() {
   const [customTo, setCustomTo] = useState(format(today, "yyyy-MM-dd"));
   const [serverFinance, setServerFinance] = useState<DashboardFinance | null>(null);
   const [serverOperations, setServerOperations] = useState<DashboardOperations | null>(null);
+  const canManageFinance = Boolean(session && ["OWNER", "BRANCH_MANAGER"].includes(session.role));
 
   useEffect(() => {
     if (!session) return;
@@ -118,12 +119,15 @@ export function AdminDashboardClient() {
     let active = true;
     async function load() {
       try {
-        const [financeResponse, operationsResponse] = await Promise.all([
-          fetch(`/api/finance/summary?${query}`, { cache: "no-store" }),
-          fetch(`/api/operations/summary?${operationsQuery}`, { cache: "no-store" }),
-        ]);
-        if (!financeResponse.ok || !operationsResponse.ok) throw new Error("dashboard unavailable");
-        const [financeData, operationsData] = await Promise.all([financeResponse.json(), operationsResponse.json()]);
+        const operationsResponse = await fetch(`/api/operations/summary?${operationsQuery}`, { cache: "no-store" });
+        if (!operationsResponse.ok) throw new Error("operations dashboard unavailable");
+        const operationsData = await operationsResponse.json();
+        let financeData: DashboardFinance | null = null;
+        if (canManageFinance) {
+          const financeResponse = await fetch(`/api/finance/summary?${query}`, { cache: "no-store" });
+          if (!financeResponse.ok) throw new Error("finance dashboard unavailable");
+          financeData = await financeResponse.json();
+        }
         if (active) {
           setServerFinance(financeData);
           setServerOperations(operationsData);
@@ -135,7 +139,7 @@ export function AdminDashboardClient() {
     void load();
     const timer = window.setInterval(load, 5000);
     return () => { active = false; window.clearInterval(timer); };
-  }, [branchId, customFrom, customTo, dayPart, period, session, today]);
+  }, [branchId, canManageFinance, customFrom, customTo, dayPart, period, session, today]);
   if (!session) return null;
 
   const isOwner = session.role === "OWNER";
@@ -169,10 +173,10 @@ export function AdminDashboardClient() {
     { label: "Khách đang quản lý", value: serverOperations?.customerCount ?? 0, icon: UsersRound, detail: `${periodLabel} · ${branchLabel}`, rows: [["Khách mới", serverOperations?.customerSegments.new ?? 0], ["Khách quay lại", serverOperations?.customerSegments.returning ?? 0], ["Khách VIP / dài hạn", serverOperations?.customerSegments.vip ?? 0]], href: "/admin/customers" },
     { label: "Công suất giường", value: `${roomUtilization}%`, icon: Bed, detail: `${scopedSeatCapacity} giường · ${serverOperations?.activeTherapists ?? 0} KTV`, rows: [["Tổng giường", scopedSeatCapacity], ["KTV đang hoạt động", serverOperations?.activeTherapists ?? 0], ["Booking / sức chứa", `${bookingTotal}/${scopedSeatCapacity}`]], href: "/admin/capacity" },
     { label: "Hiệu suất KTV", value: `${therapistUtilization}%`, icon: Activity, detail: `${averageRating.toFixed(1)} ★ trung bình`, rows: [["KTV đang hoạt động", serverOperations?.activeTherapists ?? 0], ["Đánh giá trung bình", `${averageRating.toFixed(1)} sao`], ["Tổng lượt đã phục vụ", serverOperations?.servedCount ?? 0]], href: "/admin/therapists" },
-    { label: "Tổng thu", value: formatMoney(collectedAmount), icon: CircleDollarSign, detail: "Doanh thu dịch vụ · không gồm Tip KTV", rows: [["Doanh thu dịch vụ", formatMoney(collectedAmount)], ["Tiền cọc đã nhận", formatMoney(serverFinance?.deposits ?? 0)], ["Tip KTV ngoài bill", formatMoney(serverFinance?.tips ?? 0)], ...branchFinanceRows], href: "/admin/finance" },
+    ...(canManageFinance ? [{ label: "Tổng thu", value: formatMoney(collectedAmount), icon: CircleDollarSign, detail: "Doanh thu dịch vụ · không gồm Tip KTV", rows: [["Doanh thu dịch vụ", formatMoney(collectedAmount)], ["Tiền cọc đã nhận", formatMoney(serverFinance?.deposits ?? 0)], ["Tip KTV ngoài bill", formatMoney(serverFinance?.tips ?? 0)], ...branchFinanceRows], href: "/admin/finance" },
     { label: "Tổng chi", value: formatMoney(expenseAmount), icon: ReceiptText, detail: "Vận hành + khoản chi phát sinh", rows: [["Chi phí đã hạch toán", formatMoney(expenseAmount)], ["Nguồn dữ liệu", "Sổ cái hệ thống"], ["Tổng chi trong phạm vi", formatMoney(expenseAmount)]], href: "/admin/finance" },
     { label: "Doanh thu dự kiến", value: formatMoney(expectedRevenue), icon: Wallet, detail: `${periodLabel} · ${branchLabel}`, rows: [["Tổng giá trị lịch", formatMoney(expectedRevenue)], ["Đã ghi nhận thu", formatMoney(collectedAmount)], ["Còn dự kiến thu", formatMoney(Math.max(0, expectedRevenue - collectedAmount))]], href: "/admin/finance" },
-    { label: "Lãi tạm tính", value: formatMoney(provisionalProfit), icon: TrendingUp, detail: `Tổng thu − ${formatMoney(expenseAmount)} tổng chi`, rows: [["Tổng thu", formatMoney(collectedAmount)], ["Tổng chi", formatMoney(expenseAmount)], ["Biên lãi tạm tính", collectedAmount ? `${Math.round((provisionalProfit / collectedAmount) * 100)}%` : "0%"], ...branchFinanceRows], href: "/admin/finance" },
+    { label: "Lãi tạm tính", value: formatMoney(provisionalProfit), icon: TrendingUp, detail: `Tổng thu − ${formatMoney(expenseAmount)} tổng chi`, rows: [["Tổng thu", formatMoney(collectedAmount)], ["Tổng chi", formatMoney(expenseAmount)], ["Biên lãi tạm tính", collectedAmount ? `${Math.round((provisionalProfit / collectedAmount) * 100)}%` : "0%"], ...branchFinanceRows], href: "/admin/finance" }] : []),
   ];
 
   const scheduleRows = (serverOperations?.bookings ?? []).map((booking) => ({

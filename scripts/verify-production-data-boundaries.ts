@@ -38,6 +38,24 @@ const businessCatalog = source("lib/server/business-catalog.ts");
 assert.ok(businessCatalog.includes('process.env.APP_ENV === "production"'), "Catalog doanh nghiệp thiếu chốt fail-closed cho production.");
 assert.ok(businessCatalog.includes("configurationError"), "Catalog doanh nghiệp phải dừng khi cấu hình production không hợp lệ.");
 
+const financePage = source("app/admin/finance/page.tsx");
+assert.ok(financePage.includes("getAdminSession()"), "Trang tài chính phải kiểm tra phiên quản trị trên server.");
+assert.ok(financePage.includes('["OWNER", "BRANCH_MANAGER"].includes(session.role)'), "Trang tài chính chỉ được mở cho chủ sở hữu và quản lý cơ sở.");
+assert.ok(financePage.includes("notFound()"), "Trang tài chính phải fail-closed khi sai vai trò.");
+
+const adminNav = source("components/admin-nav.tsx");
+assert.ok(adminNav.includes('const canManageFinance = ["OWNER", "BRANCH_MANAGER"].includes(session.role)'), "Điều hướng quản trị phải ẩn lối tắt tài chính và QR với vai trò không đủ quyền.");
+assert.ok(adminNav.includes('canManageFinance ? <Link href="/admin/finance"'), "Lối tắt tài chính chưa được ràng buộc theo vai trò.");
+assert.ok(adminNav.includes('canManageFinance ? <Link href="/admin/qr-management"'), "Lối tắt QR chưa được ràng buộc theo vai trò.");
+
+const financeSummary = source("app/api/finance/summary/route.ts");
+assert.ok(financeSummary.includes('requireAdminSession(["OWNER", "BRANCH_MANAGER"])'), "API tổng hợp tài chính phải khai báo rõ vai trò được phép.");
+
+const adminDashboard = source("components/admin-dashboard-client.tsx");
+assert.ok(adminDashboard.includes('const canManageFinance = Boolean(session && ["OWNER", "BRANCH_MANAGER"].includes(session.role))'), "Dashboard phải phân biệt vai trò được xem tài chính.");
+assert.ok(adminDashboard.includes('if (canManageFinance) {'), "Dashboard không được gọi API tài chính với vai trò Lễ tân.");
+assert.ok(adminDashboard.includes('...(canManageFinance ? [{ label: "Tổng thu"'), "KPI tài chính phải ẩn với vai trò không đủ quyền.");
+
 for (const path of [
   "app/api/payments/[paymentId]/simulate/route.ts",
   "app/api/booking-groups/[referenceCode]/simulate-deposit/route.ts",

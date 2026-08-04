@@ -12,6 +12,18 @@ export const CUSTOMER_LANGUAGE_STORAGE_KEY = "tam-an-customer-language";
 export const CUSTOMER_LANGUAGE_COOKIE_KEY = "tam_customer_language";
 
 const EXACT_KOREAN: Record<string, string> = {
+  "Đồng": "브론즈",
+  "Bạc": "실버",
+  "Vàng": "골드",
+  "Kim Cương": "다이아몬드",
+  "Bạch Kim": "플래티넘",
+  "Huyền Thoại": "레전드",
+  "🥉 Đồng": "🥉 브론즈",
+  "🥈 Bạc": "🥈 실버",
+  "🥇 Vàng": "🥇 골드",
+  "💎 Kim Cương": "💎 다이아몬드",
+  "🏆 Bạch Kim": "🏆 플래티넘",
+  "👑 Huyền Thoại": "👑 레전드",
   "Chạm sóc toàn diện, nâng niu từng cảm giác": "온전한 케어, 모든 감각을 세심하게",
   "Tạo tài khoản nhận ưu đãi 150K": "계정을 만들고 150K 혜택 받기",
   "Tạo tài khoản, nhận ngay 150K": "계정을 만들고 즉시 150K 혜택 받기",
@@ -1081,7 +1093,7 @@ const COMPLETE_KOREAN: Record<string, string> = {
   "Xác minh số điện thoại giúp mã giới thiệu gắn đúng người nhận hoa hồng. Sau đó bạn có thể chia sẻ link hoặc QR không giới hạn lượt.": "전화번호 인증으로 추천 수익을 정확한 계정에 연결합니다. 이후 링크와 QR을 횟수 제한 없이 공유할 수 있습니다.",
   "Chia sẻ link hoặc mã QR — ai đặt lịch qua đây đều được tự động ghi nhận Affiliate 1 tầng cho bạn.": "링크 또는 QR을 공유하세요. 이를 통해 예약한 고객은 자동으로 고객님의 1단계 제휴 실적으로 기록됩니다.",
   "Hai mật khẩu chưa trùng khớp.": "두 비밀번호가 일치하지 않습니다.",
-  "Hệ thống tự ưu tiên WELCOME100 cho lần đặt dịch vụ đầu tiên đủ điều kiện.": "조건을 충족하는 첫 서비스 예약에는 WELCOME100이 자동 우선 적용됩니다.",
+  "Hệ thống tự ưu tiên WELCOME150 cho lần đặt dịch vụ đầu tiên đủ điều kiện.": "조건을 충족하는 첫 서비스 예약에는 WELCOME150이 자동 우선 적용됩니다.",
   "Liên kết để lần sau đăng nhập nhanh mà vẫn giữ nguyên lịch sử và ưu đãi.": "연결하면 예약 내역과 혜택을 그대로 유지하면서 다음부터 빠르게 로그인할 수 있습니다.",
   "Ưu đãi tiếp thị là tùy chọn, không ảnh hưởng tài khoản hoặc booking.": "마케팅 혜택 수신은 선택 사항이며 계정이나 예약에 영향을 주지 않습니다.",
   "Ẩn mật khẩu": "비밀번호 숨기기",

@@ -290,6 +290,7 @@ export function AdminNav() {
   }
 
   const allowedSections = session.permissions.filter((slug) => canAccessAdminSection(session, slug));
+  const canManageFinance = ["OWNER", "BRANCH_MANAGER"].includes(session.role);
   const priorityItems = PRIORITY_ITEMS.filter((item) => item.slug === "dashboard" || canAccessAdminSection(session, item.slug));
   const primaryMobileItems = priorityItems.slice(0, 4);
   const moreActive = pathname.startsWith("/admin/") && !pathname.startsWith("/admin/finance") && !primaryMobileItems.some((item) => item.href === "/admin" ? pathname === "/admin" : pathname.startsWith(item.href));
@@ -346,12 +347,12 @@ export function AdminNav() {
 
           <div className="flex items-center gap-1.5">
             <AdminExpenseAction />
-            <Link href="/admin/qr-management" className={cn("tap-feedback relative flex h-9 w-9 items-center justify-center rounded-full border", pathname.startsWith("/admin/qr-management") ? "border-[#76551d] bg-[#76551d] text-white" : "border-[#e7d6ca] text-[#76551d]")} aria-label="Trung tâm quản lý QR" title="Quản lý QR"><QrCode size={17} /><NavigationPendingIndicator /></Link>
+            {canManageFinance ? <Link href="/admin/qr-management" className={cn("tap-feedback relative flex h-9 w-9 items-center justify-center rounded-full border", pathname.startsWith("/admin/qr-management") ? "border-[#76551d] bg-[#76551d] text-white" : "border-[#e7d6ca] text-[#76551d]")} aria-label="Trung tâm quản lý QR" title="Quản lý QR"><QrCode size={17} /><NavigationPendingIndicator /></Link> : null}
             {session.role === "OWNER" ? <Link href="/admin/investment-opportunities" className={cn("tap-feedback relative flex h-9 w-9 items-center justify-center rounded-full border", pathname.startsWith("/admin/investment-opportunities") ? "border-[#76551d] bg-[#76551d] text-white" : "border-[#e7d6ca] text-[#76551d]")} aria-label="Quản lý cơ hội đầu tư" title="Cơ hội đầu tư"><Rocket size={17} /><NavigationPendingIndicator /></Link> : null}
-            <Link href="/admin/finance" className={cn("tap-feedback relative flex h-9 w-9 items-center justify-center rounded-full border", pathname.startsWith("/admin/finance") ? "border-[#c64b32] bg-[#c64b32] text-white" : "border-[#e7d6ca] text-[#7a3e1d]")} aria-label="Trung tâm Bill và tài chính" title="Bill & tài chính">
+            {canManageFinance ? <Link href="/admin/finance" className={cn("tap-feedback relative flex h-9 w-9 items-center justify-center rounded-full border", pathname.startsWith("/admin/finance") ? "border-[#c64b32] bg-[#c64b32] text-white" : "border-[#e7d6ca] text-[#7a3e1d]")} aria-label="Trung tâm Bill và tài chính" title="Bill & tài chính">
               <CircleDollarSign size={18} />
               <NavigationPendingIndicator />
-            </Link>
+            </Link> : null}
             <div className="relative hidden sm:block">
               <button type="button" onClick={() => setRoleOpen((value) => !value)} className="flex items-center gap-2 rounded-full border border-[#e7d6ca] bg-[#fdf8f3] py-1.5 pl-2 pr-3 text-left">
                 <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#c64b32] text-white">

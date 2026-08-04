@@ -62,6 +62,15 @@ assert.equal(translateCustomerText("Thu +500.000đ", "en"), "Income +500.000 ₫
 assert.equal(translateCustomerText("Chi -200.000đ", "zh"), "支出 -200.000 ₫");
 assert.equal(translateCustomerText("HSD 03/08/2027", "en"), "Expires 03/08/2027");
 assert.equal(translateCustomerText("HSD 03/08/2027", "zh"), "有效期至 03/08/2027");
+assert.equal(translateCustomerText("Hệ thống tự ưu tiên WELCOME150 cho lần đặt dịch vụ đầu tiên đủ điều kiện.", "ko"), "조건을 충족하는 첫 서비스 예약에는 WELCOME150이 자동 우선 적용됩니다.");
+assert.equal(translateCustomerText("Hệ thống tự ưu tiên WELCOME150 cho lần đặt dịch vụ đầu tiên đủ điều kiện.", "en"), "WELCOME150 is automatically prioritized for the first eligible service booking.");
+assert.equal(translateCustomerText("Hệ thống tự ưu tiên WELCOME150 cho lần đặt dịch vụ đầu tiên đủ điều kiện.", "zh"), "首次符合条件的服务预约将自动优先使用WELCOME150优惠。");
+assert.equal(translateCustomerText("Đồng", "en"), "Bronze");
+assert.equal(translateCustomerText("Bạc", "ko"), "실버");
+assert.equal(translateCustomerText("Huyền Thoại", "zh"), "传奇");
+assert.equal(translateCustomerText("🥈 Bạc", "en"), "🥈 Silver");
+assert.equal(translateCustomerText("💎 Kim Cương", "ko"), "💎 다이아몬드");
+assert.equal(translateCustomerText("🏆 Bạch Kim", "zh"), "🏆 铂金");
 
 for (const language of ["en", "zh"] as const) {
   const therapistCopy = translateCustomerText("KTV chuyên nghiệp", language);
