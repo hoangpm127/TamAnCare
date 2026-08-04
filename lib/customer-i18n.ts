@@ -1500,6 +1500,7 @@ const EXACT_CHINESE_OVERRIDES: Record<string, string> = {
 };
 
 const ENGLISH_REPLACEMENTS: Array<[string, string]> = [
+  ["HSD", "Expires"],
   ["cơ sở đang nhận lịch", "location(s) accepting bookings"],
   ["KTV chuyên nghiệp", "professional therapist(s)"],
   ["Chọn cơ sở & kỹ thuật viên", "Choose location & therapist"],
@@ -1569,6 +1570,7 @@ const ENGLISH_REPLACEMENTS: Array<[string, string]> = [
 ];
 
 const CHINESE_REPLACEMENTS: Array<[string, string]> = [
+  ["HSD", "有效期至"],
   ["cơ sở đang nhận lịch", "家门店可预约"],
   ["KTV chuyên nghiệp", "名专业理疗师"],
   ["Chọn cơ sở & kỹ thuật viên", "选择门店和理疗师"],
@@ -1644,11 +1646,15 @@ function preserveOuterWhitespace(source: string, translated: string) {
 }
 
 function normalizeTranslatedCopy(translated: string, language: CustomerLanguage) {
-  if (language === "en") return translated.replace(/\bKTV\b/g, "therapist").replaceAll("HSD ", "Expires ");
+  if (language === "en") return translated
+    .replace(/\bKTV\b/g, "therapist")
+    .replaceAll("HSD ", "Expires ")
+    .replace(/(\d[\d.]*)đ(?=\s|$|[·,.;)])/g, "$1 ₫");
   if (language === "zh") return translated
     .replaceAll("KTV", "理疗师")
     .replaceAll("比尔", "账单")
     .replaceAll("HSD ", "有效期至 ")
+    .replace(/(\d[\d.]*)đ(?=\s|$|[·,.;)])/g, "$1 ₫")
     .replace(/TÂM AN CENTER(?=[\u3400-\u9fff])/g, "TÂM AN CENTER ");
   return translated;
 }
@@ -1713,5 +1719,5 @@ export function translateCustomerText(source: string, language: CustomerLanguage
         .replace(/(\d+(?:[.,]\d+)?)\s*ngày/gi, "$1天")
         .replace(/(\d+(?:[.,]\d+)?)\s+(家|名|个|分钟|次|天)/g, "$1$2");
   changed ||= withUnits !== translated;
-  return changed ? preserveOuterWhitespace(source, withUnits) : source;
+  return changed ? preserveOuterWhitespace(source, normalizeTranslatedCopy(withUnits, language)) : source;
 }

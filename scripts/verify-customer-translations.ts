@@ -48,10 +48,12 @@ for (const [source, expectedEnglish, expectedChinese] of criticalCopy) {
 const dynamicGreeting = "Xin chào! Mình là trợ lý tự động của Tâm An Center · Tây Hồ. Nội dung chỉ mang tính hướng dẫn và không được chuyển trực tiếp cho lễ tân.";
 assert.match(translateCustomerText(dynamicGreeting, "en"), /automated assistant.+guidance only/i);
 assert.match(translateCustomerText(dynamicGreeting, "zh"), /自动咨询助手.+仅供指引/);
-assert.equal(translateCustomerText("Thêm 500.000đ để lên hạng VIP.", "en"), "Spend 500.000đ more to reach VIP status.");
-assert.equal(translateCustomerText("Thêm 500.000đ để lên hạng VIP.", "zh"), "再消费 500.000đ 即可升级为 VIP。");
-assert.equal(translateCustomerText("Thu +500.000đ", "en"), "Income +500.000đ");
-assert.equal(translateCustomerText("Chi -200.000đ", "zh"), "支出 -200.000đ");
+assert.equal(translateCustomerText("Thêm 500.000đ để lên hạng VIP.", "en"), "Spend 500.000 ₫ more to reach VIP status.");
+assert.equal(translateCustomerText("Thêm 500.000đ để lên hạng VIP.", "zh"), "再消费 500.000 ₫ 即可升级为 VIP。");
+assert.equal(translateCustomerText("Thu +500.000đ", "en"), "Income +500.000 ₫");
+assert.equal(translateCustomerText("Chi -200.000đ", "zh"), "支出 -200.000 ₫");
+assert.equal(translateCustomerText("HSD 03/08/2027", "en"), "Expires 03/08/2027");
+assert.equal(translateCustomerText("HSD 03/08/2027", "zh"), "有效期至 03/08/2027");
 
 for (const language of ["en", "zh"] as const) {
   const therapistCopy = translateCustomerText("KTV chuyên nghiệp", language);
