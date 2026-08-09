@@ -1,0 +1,70 @@
+{
+  "packageId": "com.tamancenter.app",
+  "host": "tamancare-production.up.railway.app",
+  "name": "Tâm An Center",
+  "launcherName": "Tâm An",
+  "display": "standalone",
+  "themeColor": "#C64B32",
+  "themeColorDark": "#000000",
+  "navigationColor": "#000000",
+  "navigationColorDark": "#000000",
+  "navigationDividerColor": "#000000",
+  "navigationDividerColorDark": "#000000",
+  "backgroundColor": "#FDF8F3",
+  "enableNotifications": true,
+  "startUrl": "/",
+  "iconUrl": "https://tamancare-production.up.railway.app/icon-512.png",
+  "splashScreenFadeOutDuration": 300,
+  "signingKey": {
+    "path": "android-keystore",
+    "alias": "androiddebugkey"
+  },
+  "appVersionName": "1.5.4",
+  "appVersionCode": 10504,
+  "shortcuts": [
+    {
+      "name": "Đặt lịch",
+      "shortName": "Đặt lịch",
+      "url": "https://tamancare-production.up.railway.app/booking",
+      "chosenIconUrl": "https://tamancare-production.up.railway.app/icon-192.png"
+    },
+    {
+      "name": "Lịch của tôi",
+      "shortName": "Lịch của tôi",
+      "url": "https://tamancare-production.up.railway.app/don-cua-toi",
+      "chosenIconUrl": "https://tamancare-production.up.railway.app/icon-192.png"
+    },
+    {
+      "name": "Affiliate",
+      "shortName": "Affiliate",
+      "url": "https://tamancare-production.up.railway.app/ru-ban",
+      "chosenIconUrl": "https://tamancare-production.up.railway.app/icon-192.png"
+    }
+  ],
+  "generatorApp": "bubblewrap-cli",
+  "webManifestUrl": "https://tamancare-production.up.railway.app/manifest.webmanifest",
+  "fallbackType": "customtabs",
+  "features": {},
+  "alphaDependencies": {
+    "enabled": false
+  },
+  "enableSiteSettingsShortcut": true,
+  "isChromeOSOnly": false,
+  "isMetaQuest": false,
+  "fullScopeUrl": "https://tamancare-production.up.railway.app/",
+  "minSdkVersion": 21,
+  "orientation": "portrait-primary",
+  "fingerprints": [
+    {
+      "name": "Tâm An Center E2E testing key",
+      "value": "55:26:FB:E0:55:62:A3:30:F9:42:D1:ED:E4:E0:B5:44:A8:C0:A6:F3:F9:DE:68:29:AA:DA:46:D7:A2:9A:89:AA"
+    }
+  ],
+  "additionalTrustedOrigins": [],
+  "retainedBundles": [],
+  "protocolHandlers": [],
+  "fileHandlers": [],
+  "launchHandlerClientMode": "",
+  "displayOverride": [],
+  "appVersion": "1.5.4"
+}

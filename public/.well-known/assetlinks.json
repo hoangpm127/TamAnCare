@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.tamancenter.app",
+      "sha256_cert_fingerprints": [
+        "55:26:FB:E0:55:62:A3:30:F9:42:D1:ED:E4:E0:B5:44:A8:C0:A6:F3:F9:DE:68:29:AA:DA:46:D7:A2:9A:89:AA"
+      ]
+    }
+  }
+]

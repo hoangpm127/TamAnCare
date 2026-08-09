@@ -69,3 +69,13 @@ next-env.d.ts
 /artifacts/tuetam-market-plan-v2/rendered/
 /artifacts/tuetam-market-plan-v2/reportlab-qa/
 /artifacts/tuetam-market-plan-v2.1/reportlab-qa/
+
+# Android Trusted Web Activity local outputs and signing material
+/android/android-keystore
+/android/.gradle/
+/android/app/build/
+/android/build/
+/android/*.apk
+/android/*.aab
+/android/*.idsig
+/android/local.properties
