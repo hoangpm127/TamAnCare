@@ -12,8 +12,8 @@ const testIp = `198.18.${Number(String(Date.now()).slice(-4, -2)) % 250 + 1}.${N
 const customerPhone = `09${String(Date.now()).slice(-8)}`;
 const guestPhone = `08${String(Date.now() + 1).slice(-8)}`;
 const voucherPhone = `07${String(Date.now() + 2).slice(-8)}`;
-const customerPassword = `Care!${marker}`;
-const voucherPassword = `Welcome!${marker}`;
+const customerPin = customerPhone.endsWith("5826") ? "5827" : "5826";
+const voucherPin = voucherPhone.endsWith("7395") ? "7396" : "7395";
 const adminUsername = `owner_${marker.toLowerCase()}`;
 const adminPassword = `Owner!${marker}`;
 const receptionUsername = `reception_${marker.toLowerCase()}`;
@@ -289,33 +289,30 @@ async function main() {
     body: JSON.stringify({
       fullName: `Khách ${marker}`,
       phone: customerPhone,
-      password: customerPassword,
-      passwordConfirmation: customerPassword,
+      pin: customerPin,
     }),
   });
   assert(missingConsentResponse.status === 400, "API đăng ký chưa từ chối yêu cầu thiếu đồng ý bắt buộc.");
 
-  const mismatchedPasswordResponse = await fetch(`${BASE_URL}/api/customer-auth/register`, {
+  const weakPinResponse = await fetch(`${BASE_URL}/api/customer-auth/register`, {
     method: "POST",
     headers: { Origin: BASE_URL, "Content-Type": "application/json" },
     body: JSON.stringify({
       fullName: `Khách ${marker}`,
       phone: customerPhone,
-      password: customerPassword,
-      passwordConfirmation: `${customerPassword}!`,
+      pin: "1234",
       acceptTerms: true,
       acceptPrivacy: true,
     }),
   });
-  assert(mismatchedPasswordResponse.status === 400, "API đăng ký chưa từ chối hai mật khẩu không khớp.");
+  assert(weakPinResponse.status === 400, "API đăng ký chưa từ chối Mã PIN quá dễ đoán.");
 
   const registration = await jsonRequest<{ account: { customerId: string } }>("/api/customer-auth/register", {
     jar: customerJar,
     body: {
       fullName: `Khách ${marker}`,
       phone: customerPhone,
-      password: customerPassword,
-      passwordConfirmation: customerPassword,
+      pin: customerPin,
       acceptTerms: true,
       acceptPrivacy: true,
       marketingOptIn: false,
@@ -475,8 +472,7 @@ async function main() {
     body: {
       fullName: `Khách mới ${marker}`,
       phone: voucherPhone,
-      password: voucherPassword,
-      passwordConfirmation: voucherPassword,
+      pin: voucherPin,
       acceptTerms: true,
       acceptPrivacy: true,
       marketingOptIn: false,

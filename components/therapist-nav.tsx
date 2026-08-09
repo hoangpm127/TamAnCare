@@ -9,6 +9,7 @@ import { TherapistNotificationList } from "@/components/therapist-notification-l
 import { TherapistQrCard } from "@/components/therapist-qr-card";
 import { NavigationPendingIndicator } from "@/components/navigation-pending-indicator";
 import { TherapistServiceAlert } from "@/components/therapist-service-alert";
+import { forgetAdminWorkspace, rememberAdminWorkspace } from "@/lib/admin-workspace";
 
 const NAV_ITEMS = [
   { href: "/therapist", label: "Lịch", icon: CalendarDays, exact: true },
@@ -37,6 +38,10 @@ export function TherapistNav({ qrDataUrl, therapistName, branchLabel }: Props) {
   }, []);
 
   useEffect(() => {
+    rememberAdminWorkspace(pathname);
+  }, [pathname]);
+
+  useEffect(() => {
     queueMicrotask(() => void loadUnread());
     const timer = window.setInterval(loadUnread, 10_000);
     return () => window.clearInterval(timer);
@@ -44,6 +49,7 @@ export function TherapistNav({ qrDataUrl, therapistName, branchLabel }: Props) {
 
   async function logout() {
     await fetch("/api/admin-auth/session", { method: "DELETE" });
+    forgetAdminWorkspace();
     router.replace("/dang-nhap-quan-tri");
     router.refresh();
   }

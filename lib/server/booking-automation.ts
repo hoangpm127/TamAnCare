@@ -1,6 +1,7 @@
 import "server-only";
 
 import { addMinutes } from "date-fns";
+import { therapistWorksDuring } from "@/lib/server/therapist-schedule";
 import type { Prisma } from "@/app/generated/prisma/client";
 
 export const BOOKING_AUTO_CONFIRM_KEY = "booking.auto_confirm";
@@ -117,8 +118,17 @@ export async function maybeAutoConfirmBookingGroup(
             services: { some: { id: booking.serviceId } },
           },
           orderBy: [{ servedCount: "asc" }, { ratingAvg: "desc" }, { fullName: "asc" }],
+          include: {
+            weeklySchedules: {
+              where: { isActive: true },
+              select: { weekday: true, startMinute: true, endMinute: true, isActive: true },
+            },
+          },
         });
-        therapist = candidates.find((candidate) => !busyTherapistIds.has(candidate.id)) ?? null;
+        therapist = candidates.find((candidate) =>
+          therapistWorksDuring(candidate.weeklySchedules, booking.startTime, booking.endTime)
+          && !busyTherapistIds.has(candidate.id),
+        ) ?? null;
       }
       if (!room) {
         const candidates = await client.room.findMany({

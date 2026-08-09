@@ -14,7 +14,7 @@ import {
 
 const COOKIE_NAME = "tt_admin_session_v2";
 const LEGACY_COOKIE_NAME = "tt_admin_session";
-const SESSION_DAYS = 7;
+const SESSION_DAYS = 30;
 const MAX_FAILED_LOGINS = 5;
 const ACCOUNT_LOCK_MINUTES = 15;
 const DUMMY_PASSWORD_HASH = "scrypt:0123456789abcdef0123456789abcdef:115babb3388379f33e3094f0913751b9fff81cce9585c9edc92b9afb5330c9ecb004a51ef9dcaab762d5bb920e30c0a38422bff9b0f449054775ab71f6d7b6c6";

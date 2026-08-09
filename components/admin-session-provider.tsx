@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useMemo, useState } from "react";
 import type { AdminAccount } from "@/lib/admin-auth";
+import { forgetAdminWorkspace } from "@/lib/admin-workspace";
 
 type AdminSessionContextValue = {
   session: AdminAccount | null;
@@ -25,6 +26,7 @@ export function AdminSessionProvider({ children, initialSession }: { children: R
       },
       async signOut() {
         await fetch("/api/admin-auth/session", { method: "DELETE" }).catch(() => undefined);
+        forgetAdminWorkspace();
         setSession(null);
       },
     }),

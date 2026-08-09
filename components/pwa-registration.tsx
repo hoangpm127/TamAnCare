@@ -3,6 +3,8 @@
 import { useEffect } from "react";
 import packageMetadata from "@/package.json";
 import { activateInstalledReferralAttribution } from "@/lib/referral-attribution";
+import { adminLandingPath, type AdminRole } from "@/lib/admin-auth";
+import { isAdminWorkspacePath, preferredAdminRoute, prefersAdminWorkspace, rememberAdminWorkspace } from "@/lib/admin-workspace";
 
 const RELOAD_KEY = `tam-an-pwa-reloaded:${packageMetadata.version}`;
 
@@ -10,6 +12,18 @@ export function PwaRegistration() {
   useEffect(() => {
     const standalone = window.matchMedia("(display-mode: standalone)").matches
       || Boolean((navigator as Navigator & { standalone?: boolean }).standalone);
+    if (isAdminWorkspacePath(window.location.pathname)) rememberAdminWorkspace(window.location.pathname);
+    if (standalone && window.location.pathname === "/" && prefersAdminWorkspace()) {
+      void fetch("/api/admin-auth/session", { cache: "no-store" })
+        .then((response) => response.ok ? response.json() : null)
+        .then((payload) => {
+          const account = payload?.account as { role?: AdminRole } | undefined;
+          if (!account?.role) return;
+          const destination = preferredAdminRoute(account.role) || adminLandingPath(account.role);
+          if (destination !== window.location.pathname) window.location.replace(destination);
+        })
+        .catch(() => undefined);
+    }
     if (standalone) void activateInstalledReferralAttribution();
     if (process.env.NODE_ENV !== "production" || !("serviceWorker" in navigator)) return;
 

@@ -2,14 +2,15 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { BriefcaseBusiness, CheckCircle2, Clock3, Loader2, MessageSquareWarning, QrCode, RefreshCcw, UserRound } from "lucide-react";
+import { BriefcaseBusiness, CheckCircle2, Clock3, Loader2, MessageSquareWarning, Pencil, Plus, QrCode, RefreshCcw, UserRound } from "lucide-react";
 import { CompactSelect } from "@/components/compact-select";
 import { useAdminSession } from "@/components/admin-session-provider";
 import { TherapistAvatar } from "@/components/therapist-avatar";
 import { cn } from "@/lib/utils";
+import { AdminTherapistEditor, type TherapistEditableView, type TherapistScheduleView } from "@/components/admin-therapist-editor";
 
 type LiveStatus = "AVAILABLE" | "BUSY" | "BUSINESS" | "WRAP_UP" | "OFF";
-type TherapistView = {
+type TherapistView = TherapistEditableView & {
   id: string;
   branchId: string;
   fullName: string;
@@ -24,6 +25,7 @@ type TherapistView = {
   proposedStrengths: string[];
   profileSubmittedAt: string | null;
   profileReviewNote: string | null;
+  schedules: TherapistScheduleView[];
   liveStatus: LiveStatus;
   live: null | { type: "CARE" | "BUSINESS"; label: string; detail: string; serviceName: string; roomName: string | null; startedAt: string; expectedEndAt: string; requiredTherapists: number };
   wrapUp: null | { customerName: string; checkoutRequestedAt: string | null };
@@ -32,6 +34,7 @@ type TherapistView = {
 type Payload = {
   generatedAt: string;
   branches: Array<{ id: string; label: string }>;
+  services: Array<{ id: string; name: string }>;
   therapists: TherapistView[];
   businessStaffing: Array<{ eventCode: string; branchId: string; companyName: string; requiredTherapists: number; trackedTherapists: number; staffingGap: number }>;
 };
@@ -66,6 +69,7 @@ export function AdminTherapistOperations() {
   const [now, setNow] = useState(() => Date.now());
   const [reviewNotes, setReviewNotes] = useState<Record<string, string>>({});
   const [reviewingId, setReviewingId] = useState<string | null>(null);
+  const [editing, setEditing] = useState<TherapistView | "NEW" | null>(null);
 
   const load = useCallback(async (quiet = false) => {
     if (!session) return;
@@ -127,6 +131,7 @@ export function AdminTherapistOperations() {
     }
   }
   if (!session) return null;
+  const canManageTherapists = session.role === "OWNER" || session.role === "BRANCH_MANAGER";
 
   return (
     <main className="mx-auto max-w-7xl px-3 py-3 sm:px-6 sm:py-5 lg:px-10">
@@ -145,7 +150,10 @@ export function AdminTherapistOperations() {
 
       <section className="mt-2.5 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 rounded-xl border border-[#d2ad5d]/55 bg-white p-2 shadow-sm">
         <CompactSelect value={session.role === "OWNER" ? branchId : session.branchId ?? "all"} onValueChange={setBranchId} disabled={session.role !== "OWNER"} dialogTitle="Chọn cơ sở xem KTV" triggerClassName="min-h-9 rounded-lg py-2" options={[{ value: "all", label: "Toàn hệ thống" }, ...(payload?.branches ?? []).map((branch) => ({ value: branch.id, label: branch.label }))]} />
-        <Link href="/admin/qr-management" className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-[#76551d] px-3 text-[10px] font-semibold text-white"><QrCode size={13} /> Quản lý QR</Link>
+        <span className="flex gap-1.5">
+          {canManageTherapists ? <button type="button" onClick={() => setEditing("NEW")} className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-[#c64b32] px-3 text-[10px] font-semibold text-white"><Plus size={13} /> Thêm KTV</button> : null}
+          <Link href="/admin/qr-management" className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-[#76551d] px-3 text-[10px] font-semibold text-white"><QrCode size={13} /> Quản lý QR</Link>
+        </span>
       </section>
       {pendingProfiles.length ? <section className="mt-3 rounded-2xl border border-[#d2ad5d] bg-gradient-to-br from-[#fffaf0] to-white p-3 shadow-sm">
         <div className="flex items-center justify-between gap-3"><div><h2 className="text-sm font-semibold">Hồ sơ KTV chờ duyệt</h2><p className="mt-0.5 text-[9px] text-[#826f66]">Chỉ thông tin được duyệt mới hiển thị cho khách lựa chọn</p></div><span className="rounded-full bg-[#fff0c8] px-2.5 py-1 text-[9px] font-bold text-[#76551d]">{pendingProfiles.length} hồ sơ</span></div>
@@ -168,7 +176,7 @@ export function AdminTherapistOperations() {
               {therapists.map((therapist) => {
                 const style = STYLE[therapist.liveStatus];
                 return <article key={therapist.id} className={cn("overflow-hidden rounded-xl border p-2.5", style.card)}>
-                  <div className="flex items-start justify-between gap-1"><Link href={`/admin/therapists/${therapist.id}`} className="min-w-0 truncate text-[11px] font-semibold hover:underline">{therapist.fullName}</Link><span className={cn("shrink-0 rounded-full px-2 py-1 text-[7px] font-bold", style.badge)}>{style.label}</span></div>
+                  <div className="flex items-start justify-between gap-1"><Link href={`/admin/therapists/${therapist.id}`} className="min-w-0 truncate text-[11px] font-semibold hover:underline">{therapist.fullName}</Link><span className="flex shrink-0 items-center gap-1">{canManageTherapists ? <button type="button" onClick={() => setEditing(therapist)} className="flex h-6 w-6 items-center justify-center rounded-full bg-white/80 text-[#c64b32]" aria-label={`Sửa ${therapist.fullName}`}><Pencil size={11} /></button> : null}<span className={cn("rounded-full px-2 py-1 text-[7px] font-bold", style.badge)}>{style.label}</span></span></div>
                   <p className="mt-0.5 text-[8px] text-[#826f66]">{therapist.shiftLabel} · {therapist.ratingAvg.toFixed(1)}★</p>
                   {therapist.live ? <div className="mt-2 border-t border-current/10 pt-2"><p className={cn("truncate text-[9px] font-semibold", therapist.live.type === "BUSINESS" ? "text-[#2452b8]" : "text-[#c64b32]")}>{therapist.live.type === "BUSINESS" ? <BriefcaseBusiness size={10} className="mr-1 inline" /> : <UserRound size={10} className="mr-1 inline" />}{therapist.live.label}</p><p className="mt-0.5 truncate text-[8px] text-[#68574f]">{therapist.live.serviceName}{therapist.live.roomName ? ` · ${therapist.live.roomName}` : ""}</p><p className="mt-1 text-[8px] font-bold"><Clock3 size={9} className="mr-1 inline" />{remaining(therapist.live.expectedEndAt, now)} · đến {time(therapist.live.expectedEndAt)}</p></div> : therapist.wrapUp ? <div className="mt-2 border-t border-[#ead6a2] pt-2"><p className="truncate text-[9px] font-semibold text-[#76551d]">{therapist.wrapUp.customerName}</p><p className="mt-1 text-[8px] text-[#806e65]">Đã check-out · quầy cần đóng Bill</p></div> : therapist.next ? <div className="mt-2 border-t border-[#e8d2c4] pt-2"><p className="text-[8px] text-[#826f66]">Ca kế tiếp</p><p className="mt-0.5 truncate text-[9px] font-semibold">{time(therapist.next.startsAt)} · {therapist.next.label}</p></div> : <p className="mt-2 text-[8px] leading-3.5 text-[#a85f29]">Sẵn sàng nhận khách ngay</p>}
                 </article>;
@@ -177,6 +185,7 @@ export function AdminTherapistOperations() {
           </section>;
         })}
       </div>
+      {editing ? <AdminTherapistEditor therapist={editing === "NEW" ? null : editing} branches={payload?.branches ?? []} services={payload?.services ?? []} fixedBranchId={session.role === "OWNER" ? null : session.branchId} onClose={() => setEditing(null)} onSaved={() => load(true)} /> : null}
     </main>
   );
 }

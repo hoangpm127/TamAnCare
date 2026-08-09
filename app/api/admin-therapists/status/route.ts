@@ -17,19 +17,29 @@ export async function GET(request: Request) {
   const branchId = session.role === "OWNER" ? requestedBranch || undefined : session.branchId ?? "__none__";
   const now = new Date();
   const day = businessDayRange(now);
-  const [branches, therapists, bookings, businessEvents] = await Promise.all([
+  const [branches, services, therapists, bookings, businessEvents] = await Promise.all([
     db.branch.findMany({
       where: session.role === "OWNER" ? (branchId ? { id: branchId } : {}) : { id: branchId },
       orderBy: { createdAt: "asc" },
       select: { id: true, name: true },
     }),
+    db.service.findMany({
+      where: { isActive: true },
+      orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
+      select: { id: true, name: true },
+    }),
     db.therapist.findMany({
-      where: branchId ? { branchId } : {},
+      where: { ...(branchId ? { branchId } : {}), status: { not: "HIDDEN" } },
       orderBy: [{ branchId: "asc" }, { fullName: "asc" }],
       select: {
         id: true,
         branchId: true,
         fullName: true,
+        phone: true,
+        gender: true,
+        skills: true,
+        onlineBooking: true,
+        internalNote: true,
         status: true,
         shiftLabel: true,
         ratingAvg: true,
@@ -42,6 +52,11 @@ export async function GET(request: Request) {
         proposedStrengths: true,
         profileSubmittedAt: true,
         profileReviewNote: true,
+        services: { select: { id: true } },
+        weeklySchedules: {
+          orderBy: { weekday: "asc" },
+          select: { weekday: true, startMinute: true, endMinute: true, isActive: true },
+        },
       },
     }),
     db.booking.findMany({
@@ -110,6 +125,12 @@ export async function GET(request: Request) {
       id: therapist.id,
       branchId: therapist.branchId,
       fullName: therapist.fullName,
+      phone: therapist.phone,
+      gender: therapist.gender,
+      skills: therapist.skills,
+      onlineBooking: therapist.onlineBooking,
+      internalNote: therapist.internalNote,
+      status: therapist.status,
       shiftLabel: therapist.shiftLabel,
       ratingAvg: therapist.ratingAvg,
       avatarUrl: therapist.avatarUrl,
@@ -121,6 +142,8 @@ export async function GET(request: Request) {
       proposedStrengths: therapist.proposedStrengths,
       profileSubmittedAt: therapist.profileSubmittedAt?.toISOString() ?? null,
       profileReviewNote: therapist.profileReviewNote,
+      serviceIds: therapist.services.map((service) => service.id),
+      schedules: therapist.weeklySchedules,
       liveStatus,
       live,
       wrapUp: closingBooking ? { customerName: closingBooking.customer.fullName, checkoutRequestedAt: closingBooking.checkoutRequestedAt?.toISOString() } : null,
@@ -131,6 +154,7 @@ export async function GET(request: Request) {
   return NextResponse.json({
     generatedAt: now.toISOString(),
     branches: branches.map((branch) => ({ id: branch.id, label: branch.name.replace(/^Tâm An Center · /, "") })),
+    services,
     therapists: rows,
     businessStaffing: businessEvents.filter((event) => event.status === "IN_SERVICE").map((event) => ({
       eventCode: event.eventCode,

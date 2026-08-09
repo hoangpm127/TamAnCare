@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
-import { CalendarClock, QrCode, Receipt, Star } from "lucide-react";
+import { CalendarClock, CreditCard, QrCode, Receipt, Star } from "lucide-react";
 import { bookingDisplayStatusLabel } from "@/lib/labels";
 import { cn, displayBookingCode, formatMoney } from "@/lib/utils";
 import { useCustomerProfile } from "@/lib/customer-profile-store";
@@ -32,6 +32,10 @@ type OrderView = {
   depositAmount?: number;
   paidAmount: number;
   paymentStatus: string;
+  dueAmount?: number;
+  checkoutRequestedAt?: string | null;
+  depositPayment?: { status: string; paymentCode: string } | null;
+  checkoutPayment?: { status: string; paymentCode: string } | null;
   kind?: "BOOKING" | "BUSINESS";
   location?: string;
 };
@@ -54,7 +58,7 @@ export function OrdersClient() {
         const bookingResponse = await fetch(`/api/bookings?${query}`, { cache: "no-store" });
         const data = await bookingResponse.json();
         if (!bookingResponse.ok) throw new Error(data.error ?? "Không thể tải lịch đã đặt.");
-        const bookingOrders = (data.bookings ?? []).filter((item: { timeIso?: string }) => item.timeIso).map((item: { id: string; referenceCode: string; serviceLabel: string; therapistName: string; timeIso: string; status: string; totalAmount: number; depositAmount: number; paidAmount: number; paymentStatus: string }) => ({
+        const bookingOrders = (data.bookings ?? []).filter((item: { timeIso?: string }) => item.timeIso).map((item: { id: string; referenceCode: string; serviceLabel: string; therapistName: string; timeIso: string; status: string; totalAmount: number; depositAmount: number; paidAmount: number; paymentStatus: string; dueAmount: number; checkoutRequestedAt?: string | null; depositPayment?: { status: string; paymentCode: string } | null; checkoutPayment?: { status: string; paymentCode: string } | null }) => ({
           id: item.id,
           bookingCode: item.referenceCode,
           serviceName: item.serviceLabel,
@@ -65,6 +69,10 @@ export function OrdersClient() {
           depositAmount: item.depositAmount,
           paidAmount: item.paidAmount,
           paymentStatus: item.paymentStatus,
+          dueAmount: item.dueAmount,
+          checkoutRequestedAt: item.checkoutRequestedAt ?? null,
+          depositPayment: item.depositPayment ?? null,
+          checkoutPayment: item.checkoutPayment ?? null,
           kind: "BOOKING" as const,
         }));
         const businessResponse = await fetch("/api/business-events?audience=customer", { cache: "no-store" });
@@ -170,6 +178,13 @@ export function OrdersClient() {
             const isReserved = ["CONFIRMED", "DEPOSIT_CONFIRMED", "READY"].includes(booking.status) && ["DEPOSITED", "PAID"].includes(booking.paymentStatus);
             const displayStartTime = booking.startTime;
             const isBusiness = booking.kind === "BUSINESS";
+            const needsDepositPayment = !isBusiness
+              && booking.status === "PENDING"
+              && booking.paymentStatus === "UNPAID"
+              && (booking.depositAmount ?? 0) > 0;
+            const needsBalancePayment = !isBusiness
+              && (booking.dueAmount ?? booking.totalAmount - booking.paidAmount) > 0
+              && Boolean(booking.checkoutRequestedAt || booking.checkoutPayment?.status === "PENDING");
             const businessLabel: Record<string, string> = { AWAITING_DEPOSIT: "Chờ đối soát cọc", DEPOSIT_CONFIRMED: "Đã cọc · đang điều phối", READY: "Sẵn sàng", IN_SERVICE: "Đang phục vụ", AWAITING_BALANCE: "Chờ thanh toán", COMPLETED: "Đã hoàn tất dịch vụ & thanh toán", CANCELLED: "Đã hủy" };
             return (
               <div key={booking.id} className="rounded-xl border border-[#e7d6ca] bg-white p-3.5 shadow-sm">
@@ -204,6 +219,16 @@ export function OrdersClient() {
                     {displayBookingCode(booking.bookingCode)} · <span className="text-sm font-semibold text-[#281b18]">{formatMoney(booking.totalAmount)}</span>
                   </span>
                   <div className="flex flex-wrap items-center justify-end gap-2">
+                    {needsDepositPayment ? (
+                      <Link href={`/booking/success/${booking.bookingCode}`} className="inline-flex items-center gap-1.5 rounded-full bg-[#c64b32] px-3 py-1.5 text-xs font-semibold text-white shadow-sm">
+                        <CreditCard size={13} /> Tiếp tục thanh toán cọc
+                      </Link>
+                    ) : null}
+                    {needsBalancePayment ? (
+                      <Link href={`/thanh-toan/${booking.bookingCode}`} className="inline-flex items-center gap-1.5 rounded-full bg-[#c64b32] px-3 py-1.5 text-xs font-semibold text-white shadow-sm">
+                        <CreditCard size={13} /> Thanh toán phần còn lại
+                      </Link>
+                    ) : null}
                     {isBusiness ? <Link href={`/doanh-nghiep/${booking.bookingCode}`} className="inline-flex items-center gap-1 text-xs font-semibold text-[#c64b32]"><Receipt size={12} /> Xem hồ sơ & Bill</Link> : booking.status === "COMPLETED" ? (
                       <Link href={`/review/${booking.bookingCode}`} className="inline-flex items-center gap-1 text-xs font-semibold text-[#c64b32]">
                         <Star size={12} /> Đánh giá
@@ -217,7 +242,7 @@ export function OrdersClient() {
                     {!isBusiness && booking.status === "PENDING" && ["DEPOSITED", "PAID"].includes(booking.paymentStatus) ? (
                       <span className="text-[10px] font-medium text-[#826f66]">QR mở ngay khi TÂM AN CENTER xếp xong KTV & giường</span>
                     ) : null}
-                    {!isBusiness && (booking.status === "CHECKED_IN" || booking.status === "IN_SERVICE") ? (
+                    {!isBusiness && !needsBalancePayment && (booking.status === "CHECKED_IN" || booking.status === "IN_SERVICE") ? (
                       <Link href={`/thanh-toan/${booking.bookingCode}`} className="rounded-full bg-[#c64b32] px-3 py-1.5 text-xs font-semibold text-white">
                         Thanh toán Bill
                       </Link>

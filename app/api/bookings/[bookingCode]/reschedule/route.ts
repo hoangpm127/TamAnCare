@@ -10,6 +10,7 @@ import { getGuestSession } from "@/lib/server/guest-session";
 import { isSameOriginMutation, privateIdentifierDigest, requestIp } from "@/lib/server/request-security";
 import { buildPaymentCode } from "@/lib/server/payment-service";
 import { bookingWindowError } from "@/lib/scheduling-policy";
+import { therapistWorksDuring } from "@/lib/server/therapist-schedule";
 import { isCustomerAudienceRequest } from "@/lib/request-audience";
 import { BOOKING_POLICY } from "@/lib/business-policy";
 
@@ -123,7 +124,11 @@ export async function POST(request: Request, context: { params: Promise<{ bookin
           lastBookingTime: branch.lastBookingTime,
         });
         if (scheduleError) throw new Error(scheduleError);
-        const therapists = await tx.therapist.findMany({ where: { branchId, status: "ACTIVE", onlineBooking: true, services: { some: { id: booking.serviceId } } }, orderBy: { ratingAvg: "desc" } });
+        const therapists = await tx.therapist.findMany({
+          where: { branchId, status: "ACTIVE", onlineBooking: true, services: { some: { id: booking.serviceId } } },
+          orderBy: { ratingAvg: "desc" },
+          include: { weeklySchedules: { where: { isActive: true }, select: { weekday: true, startMinute: true, endMinute: true, isActive: true } } },
+        });
         const rooms = await tx.room.findMany({ where: { branchId, status: "ACTIVE", suitableCategories: { has: booking.service.category } }, orderBy: { name: "asc" } });
         const conflicts = await tx.booking.findMany({
           where: {
@@ -135,7 +140,7 @@ export async function POST(request: Request, context: { params: Promise<{ bookin
           },
           select: { therapistId: true, roomId: true },
         });
-        const therapist = therapists.find((item) => !reservedTherapists.has(item.id) && !conflicts.some((conflict) => conflict.therapistId === item.id));
+        const therapist = therapists.find((item) => therapistWorksDuring(item.weeklySchedules, start, end) && !reservedTherapists.has(item.id) && !conflicts.some((conflict) => conflict.therapistId === item.id));
         const room = rooms.find((item) => !reservedRooms.has(item.id) && !conflicts.some((conflict) => conflict.roomId === item.id));
         if (!therapist || !room) throw new Error("Khung giờ mới vừa hết chỗ. Vui lòng chọn giờ khác.");
         reservedTherapists.add(therapist.id);

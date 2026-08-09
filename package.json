@@ -1,6 +1,6 @@
 {
   "name": "tam-an-center",
-  "version": "1.6.1",
+  "version": "1.7.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -23,6 +23,7 @@
     "test:affiliate": "tsx scripts/verify-affiliate-policy.ts",
     "test:scheduling": "tsx scripts/verify-scheduling-policy.ts",
     "test:capacity": "tsx scripts/verify-tam-an-room-capacity.ts",
+    "test:therapists": "tsx scripts/verify-therapist-management.ts",
     "test:catalog": "tsx scripts/verify-tam-an-service-catalog.ts",
     "test:i18n": "tsx scripts/verify-customer-translations.ts",
     "test:data-boundaries": "tsx scripts/verify-production-data-boundaries.ts",

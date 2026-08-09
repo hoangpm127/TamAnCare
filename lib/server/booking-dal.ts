@@ -16,6 +16,7 @@ import { calculateVoucherDiscount, voucherRuleError } from "@/lib/server/voucher
 import { phoneVerificationRequired } from "@/lib/server/otp-delivery";
 import { claimInstalledReferral } from "@/lib/server/referral-installation";
 import { bookingWindowError, intervalsOverlapWithBuffer, timeToMinutes } from "@/lib/scheduling-policy";
+import { therapistWorksDuring } from "@/lib/server/therapist-schedule";
 
 const BUSINESS_TIME_ZONE = "Asia/Ho_Chi_Minh";
 const BUSINESS_OFFSET = "+07:00";
@@ -130,7 +131,15 @@ async function findAvailability(
         ...(input.therapistId ? { id: input.therapistId } : {}),
         services: { some: { id: service.id } },
       },
-      select: { id: true, fullName: true, ratingAvg: true },
+      select: {
+        id: true,
+        fullName: true,
+        ratingAvg: true,
+        weeklySchedules: {
+          where: { isActive: true },
+          select: { weekday: true, startMinute: true, endMinute: true, isActive: true },
+        },
+      },
       orderBy: [{ ratingAvg: "desc" }, { fullName: "asc" }],
     }),
     client.room.findMany({
@@ -166,9 +175,16 @@ async function findAvailability(
     const end = addMinutes(start, duration);
     if (start < addMinutes(now, BOOKING_POLICY.minimumLeadMinutes)) continue;
 
-    const availableTherapists = therapists.filter((therapist) =>
-      !dayBookings.some((booking) => booking.therapistId === therapist.id && intervalsOverlapWithBuffer(start, end, booking.startTime, booking.endTime, branch.bufferMinutes)),
-    );
+    const availableTherapists = therapists
+      .filter((therapist) => therapistWorksDuring(therapist.weeklySchedules, start, end))
+      .filter((therapist) =>
+        !dayBookings.some((booking) => booking.therapistId === therapist.id && intervalsOverlapWithBuffer(start, end, booking.startTime, booking.endTime, branch.bufferMinutes)),
+      )
+      .map((therapist) => ({
+        id: therapist.id,
+        fullName: therapist.fullName,
+        ratingAvg: therapist.ratingAvg,
+      }));
     const availableRooms = rooms.filter((room) =>
       !dayBookings.some((booking) => booking.roomId === room.id && intervalsOverlapWithBuffer(start, end, booking.startTime, booking.endTime, branch.bufferMinutes)),
     );
@@ -504,6 +520,12 @@ export async function createBookingGroup(input: BookingGroupInput) {
           orderBy: unit.therapistId
             ? [{ ratingAvg: "desc" }, { fullName: "asc" }]
             : [{ servedCount: "asc" }, { ratingAvg: "desc" }, { fullName: "asc" }],
+          include: {
+            weeklySchedules: {
+              where: { isActive: true },
+              select: { weekday: true, startMinute: true, endMinute: true, isActive: true },
+            },
+          },
         });
         const roomCandidates = await tx.room.findMany({
           where: { branchId: branch.id, status: "ACTIVE", suitableCategories: { has: service.category as ServiceCategory } },
@@ -520,6 +542,7 @@ export async function createBookingGroup(input: BookingGroupInput) {
         });
 
         const therapist = therapistCandidates.find((candidate) =>
+          therapistWorksDuring(candidate.weeklySchedules, start, end) &&
           !conflicts.some((booking) => booking.therapistId === candidate.id) &&
           !reserved.some((item) => item.therapistId === candidate.id && intervalsOverlapWithBuffer(start, end, item.start, item.end, branch.bufferMinutes)),
         );

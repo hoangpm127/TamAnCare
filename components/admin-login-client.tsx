@@ -6,6 +6,7 @@ import { useState } from "react";
 import { ArrowLeft, Check, Eye, EyeOff, KeyRound, Loader2, LockKeyhole, ShieldCheck, UserRound } from "lucide-react";
 import { adminLandingPath } from "@/lib/admin-auth";
 import { BrandWordmark } from "@/components/brand-wordmark";
+import { rememberAdminWorkspace } from "@/lib/admin-workspace";
 
 export function AdminLoginClient() {
   const router = useRouter();
@@ -40,6 +41,7 @@ export function AdminLoginClient() {
         : data.account?.mustEnrollMfa
           ? "/bao-mat-quan-tri"
         : adminLandingPath(data.account?.role ?? "RECEPTIONIST");
+      rememberAdminWorkspace(destination);
       keepBusyForNavigation = true;
       router.replace(destination);
       router.refresh();
