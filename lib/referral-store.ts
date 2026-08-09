@@ -25,7 +25,7 @@ const EMPTY: ReferralSummary = {
   activationRequired: false,
   code: "",
   rewardForYou: "10% doanh thu dịch vụ/gói đủ điều kiện · đối soát 15 ngày",
-  rewardForFriend: "Đặt lịch nhanh qua link/QR và vẫn dùng ưu đãi đang đủ điều kiện",
+  rewardForFriend: "Khách mới nhận FIRST60; nếu tạo tài khoản, hệ thống ưu tiên quyền lợi WELCOME150",
   totalEarned: 0,
   monthlyEarnings: [],
   invited: [],

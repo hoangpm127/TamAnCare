@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import QRCode from "qrcode";
-import { BadgePercent, Check, Copy, Gift, Loader2, QrCode as QrCodeIcon, Save, Share2, ShieldCheck, Sparkles, TrendingUp, UserCheck } from "lucide-react";
+import { BadgePercent, Check, ChevronDown, Copy, Download, Gift, Link2, Loader2, QrCode as QrCodeIcon, Save, Share2, ShieldCheck, Sparkles, TrendingUp, UserCheck } from "lucide-react";
 import { referralTiers } from "@/lib/demo-data";
 import { useReferralSummary } from "@/lib/referral-store";
 import { cn, formatMoney } from "@/lib/utils";
@@ -28,8 +28,9 @@ function currentReferralTier(totalEarned: number) {
 
 export default function ReferralPage() {
   const referral = useReferralSummary();
-  const [copied, setCopied] = useState(false);
-  const [showQr, setShowQr] = useState(false);
+  const [copiedTarget, setCopiedTarget] = useState<"code" | "link" | null>(null);
+  const [shareKitOpen, setShareKitOpen] = useState(false);
+  const [referralLink, setReferralLink] = useState("");
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
   const [qrLoading, setQrLoading] = useState(false);
   const [profileDraft, setProfileDraft] = useState<NonNullable<typeof referral.profile> | null>(null);
@@ -99,34 +100,47 @@ export default function ReferralPage() {
 
   async function copyCode() {
     await navigator.clipboard.writeText(referral.code);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1500);
+    setCopiedTarget("code");
+    setTimeout(() => setCopiedTarget(null), 1500);
   }
 
   async function share() {
-    const referralLink = `${window.location.origin}${referralPath}`;
+    const link = referralLink || `${window.location.origin}${referralPath}`;
     if (navigator.share) {
       try {
-        await navigator.share({ title: "Tâm An Center", text: shareText, url: referralLink });
+        await navigator.share({ title: "Tâm An Center", text: shareText, url: link });
         return;
-      } catch {
-        // người dùng huỷ chia sẻ, rơi xuống copy bên dưới
+      } catch (reason) {
+        if (reason instanceof DOMException && reason.name === "AbortError") return;
       }
     }
-    await navigator.clipboard.writeText(`${shareText} ${referralLink}`);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1500);
+    await navigator.clipboard.writeText(`${shareText} ${link}`);
+    setCopiedTarget("link");
+    setTimeout(() => setCopiedTarget(null), 1500);
   }
 
-  async function toggleQr() {
-    if (!showQr && !qrDataUrl) {
+  async function toggleShareKit() {
+    const nextOpen = !shareKitOpen;
+    setShareKitOpen(nextOpen);
+    if (!nextOpen) return;
+    const link = `${window.location.origin}${referralPath}`;
+    setReferralLink(link);
+    if (!qrDataUrl) {
       setQrLoading(true);
-      const referralLink = `${window.location.origin}${referralPath}`;
-      const dataUrl = await QRCode.toDataURL(referralLink, { margin: 1, width: 220, color: { dark: "#281b18", light: "#ffffff" } });
-      setQrDataUrl(dataUrl);
-      setQrLoading(false);
+      try {
+        const dataUrl = await QRCode.toDataURL(link, { margin: 1, width: 360, errorCorrectionLevel: "M", color: { dark: "#281b18", light: "#ffffff" } });
+        setQrDataUrl(dataUrl);
+      } finally {
+        setQrLoading(false);
+      }
     }
-    setShowQr((value) => !value);
+  }
+
+  async function copyReferralLink() {
+    const link = referralLink || `${window.location.origin}${referralPath}`;
+    await navigator.clipboard.writeText(link);
+    setCopiedTarget("link");
+    setTimeout(() => setCopiedTarget(null), 1500);
   }
 
   async function saveAffiliateProfile() {
@@ -244,42 +258,53 @@ export default function ReferralPage() {
               onClick={copyCode}
               className={cn(
                 "inline-flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1.5 text-xs font-semibold transition",
-                copied ? "bg-[#a85f29] text-white" : "bg-[#c64b32] text-white"
+                copiedTarget === "code" ? "bg-[#a85f29] text-white" : "bg-[#c64b32] text-white"
               )}
+              aria-label="Chép mã"
             >
-              {copied ? <Check size={13} /> : <Copy size={13} />}
+              {copiedTarget === "code" ? <Check size={13} /> : <Copy size={13} />}
             </button>
           </div>
-          <button
-            type="button"
-            onClick={share}
-            aria-label="Chia sẻ link giới thiệu"
-            className="flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-xl bg-gradient-to-b from-[#b6403a] to-[#8b2b28] text-white shadow-sm"
-          >
-            <Share2 size={17} />
-          </button>
-          <button
-            type="button"
-            onClick={toggleQr}
-            aria-label="Hiện mã QR giới thiệu"
-            className={cn(
-              "flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-xl border transition",
-              showQr ? "border-[#c64b32] bg-[#f8ebe5] text-[#c64b32]" : "border-[#e7d6ca] text-[#c64b32]"
-            )}
-          >
-            <QrCodeIcon size={17} />
-          </button>
         </div>
 
-        {showQr ? (
-          <div className="mt-3 flex flex-col items-center gap-2 rounded-xl border border-dashed border-[#e7d6ca] bg-[#fdf8f5] p-3">
-            {qrLoading ? (
-              <Loader2 size={24} className="animate-spin text-[#c64b32]" />
-            ) : qrDataUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={qrDataUrl} alt="Mã QR giới thiệu" className="h-32 w-32" />
-            ) : null}
-            <span className="max-w-full truncate rounded-full bg-white px-2.5 py-1 font-mono text-[10px] text-[#51423b]">{referralPath}</span>
+        <button
+          type="button"
+          onClick={() => void toggleShareKit()}
+          aria-expanded={shareKitOpen}
+          className="mt-3 flex w-full items-center justify-between gap-3 rounded-xl bg-gradient-to-r from-[#b6403a] to-[#8b2b28] px-4 py-3.5 text-left text-white shadow-md shadow-[#8b2b28]/15"
+        >
+          <span className="flex items-center gap-2.5">
+            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/15"><Share2 size={17} /></span>
+            <span><strong className="block text-sm">Chia sẻ link giới thiệu</strong><small className="mt-0.5 block text-[10px] text-white/75">Link và mã QR dùng chung một nguồn ghi nhận</small></span>
+          </span>
+          <ChevronDown size={18} className={cn("shrink-0 transition-transform", shareKitOpen && "rotate-180")} />
+        </button>
+
+        {shareKitOpen ? (
+          <div className="mt-3 overflow-hidden rounded-2xl border border-[#e7d6ca] bg-[#fdf8f5]">
+            <div className="grid gap-4 p-4 sm:grid-cols-[168px_1fr] sm:items-center">
+              <div className="mx-auto flex h-[168px] w-[168px] items-center justify-center rounded-2xl bg-white p-2 shadow-sm ring-1 ring-[#e7d6ca]">
+                {qrLoading ? (
+                  <Loader2 size={26} className="animate-spin text-[#c64b32]" />
+                ) : qrDataUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={qrDataUrl} alt="Mã QR giới thiệu" className="h-full w-full" />
+                ) : null}
+              </div>
+              <div className="min-w-0">
+                <p className="flex items-center gap-1.5 text-sm font-semibold"><QrCodeIcon size={16} className="text-[#c64b32]" /> Mã QR giới thiệu</p>
+                <p className="mt-1 text-[11px] leading-4 text-[#826f66]">Người nhận quét QR hoặc bấm link đều mở cùng một lời mời và được lưu mã trong 30 ngày.</p>
+                <div className="mt-2.5 flex min-w-0 items-center gap-2 rounded-xl bg-white px-3 py-2.5 ring-1 ring-[#e7d6ca]">
+                  <Link2 size={14} className="shrink-0 text-[#c64b32]" />
+                  <span className="min-w-0 flex-1 truncate text-[10px] text-[#51423b]">{referralLink || referralPath}</span>
+                </div>
+              </div>
+            </div>
+            <div className="grid gap-2 border-t border-[#e7d6ca] bg-white p-3 sm:grid-cols-3">
+              <button type="button" onClick={() => void share()} className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#c64b32] px-3 py-3 text-xs font-semibold text-white"><Share2 size={15} /> Chia sẻ link giới thiệu</button>
+              <button type="button" onClick={() => void copyReferralLink()} className="inline-flex items-center justify-center gap-2 rounded-xl border border-[#e7d6ca] px-3 py-3 text-xs font-semibold text-[#6f211f]">{copiedTarget === "link" ? <Check size={15} /> : <Copy size={15} />} Sao chép link để mở bằng trình duyệt</button>
+              {qrDataUrl ? <a href={qrDataUrl} download={`TAM-AN-AFF-${referral.code}.png`} className="inline-flex items-center justify-center gap-2 rounded-xl border border-[#e7d6ca] px-3 py-3 text-xs font-semibold text-[#6f211f]"><Download size={15} /> Tải QR</a> : <span className="inline-flex items-center justify-center rounded-xl border border-[#e7d6ca] px-3 py-3 text-xs text-[#826f66]">Đang tạo mã…</span>}
+            </div>
           </div>
         ) : null}
 
@@ -304,6 +329,7 @@ export default function ReferralPage() {
           </div>
         </div>
       </section>
+      <p className="mt-2 rounded-xl bg-[#fff7df] px-3.5 py-3 text-[11px] leading-5 text-[#715943] ring-1 ring-[#c59a3d]/35">Khách nhận ưu đãi khi đặt lịch đủ điều kiện; bạn nhận hoa hồng sau khi dịch vụ hoàn tất và thanh toán thành công.</p>
 
       <section className="mt-5">
         <div className="mb-2.5 flex items-end justify-between gap-4">

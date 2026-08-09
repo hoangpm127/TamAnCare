@@ -213,6 +213,15 @@ export const EXACT_ENGLISH: Record<string, string> = {
   "Chi tiết": "Details",
   "Chi tiêu": "Spend",
   "Chia sẻ link giới thiệu": "Share referral link",
+  "Link và mã QR dùng chung một nguồn ghi nhận":
+    "The link and QR code use the same referral attribution.",
+  "Người nhận quét QR hoặc bấm link đều mở cùng một lời mời và được lưu mã trong 30 ngày.":
+    "Scanning the QR code or tapping the link opens the same invitation and saves the referral code for 30 days.",
+  "Đang tạo mã…": "Creating code…",
+  "Khách mới nhận FIRST60; nếu tạo tài khoản, hệ thống ưu tiên quyền lợi WELCOME150":
+    "New guests receive FIRST60; after creating an account, WELCOME150 is applied first.",
+  "Khách nhận ưu đãi khi đặt lịch đủ điều kiện; bạn nhận hoa hồng sau khi dịch vụ hoàn tất và thanh toán thành công.":
+    "Guests receive an offer on eligible bookings; you earn commission after the service is completed and payment succeeds.",
   "Chia sẻ link hoặc mã QR — ai đặt lịch qua đây đều được tự động ghi nhận Affiliate 1 tầng cho bạn.": "Share the link or QR code — anyone who books an appointment through here will automatically be recognized as a 1-level Affiliate for you.",
   "Chính sách bảo vệ dữ liệu": "Data protection policy",
   "Chính sách bảo vệ dữ liệu · Tâm An Center": "Data protection policy · TÂM AN CENTER",

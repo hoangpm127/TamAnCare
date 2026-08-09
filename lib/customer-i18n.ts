@@ -536,6 +536,15 @@ const COMPLETE_KOREAN: Record<string, string> = {
   "Cần chọn lịch khác": "다른 시간 선택 필요",
   "Chỉ dùng cho chủ thẻ, không chuyển nhượng.": "이용권 소유자만 사용할 수 있으며 양도할 수 없습니다.",
   "Chia sẻ link giới thiệu": "추천 링크 공유",
+  "Link và mã QR dùng chung một nguồn ghi nhận":
+    "링크와 QR 코드는 동일한 추천 경로로 기록됩니다.",
+  "Người nhận quét QR hoặc bấm link đều mở cùng một lời mời và được lưu mã trong 30 ngày.":
+    "받는 분이 QR을 스캔하거나 링크를 눌러도 같은 초대 페이지가 열리며 추천 코드는 30일 동안 저장됩니다.",
+  "Đang tạo mã…": "코드를 생성하는 중…",
+  "Khách mới nhận FIRST60; nếu tạo tài khoản, hệ thống ưu tiên quyền lợi WELCOME150":
+    "신규 고객은 FIRST60 혜택을 받으며, 계정을 만들면 WELCOME150 혜택이 우선 적용됩니다.",
+  "Khách nhận ưu đãi khi đặt lịch đủ điều kiện; bạn nhận hoa hồng sau khi dịch vụ hoàn tất và thanh toán thành công.":
+    "고객은 조건을 충족한 예약에 혜택을 받고, 소개자는 서비스 완료 및 결제 성공 후 수수료를 받습니다.",
   "Chính sách bảo vệ dữ liệu · Tâm An Center": "개인정보 보호정책 · TÂM AN CENTER",
   "Chọn giờ chăm sóc": "케어 시간 선택",
   "Chọn khung giờ phục vụ": "서비스 시간대 선택",

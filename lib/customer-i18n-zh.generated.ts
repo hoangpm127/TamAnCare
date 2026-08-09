@@ -213,6 +213,15 @@ export const EXACT_CHINESE: Record<string, string> = {
   "Chi tiết": "详情",
   "Chi tiêu": "花费",
   "Chia sẻ link giới thiệu": "分享推荐链接",
+  "Link và mã QR dùng chung một nguồn ghi nhận":
+    "链接和二维码使用同一个推荐来源记录。",
+  "Người nhận quét QR hoặc bấm link đều mở cùng một lời mời và được lưu mã trong 30 ngày.":
+    "扫描二维码或点击链接都会打开同一个邀请页面，并将推荐码保存30天。",
+  "Đang tạo mã…": "正在生成代码…",
+  "Khách mới nhận FIRST60; nếu tạo tài khoản, hệ thống ưu tiên quyền lợi WELCOME150":
+    "新顾客可享 FIRST60；创建账户后将优先使用 WELCOME150。",
+  "Khách nhận ưu đãi khi đặt lịch đủ điều kiện; bạn nhận hoa hồng sau khi dịch vụ hoàn tất và thanh toán thành công.":
+    "顾客在符合条件的预约中享受优惠；服务完成且付款成功后，推荐人获得佣金。",
   "Chia sẻ link hoặc mã QR — ai đặt lịch qua đây đều được tự động ghi nhận Affiliate 1 tầng cho bạn.": "分享链接或二维码 — 任何通过此处预约的人都会自动被识别为您的 1 级会员。",
   "Chính sách bảo vệ dữ liệu": "数据保护政策",
   "Chính sách bảo vệ dữ liệu · Tâm An Center": "数据保护政策·TÂM AN CENTER",
