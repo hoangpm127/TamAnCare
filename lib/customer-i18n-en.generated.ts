@@ -1,5 +1,9 @@
 // Generated from the canonical Vietnamese customer copy. Review brand, legal and medical wording before release.
 export const EXACT_ENGLISH: Record<string, string> = {
+  "Không cần mật khẩu hoặc mã SMS.": "No password or SMS code is required.",
+  "Tâm An Center đối chiếu quyền lợi theo số điện thoại và lịch sử phục vụ tại cơ sở. Hồ sơ được giữ trên điện thoại này trong 180 ngày; hãy liên kết Google hoặc Facebook sau khi tạo để đăng nhập lại dễ dàng khi đổi máy.": "TÂM AN CENTER verifies benefits using the phone number and in-store service history. The profile stays signed in on this phone for 180 days; link Google or Facebook after creating it so you can easily sign in again when changing devices.",
+  "Bạn chỉ cần tạo hồ sơ bằng họ tên và số điện thoại. Lễ tân sẽ đối chiếu ưu đãi khi bạn đến cơ sở.": "You only need to create a profile with your name and phone number. Reception will verify the offer when you arrive.",
+  "Quên mật khẩu? Liên hệ lễ tân để khôi phục": "Forgot your password? Contact reception to recover access",
   "Đồng": "Bronze",
   "Bạc": "Silver",
   "Vàng": "Gold",

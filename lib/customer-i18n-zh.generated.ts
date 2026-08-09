@@ -1,5 +1,9 @@
 // Generated from the canonical Vietnamese customer copy. Review brand, legal and medical wording before release.
 export const EXACT_CHINESE: Record<string, string> = {
+  "Không cần mật khẩu hoặc mã SMS.": "无需密码或短信验证码。",
+  "Tâm An Center đối chiếu quyền lợi theo số điện thoại và lịch sử phục vụ tại cơ sở. Hồ sơ được giữ trên điện thoại này trong 180 ngày; hãy liên kết Google hoặc Facebook sau khi tạo để đăng nhập lại dễ dàng khi đổi máy.": "TÂM AN CENTER 会根据手机号和到店服务记录核对权益。该资料将在此手机上保留登录状态180天；创建后请关联 Google 或 Facebook，以便更换设备时轻松重新登录。",
+  "Bạn chỉ cần tạo hồ sơ bằng họ tên và số điện thoại. Lễ tân sẽ đối chiếu ưu đãi khi bạn đến cơ sở.": "您只需使用姓名和手机号创建资料。到店时前台会核对优惠资格。",
+  "Quên mật khẩu? Liên hệ lễ tân để khôi phục": "忘记密码？请联系前台恢复访问",
   "Đồng": "青铜",
   "Bạc": "白银",
   "Vàng": "黄金",

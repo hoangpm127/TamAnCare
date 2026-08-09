@@ -7,7 +7,9 @@ import { phoneVerificationRequired } from "@/lib/server/otp-delivery";
 
 const COOKIE_NAME = "ta_customer_session_v2";
 const LEGACY_COOKIE_NAME = "ta_customer_session";
-const SESSION_DAYS = 30;
+// Hồ sơ khách hàng không dùng OTP được giữ lâu trên đúng thiết bị đã đăng ký.
+// Khách vẫn có thể chủ động đăng xuất; Google/Facebook là đường khôi phục khi đổi máy.
+const SESSION_DAYS = 180;
 
 function tokenHash(token: string) {
   return createHash("sha256").update(token).digest("hex");

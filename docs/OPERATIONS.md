@@ -37,9 +37,12 @@ Tác vụ không tự đánh dấu Tip là đã trả. Admin hoặc Quản lý c
 - Tiếp thị là lựa chọn độc lập; khách có thể bật/tắt tại Tài khoản. Khi rút lại, lần đồng ý trước được đóng bằng `withdrawnAt` và quyết định mới được lưu thành một bản ghi lịch sử.
 - Không sửa ngược nội dung của một phiên bản đã có consent. Tạo phiên bản mới và thiết kế luồng xin đồng ý lại nếu thay đổi trọng yếu.
 
-## OTP khách hàng và khôi phục tài khoản
+## Nhận diện khách hàng và OTP dự phòng
 
-- Booking giá thường và tạo tài khoản không yêu cầu OTP. Giữ `PHONE_VERIFICATION_ON_SIGNUP_REQUIRED=false`; khách chỉ cần xác minh một lần trong tài khoản trước khi dùng voucher, tín dụng chào mừng hoặc affiliate khi `PHONE_VERIFICATION_REQUIRED=true`.
+- Cấu hình vận hành hiện tại ưu tiên khách trung tuổi: tạo hồ sơ bằng họ tên và số điện thoại, không yêu cầu mật khẩu hoặc OTP. Giữ `PHONE_VERIFICATION_REQUIRED=false`, `PHONE_VERIFICATION_ON_SIGNUP_REQUIRED=false` và `OTP_PROVIDER=DISABLED`.
+- Mỗi số điện thoại chỉ tạo được một hồ sơ. Voucher lần đầu và đối soát Affiliate phải được lễ tân kiểm tra thêm bằng lịch sử phục vụ và nhận diện khách trực tiếp tại cơ sở; trường hợp nghi ngờ được chuyển quản lý xác nhận trước khi ghi nhận quyền lợi hoặc chi hoa hồng.
+- Phiên hồ sơ trên thiết bị có hiệu lực 180 ngày. Khuyến nghị khách liên kết Google hoặc Facebook ngay sau khi tạo hồ sơ để đăng nhập lại khi đổi điện thoại; nếu chưa liên kết, lễ tân hỗ trợ khôi phục tại cơ sở.
+- SMS OTP được giữ làm phương án nâng cấp sau, không phải điều kiện ra mắt hiện tại.
 - Mã xác minh số điện thoại gồm 6 số, hết hạn sau 5 phút, tối đa 5 lần thử. Bằng chứng xác minh chỉ dùng một lần và hết hạn sau 10 phút.
 - Cấu hình ra mắt khuyến nghị: `OTP_PROVIDER=ESMS`, `ESMS_SMS_TYPE=8`, `ESMS_SANDBOX=false`; giữ trống `ESMS_BRANDNAME`. Tin loại 8 dùng nội dung OTP trung tính, không giả lập Brandname. Khi Brandname được duyệt, đổi `ESMS_SMS_TYPE=2` và đặt `ESMS_BRANDNAME=TAMANCARE` mà không đổi luồng ứng dụng.
 - Phương án ra mắt nhanh: `OTP_PROVIDER=SPEEDSMS`, `SPEEDSMS_SMS_TYPE=2` và `SPEEDSMS_ACCESS_TOKEN`. Loại 2 dùng đầu số ngẫu nhiên; sau khi có Brandname mặc định có thể đổi sang loại 4 và đặt `SPEEDSMS_SENDER=Verify`.

@@ -12,6 +12,10 @@ export const CUSTOMER_LANGUAGE_STORAGE_KEY = "tam-an-customer-language";
 export const CUSTOMER_LANGUAGE_COOKIE_KEY = "tam_customer_language";
 
 const EXACT_KOREAN: Record<string, string> = {
+  "Không cần mật khẩu hoặc mã SMS.": "비밀번호나 SMS 인증 코드가 필요하지 않습니다.",
+  "Tâm An Center đối chiếu quyền lợi theo số điện thoại và lịch sử phục vụ tại cơ sở. Hồ sơ được giữ trên điện thoại này trong 180 ngày; hãy liên kết Google hoặc Facebook sau khi tạo để đăng nhập lại dễ dàng khi đổi máy.": "TÂM AN CENTER는 전화번호와 매장 이용 기록으로 혜택을 확인합니다. 이 기기에는 프로필이 180일 동안 유지됩니다. 휴대폰을 바꿀 때 쉽게 다시 로그인할 수 있도록 생성 후 Google 또는 Facebook을 연결해 주세요.",
+  "Bạn chỉ cần tạo hồ sơ bằng họ tên và số điện thoại. Lễ tân sẽ đối chiếu ưu đãi khi bạn đến cơ sở.": "이름과 전화번호로 프로필만 만들면 됩니다. 매장 방문 시 리셉션에서 혜택을 확인해 드립니다.",
+  "Quên mật khẩu? Liên hệ lễ tân để khôi phục": "비밀번호를 잊으셨나요? 복구를 위해 리셉션에 문의해 주세요",
   "Đồng": "브론즈",
   "Bạc": "실버",
   "Vàng": "골드",

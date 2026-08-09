@@ -6,8 +6,6 @@ import { CheckCircle2, Eye, EyeOff, Gift, Loader2, LockKeyhole, LogOut, Phone, S
 import { DEFAULT_CUSTOMER_PROFILE, refreshCustomerProfile } from "@/lib/customer-profile-store";
 import { formatMoney } from "@/lib/utils";
 import { signalCustomerAccountChanged, type CustomerAccountView } from "@/lib/customer-account";
-import { CustomerPasswordRecovery } from "@/components/customer-password-recovery";
-import { CustomerPhoneVerification } from "@/components/customer-phone-verification";
 import { CustomerSocialAuthButtons, CustomerSocialCompletion } from "@/components/customer-social-auth";
 
 export function CustomerAccountClient({
@@ -33,17 +31,12 @@ export function CustomerAccountClient({
   const [fullName, setFullName] = useState(DEFAULT_CUSTOMER_PROFILE.fullName);
   const [phone, setPhone] = useState(DEFAULT_CUSTOMER_PROFILE.phone);
   const [password, setPassword] = useState("");
-  const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [showPasswordConfirmation, setShowPasswordConfirmation] = useState(false);
   const [acceptRequired, setAcceptRequired] = useState(false);
   const [marketingOptIn, setMarketingOptIn] = useState(false);
-  const [phoneVerificationToken, setPhoneVerificationToken] = useState<string | null>(null);
-  const [phoneVerificationRequired, setPhoneVerificationRequired] = useState(false);
   const [marketingSaved, setMarketingSaved] = useState<boolean | null>(null);
   const [consentSaving, setConsentSaving] = useState(false);
   const [consentMessage, setConsentMessage] = useState("");
-  const [recoveryOpen, setRecoveryOpen] = useState(false);
   const [oauthCompletionOpen, setOauthCompletionOpen] = useState(initialOauthCompletion);
   const [oauthMessage] = useState(initialOauthMessage);
 
@@ -93,10 +86,6 @@ export function CustomerAccountClient({
 
   async function submit(event: React.FormEvent) {
     event.preventDefault();
-    if (mode === "register" && password !== passwordConfirmation) {
-      setError("Hai mật khẩu chưa trùng khớp.");
-      return;
-    }
     setSubmitting(true);
     setError("");
     try {
@@ -104,7 +93,7 @@ export function CustomerAccountClient({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(mode === "register"
-          ? { fullName, phone, password, passwordConfirmation, phoneVerificationToken, acceptTerms: acceptRequired, acceptPrivacy: acceptRequired, marketingOptIn }
+          ? { fullName, phone, acceptTerms: acceptRequired, acceptPrivacy: acceptRequired, marketingOptIn }
           : { phone, password }),
       });
       const data = await response.json();
@@ -129,12 +118,8 @@ export function CustomerAccountClient({
   function selectMode(nextMode: "register" | "login") {
     setMode(nextMode);
     setPassword("");
-    setPasswordConfirmation("");
     setShowPassword(false);
-    setShowPasswordConfirmation(false);
-    setPhoneVerificationToken(null);
     setError("");
-    if (nextMode === "register") setRecoveryOpen(false);
   }
 
   if (loading) {
@@ -157,18 +142,6 @@ export function CustomerAccountClient({
           </div>
           <div className="p-5">
             {oauthMessage ? <p className="mb-4 rounded-2xl bg-amber-50 p-3 text-center text-xs font-semibold text-amber-700">{oauthMessage}</p> : null}
-            {!account.phoneVerified ? (
-              <div className="mb-4">
-                <CustomerPhoneVerification
-                  key={`account:${account.phone}`}
-                  phone={account.phone}
-                  purpose="ACCOUNT_PHONE"
-                  onVerificationChange={(token) => {
-                    if (token) setAccount((current) => current ? { ...current, phoneVerified: true } : current);
-                  }}
-                />
-              </div>
-            ) : null}
             <div className="rounded-2xl bg-[#fff7df] p-4 text-center ring-1 ring-[#c59a3d]/45">
               <Gift className="mx-auto text-[#c64b32]" size={24} />
               <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-[#76551d]">Ưu đãi đang có</p>
@@ -233,18 +206,14 @@ export function CustomerAccountClient({
           </div>
           <form onSubmit={submit} className="mt-4 space-y-3">
             {mode === "register" ? <label className="block text-xs font-semibold">Họ tên<span className="mt-1.5 flex items-center gap-2 rounded-xl border border-[#e7d6ca] px-3"><UserRound size={15} className="text-[#c64b32]" /><input required value={fullName} onChange={(event) => setFullName(event.target.value)} className="min-w-0 flex-1 py-3 text-sm outline-none" /></span></label> : null}
-            <label className="block text-xs font-semibold">Số điện thoại<span className="mt-1.5 flex items-center gap-2 rounded-xl border border-[#e7d6ca] px-3"><Phone size={15} className="text-[#c64b32]" /><input required inputMode="tel" autoComplete="tel" value={phone} onChange={(event) => { setPhone(event.target.value); setPhoneVerificationToken(null); }} className="min-w-0 flex-1 py-3 text-sm outline-none" /></span></label>
-            <label className="block text-xs font-semibold">{mode === "register" ? "Mật khẩu từ 15 ký tự" : "Mật khẩu"}<span className="mt-1.5 flex items-center gap-2 rounded-xl border border-[#e7d6ca] px-3"><LockKeyhole size={15} className="shrink-0 text-[#c64b32]" /><input required minLength={mode === "register" ? 15 : 6} maxLength={72} autoComplete={mode === "register" ? "new-password" : "current-password"} type={showPassword ? "text" : "password"} value={password} onChange={(event) => setPassword(event.target.value)} className="min-w-0 flex-1 py-3 text-sm outline-none" /><button type="button" onClick={() => setShowPassword((current) => !current)} aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"} aria-pressed={showPassword} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[#786a63] hover:bg-[#f8ebe5] hover:text-[#c64b32]">{showPassword ? <EyeOff size={17} /> : <Eye size={17} />}</button></span></label>
+            <label className="block text-xs font-semibold">Số điện thoại<span className="mt-1.5 flex items-center gap-2 rounded-xl border border-[#e7d6ca] px-3"><Phone size={15} className="text-[#c64b32]" /><input required inputMode="tel" autoComplete="tel" value={phone} onChange={(event) => setPhone(event.target.value)} className="min-w-0 flex-1 py-3 text-sm outline-none" /></span></label>
+            {mode === "login" ? <label className="block text-xs font-semibold">Mật khẩu<span className="mt-1.5 flex items-center gap-2 rounded-xl border border-[#e7d6ca] px-3"><LockKeyhole size={15} className="shrink-0 text-[#c64b32]" /><input required minLength={6} maxLength={72} autoComplete="current-password" type={showPassword ? "text" : "password"} value={password} onChange={(event) => setPassword(event.target.value)} className="min-w-0 flex-1 py-3 text-sm outline-none" /><button type="button" onClick={() => setShowPassword((current) => !current)} aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"} aria-pressed={showPassword} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[#786a63] hover:bg-[#f8ebe5] hover:text-[#c64b32]">{showPassword ? <EyeOff size={17} /> : <Eye size={17} />}</button></span></label> : null}
             {mode === "register" ? (
               <>
-              <label className="block text-xs font-semibold">Nhập lại mật khẩu<span className={`mt-1.5 flex items-center gap-2 rounded-xl border px-3 ${passwordConfirmation && passwordConfirmation !== password ? "border-red-300 bg-red-50/40" : "border-[#e7d6ca]"}`}><LockKeyhole size={15} className="shrink-0 text-[#c64b32]" /><input required minLength={15} maxLength={72} autoComplete="new-password" type={showPasswordConfirmation ? "text" : "password"} value={passwordConfirmation} onChange={(event) => setPasswordConfirmation(event.target.value)} aria-invalid={Boolean(passwordConfirmation && passwordConfirmation !== password)} className="min-w-0 flex-1 bg-transparent py-3 text-sm outline-none" /><button type="button" onClick={() => setShowPasswordConfirmation((current) => !current)} aria-label={showPasswordConfirmation ? "Ẩn mật khẩu nhập lại" : "Hiện mật khẩu nhập lại"} aria-pressed={showPasswordConfirmation} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[#786a63] hover:bg-[#f8ebe5] hover:text-[#c64b32]">{showPasswordConfirmation ? <EyeOff size={17} /> : <Eye size={17} />}</button></span>{passwordConfirmation && passwordConfirmation !== password ? <span className="mt-1.5 block text-[11px] font-medium text-red-700">Hai mật khẩu chưa trùng khớp.</span> : null}</label>
-              <CustomerPhoneVerification
-                key={`signup:${phone}`}
-                phone={phone}
-                purpose="CUSTOMER_SIGNUP"
-                onVerificationChange={setPhoneVerificationToken}
-                onRequiredChange={setPhoneVerificationRequired}
-              />
+              <div className="rounded-2xl bg-[#fff7df] p-3 text-[11px] leading-5 text-[#715943] ring-1 ring-[#c59a3d]/35">
+                <p className="font-semibold text-[#6f211f]">Không cần mật khẩu hoặc mã SMS.</p>
+                <p className="mt-1">Tâm An Center đối chiếu quyền lợi theo số điện thoại và lịch sử phục vụ tại cơ sở. Hồ sơ được giữ trên điện thoại này trong 180 ngày; hãy liên kết Google hoặc Facebook sau khi tạo để đăng nhập lại dễ dàng khi đổi máy.</p>
+              </div>
               <div className="space-y-2 rounded-2xl bg-[#fcf5ef] p-3 ring-1 ring-[#e7d6ca]">
                 <label className="flex cursor-pointer items-start gap-2.5 text-xs leading-5 text-[#554842]">
                   <input
@@ -272,12 +241,10 @@ export function CustomerAccountClient({
               </>
             ) : null}
             {error ? <p role="alert" aria-live="polite" className="rounded-xl bg-red-50 p-3 text-xs font-medium text-red-700">{error}</p> : null}
-            <button disabled={submitting || (mode === "register" && (password !== passwordConfirmation || (phoneVerificationRequired && !phoneVerificationToken)))} className="flex w-full items-center justify-center gap-2 rounded-full bg-[#c64b32] px-5 py-3 text-sm font-semibold text-white disabled:opacity-60">{submitting ? <Loader2 className="animate-spin" size={16} /> : <ShieldCheck size={16} />}{mode === "register" ? "Tạo tài khoản & nhận 150K" : "Đăng nhập"}</button>
+            <button disabled={submitting || (mode === "register" && !acceptRequired)} className="flex w-full items-center justify-center gap-2 rounded-full bg-[#c64b32] px-5 py-3 text-sm font-semibold text-white disabled:opacity-60">{submitting ? <Loader2 className="animate-spin" size={16} /> : <ShieldCheck size={16} />}{mode === "register" ? "Tạo tài khoản & nhận 150K" : "Đăng nhập"}</button>
           </form>
           {mode === "login" ? (
-            recoveryOpen
-              ? <CustomerPasswordRecovery initialPhone={phone} onClose={() => setRecoveryOpen(false)} />
-              : <button type="button" onClick={() => setRecoveryOpen(true)} className="mt-3 w-full text-center text-xs font-semibold text-[#c64b32]">Quên mật khẩu?</button>
+            <Link href="/lien-he" className="mt-3 block w-full text-center text-xs font-semibold text-[#c64b32]">Quên mật khẩu? Liên hệ lễ tân để khôi phục</Link>
           ) : null}
           <p className="mt-3 text-center text-[11px] leading-5 text-[#826f66]">Không bắt buộc tạo tài khoản để đặt lịch.</p>
         </div>

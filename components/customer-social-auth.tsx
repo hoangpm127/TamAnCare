@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { CheckCircle2, Loader2, Phone, ShieldCheck, UserRound, X } from "lucide-react";
 import type { CustomerAccountView } from "@/lib/customer-account";
-import { CustomerPhoneVerification } from "@/components/customer-phone-verification";
 
 type SocialProvider = "GOOGLE" | "FACEBOOK";
 
@@ -68,8 +67,6 @@ export function CustomerSocialCompletion({
   const [pending, setPending] = useState<PendingIdentity | null | undefined>(undefined);
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
-  const [phoneVerificationToken, setPhoneVerificationToken] = useState<string | null>(null);
-  const [phoneVerificationRequired, setPhoneVerificationRequired] = useState(false);
   const [acceptRequired, setAcceptRequired] = useState(false);
   const [marketingOptIn, setMarketingOptIn] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -117,7 +114,6 @@ export function CustomerSocialCompletion({
         body: JSON.stringify({
           fullName,
           phone,
-          phoneVerificationToken,
           acceptTerms: acceptRequired,
           acceptPrivacy: acceptRequired,
           marketingOptIn,
@@ -169,14 +165,7 @@ export function CustomerSocialCompletion({
         <form onSubmit={submit} className="space-y-3 p-5">
           <p className="text-xs leading-5 text-[#786a63]">Số điện thoại giúp giữ đúng lịch sử booking, ưu đãi và chăm sóc tại hai cơ sở.</p>
           <label className="block text-xs font-semibold">Họ tên<span className="mt-1.5 flex items-center gap-2 rounded-xl border border-[#e7d6ca] px-3"><UserRound size={15} className="text-[#c64b32]" /><input required minLength={2} maxLength={100} autoComplete="name" value={fullName} onChange={(event) => setFullName(event.target.value)} className="min-w-0 flex-1 py-3 text-sm outline-none" /></span></label>
-          <label className="block text-xs font-semibold">Số điện thoại<span className="mt-1.5 flex items-center gap-2 rounded-xl border border-[#e7d6ca] px-3"><Phone size={15} className="text-[#c64b32]" /><input required inputMode="tel" autoComplete="tel" value={phone} onChange={(event) => { setPhone(event.target.value); setPhoneVerificationToken(null); }} className="min-w-0 flex-1 py-3 text-sm outline-none" /></span></label>
-          <CustomerPhoneVerification
-            key={`social:${phone}`}
-            phone={phone}
-            purpose="CUSTOMER_SOCIAL_SIGNUP"
-            onVerificationChange={setPhoneVerificationToken}
-            onRequiredChange={setPhoneVerificationRequired}
-          />
+          <label className="block text-xs font-semibold">Số điện thoại<span className="mt-1.5 flex items-center gap-2 rounded-xl border border-[#e7d6ca] px-3"><Phone size={15} className="text-[#c64b32]" /><input required inputMode="tel" autoComplete="tel" value={phone} onChange={(event) => setPhone(event.target.value)} className="min-w-0 flex-1 py-3 text-sm outline-none" /></span></label>
           <div className="space-y-2 rounded-2xl bg-[#fcf5ef] p-3 ring-1 ring-[#e7d6ca]">
             <label className="flex cursor-pointer items-start gap-2.5 text-xs leading-5 text-[#554842]">
               <input required type="checkbox" checked={acceptRequired} onChange={(event) => setAcceptRequired(event.target.checked)} className="mt-1 h-4 w-4 shrink-0 accent-[#c64b32]" />
@@ -188,7 +177,7 @@ export function CustomerSocialCompletion({
             </label>
           </div>
           {error ? <p className="rounded-xl bg-red-50 p-3 text-xs font-medium text-red-700">{error}</p> : null}
-          <button disabled={submitting || (phoneVerificationRequired && !phoneVerificationToken)} className="flex w-full items-center justify-center gap-2 rounded-full bg-[#c64b32] px-5 py-3 text-sm font-semibold text-white disabled:opacity-60">
+          <button disabled={submitting} className="flex w-full items-center justify-center gap-2 rounded-full bg-[#c64b32] px-5 py-3 text-sm font-semibold text-white disabled:opacity-60">
             {submitting ? <Loader2 className="animate-spin" size={16} /> : <ShieldCheck size={16} />}
             Hoàn tất &amp; nhận ưu đãi 150K
           </button>

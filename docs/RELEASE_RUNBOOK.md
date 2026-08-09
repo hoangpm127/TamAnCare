@@ -16,7 +16,7 @@
 2. Chạy backup và xác minh khả năng tải bản backup trước khi migration.
 3. Chạy `npm run prod:readiness`; không phát hành nếu còn bất kỳ mục `FAIL` nào.
 4. Chạy migration theo cơ chế pre-deploy, sau đó health check và smoke test đọc dữ liệu.
-5. Chỉ bật nhận tiền khi webhook, tài khoản nhận, OTP, MFA, pháp lý, giám sát và quy trình hoàn tiền đều được ký duyệt.
+5. Chỉ bật nhận tiền khi webhook, tài khoản nhận, MFA, pháp lý, giám sát, quy trình hoàn tiền và cơ chế nhận diện khách đã được ký duyệt. Khi OTP tắt, phải có quy trình lễ tân đối chiếu trực tiếp số điện thoại, lịch sử sử dụng, voucher lần đầu và hồ sơ nhận hoa hồng Affiliate.
 6. Theo dõi 5xx, webhook không khớp, booking giữ chỗ hết hạn, Tip quá hạn và sai lệch sổ cái trong ít nhất 60 phút sau phát hành.
 
 ## Rollback
