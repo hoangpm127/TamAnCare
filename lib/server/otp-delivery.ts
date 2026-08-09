@@ -207,6 +207,13 @@ async function getEsmsDeliveryStatus(reference: string, apiKey: string, secretKe
   return "PENDING" as const;
 }
 
+export async function inspectEsmsDeliveryStatus(reference: string) {
+  const apiKey = process.env.ESMS_API_KEY?.trim();
+  const secretKey = process.env.ESMS_SECRET_KEY?.trim();
+  if (!apiKey || !secretKey || !reference.trim()) return "PENDING" as const;
+  return getEsmsDeliveryStatus(reference.trim(), apiKey, secretKey);
+}
+
 async function waitForEsmsDelivery(reference: string, apiKey: string, secretKey: string) {
   for (const delayMs of [350, 650]) {
     await new Promise((resolve) => setTimeout(resolve, delayMs));

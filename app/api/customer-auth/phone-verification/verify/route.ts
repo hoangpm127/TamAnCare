@@ -4,7 +4,7 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { getCustomerOAuthPendingIdentityId } from "@/lib/server/customer-oauth";
 import { getCustomerSession } from "@/lib/server/customer-session";
-import { phoneVerificationOnSignupRequired, phoneVerificationRequired } from "@/lib/server/otp-delivery";
+import { inspectEsmsDeliveryStatus, phoneVerificationOnSignupRequired, phoneVerificationRequired } from "@/lib/server/otp-delivery";
 import {
   createPhoneVerificationToken,
   isVietnamMobilePhone,
@@ -57,9 +57,28 @@ export async function POST(request: Request) {
       purpose,
       consumedAt: null,
       expiresAt: { gt: now },
-      deliveryStatus: { in: ["SENT", "TEST_MODE"] },
+      deliveryStatus: { in: ["PENDING", "SENT", "TEST_MODE"] },
     },
   });
+  if (challenge?.deliveryStatus === "PENDING") {
+    const deliveryStatus = challenge.deliveryReference
+      ? await inspectEsmsDeliveryStatus(challenge.deliveryReference)
+      : "PENDING";
+    if (deliveryStatus === "FAILED") {
+      await db.phoneOtpChallenge.updateMany({
+        where: { id: challenge.id, consumedAt: null },
+        data: { deliveryStatus: "FAILED", consumedAt: now },
+      });
+      return NextResponse.json({ error: "Nhà mạng chưa chuyển được SMS. Vui lòng yêu cầu mã mới." }, { status: 503 });
+    }
+    if (deliveryStatus === "PENDING") {
+      return NextResponse.json({ error: "SMS vẫn đang được nhà mạng xử lý. Vui lòng chờ ít giây rồi xác nhận lại." }, { status: 409 });
+    }
+    await db.phoneOtpChallenge.updateMany({
+      where: { id: challenge.id, consumedAt: null, deliveryStatus: "PENDING" },
+      data: { deliveryStatus: "SENT" },
+    });
+  }
   const valid = Boolean(
     challenge
       && challenge.attempts < challenge.maxAttempts
