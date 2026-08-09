@@ -263,9 +263,21 @@ async function databaseChecks() {
     }
 
     const countFor = (role: string) => roleCounts.find((item) => item.role === role)?._count._all ?? 0;
-    for (const [role, minimum] of [["OWNER", 1], ["MANAGER", 2], ["RECEPTIONIST", 1], ["INVESTOR", 1]] as const) {
+    // Giai đoạn vận hành ban đầu chỉ có hai tài khoản nội bộ bắt buộc:
+    // Admin (OWNER) và Lễ tân. Khách hàng dùng CustomerAccount riêng; các vai
+    // trò mở rộng được giữ trong kiến trúc nhưng không chặn phát hành.
+    for (const [role, minimum] of [["OWNER", 1], ["RECEPTIONIST", 1]] as const) {
       const count = countFor(role);
       add("Phân quyền", role, count >= minimum ? "PASS" : "FAIL", `${count} tài khoản hoạt động; yêu cầu tối thiểu ${minimum}`);
+    }
+    for (const role of ["MANAGER", "INVESTOR", "XGROUP_SUPER_ADMIN", "DISTRICT_SALES_MANAGER"] as const) {
+      const count = countFor(role);
+      add(
+        "Phân quyền",
+        `${role} (mở rộng)`,
+        count > 0 ? "PASS" : "WARN",
+        count > 0 ? `${count} tài khoản hoạt động` : "Chưa cấp tài khoản; không ảnh hưởng quy trình Khách hàng - Lễ tân - Admin",
+      );
     }
     const activeTherapistUsers = countFor("THERAPIST");
     add(
