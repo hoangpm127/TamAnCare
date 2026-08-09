@@ -47,6 +47,9 @@ export async function POST(request: Request) {
   });
   if (!rateLimit.allowed) return NextResponse.json({ error: "Bạn đã gửi quá nhiều yêu cầu Business. Vui lòng thử lại sau." }, { status: 429 });
   const businessCatalog = await getBusinessCatalog();
+  if (!businessCatalog.onsiteProgram.deploymentEnabled) {
+    return NextResponse.json({ error: "Chương trình onsite hiện chưa nhận lịch mới." }, { status: 503 });
+  }
   const trial = businessCatalog.trialPackages.find((item) => item.id === input.trialId);
   const tier = input.wantsCorporatePackage ? businessCatalog.packageTiers.find((item) => item.id === input.tierId) : undefined;
   if (!trial || (input.wantsCorporatePackage && !tier)) return NextResponse.json({ error: "Gói Business không tồn tại." }, { status: 404 });
@@ -56,7 +59,10 @@ export async function POST(request: Request) {
   const subtotal = input.headcount * trial.pricePerPerson;
   const discount = tier ? Math.round(subtotal * tier.discountPercent / 100) : 0;
   const capacityPerTherapist = Math.max(1, Math.floor(60 / trial.durationMin));
-  const requiredTherapists = Math.max(1, Math.ceil(input.headcount / capacityPerTherapist));
+  const requiredTherapists = Math.max(
+    businessCatalog.onsiteProgram.minimumTherapistsPerSession,
+    Math.ceil(input.headcount / capacityPerTherapist),
+  );
   const transportFee = tier?.id === "corp-complete" ? 0 : requiredTherapists * businessCatalog.transportFee.feePerTherapist;
   const paymentBreakdown = calculatePaymentBreakdown({
     originalAmount: subtotal + transportFee,
@@ -126,6 +132,8 @@ export async function POST(request: Request) {
         paymentStatus: "UNPAID",
         status: "AWAITING_DEPOSIT",
         voucherCode: packageTier,
+        onsiteAssets: businessCatalog.onsiteProgram.requiredAssets,
+        returnVoucherCode: businessCatalog.onsiteProgram.returnVoucher.code,
       },
       update: {
         customerId: customer.id,
@@ -149,6 +157,8 @@ export async function POST(request: Request) {
         totalAmount: serverTotal,
         depositAmount: serverDeposit,
         voucherCode: packageTier,
+        onsiteAssets: businessCatalog.onsiteProgram.requiredAssets,
+        returnVoucherCode: businessCatalog.onsiteProgram.returnVoucher.code,
       },
     });
     await tx.officeRegistration.create({

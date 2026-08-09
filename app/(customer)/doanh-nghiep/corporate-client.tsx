@@ -41,6 +41,7 @@ export function CorporateClient({ businessCatalog }: { businessCatalog: Business
   const corporatePackageTiers = businessCatalog.packageTiers;
   const corporateTransportFee = businessCatalog.transportFee;
   const depositPolicy = businessCatalog.depositPolicy;
+  const onsiteProgram = businessCatalog.onsiteProgram;
 
   const [companyName, setCompanyName] = useState("");
   const [taxCode, setTaxCode] = useState("");
@@ -73,7 +74,10 @@ export function CorporateClient({ businessCatalog }: { businessCatalog: Business
   const discount = wantsCorporatePackage ? Math.round((subtotal * tier.discountPercent) / 100) : 0;
 
   const capacityPerTherapist = Math.max(1, Math.floor(60 / trial.durationMin));
-  const requiredTherapists = Math.max(1, Math.ceil(headcount / capacityPerTherapist));
+  const requiredTherapists = Math.max(
+    onsiteProgram.minimumTherapistsPerSession,
+    Math.ceil(headcount / capacityPerTherapist),
+  );
   const transportFree = wantsCorporatePackage && tier.id === "corp-complete";
   const transportFee = transportFree ? 0 : requiredTherapists * corporateTransportFee.feePerTherapist;
 
@@ -253,6 +257,9 @@ export function CorporateClient({ businessCatalog }: { businessCatalog: Business
                   <Sparkles size={13} className="shrink-0 text-[#8a5a12]" /> Đăng ký {tier.name} — {tier.sessionsPerMonth} buổi/tháng
                 </p>
               ) : null}
+              <p className="flex items-center gap-2 text-xs">
+                <Gift size={13} className="shrink-0 text-[#8a5a12]" /> Voucher quay lại {formatMoney(onsiteProgram.returnVoucher.amount)} tại cơ sở
+              </p>
               <div className="flex items-center justify-between border-t border-dashed border-[#e8d3ab] pt-2">
                 <span className="text-xs text-[#826f66]">Đã đặt cọc</span>
                 <span className="text-base font-bold text-[#c64b32]">{formatMoney(depositAmount)}</span>
@@ -390,7 +397,7 @@ export function CorporateClient({ businessCatalog }: { businessCatalog: Business
           </span>
           <h1 className="mt-2 text-xl font-semibold tracking-tight sm:text-2xl">Đặt lịch massage tận nơi cho công ty</h1>
           <p className="mt-1.5 text-sm leading-6 text-white/72">
-            KTV đến tận văn phòng vào giờ nghỉ trưa, phục vụ nhiều nhân sự theo slot 15-30 phút/người.
+            KTV đến tận văn phòng vào giờ nghỉ trưa, phục vụ nhiều nhân sự theo slot 10-30 phút/người.
           </p>
           <div className="relative mt-4 flex items-start gap-2.5 rounded-2xl border border-white/15 bg-white/[0.08] p-3.5 backdrop-blur">
             <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#e7c878] text-[#3d1f12] shadow-sm">
@@ -402,6 +409,41 @@ export function CorporateClient({ businessCatalog }: { businessCatalog: Business
             </p>
           </div>
         </div>
+
+        <section className="overflow-hidden rounded-2xl border border-[#d2ad5d]/65 bg-white shadow-md shadow-[#5c3a1e]/5">
+          <div className="bg-gradient-to-r from-[#fff4e6] via-[#fffaf3] to-white px-4 py-3.5">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.12em] text-[#a33a2b]">
+                  <Sparkles size={14} /> Gói Onsite buổi trưa
+                </p>
+                <p className="mt-1 text-xs leading-5 text-[#68574f]">Vừa chăm sóc nhân sự, vừa tạo voucher kéo khách về Tâm An Center.</p>
+              </div>
+              <span className="shrink-0 rounded-full bg-[#f8ebe5] px-2.5 py-1 text-[10px] font-bold text-[#a33a2b]">Đang triển khai</span>
+            </div>
+          </div>
+          <div className="grid gap-3 p-4 sm:grid-cols-2">
+            <div className="rounded-xl bg-[#fdf8f3] p-3">
+              <p className="flex items-center gap-1.5 text-xs font-semibold"><Users size={14} className="text-[#c64b32]" /> Đội onsite từ {onsiteProgram.minimumTherapistsPerSession} KTV/buổi</p>
+              <p className="mt-1.5 flex items-start gap-1.5 text-[11px] leading-4 text-[#826f66]"><MapPin size={12} className="mt-0.5 shrink-0" /> Khu vực ưu tiên: {onsiteProgram.priorityArea}</p>
+            </div>
+            <div className="rounded-xl bg-[#fff9ed] p-3">
+              <p className="flex items-center gap-1.5 text-xs font-semibold"><Gift size={14} className="text-[#a8752e]" /> Voucher kéo về cơ sở {formatMoney(onsiteProgram.returnVoucher.amount)}</p>
+              <p className="mt-1.5 text-[11px] leading-4 text-[#826f66]">{onsiteProgram.returnVoucher.description}</p>
+            </div>
+            <div className="sm:col-span-2">
+              <p className="text-[11px] font-semibold text-[#51423b]">Tâm An Center chuẩn bị trọn bộ</p>
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                {onsiteProgram.requiredAssets.map((asset) => (
+                  <span key={asset} className="inline-flex items-center gap-1 rounded-full border border-[#ead8cc] bg-white px-2.5 py-1 text-[10px] text-[#68574f]">
+                    <Check size={10} className="text-[#9a5a16]" /> {asset}
+                  </span>
+                ))}
+              </div>
+              <p className="mt-2 text-[10px] leading-4 text-[#826f66]">{onsiteProgram.pilotPolicy}</p>
+            </div>
+          </div>
+        </section>
 
         <div className="rounded-2xl border border-[#d2ad5d]/55 bg-gradient-to-br from-white to-[#fff9f1] p-4 shadow-md shadow-[#5c3a1e]/5">
           <h2 className="mb-2.5 flex items-center gap-2 text-base font-semibold tracking-tight">
@@ -514,7 +556,7 @@ export function CorporateClient({ businessCatalog }: { businessCatalog: Business
           <h2 className="mb-2.5 flex items-center gap-2 text-base font-semibold tracking-tight">
             <Clock size={18} /> 3. Chọn thời lượng trải nghiệm
           </h2>
-          <div className="grid gap-2.5 sm:grid-cols-3">
+          <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
             {corporateTrialPackages.map((item) => (
               <button
                 key={item.id}
@@ -533,7 +575,7 @@ export function CorporateClient({ businessCatalog }: { businessCatalog: Business
               </button>
             ))}
           </div>
-          <p className="mt-2 text-[11px] text-[#826f66]">Giá gói dùng thử lần đầu, chưa bao gồm phí di chuyển.</p>
+          <p className="mt-2 text-[11px] text-[#826f66]">Giá bán onsite theo người, chưa bao gồm phí di chuyển. Pilot miễn phí hoặc mức giá khác cần được cơ sở xác nhận riêng.</p>
         </div>
 
         <div className="overflow-hidden rounded-2xl border border-[#d2ad5d]/55 bg-gradient-to-br from-white to-[#fff9f1] p-4 shadow-md shadow-[#5c3a1e]/5">

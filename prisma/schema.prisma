@@ -1308,6 +1308,8 @@ model OfficeEvent {
   paymentStatus       PaymentStatus         @default(UNPAID)
   status              BusinessEventStatus   @default(READY)
   voucherCode         String?
+  onsiteAssets        String[]              @default([])
+  returnVoucherCode   String?
   qrVersion           Int                   @default(1)
   customerRating      Int?
   customerComment     String?

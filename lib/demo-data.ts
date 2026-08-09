@@ -1405,25 +1405,32 @@ export type CorporateTrialPackage = {
 
 export const corporateTrialPackages: CorporateTrialPackage[] = [
   {
-    id: "trial-15",
+    id: "onsite-10",
+    durationMin: 10,
+    pricePerPerson: 29000,
+    name: "Onsite khởi động 10 phút",
+    description: "Thả lỏng nhanh vùng cổ - vai - gáy ngay tại văn phòng.",
+  },
+  {
+    id: "onsite-15",
     durationMin: 15,
-    pricePerPerson: 75000,
-    name: "Trải nghiệm nhanh 15 phút",
-    description: "Bấm huyệt cổ - vai - gáy nhanh gọn ngay tại bàn làm việc hoặc phòng nghỉ.",
+    pricePerPerson: 59000,
+    name: "Onsite nhanh 15 phút",
+    description: "Bấm huyệt cổ - vai - gáy gọn trong giờ nghỉ trưa.",
   },
   {
-    id: "trial-20",
+    id: "onsite-20",
     durationMin: 20,
-    pricePerPerson: 95000,
-    name: "Trải nghiệm tiêu chuẩn 20 phút",
-    description: "Massage cổ vai gáy kết hợp bấm huyệt đầu, thư giãn sâu hơn cho giờ nghỉ trưa.",
+    pricePerPerson: 89000,
+    name: "Onsite tiêu chuẩn 20 phút",
+    description: "Massage cổ vai gáy kết hợp bấm huyệt đầu cho dân văn phòng.",
   },
   {
-    id: "trial-30",
+    id: "onsite-30",
     durationMin: 30,
-    pricePerPerson: 150000,
-    name: "Trải nghiệm chuyên sâu 30 phút",
-    description: "Massage lưng - vai - gáy trên ghế chuyên dụng, giải toả căng cơ sau nhiều giờ ngồi máy tính.",
+    pricePerPerson: 129000,
+    name: "Onsite chuyên sâu 30 phút",
+    description: "Chăm sóc lưng - vai - gáy chuyên sâu trên ghế chuyên dụng.",
   },
 ];
 

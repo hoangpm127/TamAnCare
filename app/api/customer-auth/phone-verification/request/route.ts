@@ -5,7 +5,7 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { getCustomerOAuthPendingIdentityId } from "@/lib/server/customer-oauth";
 import { getCustomerSession } from "@/lib/server/customer-session";
-import { deliverOtpCode, otpDeliveryConfigured, phoneVerificationOnSignupRequired, phoneVerificationRequired } from "@/lib/server/otp-delivery";
+import { deliverOtpCode, inspectOtpDeliveryReadiness, phoneVerificationOnSignupRequired, phoneVerificationRequired } from "@/lib/server/otp-delivery";
 import {
   createPhoneOtpCode,
   isVietnamMobilePhone,
@@ -37,7 +37,8 @@ export async function POST(request: Request) {
     ? phoneVerificationRequired()
     : phoneVerificationOnSignupRequired();
   if (!verificationRequired) return NextResponse.json({ error: "Xác minh số điện thoại chưa được bật cho luồng này." }, { status: 409 });
-  if (!otpDeliveryConfigured()) return NextResponse.json({ error: "Kênh gửi mã đang được cấu hình. Vui lòng thử lại sau." }, { status: 503 });
+  const readiness = await inspectOtpDeliveryReadiness();
+  if (readiness.state !== "READY") return NextResponse.json({ error: "Kênh gửi mã đang chờ nhà cung cấp duyệt mẫu OTP. Vui lòng thử lại sau." }, { status: 503 });
   const [ipLimit, phoneLimit, customerSession] = await Promise.all([
     consumeRateLimit({ scope: "phone-otp-request-ip", identifier: requestIp(request), limit: 10, windowMs: 60 * 60_000 }),
     consumeRateLimit({ scope: "phone-otp-request-phone", identifier: phone, limit: 3, windowMs: 60 * 60_000 }),

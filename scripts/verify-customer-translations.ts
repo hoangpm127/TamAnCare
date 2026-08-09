@@ -52,6 +52,11 @@ for (const [source, expectedEnglish, expectedChinese] of criticalCopy) {
 }
 assert.equal(translateCustomerText("Tạo tài khoản nhận ưu đãi 150K", "ko"), "계정을 만들고 150K 혜택 받기");
 assert.equal(translateCustomerText("Hồ sơ nhận đối soát", "ko"), "정산 수령 정보");
+assert.equal(translateCustomerText("Gói Onsite buổi trưa", "en"), "Midday Onsite Package");
+assert.equal(translateCustomerText("Gói Onsite buổi trưa", "ko"), "점심시간 온사이트 패키지");
+assert.equal(translateCustomerText("Gói Onsite buổi trưa", "zh"), "午间上门服务套餐");
+assert.equal(translateCustomerText("Ghế chuyên dụng", "en"), "Dedicated massage chair");
+assert.equal(translateCustomerText("Voucher tại cơ sở", "zh"), "到店优惠券");
 
 const dynamicGreeting = "Xin chào! Mình là trợ lý tự động của Tâm An Center · Tây Hồ. Nội dung chỉ mang tính hướng dẫn và không được chuyển trực tiếp cho lễ tân.";
 assert.match(translateCustomerText(dynamicGreeting, "en"), /automated assistant.+guidance only/i);

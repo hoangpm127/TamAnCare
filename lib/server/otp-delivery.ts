@@ -30,6 +30,30 @@ type EsmsDeliveryStatusResponse = {
   SendFailed?: string | number;
 };
 
+type EsmsTemplate = {
+  NetworkID?: number;
+  TempContent?: string;
+  TempId?: number;
+  TempName?: string;
+};
+
+type EsmsTemplateResponse = {
+  BrandnameTemplates?: EsmsTemplate[];
+  CodeResult?: string | number;
+  ErrorMessage?: string;
+};
+
+export type OtpDeliveryReadiness = {
+  state: "READY" | "DISABLED" | "PENDING_TEMPLATE" | "MISCONFIGURED" | "PROVIDER_UNAVAILABLE";
+  provider: "ESMS" | "WEBHOOK" | "DISABLED" | "TEST_MODE";
+  channel: "SMS" | "WEBHOOK" | "TEST" | "NONE";
+  detail: string;
+  templateId?: number;
+};
+
+const ESMS_TEMPLATE_CACHE_MS = 60_000;
+let esmsTemplateCache: { key: string; expiresAt: number; template: EsmsTemplate | null } | null = null;
+
 function configuredProvider() {
   const explicit = process.env.OTP_PROVIDER?.trim().toUpperCase();
   if (explicit === "ESMS" || explicit === "WEBHOOK" || explicit === "DISABLED") return explicit;
@@ -77,7 +101,93 @@ export function buildOtpSmsContent(code: string, expiresMinutes: number, smsType
   if (smsType === "8") {
     return `Ma xac minh cua ban la ${code}. Hieu luc ${expiresMinutes} phut. Khong chia se ma nay.`;
   }
-  return `TAMANCARE: Ma OTP ${code}. Hieu luc ${expiresMinutes} phut. Khong chia se ma nay.`;
+  return `TAM AN CENTER: Ma OTP ${code}. Hieu luc ${expiresMinutes} phut. Khong chia se ma nay.`;
+}
+
+function supportedOtpPlaceholder(content: string) {
+  return /\{\{?(?:OTP|CODE|P)(?::\d+)?\}?\}/i.test(content);
+}
+
+function looksLikeOtpTemplate(content: string) {
+  const normalized = content
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+  return supportedOtpPlaceholder(content) && (normalized.includes("otp") || normalized.includes("ma xac"));
+}
+
+function renderApprovedOtpTemplate(content: string, code: string) {
+  return content.replace(/\{\{?(?:OTP|CODE|P)(?::\d+)?\}?\}/gi, code);
+}
+
+async function approvedEsmsOtpTemplate(apiKey: string, secretKey: string) {
+  const smsType = process.env.ESMS_SMS_TYPE?.trim() === "2" ? "2" : "8";
+  const brandname = process.env.ESMS_BRANDNAME?.trim() ?? "";
+  const configuredTemplateId = Number(process.env.ESMS_OTP_TEMPLATE_ID?.trim() || 0);
+  const cacheKey = `${smsType}:${brandname}:${configuredTemplateId || "auto"}`;
+  if (esmsTemplateCache?.key === cacheKey && esmsTemplateCache.expiresAt > Date.now()) {
+    return esmsTemplateCache.template;
+  }
+
+  const response = await fetch("https://rest.esms.vn/MainService.svc/json/GetTemplate/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ApiKey: apiKey, SecretKey: secretKey, Brandname: brandname, OAId: "", SmsType: smsType }),
+    cache: "no-store",
+    signal: AbortSignal.timeout(8_000),
+  });
+  if (!response.ok) throw new Error(`ESMS_TEMPLATE_HTTP_${response.status}`);
+  const payload = await response.json() as EsmsTemplateResponse;
+  if (String(payload.CodeResult) !== "100") throw new Error(`ESMS_TEMPLATE_REJECTED_${payload.CodeResult ?? "UNKNOWN"}`);
+  const templates = payload.BrandnameTemplates ?? [];
+  const template = templates.find((item) => configuredTemplateId > 0 && item.TempId === configuredTemplateId && looksLikeOtpTemplate(item.TempContent ?? ""))
+    ?? templates.find((item) => looksLikeOtpTemplate(item.TempContent ?? ""))
+    ?? null;
+  esmsTemplateCache = { key: cacheKey, expiresAt: Date.now() + ESMS_TEMPLATE_CACHE_MS, template };
+  return template;
+}
+
+export async function inspectOtpDeliveryReadiness(): Promise<OtpDeliveryReadiness> {
+  const mode = otpDeliveryMode();
+  if (mode === "TEST_MODE") return { state: "READY", provider: "TEST_MODE", channel: "TEST", detail: "Kênh OTP kiểm thử cục bộ đã sẵn sàng." };
+  if (mode === "DISABLED") {
+    return {
+      state: otpDeliveryAwaitingTemplateApproval() ? "PENDING_TEMPLATE" : "DISABLED",
+      provider: configuredProvider(),
+      channel: "NONE",
+      detail: otpDeliveryAwaitingTemplateApproval() ? "eSMS chưa được xác nhận duyệt mẫu OTP." : "Chưa cấu hình kênh gửi OTP.",
+    };
+  }
+  if (mode === "WEBHOOK") {
+    return process.env.OTP_DELIVERY_WEBHOOK_URL?.trim() && process.env.OTP_DELIVERY_WEBHOOK_TOKEN?.trim()
+      ? { state: "READY", provider: "WEBHOOK", channel: "WEBHOOK", detail: "Gateway OTP đã sẵn sàng." }
+      : { state: "MISCONFIGURED", provider: "WEBHOOK", channel: "WEBHOOK", detail: "Gateway OTP thiếu URL hoặc token." };
+  }
+
+  const apiKey = process.env.ESMS_API_KEY?.trim();
+  const secretKey = process.env.ESMS_SECRET_KEY?.trim();
+  if (!apiKey || !secretKey) return { state: "MISCONFIGURED", provider: "ESMS", channel: "SMS", detail: "Thiếu khóa API eSMS." };
+  if (process.env.NODE_ENV === "production" && process.env.ESMS_SANDBOX?.trim().toLowerCase() === "true") {
+    return { state: "MISCONFIGURED", provider: "ESMS", channel: "SMS", detail: "eSMS vẫn đang ở Sandbox." };
+  }
+  if (!otpDeliveryTrackingConfigured()) {
+    return { state: "MISCONFIGURED", provider: "ESMS", channel: "SMS", detail: "Thiếu callback xác nhận trạng thái gửi eSMS." };
+  }
+  try {
+    const template = await approvedEsmsOtpTemplate(apiKey, secretKey);
+    if (!template?.TempContent) {
+      return { state: "PENDING_TEMPLATE", provider: "ESMS", channel: "SMS", detail: "Tài khoản eSMS chưa có mẫu OTP đã duyệt." };
+    }
+    return {
+      state: "READY",
+      provider: "ESMS",
+      channel: "SMS",
+      detail: "Mẫu OTP eSMS đã được đối chiếu trực tiếp.",
+      templateId: template.TempId,
+    };
+  } catch {
+    return { state: "PROVIDER_UNAVAILABLE", provider: "ESMS", channel: "SMS", detail: "Không thể đối chiếu mẫu OTP với eSMS." };
+  }
 }
 
 async function getEsmsDeliveryStatus(reference: string, apiKey: string, secretKey: string) {
@@ -116,6 +226,9 @@ async function deliverWithEsms(input: OtpDeliveryInput): Promise<OtpDeliveryResu
   if (smsType === "2" && !brandname) throw new Error("ESMS_BRANDNAME_REQUIRED");
 
   const callbackUrl = process.env.ESMS_CALLBACK_URL?.trim();
+  if (!callbackUrl || !process.env.ESMS_CALLBACK_TOKEN?.trim()) throw new Error("ESMS_TRACKING_NOT_CONFIGURED");
+  const approvedTemplate = await approvedEsmsOtpTemplate(apiKey, secretKey);
+  if (!approvedTemplate?.TempContent) throw new Error("ESMS_TEMPLATE_NOT_APPROVED");
   const response = await fetch("https://rest.esms.vn/MainService.svc/json/SendMultipleMessage_V4_post_json/", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -123,7 +236,7 @@ async function deliverWithEsms(input: OtpDeliveryInput): Promise<OtpDeliveryResu
       ApiKey: apiKey,
       SecretKey: secretKey,
       Phone: input.phone,
-      Content: buildOtpSmsContent(input.code, input.expiresMinutes, smsType),
+      Content: renderApprovedOtpTemplate(approvedTemplate.TempContent, input.code),
       SmsType: smsType,
       IsUnicode: "0",
       Sandbox: process.env.ESMS_SANDBOX?.trim().toLowerCase() === "true" ? "1" : "0",

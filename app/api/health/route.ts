@@ -2,9 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { appRevision, appVersion } from "@/lib/server/app-version";
 import {
-  otpDeliveryAwaitingTemplateApproval,
-  otpDeliveryConfigured,
-  otpDeliveryTrackingConfigured,
+  inspectOtpDeliveryReadiness,
   phoneVerificationRequired,
 } from "@/lib/server/otp-delivery";
 
@@ -13,12 +11,13 @@ export const dynamic = "force-dynamic";
 export async function GET() {
   const startedAt = Date.now();
   try {
-    const [, maintenanceHeartbeat] = await Promise.all([
+    const [, maintenanceHeartbeat, otpReadiness] = await Promise.all([
       db.$queryRaw`SELECT 1`,
       db.systemSetting.findUnique({
         where: { scopeKey: "GLOBAL:operations.maintenance_last_success_at" },
         select: { value: true },
       }),
+      inspectOtpDeliveryReadiness(),
     ]);
     const maintenanceAt = maintenanceHeartbeat?.value ? new Date(maintenanceHeartbeat.value) : null;
     const maintenanceAgeMinutes = maintenanceAt && !Number.isNaN(maintenanceAt.getTime())
@@ -35,10 +34,11 @@ export async function GET() {
       maintenance: maintenanceReady ? "ready" : "stale",
       maintenanceAgeMinutes,
       phoneVerification: phoneVerificationRequired()
-        ? otpDeliveryAwaitingTemplateApproval()
-          ? "pending-template"
-          : otpDeliveryConfigured() && otpDeliveryTrackingConfigured() ? "ready" : "misconfigured"
+        ? otpReadiness.state === "READY"
+          ? "ready"
+          : otpReadiness.state === "PENDING_TEMPLATE" ? "pending-template" : "misconfigured"
         : "optional",
+      phoneVerificationDetail: otpReadiness.detail,
       version: appVersion(),
       revision: appRevision(),
       checkedAt: new Date().toISOString(),

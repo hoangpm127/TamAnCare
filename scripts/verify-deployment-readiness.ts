@@ -114,17 +114,64 @@ const otpConfigured = ["ESMS", "WEBHOOK"].includes(otpProvider ?? "")
   && otpCredentials.every((envName) => !isPlaceholder(process.env[envName]))
   && !(mode === "production" && otpProvider === "ESMS" && process.env.ESMS_SANDBOX === "true")
   && !(mode === "production" && !otpTemplatesApproved)
-  && !(otpProvider === "ESMS" && process.env.ESMS_SMS_TYPE === "2" && isPlaceholder(process.env.ESMS_BRANDNAME));
-add(
-  "Tích hợp",
-  "Xác minh và khôi phục qua OTP",
-  otpConfigured ? "PASS" : otpRequired && mode === "production" ? "FAIL" : "WARN",
-  otpConfigured
-    ? `${otpProvider} đã có đủ biến cấu hình`
-    : otpRequired
-      ? `PHONE_VERIFICATION_REQUIRED=true nhưng ${otpProvider || "OTP_PROVIDER"} chưa sẵn sàng`
-      : "Chưa bật xác minh bắt buộc; booking vãng lai không bị ảnh hưởng",
-);
+  && !(otpProvider === "ESMS" && process.env.ESMS_SMS_TYPE === "2" && isPlaceholder(process.env.ESMS_BRANDNAME))
+  && !(otpProvider === "ESMS" && (!process.env.ESMS_CALLBACK_URL?.trim() || !process.env.ESMS_CALLBACK_TOKEN?.trim()));
+
+function isOtpTemplate(content: string) {
+  const normalized = content.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  return /\{\{?(?:OTP|CODE|P)(?::\d+)?\}?\}/i.test(content) && (normalized.includes("otp") || normalized.includes("ma xac"));
+}
+
+async function otpProviderCheck() {
+  const statusWhenUnavailable: Status = otpRequired && mode === "production" ? "FAIL" : "WARN";
+  if (!otpConfigured) {
+    add(
+      "Tích hợp",
+      "Xác minh và khôi phục qua OTP",
+      statusWhenUnavailable,
+      otpRequired
+        ? `PHONE_VERIFICATION_REQUIRED=true nhưng ${otpProvider || "OTP_PROVIDER"} chưa sẵn sàng`
+        : "Chưa bật xác minh bắt buộc; booking vãng lai không bị ảnh hưởng",
+    );
+    return;
+  }
+  if (otpProvider !== "ESMS") {
+    add("Tích hợp", "Xác minh và khôi phục qua OTP", "PASS", `${otpProvider} đã có đủ biến cấu hình`);
+    return;
+  }
+  try {
+    const response = await fetch("https://rest.esms.vn/MainService.svc/json/GetTemplate/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ApiKey: process.env.ESMS_API_KEY,
+        SecretKey: process.env.ESMS_SECRET_KEY,
+        Brandname: process.env.ESMS_BRANDNAME?.trim() ?? "",
+        OAId: "",
+        SmsType: process.env.ESMS_SMS_TYPE === "2" ? "2" : "8",
+      }),
+      signal: AbortSignal.timeout(8_000),
+    });
+    const payload = await response.json() as {
+      CodeResult?: string | number;
+      BrandnameTemplates?: Array<{ TempId?: number; TempContent?: string }>;
+    };
+    const configuredTemplateId = Number(process.env.ESMS_OTP_TEMPLATE_ID?.trim() || 0);
+    const approved = (payload.BrandnameTemplates ?? []).find((item) => {
+      if (configuredTemplateId > 0 && item.TempId !== configuredTemplateId) return false;
+      return isOtpTemplate(item.TempContent ?? "");
+    });
+    const ready = response.ok && String(payload.CodeResult) === "100" && Boolean(approved);
+    add(
+      "Tích hợp",
+      "Xác minh và khôi phục qua OTP",
+      ready ? "PASS" : statusWhenUnavailable,
+      ready ? `eSMS đã đối chiếu mẫu OTP ${approved?.TempId ?? "hợp lệ"}` : "eSMS chưa trả về mẫu OTP đã duyệt; hệ thống sẽ không gửi nội dung mặc định",
+    );
+  } catch {
+    add("Tích hợp", "Xác minh và khôi phục qua OTP", statusWhenUnavailable, "Không thể đối chiếu mẫu OTP trực tiếp với eSMS");
+  }
+}
 integration("Lưu ảnh chứng từ quy mô lớn", [
   "OBJECT_STORAGE_ENDPOINT",
   "OBJECT_STORAGE_BUCKET",
@@ -284,6 +331,7 @@ async function databaseChecks() {
             "GLOBAL:business.package_tiers",
             "GLOBAL:business.transport",
             "GLOBAL:business.deposit_percent",
+            "GLOBAL:business.onsite_program",
             "GLOBAL:business.accounting_branch_id",
           ],
         },
@@ -291,14 +339,27 @@ async function databaseChecks() {
       },
     });
     const businessValue = (key: string) => businessSettings.find((item) => item.scopeKey === `GLOBAL:${key}`)?.value;
-    let businessCatalogValid = businessSettings.length === 5;
+    let businessCatalogValid = businessSettings.length === 6;
     try {
+      const onsiteProgram = JSON.parse(businessValue("business.onsite_program") ?? "null") as {
+        durationOptionsMin?: number[];
+        priceOptions?: number[];
+        minimumTherapistsPerSession?: number;
+        requiredAssets?: string[];
+        returnVoucher?: { code?: string; amount?: number };
+      } | null;
       businessCatalogValid = businessCatalogValid
         && Array.isArray(JSON.parse(businessValue("business.trial_packages") ?? "null"))
         && Array.isArray(JSON.parse(businessValue("business.package_tiers") ?? "null"))
         && Boolean(JSON.parse(businessValue("business.transport") ?? "null"))
         && Number(businessValue("business.deposit_percent")) >= 0
         && Number(businessValue("business.deposit_percent")) <= 100
+        && onsiteProgram?.durationOptionsMin?.join(",") === "10,15,20,30"
+        && onsiteProgram?.priceOptions?.join(",") === "0,29000,59000,89000,129000"
+        && onsiteProgram?.minimumTherapistsPerSession === 5
+        && Boolean(onsiteProgram?.requiredAssets?.length)
+        && onsiteProgram?.returnVoucher?.code === "RETURN100"
+        && onsiteProgram?.returnVoucher?.amount === 100000
         && Boolean(await prisma.branch.findUnique({ where: { id: businessValue("business.accounting_branch_id") ?? "" }, select: { id: true } }));
     } catch {
       businessCatalogValid = false;
@@ -307,7 +368,7 @@ async function databaseChecks() {
       "Tâm An Business",
       "Bảng giá và cơ sở hạch toán động",
       businessCatalogValid ? "PASS" : "FAIL",
-      businessCatalogValid ? "Đủ 5 cấu hình hợp lệ trong CSDL" : "Thiếu hoặc sai cấu trúc bảng giá/cơ sở hạch toán",
+      businessCatalogValid ? "Đủ 6 cấu hình hợp lệ trong CSDL" : "Thiếu hoặc sai cấu trúc bảng giá/onsite/cơ sở hạch toán",
     );
 
     const [expiredHolds, activeBookingAllocationIssues, activeBookingClockIssues, completedPaymentIssues, activeBusinessIssues, tipPayoutIssues] = await Promise.all([
@@ -376,7 +437,7 @@ function printReport() {
   if (totals.fail > 0) process.exitCode = 1;
 }
 
-databaseChecks()
+Promise.all([databaseChecks(), otpProviderCheck()])
   .finally(async () => prisma?.$disconnect())
   .then(printReport)
   .catch((error) => {

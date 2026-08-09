@@ -37,6 +37,17 @@ assert.ok(corporatePage.includes("businessCatalog={businessCatalog}"), "Trang do
 const businessCatalog = source("lib/server/business-catalog.ts");
 assert.ok(businessCatalog.includes('process.env.APP_ENV === "production"'), "Catalog doanh nghiệp thiếu chốt fail-closed cho production.");
 assert.ok(businessCatalog.includes("configurationError"), "Catalog doanh nghiệp phải dừng khi cấu hình production không hợp lệ.");
+assert.ok(businessCatalog.includes('GLOBAL:business.onsite_program'), "Catalog doanh nghiệp chưa lấy chương trình onsite từ database.");
+assert.ok(businessCatalog.includes("minimumTherapistsPerSession"), "Catalog doanh nghiệp thiếu quy mô đội onsite tối thiểu.");
+
+const corporateClient = source("app/(customer)/doanh-nghiep/corporate-client.tsx");
+assert.ok(corporateClient.includes("onsiteProgram.requiredAssets.map"), "Trang Business chưa hiển thị checklist vật tư onsite từ catalog thật.");
+assert.ok(corporateClient.includes("onsiteProgram.returnVoucher.amount"), "Trang Business chưa hiển thị voucher kéo khách về cơ sở.");
+assert.ok(corporateClient.includes("onsiteProgram.minimumTherapistsPerSession"), "Trang Business chưa áp dụng đội tối thiểu 5 KTV/buổi.");
+
+const corporateInquiry = source("app/api/corporate-inquiries/route.ts");
+assert.ok(corporateInquiry.includes("onsiteAssets: businessCatalog.onsiteProgram.requiredAssets"), "Hồ sơ Business chưa chụp lại checklist vật tư khi tạo.");
+assert.ok(corporateInquiry.includes("returnVoucherCode: businessCatalog.onsiteProgram.returnVoucher.code"), "Hồ sơ Business chưa lưu voucher kéo về cơ sở.");
 
 const financePage = source("app/admin/finance/page.tsx");
 assert.ok(financePage.includes("getAdminSession()"), "Trang tài chính phải kiểm tra phiên quản trị trên server.");
