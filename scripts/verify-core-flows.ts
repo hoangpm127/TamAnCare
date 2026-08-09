@@ -145,14 +145,13 @@ async function createBooking(options: {
   return payload.booking;
 }
 
-async function updateStatus(referenceCode: string, status: string, jar: CookieJar, venueBranchId?: string, customerAudience = false) {
+async function updateStatus(referenceCode: string, status: string, jar: CookieJar) {
   const { payload } = await jsonRequest<{ status: string; paymentStatus: string }>(
     `/api/bookings/${encodeURIComponent(referenceCode)}/status`,
     {
       method: "PATCH",
       jar,
-      headers: customerAudience ? customerAudienceHeaders : undefined,
-      body: { status, actorName: `Core Test ${marker}`, venueBranchId },
+      body: { status, actorName: `Core Test ${marker}` },
     },
   );
   return payload;
@@ -272,16 +271,18 @@ async function main() {
   const guestJar: CookieJar = new Map();
   const branch = await db.branch.findFirstOrThrow({ orderBy: { createdAt: "asc" } });
   branchAutomationScopeKey = `${branch.id}:booking.auto_confirm`;
+  const plan = await db.packagePlan.findUniqueOrThrow({ where: { id: "pkg-3" } });
+  assert(plan.serviceId, "Gói dài hạn kiểm thử chưa được gắn với dịch vụ.");
   const service = await db.service.findFirst({
     where: {
+      id: plan.serviceId,
       isActive: true,
       isOnline: true,
-      durationMin: 60,
       therapists: { some: { branchId: branch.id, status: "ACTIVE", onlineBooking: true } },
     },
     orderBy: { sortOrder: "asc" },
   });
-  assert(service, "Thiếu dịch vụ 60 phút đủ điều kiện kiểm thử.");
+  assert(service, "Thiếu dịch vụ của gói dài hạn đủ điều kiện kiểm thử.");
 
   const missingConsentResponse = await fetch(`${BASE_URL}/api/customer-auth/register`, {
     method: "POST",
@@ -341,7 +342,6 @@ async function main() {
     "Lựa chọn bật/tắt tiếp thị chưa lưu lịch sử hoặc chưa đánh dấu lần đồng ý trước là đã rút.",
   );
 
-  const plan = await db.packagePlan.findUniqueOrThrow({ where: { id: "pkg-3" } });
   const customerPackage = await db.customerPackage.create({
     data: {
       customerId,
@@ -423,15 +423,16 @@ async function main() {
   assert(secondBooking.usedPackage && secondBooking.status === "CONFIRMED", "Booking hoàn tất không dùng lượt gói hoặc chưa được AI xác nhận.");
   assert(secondBooking.minimumTipAmount === 0, "Bill vẫn còn áp mức Tip tối thiểu.");
   await updateStatus(secondReference, "CONFIRMED", adminJar);
-  await updateStatus(secondReference, "IN_SERVICE", customerJar, branch.id, true);
+  await updateStatus(secondReference, "CHECKED_IN", receptionJar);
+  await updateStatus(secondReference, "IN_SERVICE", receptionJar);
   const earlyCheckout = await jsonRequest<{ checkoutRequestedAt: string; dueAmount: number; idempotent: boolean }>(
     `/api/bookings/${encodeURIComponent(secondReference)}/checkout-request`,
-    { method: "POST", jar: customerJar },
+    { method: "POST", jar: receptionJar },
   );
   assert(earlyCheckout.payload.checkoutRequestedAt && !earlyCheckout.payload.idempotent, "Check-out sớm chưa khóa thời điểm kết thúc thực tế.");
   const repeatedEarlyCheckout = await jsonRequest<{ checkoutRequestedAt: string; idempotent: boolean }>(
     `/api/bookings/${encodeURIComponent(secondReference)}/checkout-request`,
-    { method: "POST", jar: customerJar },
+    { method: "POST", jar: receptionJar },
   );
   assert(repeatedEarlyCheckout.payload.idempotent, "Yêu cầu check-out sớm lặp lại chưa được xử lý idempotent.");
   const earlyCheckoutGroup = await db.bookingGroup.findUniqueOrThrow({
@@ -504,25 +505,29 @@ async function main() {
   voucherUsage = await db.voucherUsage.findFirstOrThrow({ where: { booking: { group: { referenceCode: voucherReference } } } });
   const welcomeLedger = await db.ledgerEntry.findFirst({ where: { bookingGroup: { referenceCode: voucherReference }, category: "WELCOME_CREDIT" } });
   const voucherGroup = await db.bookingGroup.findUniqueOrThrow({ where: { referenceCode: voucherReference } });
-  assert(account.creditBalance === 0 && voucherUsage.status === "CONFIRMED", "Voucher chưa được xác nhận sau webhook.");
+  assert(
+    account.creditBalance === 0 && voucherUsage.status === "CONFIRMED",
+    `Voucher chưa được xác nhận sau webhook (credit=${account.creditBalance}, status=${voucherUsage.status}).`,
+  );
   assert(welcomeLedger?.amount === 150_000 && voucherGroup.holdExpiresAt === null && voucherGroup.status === "CONFIRMED", "Quyền lợi WELCOME150 hoặc AI xác nhận lịch chưa được kết sổ.");
   const autoConfirmationNotice = await db.notification.findFirst({
     where: { customerId: voucherCustomerId, title: { contains: "AI xác nhận" }, body: { contains: voucherReference } },
   });
   assert(autoConfirmationNotice?.actionUrl === `/booking/success/${voucherReference}`, "Khách chưa nhận thông báo chúc mừng sau khi AI xác nhận lịch.");
-  const venueCheckin = await updateStatus(voucherReference, "IN_SERVICE", voucherJar, branch.id, true);
+  await updateStatus(voucherReference, "CHECKED_IN", receptionJar);
+  const venueCheckin = await updateStatus(voucherReference, "IN_SERVICE", receptionJar);
   assert(
     venueCheckin.status === "IN_SERVICE" && venueCheckin.paymentStatus === "DEPOSITED",
-    "Bill đã được AI xác nhận chưa bắt đầu tính giờ sau khi quét đúng QR cơ sở.",
+    "Bill đã được AI xác nhận chưa bắt đầu tính giờ sau khi lễ tân xác nhận lên giường.",
   );
   const venueCheckinNotification = await db.notification.findFirst({
     where: {
       branchId: branch.id,
-      title: { contains: "bắt đầu tính giờ qua QR" },
+      title: { contains: "Khách đã lên giường" },
       body: { contains: voucherReference },
     },
   });
-  assert(venueCheckinNotification, "Bill bắt đầu tính giờ qua QR chưa báo cho bộ phận vận hành tại cơ sở.");
+  assert(venueCheckinNotification, "Bill do lễ tân bắt đầu chưa báo cho bộ phận vận hành tại cơ sở.");
   const counterCheckout = await jsonRequest<{ serviceRevenue: number; platformRevenue: number; partnerRevenue: number; paymentStatus: string }>(
     "/api/payments/checkout-record",
     {
@@ -585,7 +590,7 @@ async function main() {
     headers: { Origin: BASE_URL, "Content-Type": "application/json", Cookie: cookieHeader(guestJar), "x-forwarded-for": testIp, ...customerAudienceHeaders },
     body: JSON.stringify({ status: "IN_SERVICE", venueBranchId: branch.id }),
   });
-  assert(manualCheckinResponse.status === 409, "Booking ở chế độ thủ công vẫn cho khách check-in trước khi Admin xác nhận.");
+  assert(manualCheckinResponse.status === 403, "API vẫn cho khách tự check-in thay vì yêu cầu lễ tân xử lý.");
   const enabledAutomation = await jsonRequest<{ mode: string; automaticallyConfirmed: number }>("/api/admin-booking-automation", {
     method: "PATCH",
     jar: adminJar,
@@ -593,7 +598,8 @@ async function main() {
   });
   manualGroup = await db.bookingGroup.findUniqueOrThrow({ where: { referenceCode: manualReference } });
   assert(enabledAutomation.payload.mode === "AUTO" && enabledAutomation.payload.automaticallyConfirmed >= 1 && manualGroup.status === "CONFIRMED", "Bật AI chưa xử lý các lịch đủ cọc đang chờ.");
-  await updateStatus(manualReference, "IN_SERVICE", guestJar, branch.id, true);
+  await updateStatus(manualReference, "CHECKED_IN", receptionJar);
+  await updateStatus(manualReference, "IN_SERVICE", receptionJar);
   const guestFinance = await jsonRequest<{ entries: { bookingCode?: string; serviceStatus?: string; actualCheckinTime?: string }[]; guestAuthorized: boolean }>(
     "/api/customer-finance",
     { jar: guestJar },
@@ -603,7 +609,7 @@ async function main() {
     guestFinance.payload.guestAuthorized
       && guestActiveService?.serviceStatus === "IN_SERVICE"
       && Boolean(guestActiveService.actualCheckinTime),
-    "Phiên khách vãng lai chưa nhận được ca đang phục vụ để hiển thị đồng hồ trên toàn bộ giao diện khách.",
+    "Phiên khách vãng lai chưa nhận được trạng thái ca do lễ tân cập nhật.",
   );
 
   const holdReference = `${marker}-EXPIRE`;
@@ -645,10 +651,11 @@ async function main() {
     body: JSON.stringify({ status: "IN_SERVICE", venueBranchId: branch.id }),
   });
   assert(investorPriorityResponse.status === 403, "Thiếu bằng chứng hồi quy cho xung đột phiên Nhà đầu tư/Khách.");
-  const mixedSessionCheckin = await updateStatus(mixedSessionReference, "IN_SERVICE", mixedInvestorCustomerJar, branch.id, true);
+  await updateStatus(mixedSessionReference, "CHECKED_IN", receptionJar);
+  const mixedSessionCheckin = await updateStatus(mixedSessionReference, "IN_SERVICE", receptionJar);
   assert(
     mixedSessionCheckin.status === "IN_SERVICE",
-    "Giao diện Khách vẫn bị phiên Nhà đầu tư chặn khi bắt đầu đồng hồ qua QR.",
+    "Lễ tân chưa thể tiếp nhận và bắt đầu ca sau khi API chặn thao tác từ giao diện khách.",
   );
 
   console.log(JSON.stringify({
@@ -656,15 +663,15 @@ async function main() {
     checks: [
       "package_reserve_and_cancel_restore",
       "package_complete_without_bill_or_tip_transaction",
-      "early_checkout_stops_timer_and_is_idempotent",
+      "reception_checkout_stops_timer_and_is_idempotent",
       "direct_tip_is_optional_and_rejected_from_bill",
       "welcome_voucher_confirmed_only_after_webhook",
       "ai_auto_confirms_paid_booking_and_notifies_customer",
       "manual_mode_waits_for_admin_and_auto_mode_clears_backlog",
-      "manual_mode_blocks_customer_checkin_until_confirmation",
-      "ai_confirmed_bill_starts_service_with_matching_venue_qr",
+      "customer_cannot_self_checkin",
+      "reception_confirms_arrival_then_starts_service",
       "reception_counter_checkout_closes_bill_and_splits_platform_partner_revenue_once",
-      "customer_qr_ignores_investor_session_without_losing_ownership_checks",
+      "mixed_customer_investor_session_cannot_bypass_reception_flow",
       "guest_active_service_is_visible_across_customer_shell",
       "booking_hold_expires_and_voids_payment",
       "versioned_consent_is_required_and_persisted",

@@ -128,7 +128,7 @@ export async function PATCH(request: Request) {
               branchId: confirmedGroup.branchId,
               type: "BOOKING",
               title: "Chúc mừng! Lịch đã được AI xác nhận",
-              body: `${confirmedGroup.referenceCode} đã được xếp ${confirmation.assignments.map((item) => `${item.therapistName} · ${item.roomName}`).join(", ")}. Mở Đơn của tôi và dùng Camera quét QR tại cơ sở để check-in.`,
+              body: `${confirmedGroup.referenceCode} đã được xếp ${confirmation.assignments.map((item) => `${item.therapistName} · ${item.roomName}`).join(", ")}. Khi đến, khách chỉ cần đọc họ tên và số điện thoại để lễ tân tiếp nhận.`,
               actionUrl: `/booking/success/${confirmedGroup.referenceCode}`,
             });
             await notifyOperations(tx, {

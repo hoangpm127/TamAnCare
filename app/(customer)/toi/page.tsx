@@ -7,7 +7,6 @@ import {
   Languages,
   MessageCircle,
   Phone,
-  QrCode,
   Receipt,
   Users,
   type LucideIcon,
@@ -35,7 +34,6 @@ type MenuItem = {
 const ACTIVITY_ITEMS: MenuItem[] = [
   { href: "/don-cua-toi?tab=upcoming", label: "Lịch đã đặt", description: "Lịch hẹn sắp tới", icon: CalendarClock },
   { href: "/don-cua-toi?tab=history", label: "Lịch sử & hoá đơn", description: "Buổi đã xong, tổng chi tiêu", icon: Receipt },
-  { href: "/check-in", label: "Check-in tại cơ sở", description: "Quét mã QR tại quầy để bắt đầu dịch vụ", icon: QrCode },
 ];
 
 const SUPPORT_ITEMS: MenuItem[] = [

@@ -269,7 +269,7 @@ export async function confirmIncomingPayment(
         body: standaloneBusinessReference
           ? `${referenceCode} đã nhận đúng ${money(payment.amount)}. Đội ngũ sẽ liên hệ để chốt phương án triển khai.`
           : bookingAutomation?.confirmed
-            ? `${referenceCode} đã được xếp ${bookingAutomation.assignments.map((item) => `${item.therapistName} · ${item.roomName}`).join(", ")}. Mở Đơn của tôi và dùng Camera quét QR tại cơ sở để check-in.`
+            ? `${referenceCode} đã được xếp ${bookingAutomation.assignments.map((item) => `${item.therapistName} · ${item.roomName}`).join(", ")}. Khi đến, bạn chỉ cần đọc họ tên và số điện thoại để lễ tân tiếp nhận.`
             : bookingAutomation?.enabled && bookingAutomation.reason === "NO_RESOURCE"
               ? `${referenceCode} đã nhận đúng ${money(payment.amount)}. IQ Care đang tự tìm tổ hợp KTV và giường phù hợp, không xếp chồng lịch.`
               : `${referenceCode} đã nhận đúng ${money(payment.amount)}. Lịch đang ở chế độ xác nhận thủ công của cơ sở.`,

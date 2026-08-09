@@ -2,8 +2,6 @@ import { NextResponse } from "next/server";
 import { Prisma } from "@/app/generated/prisma/client";
 import { db } from "@/lib/db";
 import { getAdminSession } from "@/lib/server/admin-session";
-import { getCustomerSession } from "@/lib/server/customer-session";
-import { getGuestSession } from "@/lib/server/guest-session";
 import { money, notifyCustomer, notifyOperations, notifyTherapist } from "@/lib/server/notification-service";
 import { isSameOriginMutation, privateIdentifierDigest, requestIp } from "@/lib/server/request-security";
 import { isCustomerAudienceRequest } from "@/lib/request-audience";
@@ -20,16 +18,15 @@ export async function POST(request: Request, context: { params: Promise<{ bookin
   }
 
   const { bookingCode } = await context.params;
-  const [adminCandidate, customerSession, guestSession] = await Promise.all([
-    getAdminSession(),
-    getCustomerSession(),
-    getGuestSession(),
-  ]);
+  const adminCandidate = await getAdminSession();
   const activeAdmin = !isCustomerAudienceRequest(request) && adminCandidate
     && !adminCandidate.mustChangePassword
     && ["OWNER", "BRANCH_MANAGER", "RECEPTIONIST"].includes(adminCandidate.role)
     ? adminCandidate
     : null;
+  if (!activeAdmin) {
+    return NextResponse.json({ error: "Khách không cần tự check-out. Lễ tân sẽ xác nhận khi buổi dịch vụ kết thúc." }, { status: 403 });
+  }
 
   try {
     const result = await db.$transaction(async (tx) => {
@@ -54,27 +51,12 @@ export async function POST(request: Request, context: { params: Promise<{ bookin
 
       if (!bookings.length) throw new CheckoutRequestError("Không tìm thấy Bill dịch vụ.", 404);
 
-      const customerId = group?.customerId ?? bookings[0].customerId;
       const branchId = group?.branchId ?? bookings[0].branchId;
       const referenceCode = group?.referenceCode ?? bookings[0].bookingCode;
       const customer = directBooking?.customer ?? directGroup?.customer;
-      const ownsBooking = customerSession?.customerId === customerId;
-      const adminAuthorized = activeAdmin
-        ? activeAdmin.role === "OWNER" || activeAdmin.branchId === branchId
-        : false;
-      const guestVerified = guestSession
-        ? Boolean(await tx.bookingAccessGrant.findFirst({
-            where: {
-              guestSessionId: guestSession.id,
-              expiresAt: { gt: new Date() },
-              ...(groupId ? { bookingGroupId: groupId } : { bookingId: bookings[0].id }),
-            },
-            select: { id: true },
-          }))
-        : false;
-
-      if (!adminAuthorized && !ownsBooking && !guestVerified) {
-        throw new CheckoutRequestError("Cần mở Bill trên đúng tài khoản hoặc thiết bị đã đặt lịch.", 401);
+      const customerId = group?.customerId ?? bookings[0].customerId;
+      if (activeAdmin.role !== "OWNER" && activeAdmin.branchId !== branchId) {
+        throw new CheckoutRequestError("Bạn không có quyền xử lý Bill ngoài cơ sở phụ trách.", 403);
       }
 
       const currentStatus = group?.status ?? bookings[0].status;
@@ -112,7 +94,7 @@ export async function POST(request: Request, context: { params: Promise<{ bookin
         type: "BOOKING",
         title: "Đã ghi nhận yêu cầu check-out sớm",
         body: `${referenceCode} đã dừng tính giờ lúc ${checkoutTime}. ${dueAmount > 0 ? `Phần còn lại ${money(dueAmount)} sẽ được đối soát trước khi đóng Bill.` : "Cơ sở đang xác nhận hoàn tất Bill."}`,
-        actionUrl: `/check-in?bookingCode=${referenceCode}`,
+        actionUrl: "/don-cua-toi?tab=upcoming",
       });
       await notifyOperations(tx, {
         branchId,

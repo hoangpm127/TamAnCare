@@ -1,13 +1,9 @@
 import { notFound } from "next/navigation";
-import QRCode from "qrcode";
-import { headers } from "next/headers";
 import { MessageSquareText, Star } from "lucide-react";
 import { db } from "@/lib/db";
 import { getAdminSession } from "@/lib/server/admin-session";
 import { resourceStatusLabel } from "@/lib/labels";
 import { canAccessAdminSection } from "@/lib/admin-auth";
-import { TherapistQrCard } from "@/components/therapist-qr-card";
-import { createTherapistQrToken, therapistCheckinUrl } from "@/lib/server/therapist-qr";
 
 export const dynamic = "force-dynamic";
 
@@ -20,12 +16,6 @@ export default async function TherapistProfilePage({ params }: { params: Promise
     include: { branch: true, reviews: { include: { booking: { include: { customer: true } } }, orderBy: { createdAt: "desc" }, take: 30 } },
   });
   if (!therapist) notFound();
-  const requestHeaders = await headers();
-  const host = requestHeaders.get("x-forwarded-host") ?? requestHeaders.get("host");
-  const protocol = requestHeaders.get("x-forwarded-proto") ?? (host?.includes("localhost") ? "http" : "https");
-  const origin = host ? `${protocol}://${host}` : undefined;
-  const qrToken = createTherapistQrToken({ therapistId: therapist.id, branchId: therapist.branchId, version: therapist.qrVersion });
-  const qrDataUrl = await QRCode.toDataURL(therapistCheckinUrl(qrToken, origin), { width: 420, margin: 1, errorCorrectionLevel: "H", color: { dark: "#4c191b", light: "#ffffff" } });
   const businessDate = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Ho_Chi_Minh", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
   const therapistBookings = await db.booking.findMany({
     where: { therapistId: therapist.id, startTime: { gte: new Date(`${businessDate}T00:00:00+07:00`), lte: new Date(`${businessDate}T23:59:59+07:00`) } },
@@ -47,8 +37,6 @@ export default async function TherapistProfilePage({ params }: { params: Promise
           <Metric label="Trạng thái" value={resourceStatusLabel(therapist.status)} />
         </div>
       </section>
-
-      <div className="mt-4"><TherapistQrCard dataUrl={qrDataUrl} therapistName={therapist.fullName} branchLabel={therapist.branch.name.replace(/^Tâm An Center · /, "")} /></div>
 
       <section className="mt-4 rounded-xl border border-[#e7d6ca] bg-white p-4 shadow-sm sm:p-5">
         <div className="flex items-center justify-between gap-3">

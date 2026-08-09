@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
-import { CalendarClock, CreditCard, QrCode, Receipt, Star } from "lucide-react";
+import { CalendarClock, CreditCard, Receipt, Star } from "lucide-react";
 import { bookingDisplayStatusLabel } from "@/lib/labels";
 import { cn, displayBookingCode, formatMoney } from "@/lib/utils";
 import { useCustomerProfile } from "@/lib/customer-profile-store";
@@ -182,9 +182,15 @@ export function OrdersClient() {
               && booking.status === "PENDING"
               && booking.paymentStatus === "UNPAID"
               && (booking.depositAmount ?? 0) > 0;
-            const needsBalancePayment = !isBusiness
-              && (booking.dueAmount ?? booking.totalAmount - booking.paidAmount) > 0
-              && Boolean(booking.checkoutRequestedAt || booking.checkoutPayment?.status === "PENDING");
+            const receptionStatus = !isBusiness && booking.status === "CONFIRMED"
+              ? "Khi đến, bạn chỉ cần đọc họ tên và số điện thoại. Lễ tân sẽ check-in cho bạn."
+              : !isBusiness && booking.status === "CHECKED_IN"
+                ? "Lễ tân đã tiếp nhận và đang chuẩn bị giường/ghế cùng KTV."
+                : !isBusiness && booking.status === "IN_SERVICE"
+                  ? "Bạn không cần thao tác thêm. Lễ tân sẽ check-out và xác nhận thanh toán khi kết thúc."
+                  : !isBusiness && Boolean(booking.checkoutRequestedAt || booking.checkoutPayment?.status === "PENDING")
+                    ? "Lễ tân đang đối soát phần thanh toán còn lại tại quầy."
+                    : null;
             const businessLabel: Record<string, string> = { AWAITING_DEPOSIT: "Chờ đối soát cọc", DEPOSIT_CONFIRMED: "Đã cọc · đang điều phối", READY: "Sẵn sàng", IN_SERVICE: "Đang phục vụ", AWAITING_BALANCE: "Chờ thanh toán", COMPLETED: "Đã hoàn tất dịch vụ & thanh toán", CANCELLED: "Đã hủy" };
             return (
               <div key={booking.id} className="rounded-xl border border-[#e7d6ca] bg-white p-3.5 shadow-sm">
@@ -214,6 +220,7 @@ export function OrdersClient() {
                     Đã cọc {formatMoney(booking.paidAmount)} · Còn lại {formatMoney(booking.totalAmount - booking.paidAmount)} thanh toán sau dịch vụ
                   </p>
                 ) : null}
+                {receptionStatus ? <p className="mt-2 rounded-lg bg-[#fff7df] px-3 py-2 text-[11px] leading-5 text-[#715943]">{receptionStatus}</p> : null}
                 <div className="mt-2.5 flex items-center justify-between gap-2 border-t border-[#eee0d6] pt-2.5">
                   <span className="text-[11px] text-[#826f66]">
                     {displayBookingCode(booking.bookingCode)} · <span className="text-sm font-semibold text-[#281b18]">{formatMoney(booking.totalAmount)}</span>
@@ -224,28 +231,13 @@ export function OrdersClient() {
                         <CreditCard size={13} /> Tiếp tục thanh toán cọc
                       </Link>
                     ) : null}
-                    {needsBalancePayment ? (
-                      <Link href={`/thanh-toan/${booking.bookingCode}`} className="inline-flex items-center gap-1.5 rounded-full bg-[#c64b32] px-3 py-1.5 text-xs font-semibold text-white shadow-sm">
-                        <CreditCard size={13} /> Thanh toán phần còn lại
-                      </Link>
-                    ) : null}
                     {isBusiness ? <Link href={`/doanh-nghiep/${booking.bookingCode}`} className="inline-flex items-center gap-1 text-xs font-semibold text-[#c64b32]"><Receipt size={12} /> Xem hồ sơ & Bill</Link> : booking.status === "COMPLETED" ? (
                       <Link href={`/review/${booking.bookingCode}`} className="inline-flex items-center gap-1 text-xs font-semibold text-[#c64b32]">
                         <Star size={12} /> Đánh giá
                       </Link>
                     ) : null}
-                    {!isBusiness && booking.status === "CONFIRMED" && ["DEPOSITED", "PAID"].includes(booking.paymentStatus) ? (
-                      <Link href={`/check-in?bookingCode=${encodeURIComponent(booking.bookingCode)}`} className="inline-flex items-center gap-1 rounded-full bg-[#76551d] px-3 py-1.5 text-xs font-semibold text-white">
-                        <QrCode size={13} /> Mở Camera quét QR
-                      </Link>
-                    ) : null}
                     {!isBusiness && booking.status === "PENDING" && ["DEPOSITED", "PAID"].includes(booking.paymentStatus) ? (
-                      <span className="text-[10px] font-medium text-[#826f66]">QR mở ngay khi TÂM AN CENTER xếp xong KTV & giường</span>
-                    ) : null}
-                    {!isBusiness && !needsBalancePayment && (booking.status === "CHECKED_IN" || booking.status === "IN_SERVICE") ? (
-                      <Link href={`/thanh-toan/${booking.bookingCode}`} className="rounded-full bg-[#c64b32] px-3 py-1.5 text-xs font-semibold text-white">
-                        Thanh toán Bill
-                      </Link>
+                      <span className="text-[10px] font-medium text-[#826f66]">TÂM AN CENTER đang xếp KTV và giường/ghế phù hợp</span>
                     ) : null}
                     {!isBusiness && ["PENDING", "CONFIRMED"].includes(booking.status) ? (
                       <Link href={`/don-cua-toi/doi-lich/${booking.bookingCode}`} className="text-xs font-semibold text-[#c64b32]">

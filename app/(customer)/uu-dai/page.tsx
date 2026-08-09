@@ -212,8 +212,8 @@ function OffersContent() {
                 <CreditCard size={16} className="shrink-0" /> Kích hoạt thẻ {selectedPlan.name}
               </p>
               <p className="mt-1.5 text-xs leading-5 text-[#826f66]">
-                Thanh toán đủ {formatMoney(selectedPlan.price)} để kích hoạt thẻ ngay — hệ thống ghi nhớ hạng thẻ và tự động trừ buổi
-                mỗi lần check-in, không cần đặt cọc riêng lẻ từng buổi.
+                  Thanh toán đủ {formatMoney(selectedPlan.price)} để kích hoạt thẻ ngay — hệ thống ghi nhớ hạng thẻ và lễ tân xác nhận trừ buổi
+                khi bạn sử dụng dịch vụ, không cần đặt cọc riêng lẻ từng buổi.
               </p>
               <div className="mt-2.5 space-y-1.5 rounded-xl border border-[#e7d6ca] bg-white p-3 text-[11px] leading-5 text-[#68574f]">
                 <p><strong className="text-[#4a2d16]">Dịch vụ:</strong> {selectedPlanService?.name ?? "Theo dịch vụ ghi trên thẻ"}</p>
@@ -278,16 +278,16 @@ function OffersContent() {
               <p className="text-sm font-semibold text-[#8a4f14]">Đã kích hoạt thẻ {selectedPlan.name}!</p>
               <p className="text-xs leading-5 text-[#826f66]">
                 Thẻ có {selectedPlan.paidSessions + selectedPlan.bonusSessions} buổi, hạn dùng {selectedPlan.validityDays} ngày. Hệ
-                thống sẽ tự động trừ buổi mỗi lần bạn check-in tại quán.
+                  thống sẽ trừ buổi sau khi lễ tân xác nhận bạn đã sử dụng dịch vụ tại quán.
               </p>
-              <div className="mt-1.5 flex gap-2">
-                <Link href="/toi" className="rounded-full border border-[#c64b32] px-4 py-2 text-xs font-semibold text-[#c64b32]">
-                  Xem thẻ trong Tôi
-                </Link>
-                <Link href="/check-in" className="rounded-full bg-[#c64b32] px-4 py-2 text-xs font-semibold text-white">
-                  Mở QR Check-in
-                </Link>
-              </div>
+                <div className="mt-1.5 flex gap-2">
+                  <Link href="/toi" className="rounded-full border border-[#c64b32] px-4 py-2 text-xs font-semibold text-[#c64b32]">
+                    Xem thẻ trong Tôi
+                  </Link>
+                  <Link href="/booking" className="rounded-full bg-[#c64b32] px-4 py-2 text-xs font-semibold text-white">
+                    Đặt lịch sử dụng thẻ
+                  </Link>
+                </div>
             </div>
           ) : null}
         </div>

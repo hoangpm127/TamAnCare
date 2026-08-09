@@ -171,7 +171,7 @@ const BOOKING_POLICY: LegalDocument = {
     {
       heading: "4. Check-in, người đi cùng và bố trí phục vụ",
       paragraphs: [
-        "Khách có thể dùng QR hoặc mã booking còn hiệu lực để check-in đúng cơ sở. Mỗi booking nhóm tối đa 6 người. Khi chọn Mời bạn/Mời sếp, thông tin quan hệ và ghi chú bố trí được chuyển cho cơ sở trong phạm vi cần thiết để chủ động xếp vị trí gần nhau; đây không phải cam kết tuyệt đối nếu năng lực phục vụ thay đổi.",
+        "Khi đến đúng cơ sở, khách chỉ cần đọc họ tên và số điện thoại; lễ tân sẽ đối chiếu booking, xác nhận check-in, lên giường, check-out và thanh toán. Mỗi booking nhóm tối đa 6 người. Khi chọn Mời bạn/Mời sếp, thông tin quan hệ và ghi chú bố trí được chuyển cho cơ sở trong phạm vi cần thiết để chủ động xếp vị trí gần nhau; đây không phải cam kết tuyệt đối nếu năng lực phục vụ thay đổi.",
       ],
     },
     {

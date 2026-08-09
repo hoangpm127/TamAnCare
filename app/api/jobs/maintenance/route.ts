@@ -52,7 +52,7 @@ export async function POST(request: Request) {
           branchId: confirmedGroup.branchId,
           type: "BOOKING",
           title: "Chúc mừng! Lịch đã được IQ Care xác nhận",
-          body: `${confirmedGroup.referenceCode} đã được xếp ${confirmation.assignments.map((item) => `${item.therapistName} · ${item.roomName}`).join(", ")}. Bạn có thể mở Đơn của tôi để xem lịch và check-in tại cơ sở.`,
+          body: `${confirmedGroup.referenceCode} đã được xếp ${confirmation.assignments.map((item) => `${item.therapistName} · ${item.roomName}`).join(", ")}. Khi đến, bạn chỉ cần đọc họ tên và số điện thoại để lễ tân tiếp nhận.`,
           actionUrl: `/booking/success/${confirmedGroup.referenceCode}`,
         });
         await notifyOperations(tx, {

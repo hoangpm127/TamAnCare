@@ -1,37 +1,11 @@
-"use client";
+export function TherapistBookingActions({ initialStatus }: { bookingCode: string; initialStatus: string }) {
+  const message = initialStatus === "CONFIRMED"
+    ? "Lịch đã sẵn sàng. Chờ lễ tân xác nhận khách có mặt."
+    : initialStatus === "CHECKED_IN"
+      ? "Khách đã được tiếp nhận. Lễ tân sẽ xác nhận khi khách lên giường và bắt đầu ca."
+      : initialStatus === "IN_SERVICE"
+        ? "Ca đang phục vụ. Lễ tân sẽ xác nhận check-out và thanh toán khi kết thúc."
+        : "Trạng thái ca được đồng bộ từ quầy lễ tân.";
 
-import { useState } from "react";
-import { Loader2 } from "lucide-react";
-
-export function TherapistBookingActions({ bookingCode, initialStatus }: { bookingCode: string; initialStatus: string }) {
-  const [status, setStatus] = useState(initialStatus);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-
-  async function startService() {
-    setLoading(true);
-    setError("");
-    try {
-      const response = await fetch(`/api/bookings/${encodeURIComponent(bookingCode)}/status`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: "IN_SERVICE" }),
-      });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error ?? "Không thể bắt đầu ca.");
-      setStatus("IN_SERVICE");
-    } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "Không thể bắt đầu ca.");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  return (
-    <div className="mt-5">
-      {status === "CONFIRMED" || status === "CHECKED_IN" ? <button type="button" onClick={startService} disabled={loading} className="inline-flex rounded-full bg-[#c64b32] px-5 py-3 font-semibold text-white disabled:opacity-60">{loading ? <Loader2 className="mr-2 animate-spin" size={16} /> : null}Bắt đầu ca</button> : null}
-      {status === "IN_SERVICE" ? <p className="rounded-xl bg-[#fbf2e7] p-3 text-sm font-semibold text-[#76551d]">Ca đang phục vụ. Khách hoặc quầy sẽ check-out và đối soát thanh toán khi kết thúc.</p> : null}
-      {error ? <p className="mt-2 text-sm text-[#c64b32]">{error}</p> : null}
-    </div>
-  );
+  return <p className="mt-5 rounded-xl bg-[#fbf2e7] p-3 text-sm font-semibold leading-6 text-[#76551d]">{message}</p>;
 }

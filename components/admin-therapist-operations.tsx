@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { BriefcaseBusiness, CheckCircle2, Clock3, Loader2, MessageSquareWarning, Pencil, Plus, QrCode, RefreshCcw, UserRound } from "lucide-react";
+import { BriefcaseBusiness, CheckCircle2, Clock3, Loader2, MessageSquareWarning, Pencil, Plus, RefreshCcw, UserRound } from "lucide-react";
 import { CompactSelect } from "@/components/compact-select";
 import { useAdminSession } from "@/components/admin-session-provider";
 import { TherapistAvatar } from "@/components/therapist-avatar";
@@ -152,7 +152,6 @@ export function AdminTherapistOperations() {
         <CompactSelect value={session.role === "OWNER" ? branchId : session.branchId ?? "all"} onValueChange={setBranchId} disabled={session.role !== "OWNER"} dialogTitle="Chọn cơ sở xem KTV" triggerClassName="min-h-9 rounded-lg py-2" options={[{ value: "all", label: "Toàn hệ thống" }, ...(payload?.branches ?? []).map((branch) => ({ value: branch.id, label: branch.label }))]} />
         <span className="flex gap-1.5">
           {canManageTherapists ? <button type="button" onClick={() => setEditing("NEW")} className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-[#c64b32] px-3 text-[10px] font-semibold text-white"><Plus size={13} /> Thêm KTV</button> : null}
-          <Link href="/admin/qr-management" className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-[#76551d] px-3 text-[10px] font-semibold text-white"><QrCode size={13} /> Quản lý QR</Link>
         </span>
       </section>
       {pendingProfiles.length ? <section className="mt-3 rounded-2xl border border-[#d2ad5d] bg-gradient-to-br from-[#fffaf0] to-white p-3 shadow-sm">

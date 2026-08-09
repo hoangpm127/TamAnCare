@@ -4,9 +4,7 @@ import { db } from "@/lib/db";
 import { reminderSchedule } from "@/lib/reminder";
 import { statusSchema } from "@/lib/validations";
 import { getAdminSession } from "@/lib/server/admin-session";
-import { getCustomerSession } from "@/lib/server/customer-session";
 import { money, notifyCustomer, notifyOperations, notifyTherapist } from "@/lib/server/notification-service";
-import { getGuestSession } from "@/lib/server/guest-session";
 import { isSameOriginMutation, privateIdentifierDigest, requestIp } from "@/lib/server/request-security";
 import { isCustomerAudienceRequest } from "@/lib/request-audience";
 import {
@@ -20,7 +18,7 @@ import { phoneVerificationRequired } from "@/lib/server/otp-delivery";
 
 const ALLOWED_TRANSITIONS: Record<BookingStatus, BookingStatus[]> = {
   PENDING: ["CONFIRMED", "CANCELLED"],
-  CONFIRMED: ["CHECKED_IN", "IN_SERVICE", "CANCELLED", "NO_SHOW"],
+  CONFIRMED: ["CHECKED_IN", "CANCELLED", "NO_SHOW"],
   CHECKED_IN: ["IN_SERVICE", "CANCELLED"],
   IN_SERVICE: ["COMPLETED"],
   COMPLETED: [],
@@ -43,10 +41,12 @@ function monthKey(value: Date) {
 export async function PATCH(request: Request, context: { params: Promise<{ bookingCode: string }> }) {
   if (!isSameOriginMutation(request)) return NextResponse.json({ error: "Yêu cầu không hợp lệ." }, { status: 403 });
   const { bookingCode } = await context.params;
-  const [adminCandidate, customerCandidate, activeGuest] = await Promise.all([getAdminSession(), getCustomerSession(), getGuestSession()]);
+  const adminCandidate = await getAdminSession();
   const customerAudience = isCustomerAudienceRequest(request);
   const activeAdmin = !customerAudience && adminCandidate && !adminCandidate.mustChangePassword ? adminCandidate : null;
-  const activeCustomer = customerCandidate;
+  if (!activeAdmin) {
+    return NextResponse.json({ error: "Khách không cần tự check-in. Vui lòng đọc họ tên và số điện thoại để lễ tân hỗ trợ." }, { status: 403 });
+  }
   if (!customerAudience && activeAdmin?.role === "INVESTOR") {
     return NextResponse.json({ error: "Vai trò Nhà đầu tư chỉ được xem báo cáo tổng hợp." }, { status: 403 });
   }
@@ -83,49 +83,15 @@ export async function PATCH(request: Request, context: { params: Promise<{ booki
         const totalAmount = group?.totalAmount ?? bookings.reduce((sum, item) => sum + item.totalAmount, 0);
         const depositAmount = group?.depositAmount ?? bookings.reduce((sum, item) => sum + item.depositAmount, 0);
         const currentPaymentStatus = group?.paymentStatus ?? bookings[0].paymentStatus;
-        const paidVenueAccess = parsed.data.venueBranchId === branchId
-          && ["DEPOSITED", "PAID"].includes(currentPaymentStatus);
-        const venueQrServiceStart = nextStatus === "IN_SERVICE"
-          && ["CONFIRMED", "CHECKED_IN"].includes(currentStatus)
-          && paidVenueAccess;
-
-        if (nextStatus && nextStatus !== currentStatus && !ALLOWED_TRANSITIONS[currentStatus].includes(nextStatus) && !venueQrServiceStart) {
+        if (nextStatus && nextStatus !== currentStatus && !ALLOWED_TRANSITIONS[currentStatus].includes(nextStatus)) {
           throw new StatusError(`Không thể chuyển từ ${currentStatus} sang ${nextStatus}.`, 409);
         }
 
-        if (activeAdmin) {
-          if (activeAdmin.role !== "OWNER" && activeAdmin.branchId !== branchId) {
-            throw new StatusError("Bạn không có quyền xử lý booking ngoài cơ sở được phân công.", 403);
-          }
-          if (activeAdmin.role === "THERAPIST") {
-            if (nextStatus !== "IN_SERVICE") {
-              throw new StatusError("KTV chỉ được bắt đầu ca đã được cơ sở xác nhận.", 403);
-            }
-            if (bookings.some((item) => item.therapist?.fullName !== activeAdmin.displayName)) {
-              throw new StatusError("Booking này không được phân công cho tài khoản KTV hiện tại.", 403);
-            }
-          }
-        } else {
-          const ownsBooking = activeCustomer?.customerId === customerId;
-          const guestVerified = activeGuest
-            ? Boolean(await tx.bookingAccessGrant.findFirst({
-                where: {
-                  guestSessionId: activeGuest.id,
-                  expiresAt: { gt: new Date() },
-                  ...(groupId ? { bookingGroupId: groupId } : { bookingId: bookings[0].id }),
-                },
-                select: { id: true },
-              }))
-            : false;
-          if (!ownsBooking && !guestVerified) {
-            throw new StatusError("Cần đăng nhập hoặc mở booking trên đúng thiết bị đã đặt lịch.", 401);
-          }
-          if (!nextStatus || !["CHECKED_IN", "IN_SERVICE"].includes(nextStatus) || !paidVenueAccess) {
-            throw new StatusError("Khách chỉ được bắt đầu sử dụng Bill đã thanh toán cọc sau khi quét đúng QR tại cơ sở.", 403);
-          }
-          if (currentStatus === "PENDING") {
-            throw new StatusError("Lịch đang chờ Admin/Quản lý xác nhận thủ công nên chưa thể check-in. Khi lịch được xác nhận, nút Camera sẽ mở ngay trong Đơn của tôi.", 409);
-          }
+        if (activeAdmin.role !== "OWNER" && activeAdmin.branchId !== branchId) {
+          throw new StatusError("Bạn không có quyền xử lý booking ngoài cơ sở được phân công.", 403);
+        }
+        if (activeAdmin.role === "THERAPIST") {
+          throw new StatusError("Quy trình tại quầy do lễ tân xác nhận bằng họ tên và số điện thoại của khách.", 403);
         }
 
         if (!nextStatus || nextStatus === currentStatus) {
@@ -142,14 +108,14 @@ export async function PATCH(request: Request, context: { params: Promise<{ booki
             branchId,
             type: "BOOKING",
             title: "Lịch của bạn đã được cơ sở xác nhận",
-            body: `${referenceCode} đã sẵn sàng. QR check-in được mở để sử dụng tại đúng cơ sở đã đặt.`,
-            actionUrl: `/check-in?bookingCode=${referenceCode}`,
+            body: `${referenceCode} đã sẵn sàng. Khi đến, bạn chỉ cần đọc họ tên và số điện thoại; lễ tân sẽ làm thủ tục còn lại.`,
+            actionUrl: "/don-cua-toi?tab=upcoming",
           });
           await notifyOperations(tx, {
             branchId,
             type: "BOOKING",
             title: `Đã xác nhận lịch · ${customer?.fullName ?? "Khách Tâm An"}`,
-            body: `${referenceCode} đã chuyển sang trạng thái sẵn sàng check-in.`,
+            body: `${referenceCode} đã sẵn sàng đón khách và đối chiếu bằng họ tên, số điện thoại.`,
             actionUrl: "/admin/bookings",
           });
           for (const booking of bookings) {
@@ -166,11 +132,15 @@ export async function PATCH(request: Request, context: { params: Promise<{ booki
 
         if (nextStatus === "CHECKED_IN" || nextStatus === "IN_SERVICE") {
           const serviceStartedAt = nextStatus === "IN_SERVICE"
-            ? bookings.find((item) => item.checkedInAt)?.checkedInAt ?? now
-            : now;
+            ? now
+            : null;
           await tx.booking.updateMany({
             where: { id: { in: bookings.map((item) => item.id) } },
-            data: { status: nextStatus, checkedInAt: serviceStartedAt, checkoutRequestedAt: null, ...(nextStatus === "IN_SERVICE" ? { endingSoonReminderSentAt: null } : {}) },
+            data: {
+              status: nextStatus,
+              ...(nextStatus === "IN_SERVICE" ? { checkedInAt: serviceStartedAt, endingSoonReminderSentAt: null } : {}),
+              checkoutRequestedAt: null,
+            },
           });
           if (groupId) await tx.bookingGroup.update({ where: { id: groupId }, data: { status: nextStatus } });
           if (nextStatus === "CHECKED_IN") {
@@ -178,8 +148,8 @@ export async function PATCH(request: Request, context: { params: Promise<{ booki
               branchId,
               type: "BOOKING",
               title: "Cơ sở đã nhận yêu cầu check-in",
-              body: `${referenceCode} đã báo bạn có mặt. Lễ tân đang xếp giường/ghế và KTV sẽ bấm bắt đầu khi sẵn sàng.`,
-              actionUrl: `/check-in?bookingCode=${referenceCode}`,
+              body: `${referenceCode} đã được lễ tân xác nhận bạn có mặt. Bạn không cần thao tác thêm; cơ sở đang chuẩn bị giường/ghế và KTV.`,
+              actionUrl: "/don-cua-toi?tab=upcoming",
             });
             await notifyOperations(tx, {
               branchId,
@@ -200,18 +170,19 @@ export async function PATCH(request: Request, context: { params: Promise<{ booki
             }
           }
           if (nextStatus === "IN_SERVICE") {
+            const confirmedServiceStartedAt = serviceStartedAt ?? now;
             await notifyCustomer(tx, customerId, {
               branchId,
               type: "BOOKING",
               title: "Dịch vụ của bạn đã bắt đầu",
-              body: `${referenceCode} đang được phục vụ. Đồng hồ thời gian đã bắt đầu${venueQrServiceStart ? " từ lúc bạn xác nhận dùng Bill tại QR cơ sở" : ""} và sẽ dừng khi cơ sở/KTV check-out.`,
-              actionUrl: `/check-in?bookingCode=${referenceCode}`,
+              body: `${referenceCode} đang được phục vụ. Lễ tân sẽ xác nhận check-out và thanh toán khi buổi dịch vụ kết thúc.`,
+              actionUrl: "/don-cua-toi?tab=upcoming",
             });
             await notifyOperations(tx, {
               branchId,
               type: "BOOKING",
-              title: `${venueQrServiceStart ? "Khách bắt đầu tính giờ qua QR" : "Khách đã bắt đầu dịch vụ"} · ${customer?.fullName ?? "Khách Tâm An"}`,
-              body: `${referenceCode} đang được phục vụ bởi ${bookings.map((item) => item.therapist?.fullName).filter(Boolean).join(", ") || "KTV cơ sở"}. Đồng hồ được tính từ ${serviceStartedAt.toLocaleTimeString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh", hour: "2-digit", minute: "2-digit" })}.`,
+              title: `Khách đã lên giường · ${customer?.fullName ?? "Khách Tâm An"}`,
+              body: `${referenceCode} đang được phục vụ bởi ${bookings.map((item) => item.therapist?.fullName).filter(Boolean).join(", ") || "KTV cơ sở"}. Đồng hồ được tính từ ${confirmedServiceStartedAt.toLocaleTimeString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh", hour: "2-digit", minute: "2-digit" })}.`,
               actionUrl: "/admin/calendar",
             });
             for (const booking of bookings) {

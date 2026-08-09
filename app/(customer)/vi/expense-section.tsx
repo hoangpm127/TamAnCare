@@ -1,8 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { Briefcase, ChevronDown, Hourglass, QrCode, Receipt, RotateCcw, Users } from "lucide-react";
+import { Briefcase, ChevronDown, Hourglass, Receipt, RotateCcw, Users } from "lucide-react";
 import { useWalletLedger, type LedgerEntry } from "@/lib/wallet-ledger";
 import { computeActualServiceMinutes } from "@/lib/time-delay";
 import { billStatusLabel } from "@/lib/labels";
@@ -247,7 +246,6 @@ function scheduledTimeLabel(value?: string) {
 }
 
 export function BillCard({ data, expanded, onToggle }: { data: BillCardData; expanded: boolean; onToggle: () => void }) {
-  const router = useRouter();
   const depositOnly = data.status === "UNUSED" && (data.paymentStatus === "DEPOSIT_ONLY" || Boolean(data.depositAmount));
   const packageSession = data.paymentStatus === "PACKAGE_SESSION";
   const refunded = data.paymentStatus === "REFUNDED" || data.paymentStatus === "PARTIALLY_REFUNDED";
@@ -271,12 +269,6 @@ export function BillCard({ data, expanded, onToggle }: { data: BillCardData; exp
   }
 
   function openCard() {
-    if (data.status === "IN_SERVICE") {
-      router.push(data.isBusiness
-        ? `/doanh-nghiep/${encodeURIComponent(data.bookingCode)}`
-        : `/check-in?bookingCode=${encodeURIComponent(data.bookingCode)}`);
-      return;
-    }
     onToggle();
   }
 
@@ -307,14 +299,7 @@ export function BillCard({ data, expanded, onToggle }: { data: BillCardData; exp
         </span>
       </button>
 
-      {data.status === "IN_SERVICE" && !data.isBusiness ? (
-        <Link
-          href={`/check-in?bookingCode=${encodeURIComponent(data.bookingCode)}`}
-          className="mt-2.5 inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-gradient-to-b from-[#a85f29] to-[#8b2b28] px-4 py-2.5 text-xs font-semibold text-white shadow-sm"
-        >
-          <Hourglass className={data.checkoutRequestedAt ? "" : "animate-pulse"} size={13} /> {data.checkoutRequestedAt ? "Xem check-out sớm" : "Xem đồng hồ đang phục vụ"}
-        </Link>
-      ) : null}
+      {data.status === "IN_SERVICE" && !data.isBusiness ? <p className="mt-2.5 rounded-xl bg-[#fff7df] px-3 py-2.5 text-center text-[11px] leading-5 text-[#715943]">Lễ tân đang theo dõi ca và sẽ xác nhận check-out, thanh toán khi kết thúc.</p> : null}
 
       {expanded ? (
         <div className="mt-2.5 space-y-1 border-t border-dashed border-[#e7d6ca] pt-2.5 text-[11px] text-[#826f66]">
@@ -450,12 +435,7 @@ export function BillCard({ data, expanded, onToggle }: { data: BillCardData; exp
               <Briefcase size={13} /> Xem yêu cầu Tâm An Business
             </Link>
           ) : data.status === "UNUSED" ? (
-            <Link
-              href={`/check-in?bookingCode=${data.bookingCode}`}
-              className="mt-2 inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-[#c64b32] px-4 py-2.5 text-xs font-semibold text-white"
-            >
-              <QrCode size={13} /> Quét QR sử dụng dịch vụ
-            </Link>
+            <p className="mt-2 rounded-xl bg-[#fff7df] px-3 py-2.5 text-center text-[11px] leading-5 text-[#715943]">Khi đến, đọc họ tên và số điện thoại để lễ tân tiếp nhận.</p>
           ) : null}
           {data.status === "IN_SERVICE" && data.isBusiness ? (
             <Link

@@ -3,10 +3,9 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { Bell, BriefcaseBusiness, CalendarDays, CircleDollarSign, LogOut, QrCode, UserRound, UsersRound, X } from "lucide-react";
+import { Bell, BriefcaseBusiness, CalendarDays, CircleDollarSign, LogOut, UserRound, UsersRound, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TherapistNotificationList } from "@/components/therapist-notification-list";
-import { TherapistQrCard } from "@/components/therapist-qr-card";
 import { NavigationPendingIndicator } from "@/components/navigation-pending-indicator";
 import { TherapistServiceAlert } from "@/components/therapist-service-alert";
 import { forgetAdminWorkspace, rememberAdminWorkspace } from "@/lib/admin-workspace";
@@ -19,12 +18,12 @@ const NAV_ITEMS = [
   { href: "/therapist/me", label: "Tôi", icon: UserRound },
 ];
 
-type Props = { qrDataUrl: string | null; therapistName: string; branchLabel: string };
+type Props = { branchLabel: string };
 
-export function TherapistNav({ qrDataUrl, therapistName, branchLabel }: Props) {
+export function TherapistNav({ branchLabel }: Props) {
   const pathname = usePathname();
   const router = useRouter();
-  const [panel, setPanel] = useState<"qr" | "notifications" | null>(null);
+  const [panel, setPanel] = useState<"notifications" | null>(null);
   const [unread, setUnread] = useState(0);
 
   const loadUnread = useCallback(async () => {
@@ -64,7 +63,6 @@ export function TherapistNav({ qrDataUrl, therapistName, branchLabel }: Props) {
             <NavigationPendingIndicator />
           </Link>
           <div className="flex items-center gap-1.5">
-            <button type="button" onClick={() => setPanel("qr")} disabled={!qrDataUrl} className="flex h-9 w-9 items-center justify-center rounded-full bg-[#fbf2e7] text-[#76551d] disabled:opacity-40" aria-label="Mở QR KTV"><QrCode size={17} /></button>
             <button type="button" onClick={() => { setPanel("notifications"); setUnread(0); }} className="relative flex h-9 w-9 items-center justify-center rounded-full bg-[#f8ebe5] text-[#c64b32]" aria-label="Mở thông báo">
               <Bell size={17} />
               {unread ? <span className="absolute -right-0.5 -top-0.5 flex min-h-4 min-w-4 items-center justify-center rounded-full bg-[#c64b32] px-1 text-[7px] font-bold text-white">{Math.min(99, unread)}</span> : null}
@@ -88,8 +86,7 @@ export function TherapistNav({ qrDataUrl, therapistName, branchLabel }: Props) {
       {panel ? <div className="fixed inset-0 z-[70] flex items-end justify-center bg-black/45 p-0 backdrop-blur-[2px] sm:items-center sm:p-5" role="dialog" aria-modal="true">
         <button type="button" className="absolute inset-0" onClick={() => setPanel(null)} aria-label="Đóng" />
         <section className="relative max-h-[88dvh] w-full max-w-lg overflow-y-auto rounded-t-[1.75rem] bg-white p-4 shadow-2xl sm:rounded-[1.75rem] sm:p-5">
-          <div className="mb-3 flex items-center justify-between"><div><p className="text-[9px] font-bold uppercase tracking-[0.14em] text-[#c64b32]">Cổng KTV</p><h2 className="text-base font-semibold">{panel === "qr" ? "QR phục vụ của tôi" : "Thông báo công việc"}</h2></div><button type="button" onClick={() => setPanel(null)} className="flex h-9 w-9 items-center justify-center rounded-full bg-[#f6efeb] text-[#756861]" aria-label="Đóng cửa sổ"><X size={17} /></button></div>
-          {panel === "qr" && qrDataUrl ? <TherapistQrCard dataUrl={qrDataUrl} therapistName={therapistName} branchLabel={branchLabel} compact /> : null}
+          <div className="mb-3 flex items-center justify-between"><div><p className="text-[9px] font-bold uppercase tracking-[0.14em] text-[#c64b32]">Cổng KTV</p><h2 className="text-base font-semibold">Thông báo công việc</h2></div><button type="button" onClick={() => setPanel(null)} className="flex h-9 w-9 items-center justify-center rounded-full bg-[#f6efeb] text-[#756861]" aria-label="Đóng cửa sổ"><X size={17} /></button></div>
           {panel === "notifications" ? <TherapistNotificationList /> : null}
         </section>
       </div> : null}

@@ -12,6 +12,17 @@ export const CUSTOMER_LANGUAGE_STORAGE_KEY = "tam-an-customer-language";
 export const CUSTOMER_LANGUAGE_COOKIE_KEY = "tam_customer_language";
 
 const EXACT_KOREAN: Record<string, string> = {
+  "Đã xác nhận · Sẵn sàng đón khách": "예약 확정 · 방문 준비 완료",
+  "TÂM AN CENTER đang xếp KTV và giường/ghế": "TÂM AN CENTER에서 테라피스트와 침대/의자를 배정하고 있습니다",
+  "TÂM AN CENTER đang xếp KTV và giường/ghế phù hợp": "TÂM AN CENTER에서 적합한 테라피스트와 침대/의자를 배정하고 있습니다",
+  "Khi đến, bạn chỉ cần đọc họ tên và số điện thoại. Lễ tân sẽ làm thủ tục check-in, lên giường, check-out và xác nhận thanh toán.": "방문 시 이름과 전화번호만 말씀해 주세요. 리셉션에서 체크인, 입실, 체크아웃과 결제 확인을 모두 도와드립니다.",
+  "Khi đến, bạn chỉ cần đọc họ tên và số điện thoại. Lễ tân sẽ check-in cho bạn.": "방문 시 이름과 전화번호만 말씀해 주세요. 리셉션에서 체크인을 도와드립니다.",
+  "Lễ tân đã tiếp nhận và đang chuẩn bị giường/ghế cùng KTV.": "리셉션에서 접수를 완료했으며 침대/의자와 테라피스트를 준비하고 있습니다.",
+  "Bạn không cần thao tác thêm. Lễ tân sẽ check-out và xác nhận thanh toán khi kết thúc.": "추가로 조작할 필요가 없습니다. 서비스 종료 후 리셉션에서 체크아웃과 결제를 확인합니다.",
+  "Lễ tân đang đối soát phần thanh toán còn lại tại quầy.": "리셉션에서 남은 결제 금액을 확인하고 있습니다.",
+  "Lễ tân đang theo dõi ca và sẽ xác nhận check-out, thanh toán khi kết thúc.": "리셉션에서 서비스 진행을 확인 중이며 종료 시 체크아웃과 결제를 처리합니다.",
+  "Khi đến, đọc họ tên và số điện thoại để lễ tân tiếp nhận.": "방문 시 이름과 전화번호를 말씀해 주시면 리셉션에서 접수합니다.",
+  "Đặt lịch sử dụng thẻ": "회원권으로 예약하기",
   "Tặng 150.000đ cho lần đặt dịch vụ đầu tiên sau khi tạo tài khoản bằng họ tên, số điện thoại và Mã PIN Tâm An 4 số.": "이름, 전화번호와 Tâm An 4자리 PIN으로 계정을 만든 후 첫 서비스 예약에 150,000동 혜택을 드립니다.",
   "Nhận thêm": "추가 혜택",
   "Cài app từ lời mời này và cộng cùng WELCOME150 · tổng quyền lợi tới 200.000đ.": "이 초대 링크로 앱을 설치하면 WELCOME150과 함께 적용되어 총 혜택이 최대 200,000동입니다.",
@@ -910,7 +921,7 @@ const COMPLETE_KOREAN: Record<string, string> = {
   "Xem hồ sơ & Bill": "프로필 및 결제 내역 보기",
   "Xem hồ sơ vận hành & Bill Business": "운영 프로필 및 비즈니스 결제 내역 보기",
   "Xem lại thông tin chuyển khoản": "이체 정보 다시 보기",
-  "Xem lịch đã đặt": "예약 일정 보기",
+  "Xem lịch đã đặt": "예약 내역 보기",
   "Xem tất cả lịch & lịch sử": "전체 일정 및 내역 보기",
   "Xem thẻ trong Tôi": "마이페이지에서 이용권 보기",
   "Xem yêu cầu Tâm An Business": "땀안 비즈니스 요청 보기",

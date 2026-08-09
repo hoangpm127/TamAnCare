@@ -112,15 +112,18 @@ export default function ReferralPage() {
 
   async function share() {
     const link = referralLink || `${window.location.origin}${referralPath}`;
+    const message = `${shareText}\n${link}`;
     if (navigator.share) {
       try {
-        await navigator.share({ title: "Tâm An Center", text: shareText, url: link });
+        // Android/iOS share targets combine `text` and `url` inconsistently.
+        // Sending one text payload prevents the invitation from being duplicated.
+        await navigator.share({ title: "Tâm An Center", text: message });
         return;
       } catch (reason) {
         if (reason instanceof DOMException && reason.name === "AbortError") return;
       }
     }
-    await navigator.clipboard.writeText(`${shareText} ${link}`);
+    await navigator.clipboard.writeText(message);
     setCopiedTarget("link");
     setTimeout(() => setCopiedTarget(null), 1500);
   }

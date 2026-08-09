@@ -701,7 +701,7 @@ export async function createBookingGroup(input: BookingGroupInput) {
             ? "Chúc mừng! Lịch dùng gói đã được AI xác nhận"
             : `Đã giữ ${bookingRecords.length} lượt từ ${activePackage.packagePlan.name}`,
           body: bookingAutomation?.confirmed
-            ? `${group.referenceCode} đã được xếp ${bookingAutomation.assignments.map((item) => `${item.therapistName} · ${item.roomName}`).join(", ")}. Mở Đơn của tôi và dùng Camera quét QR tại cơ sở để check-in.`
+            ? `${group.referenceCode} đã được xếp ${bookingAutomation.assignments.map((item) => `${item.therapistName} · ${item.roomName}`).join(", ")}. Khi đến, bạn chỉ cần đọc họ tên và số điện thoại để lễ tân tiếp nhận.`
             : `${group.referenceCode} không cần đặt cọc thêm; cơ sở đang xác nhận lịch và vị trí phục vụ.`,
           actionUrl: `/booking/success/${group.referenceCode}`,
         });
@@ -719,7 +719,7 @@ export async function createBookingGroup(input: BookingGroupInput) {
           type: "BOOKING",
           title: bookingAutomation?.confirmed ? "Chúc mừng! Lịch đã được AI xác nhận" : "Đã ghi nhận lịch không cần đặt cọc",
           body: bookingAutomation?.confirmed
-            ? `${group.referenceCode} đã được xếp ${bookingAutomation.assignments.map((item) => `${item.therapistName} · ${item.roomName}`).join(", ")}. Bạn có thể mở Camera check-in trong Đơn của tôi.`
+            ? `${group.referenceCode} đã được xếp ${bookingAutomation.assignments.map((item) => `${item.therapistName} · ${item.roomName}`).join(", ")}. Khi đến, bạn chỉ cần đọc họ tên và số điện thoại để lễ tân tiếp nhận.`
             : `${group.referenceCode} đã áp dụng đủ ưu đãi; cơ sở đang xác nhận lịch.`,
           actionUrl: `/booking/success/${group.referenceCode}`,
         });

@@ -34,7 +34,7 @@ export function ActiveServiceBanner() {
   if (!primary?.bookingCode) return null;
   const href = primary.isBusiness
     ? `/doanh-nghiep/${encodeURIComponent(primary.bookingCode)}`
-    : `/check-in?bookingCode=${encodeURIComponent(primary.bookingCode)}`;
+    : "/don-cua-toi?tab=upcoming";
 
   return (
     <div className="sticky top-14 z-30 border-b border-[#e8d2c4] bg-[#fbf2e7]/95 px-3 py-1.5 shadow-[0_4px_14px_rgba(168,95,41,0.10)] backdrop-blur">

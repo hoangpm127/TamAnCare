@@ -32,7 +32,7 @@ export function MembershipSummaryCard() {
 
   return (
     <Link
-      href="/check-in"
+      href="/don-cua-toi?tab=upcoming"
       className="mt-4 block overflow-hidden rounded-xl bg-gradient-to-br from-[#231514] to-[#3d1f12] p-4 text-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
     >
       <div className="flex items-center justify-between gap-3">

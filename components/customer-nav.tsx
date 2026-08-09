@@ -5,13 +5,13 @@ import { usePathname, useRouter } from "next/navigation";
 import {
   Bell,
   BadgePercent,
+  CalendarClock,
   ChevronLeft,
   CircleDollarSign,
   CircleUserRound,
   Gift,
   Home,
   MessageCircle,
-  QrCode,
 } from "lucide-react";
 import { useAllNotifications } from "@/lib/notification-store";
 import { cn } from "@/lib/utils";
@@ -60,11 +60,11 @@ function CustomerTopbar({ pathname }: { pathname: string }) {
         </div>
         <div className="flex items-center gap-1.5 sm:gap-2">
           <Link
-            href="/check-in"
+            href="/don-cua-toi?tab=upcoming"
             className="tap-feedback relative inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#fbf2e7] text-[#76551d] ring-1 ring-[#76551d]/10 sm:h-9 sm:w-9"
-            aria-label="Check-in tại cơ sở"
+            aria-label="Lịch đã đặt"
           >
-            <QrCode size={16} />
+            <CalendarClock size={16} />
             <NavigationPendingIndicator />
           </Link>
           <Link
