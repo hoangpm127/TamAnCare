@@ -6,6 +6,7 @@ export type CustomerAccountView = {
   customerId: string;
   fullName: string;
   phone: string;
+  pinConfigured: boolean;
   phoneVerified: boolean;
   totalVisits: number;
   creditBalance: number;

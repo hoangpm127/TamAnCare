@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
+import { customerPinError } from "@/lib/customer-pin";
 import { hashPassword } from "@/lib/password";
 import { createCustomerSession, customerAccountDto, getCustomerSession } from "@/lib/server/customer-session";
 import { createCustomerMembership } from "@/lib/server/customer-registration";
@@ -10,8 +11,7 @@ import { consumeRateLimit, isSameOriginMutation, privateIdentifierDigest, reques
 const schema = z.object({
   fullName: z.string().trim().min(2).max(100),
   phone: z.string().trim().regex(/^[0-9+ ]{8,15}$/),
-  password: z.string().min(15).max(72).optional(),
-  passwordConfirmation: z.string().min(15).max(72).optional(),
+  pin: z.string().regex(/^\d{4}$/),
   acceptTerms: z.literal(true),
   acceptPrivacy: z.literal(true),
   marketingOptIn: z.boolean().optional().default(false),
@@ -20,12 +20,11 @@ const schema = z.object({
 export async function POST(request: Request) {
   if (!isSameOriginMutation(request)) return NextResponse.json({ error: "Yêu cầu đăng ký không hợp lệ." }, { status: 403 });
   const parsed = schema.safeParse(await request.json().catch(() => null));
-  if (!parsed.success) return NextResponse.json({ error: "Họ tên hoặc số điện thoại chưa hợp lệ." }, { status: 400 });
-  if (parsed.data.password !== parsed.data.passwordConfirmation) {
-    return NextResponse.json({ error: "Hai mật khẩu chưa trùng khớp." }, { status: 400 });
-  }
+  if (!parsed.success) return NextResponse.json({ error: "Họ tên, số điện thoại hoặc Mã PIN chưa hợp lệ." }, { status: 400 });
   if (!isVietnamMobilePhone(parsed.data.phone)) return NextResponse.json({ error: "Vui lòng nhập đúng số điện thoại di động Việt Nam." }, { status: 400 });
   const phone = normalizeVietnamPhone(parsed.data.phone);
+  const pinError = customerPinError(parsed.data.pin, phone);
+  if (pinError) return NextResponse.json({ error: pinError }, { status: 400 });
   const [ipLimit, phoneLimit] = await Promise.all([
     consumeRateLimit({ scope: "customer-register-ip", identifier: requestIp(request), limit: 10, windowMs: 24 * 60 * 60_000 }),
     consumeRateLimit({ scope: "customer-register-phone", identifier: phone, limit: 3, windowMs: 24 * 60 * 60_000 }),
@@ -49,7 +48,8 @@ export async function POST(request: Request) {
       return createCustomerMembership(tx, {
         fullName: parsed.data.fullName,
         phone,
-        passwordHash: parsed.data.password ? hashPassword(parsed.data.password) : null,
+        passwordHash: null,
+        pinHash: hashPassword(parsed.data.pin),
         phoneVerifiedAt: null,
         marketingOptIn: parsed.data.marketingOptIn,
         consentAt,

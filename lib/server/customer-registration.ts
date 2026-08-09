@@ -8,6 +8,7 @@ type RegistrationInput = {
   fullName: string;
   phone: string;
   passwordHash: string | null;
+  pinHash?: string | null;
   phoneVerifiedAt: Date | null;
   email?: string | null;
   marketingOptIn: boolean;
@@ -48,6 +49,7 @@ export async function createCustomerMembership(tx: Prisma.TransactionClient, inp
       customerId: customer.id,
       phone: input.phone,
       passwordHash: input.passwordHash,
+      pinHash: input.pinHash ?? null,
       phoneVerifiedAt: input.phoneVerifiedAt,
       creditBalance: 150000,
       freeConsultationEligible: true,

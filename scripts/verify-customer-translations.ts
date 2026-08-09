@@ -42,6 +42,7 @@ const criticalCopy = [
   ["Hết lượt", "Fully claimed", "已领完"],
   ["Chạm sóc toàn diện, nâng niu từng cảm giác", "Complete care, thoughtfully tending to every sensation", "全方位呵护，细致照顾每一处感受"],
   ["Tạo tài khoản nhận ưu đãi 150K", "Create an account and receive a 150K voucher", "创建账户即享150K优惠券"],
+  ["Mã PIN Tâm An · 4 số", "Tâm An PIN · 4 digits", "Tâm An PIN码 · 4位数字"],
   ["Kiểm tra KTV và phòng/giường với thời gian chuẩn bị 5 phút.", "Therapist and room/bed availability includes a 5-minute preparation buffer.", "理疗师与房间/床位的可预约时间均预留5分钟准备时间。"],
   ["10% doanh thu dịch vụ/gói đủ điều kiện · đối soát 15 ngày", "10% of eligible service/package revenue · 15-day payout cycle", "符合条件的服务/套餐收入10% · 15天结算"],
 ] as const;

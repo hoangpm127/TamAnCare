@@ -89,14 +89,18 @@ integration("Tài khoản nhận VietQR", [
   "NEXT_PUBLIC_PAYMENT_ACCOUNT_HOLDER",
 ]);
 integration("Đối soát SePay", ["SEPAY_WEBHOOK_SECRET", "SEPAY_ACCOUNT_NUMBERS"]);
-integration("Đăng nhập Google", ["GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET", "OAUTH_STATE_SECRET"]);
+const customerOauthEnabled = process.env.CUSTOMER_OAUTH_ENABLED === "true";
+if (customerOauthEnabled) integration("Đăng nhập Google", ["GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET", "OAUTH_STATE_SECRET"]);
+else add("Tích hợp", "Đăng nhập mạng xã hội", "PASS", "Đã tắt theo thiết kế số điện thoại + Mã PIN Tâm An");
 const facebookConfigured = ["FACEBOOK_APP_ID", "FACEBOOK_APP_SECRET", "OAUTH_STATE_SECRET"].every((envName) => !isPlaceholder(process.env[envName]));
 const facebookPublic = process.env.FACEBOOK_LOGIN_PUBLIC === "true";
 add(
   "Tích hợp",
   "Đăng nhập Facebook",
-  facebookConfigured && facebookPublic ? "PASS" : "WARN",
-  facebookConfigured && facebookPublic
+  !customerOauthEnabled ? "PASS" : facebookConfigured && facebookPublic ? "PASS" : "WARN",
+  !customerOauthEnabled
+    ? "Đã tắt theo thiết kế đăng nhập khách hiện tại"
+    : facebookConfigured && facebookPublic
     ? "Đã cấu hình và cho phép khách production sử dụng"
     : facebookConfigured
       ? "Đã có khóa nhưng đang ẩn cho tới khi Meta xác minh và phát hành ứng dụng"

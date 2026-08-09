@@ -3,7 +3,7 @@ import { customerAccountDto, deleteCustomerSession, getCustomerSession } from "@
 import { isSameOriginMutation } from "@/lib/server/request-security";
 
 export async function GET() {
-  const account = await getCustomerSession();
+  const account = await getCustomerSession({ renew: true });
   return NextResponse.json({ account: account ? customerAccountDto(account) : null });
 }
 

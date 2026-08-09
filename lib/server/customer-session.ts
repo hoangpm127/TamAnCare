@@ -7,9 +7,8 @@ import { phoneVerificationRequired } from "@/lib/server/otp-delivery";
 
 const COOKIE_NAME = "ta_customer_session_v2";
 const LEGACY_COOKIE_NAME = "ta_customer_session";
-// Hồ sơ khách hàng không dùng OTP được giữ lâu trên đúng thiết bị đã đăng ký.
-// Khách vẫn có thể chủ động đăng xuất; Google/Facebook là đường khôi phục khi đổi máy.
-const SESSION_DAYS = 180;
+const SESSION_DAYS = 365;
+const SESSION_RENEW_THRESHOLD_DAYS = 30;
 
 function tokenHash(token: string) {
   return createHash("sha256").update(token).digest("hex");
@@ -43,8 +42,9 @@ export async function createCustomerSession(customerId: string) {
   cookieStore.delete(LEGACY_COOKIE_NAME);
 }
 
-export async function getCustomerSession() {
-  const token = (await cookies()).get(COOKIE_NAME)?.value;
+export async function getCustomerSession(options: { renew?: boolean } = {}) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get(COOKIE_NAME)?.value;
   if (!token) return null;
   const session = await db.customerSession.findUnique({
     where: { tokenHash: tokenHash(token) },
@@ -56,7 +56,13 @@ export async function getCustomerSession() {
       },
     },
   });
-  if (!session || session.expiresAt <= new Date()) return null;
+  const now = new Date();
+  if (!session || session.expiresAt <= now) return null;
+  if (options.renew && session.expiresAt.getTime() - now.getTime() <= SESSION_RENEW_THRESHOLD_DAYS * 86_400_000) {
+    const expiresAt = new Date(now.getTime() + SESSION_DAYS * 86_400_000);
+    await db.customerSession.update({ where: { id: session.id }, data: { expiresAt } });
+    cookieStore.set(COOKIE_NAME, token, cookieOptions(expiresAt));
+  }
   return session.account;
 }
 
@@ -71,6 +77,7 @@ export async function deleteCustomerSession() {
 type CustomerAccountDtoInput = {
   customerId: string;
   phone: string;
+  pinHash?: string | null;
   phoneVerifiedAt: Date | null;
   creditBalance: number;
   freeConsultationEligible: boolean;
@@ -88,6 +95,7 @@ export function customerAccountDto(account: CustomerAccountDtoInput) {
     customerId: account.customerId,
     fullName: account.customer.fullName,
     phone: account.phone,
+    pinConfigured: Boolean(account.pinHash),
     phoneVerified: Boolean(account.phoneVerifiedAt),
     totalVisits: account.customer.totalVisits,
     creditBalance: account.creditBalance,

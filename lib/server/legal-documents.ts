@@ -23,8 +23,8 @@ export const LEGAL_APPROVAL_REQUIRED =
 const TERMS: LegalDocument = {
   type: "TERMS",
   title: "Điều khoản sử dụng",
-  version: "2026-08-04-draft.2",
-  effectiveDate: "04/08/2026 (dự thảo)",
+  version: "2026-08-09-draft.3",
+  effectiveDate: "09/08/2026 (dự thảo)",
   summary: "Quy định cách khách hàng truy cập, đặt dịch vụ và sử dụng nền tảng Tâm An Center.",
   sections: [
     {
@@ -43,7 +43,7 @@ const TERMS: LegalDocument = {
       heading: "3. Khách vãng lai và tài khoản thành viên",
       bullets: [
         "Khách có thể xem và đặt lịch mà không cần đăng nhập; hệ thống vẫn cần số điện thoại và thông tin tối thiểu để xác nhận, phục vụ và bảo vệ quyền truy cập booking.",
-        "Tài khoản thành viên dùng để lưu lịch sử, quyền lợi, gói dịch vụ và ưu đãi. Người dùng phải cung cấp thông tin đúng, giữ bí mật mật khẩu và báo ngay khi nghi ngờ bị truy cập trái phép.",
+        "Tài khoản thành viên dùng để lưu lịch sử, quyền lợi, gói dịch vụ và ưu đãi. Người dùng phải cung cấp thông tin đúng, giữ bí mật Mã PIN Tâm An và báo ngay khi nghi ngờ bị truy cập trái phép.",
         "Ưu đãi tạo tài khoản chỉ áp dụng theo điều kiện hiển thị tại thời điểm sử dụng, không được quy đổi thành tiền mặt nếu chính sách riêng không nêu khác.",
       ],
     },

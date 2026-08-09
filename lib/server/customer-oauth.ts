@@ -129,6 +129,7 @@ export function customerOAuthIsConfigured(provider: CustomerOAuthProviderSlug) {
 }
 
 export function customerOAuthIsAvailable(provider: CustomerOAuthProviderSlug) {
+  if (process.env.CUSTOMER_OAUTH_ENABLED !== "true") return false;
   if (!customerOAuthIsConfigured(provider)) return false;
   const isProduction = process.env.APP_ENV === "production" || process.env.NODE_ENV === "production";
   return provider !== "facebook" || !isProduction || process.env.FACEBOOK_LOGIN_PUBLIC === "true";

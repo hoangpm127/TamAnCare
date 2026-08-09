@@ -1011,6 +1011,7 @@ model CustomerAccount {
   customerId                    String                    @unique
   phone                         String                    @unique
   passwordHash                  String?
+  pinHash                       String?
   phoneVerifiedAt               DateTime?
   creditBalance                 Int                       @default(150000)
   welcomeCreditGrantedAt        DateTime?                 @default(now())

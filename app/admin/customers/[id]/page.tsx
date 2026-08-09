@@ -4,6 +4,7 @@ import { getAdminSession } from "@/lib/server/admin-session";
 import { bookingStatusLabel, resourceStatusLabel } from "@/lib/labels";
 import { formatMoney } from "@/lib/utils";
 import { canAccessAdminSection } from "@/lib/admin-auth";
+import { AdminCustomerPinReset } from "@/components/admin-customer-pin-reset";
 
 export const dynamic = "force-dynamic";
 
@@ -22,6 +23,7 @@ export default async function CustomerProfilePage({ params }: { params: Promise<
       }),
     },
     include: {
+      account: { select: { pinHash: true } },
       favoriteTherapist: true,
       packages: { include: { packagePlan: true }, orderBy: { createdAt: "desc" } },
       bookings: {
@@ -48,6 +50,7 @@ export default async function CustomerProfilePage({ params }: { params: Promise<
         </div>
         <div className="mt-5 rounded-lg bg-[#fcf3ed] p-4 text-sm text-[#68574f]">{customer.internalNote ?? "Chưa có ghi chú CRM."}</div>
         {customer.packages.length ? <div className="mt-3 rounded-lg bg-[#fbf2e7] p-4 text-sm text-[#68574f]">Gói thành viên: <strong>{customer.packages.map((item) => `${item.packagePlan.name} (${item.sessionsRemaining}/${item.sessionsTotal} buổi)`).join(", ")}</strong></div> : null}
+        {customer.account ? <AdminCustomerPinReset customerId={customer.id} configured={Boolean(customer.account.pinHash)} /> : null}
       </section>
 
       <section className="mt-5 rounded-lg border border-[#e7d6ca] bg-white p-4 shadow-sm sm:p-5">
