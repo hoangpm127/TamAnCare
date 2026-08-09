@@ -107,10 +107,12 @@ const otpRequired = process.env.PHONE_VERIFICATION_REQUIRED === "true";
 const otpTemplatesApproved = otpProvider !== "ESMS" || process.env.ESMS_TEMPLATES_APPROVED === "true";
 const otpCredentials = otpProvider === "ESMS"
   ? ["ESMS_API_KEY", "ESMS_SECRET_KEY"]
+  : otpProvider === "SPEEDSMS"
+    ? ["SPEEDSMS_ACCESS_TOKEN"]
   : otpProvider === "WEBHOOK"
     ? ["OTP_DELIVERY_WEBHOOK_URL", "OTP_DELIVERY_WEBHOOK_TOKEN"]
     : [];
-const otpConfigured = ["ESMS", "WEBHOOK"].includes(otpProvider ?? "")
+const otpConfigured = ["ESMS", "SPEEDSMS", "WEBHOOK"].includes(otpProvider ?? "")
   && otpCredentials.every((envName) => !isPlaceholder(process.env[envName]))
   && !(mode === "production" && otpProvider === "ESMS" && process.env.ESMS_SANDBOX === "true")
   && !(mode === "production" && !otpTemplatesApproved)

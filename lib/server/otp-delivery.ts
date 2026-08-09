@@ -43,9 +43,19 @@ type EsmsTemplateResponse = {
   ErrorMessage?: string;
 };
 
+type SpeedSmsResponse = {
+  status?: string;
+  code?: string | number;
+  message?: string;
+  data?: {
+    tranId?: string | number;
+    invalidPhone?: string[];
+  };
+};
+
 export type OtpDeliveryReadiness = {
   state: "READY" | "DISABLED" | "PENDING_TEMPLATE" | "MISCONFIGURED" | "PROVIDER_UNAVAILABLE";
-  provider: "ESMS" | "WEBHOOK" | "DISABLED" | "TEST_MODE";
+  provider: "ESMS" | "SPEEDSMS" | "WEBHOOK" | "DISABLED" | "TEST_MODE";
   channel: "SMS" | "WEBHOOK" | "TEST" | "NONE";
   detail: string;
   templateId?: number;
@@ -56,7 +66,8 @@ let esmsTemplateCache: { key: string; expiresAt: number; template: EsmsTemplate 
 
 function configuredProvider() {
   const explicit = process.env.OTP_PROVIDER?.trim().toUpperCase();
-  if (explicit === "ESMS" || explicit === "WEBHOOK" || explicit === "DISABLED") return explicit;
+  if (explicit === "ESMS" || explicit === "SPEEDSMS" || explicit === "WEBHOOK" || explicit === "DISABLED") return explicit;
+  if (process.env.SPEEDSMS_ACCESS_TOKEN?.trim()) return "SPEEDSMS";
   if (process.env.ESMS_API_KEY?.trim() && process.env.ESMS_SECRET_KEY?.trim()) return "ESMS";
   if (process.env.OTP_DELIVERY_WEBHOOK_URL?.trim() && process.env.OTP_DELIVERY_WEBHOOK_TOKEN?.trim()) return "WEBHOOK";
   return "DISABLED";
@@ -162,6 +173,27 @@ export async function inspectOtpDeliveryReadiness(): Promise<OtpDeliveryReadines
     return process.env.OTP_DELIVERY_WEBHOOK_URL?.trim() && process.env.OTP_DELIVERY_WEBHOOK_TOKEN?.trim()
       ? { state: "READY", provider: "WEBHOOK", channel: "WEBHOOK", detail: "Gateway OTP đã sẵn sàng." }
       : { state: "MISCONFIGURED", provider: "WEBHOOK", channel: "WEBHOOK", detail: "Gateway OTP thiếu URL hoặc token." };
+  }
+  if (mode === "SPEEDSMS") {
+    const accessToken = process.env.SPEEDSMS_ACCESS_TOKEN?.trim();
+    if (!accessToken) return { state: "MISCONFIGURED", provider: "SPEEDSMS", channel: "SMS", detail: "Thiếu access token SpeedSMS." };
+    try {
+      const response = await fetch("https://api.speedsms.vn/index.php/user/info", {
+        headers: { Authorization: `Basic ${Buffer.from(`${accessToken}:x`).toString("base64")}` },
+        cache: "no-store",
+        signal: AbortSignal.timeout(8_000),
+      });
+      const payload = await response.json() as { status?: string; data?: { balance?: string | number } };
+      if (!response.ok || payload.status !== "success") {
+        return { state: "PROVIDER_UNAVAILABLE", provider: "SPEEDSMS", channel: "SMS", detail: "SpeedSMS chưa chấp nhận access token." };
+      }
+      const balance = Number(payload.data?.balance ?? 0);
+      return balance > 0
+        ? { state: "READY", provider: "SPEEDSMS", channel: "SMS", detail: "SpeedSMS và số dư gửi OTP đã sẵn sàng." }
+        : { state: "MISCONFIGURED", provider: "SPEEDSMS", channel: "SMS", detail: "Tài khoản SpeedSMS chưa có số dư." };
+    } catch {
+      return { state: "PROVIDER_UNAVAILABLE", provider: "SPEEDSMS", channel: "SMS", detail: "Không thể kết nối SpeedSMS." };
+    }
   }
 
   const apiKey = process.env.ESMS_API_KEY?.trim();
@@ -291,10 +323,40 @@ async function deliverWithWebhook(input: OtpDeliveryInput): Promise<OtpDeliveryR
   };
 }
 
+async function deliverWithSpeedSms(input: OtpDeliveryInput): Promise<OtpDeliveryResult> {
+  const accessToken = process.env.SPEEDSMS_ACCESS_TOKEN?.trim();
+  if (!accessToken) throw new Error("SPEEDSMS_NOT_CONFIGURED");
+  const smsType = process.env.SPEEDSMS_SMS_TYPE?.trim() === "4" ? 4 : 2;
+  const phone = input.phone.startsWith("0") ? `84${input.phone.slice(1)}` : input.phone;
+  const response = await fetch("https://api.speedsms.vn/index.php/sms/send", {
+    method: "POST",
+    headers: {
+      Authorization: `Basic ${Buffer.from(`${accessToken}:x`).toString("base64")}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      to: [phone],
+      content: buildOtpSmsContent(input.code, input.expiresMinutes, "8"),
+      sms_type: smsType,
+      sender: smsType === 4 ? (process.env.SPEEDSMS_SENDER?.trim() || "Verify") : "",
+    }),
+    signal: AbortSignal.timeout(10_000),
+  });
+  const payload = await response.json() as SpeedSmsResponse;
+  if (!response.ok || payload.status !== "success" || String(payload.code ?? "") !== "00") {
+    throw new Error(`SPEEDSMS_REJECTED_${payload.code ?? "UNKNOWN"}`);
+  }
+  if ((payload.data?.invalidPhone?.length ?? 0) > 0) throw new Error("SPEEDSMS_INVALID_PHONE");
+  const reference = String(payload.data?.tranId ?? "").slice(0, 200);
+  if (!reference) throw new Error("SPEEDSMS_MISSING_REFERENCE");
+  return { status: "SENT", reference };
+}
+
 export async function deliverOtpCode(input: OtpDeliveryInput): Promise<OtpDeliveryResult> {
   const mode = otpDeliveryMode();
   if (mode === "TEST_MODE") return { status: "TEST_MODE", reference: "local-test-channel" };
   if (mode === "ESMS") return deliverWithEsms(input);
+  if (mode === "SPEEDSMS") return deliverWithSpeedSms(input);
   if (mode === "WEBHOOK") return deliverWithWebhook(input);
   throw new Error("OTP_DELIVERY_DISABLED");
 }
