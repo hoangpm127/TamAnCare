@@ -12,6 +12,7 @@ export const CUSTOMER_LANGUAGE_STORAGE_KEY = "tam-an-customer-language";
 export const CUSTOMER_LANGUAGE_COOKIE_KEY = "tam_customer_language";
 
 const EXACT_KOREAN: Record<string, string> = {
+  "Tặng 150.000đ cho lần đặt dịch vụ đầu tiên sau khi tạo tài khoản bằng họ tên, số điện thoại và Mã PIN Tâm An 4 số.": "이름, 전화번호와 Tâm An 4자리 PIN으로 계정을 만든 후 첫 서비스 예약에 150,000동 혜택을 드립니다.",
   "Nhận thêm": "추가 혜택",
   "Cài app từ lời mời này và cộng cùng WELCOME150 · tổng quyền lợi tới 200.000đ.": "이 초대 링크로 앱을 설치하면 WELCOME150과 함께 적용되어 총 혜택이 최대 200,000동입니다.",
   "Nguồn giới thiệu đang được giữ trong 30 ngày và sẽ được kích hoạt khi bạn mở Tâm An Center từ biểu tượng đã cài.": "추천 정보는 30일 동안 보관되며 설치된 아이콘에서 Tâm An Center를 열면 활성화됩니다.",
@@ -1321,7 +1322,7 @@ const DYNAMIC_CATALOG_COPY = [
   ["Liệu trình vùng đầu dài hơn, điều chỉnh theo nhu cầu thư giãn của khách.", "고객의 휴식 필요에 맞춰 조절하는 장시간 머리 부위 관리입니다.", "A longer head treatment adjusted to the guest's relaxation needs.", "更长时长的头部护理，并根据顾客的放松需求进行调整。"],
   ["Xông hơi trong thời lượng ngắn để làm ấm cơ thể và hỗ trợ thư giãn.", "짧은 시간 동안 사우나로 몸을 따뜻하게 하고 휴식을 돕습니다.", "A short steam session to warm the body and support relaxation.", "短时蒸汽护理，帮助温暖身体并促进放松。"],
   ["Chuyên gia đánh giá ban đầu các triệu chứng cơ xương khớp và gợi ý hướng chăm sóc; không thay thế chẩn đoán hoặc điều trị y khoa.", "전문가가 근골격계 증상을 1차로 평가하고 관리 방향을 제안합니다. 의료 진단이나 치료를 대체하지 않습니다.", "A specialist performs an initial musculoskeletal assessment and suggests a care direction; this does not replace medical diagnosis or treatment.", "专家对肌肉骨骼症状进行初步评估并建议护理方向；不能替代医学诊断或治疗。"],
-  ["Tặng 150.000đ cho lần đặt dịch vụ đầu tiên sau khi tạo tài khoản và xác minh số điện thoại.", "계정을 만들고 전화번호를 인증한 뒤 첫 예약에서 150.000 ₫ 혜택을 받으세요.", "Receive 150,000 ₫ off your first booking after creating an account and verifying your phone number.", "创建账户并验证手机号后，首次预约立减150,000 ₫。"],
+  ["Tặng 150.000đ cho lần đặt dịch vụ đầu tiên sau khi tạo tài khoản bằng họ tên, số điện thoại và Mã PIN Tâm An 4 số.", "이름, 전화번호와 Tâm An 4자리 PIN으로 계정을 만든 후 첫 서비스 예약에 150.000 ₫ 혜택을 드립니다.", "Receive 150,000 ₫ on your first service booking after creating an account with your name, phone number, and 4-digit Tâm An PIN.", "使用姓名、手机号和4位Tâm An PIN码创建账户后，首次服务预约可享150,000 ₫优惠。"],
   ["Giá trải nghiệm Massage Body 60 phút còn 279.000đ cho lịch bắt đầu từ 10:00 đến 14:00.", "10:00~14:00에 시작하는 60분 전신 마사지 체험가는 279.000 ₫입니다.", "The 60-minute Body Massage trial price is 279,000 ₫ for appointments starting from 10:00 to 14:00.", "10:00至14:00开始的60分钟全身按摩，体验价为279,000 ₫。"],
   ["Tặng 100.000đ khi khách quay lại từ ngày thứ 7 sau lần sử dụng gần nhất.", "최근 이용 후 7일째부터 재방문하면 100.000 ₫ 혜택을 받으세요.", "Receive 100,000 ₫ off when returning from the seventh day after your most recent visit.", "最近一次到店后的第7天起再次到店，可享100,000 ₫优惠。"],
   ["Mỗi khách một lần · xác định bằng số điện thoại/Zalo/tài khoản", "고객당 1회 · 전화번호/Zalo/계정으로 확인", "Once per guest · identified by phone number/Zalo/account", "每位顾客限用一次 · 通过手机号/Zalo/账户识别"],

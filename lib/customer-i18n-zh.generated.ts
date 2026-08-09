@@ -1,5 +1,6 @@
 // Generated from the canonical Vietnamese customer copy. Review brand, legal and medical wording before release.
 export const EXACT_CHINESE: Record<string, string> = {
+  "Tặng 150.000đ cho lần đặt dịch vụ đầu tiên sau khi tạo tài khoản bằng họ tên, số điện thoại và Mã PIN Tâm An 4 số.": "使用姓名、手机号和4位Tâm An PIN码创建账户后，首次服务预约可享150,000越南盾优惠。",
   "Nhận thêm": "额外获得",
   "Cài app từ lời mời này và cộng cùng WELCOME150 · tổng quyền lợi tới 200.000đ.": "通过此邀请安装应用，可与WELCOME150叠加，总优惠最高达200,000越南盾。",
   "Nguồn giới thiệu đang được giữ trong 30 ngày và sẽ được kích hoạt khi bạn mở Tâm An Center từ biểu tượng đã cài.": "推荐来源将保留30天；从已安装的图标打开Tâm An Center后即可激活。",
