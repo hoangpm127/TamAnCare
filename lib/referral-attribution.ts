@@ -6,7 +6,9 @@ const listeners = new Set<() => void>();
 
 type StoredAttribution = {
   code: string;
+  state: "PENDING" | "ACTIVE";
   capturedAt: string;
+  activatedAt?: string;
   expiresAt: string;
 };
 
@@ -34,14 +36,11 @@ function subscribe(callback: () => void) {
 function getSnapshot(): string | null {
   const raw = window.localStorage.getItem(STORAGE_KEY);
   if (!raw) return null;
-  // Tương thích với mã chuỗi đã lưu trước khi bổ sung thời hạn attribution.
-  const legacyCode = normalizeCode(raw);
-  if (legacyCode) return legacyCode;
   try {
     const stored = JSON.parse(raw) as Partial<StoredAttribution>;
     const code = normalizeCode(stored.code ?? "");
     const expiresAt = new Date(stored.expiresAt ?? "").getTime();
-    return code && Number.isFinite(expiresAt) && expiresAt > Date.now() ? code : null;
+    return code && stored.state === "ACTIVE" && Number.isFinite(expiresAt) && expiresAt > Date.now() ? code : null;
   } catch {
     return null;
   }
@@ -55,15 +54,61 @@ export function useReferralAttribution() {
   return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 }
 
-export function setReferralAttribution(code: string) {
+function readStoredAttribution() {
+  const raw = window.localStorage.getItem(STORAGE_KEY);
+  if (!raw) return null;
+  const legacyCode = normalizeCode(raw);
+  if (legacyCode) return { code: legacyCode };
+  try {
+    const stored = JSON.parse(raw) as Partial<StoredAttribution>;
+    const code = normalizeCode(stored.code ?? "");
+    return code ? stored : null;
+  } catch {
+    return null;
+  }
+}
+
+function storeAttribution(code: string, state: "PENDING" | "ACTIVE", expiresAt?: string) {
   const normalized = normalizeCode(code);
   if (!normalized) return;
   const capturedAt = new Date();
   const attribution: StoredAttribution = {
     code: normalized,
+    state,
     capturedAt: capturedAt.toISOString(),
-    expiresAt: new Date(capturedAt.getTime() + ATTRIBUTION_TTL_MS).toISOString(),
+    ...(state === "ACTIVE" ? { activatedAt: capturedAt.toISOString() } : {}),
+    expiresAt: expiresAt ?? new Date(capturedAt.getTime() + ATTRIBUTION_TTL_MS).toISOString(),
   };
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(attribution));
   notify();
+}
+
+export function pendingReferralCode() {
+  return normalizeCode(String(readStoredAttribution()?.code ?? ""));
+}
+
+export async function captureReferralAttribution(code: string) {
+  storeAttribution(code, "PENDING");
+  const response = await fetch("/api/referrals/install-attribution", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ action: "CAPTURE", code }),
+  });
+  if (!response.ok) return false;
+  const payload = await response.json() as { state?: "PENDING" | "ACTIVE"; code?: string; expiresAt?: string };
+  if (payload.state === "ACTIVE" && payload.code) storeAttribution(payload.code, "ACTIVE", payload.expiresAt);
+  return true;
+}
+
+export async function activateInstalledReferralAttribution(code = pendingReferralCode()) {
+  const response = await fetch("/api/referrals/install-attribution", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ action: "ACTIVATE", ...(code ? { code } : {}) }),
+  });
+  if (!response.ok) return null;
+  const payload = await response.json() as { state?: "ACTIVE"; code?: string; expiresAt?: string };
+  if (payload.state !== "ACTIVE" || !payload.code) return null;
+  storeAttribution(payload.code, "ACTIVE", payload.expiresAt);
+  return payload.code;
 }

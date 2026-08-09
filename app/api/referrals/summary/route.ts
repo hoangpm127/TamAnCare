@@ -44,8 +44,8 @@ export async function GET() {
       summary: {
         code,
         activationRequired,
-        rewardForYou: `10% doanh thu dịch vụ/gói đủ điều kiện · đối soát ${AFFILIATE_RECONCILIATION_DAYS} ngày`,
-        rewardForFriend: "Khách mới nhận FIRST60; nếu tạo tài khoản, hệ thống ưu tiên quyền lợi WELCOME150",
+        rewardForYou: `10% doanh thu Bill dịch vụ đã hoàn tất và thanh toán đủ · đối soát ${AFFILIATE_RECONCILIATION_DAYS} ngày`,
+        rewardForFriend: "Cài app từ link để nhận AFF50 và cộng cùng WELCOME150 trong lần dịch vụ đầu tiên đủ điều kiện",
         profile: affiliateProfile,
         totalEarned: 0,
         monthlyEarnings: [],
@@ -136,8 +136,8 @@ export async function GET() {
     summary: {
       code,
       activationRequired,
-      rewardForYou: `10% doanh thu dịch vụ/gói đủ điều kiện · đối soát ${AFFILIATE_RECONCILIATION_DAYS} ngày`,
-      rewardForFriend: "Khách mới nhận FIRST60; nếu tạo tài khoản, hệ thống ưu tiên quyền lợi WELCOME150",
+      rewardForYou: `10% doanh thu Bill dịch vụ đã hoàn tất và thanh toán đủ · đối soát ${AFFILIATE_RECONCILIATION_DAYS} ngày`,
+      rewardForFriend: "Cài app từ link để nhận AFF50 và cộng cùng WELCOME150 trong lần dịch vụ đầu tiên đủ điều kiện",
       profile: affiliateProfile,
       totalEarned: commissions.reduce((sum, item) => sum + item.amount, 0),
       monthlyEarnings,

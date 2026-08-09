@@ -14,6 +14,7 @@ import { calculatePaymentBreakdown } from "@/lib/payment-policy";
 import { affiliateCustomerId, affiliateOwnerEligible, normalizeAffiliateCode } from "@/lib/referral-policy";
 import { calculateVoucherDiscount, voucherRuleError } from "@/lib/server/voucher-rules";
 import { phoneVerificationRequired } from "@/lib/server/otp-delivery";
+import { claimInstalledReferral } from "@/lib/server/referral-installation";
 import { bookingWindowError, intervalsOverlapWithBuffer, timeToMinutes } from "@/lib/scheduling-policy";
 
 const BUSINESS_TIME_ZONE = "Asia/Ho_Chi_Minh";
@@ -61,6 +62,7 @@ export type BookingGroupInput = {
   bankCode?: string;
   guestSessionId?: string;
   authenticatedCustomerId?: string;
+  installedReferralCampaignId?: string;
   actorUserId?: string;
   auditIpHash?: string;
   consent?: {
@@ -296,10 +298,18 @@ export async function createBookingGroup(input: BookingGroupInput) {
           })
         : null;
       const normalizedCampaignCode = normalizeAffiliateCode(input.campaignCode);
-      const campaign = normalizedCampaignCode
-        ? await tx.campaign.findFirst({ where: { code: normalizedCampaignCode, source: { startsWith: "AFFILIATE:" } } })
+      const campaign = normalizedCampaignCode && input.installedReferralCampaignId
+        ? await tx.campaign.findFirst({
+            where: {
+              id: input.installedReferralCampaignId,
+              code: normalizedCampaignCode,
+              source: { startsWith: "AFFILIATE:" },
+            },
+          })
         : null;
-      if (input.campaignCode && !campaign) throw new BookingConflictError("Mã Affiliate không tồn tại hoặc đã ngừng hoạt động.");
+      if (input.campaignCode && !campaign) {
+        throw new BookingConflictError("Hãy cài và mở Tâm An Center từ biểu tượng app trước khi dùng quyền lợi Affiliate.");
+      }
       const affiliateOwnerCustomerId = affiliateCustomerId(campaign?.source);
       const affiliateOwner = affiliateOwnerCustomerId
         ? await tx.customerAccount.findUnique({ where: { customerId: affiliateOwnerCustomerId }, select: { phoneVerifiedAt: true } })
@@ -310,6 +320,13 @@ export async function createBookingGroup(input: BookingGroupInput) {
       if (affiliateOwnerCustomerId === customer.id) {
         throw new BookingConflictError("Bạn không thể dùng mã Affiliate của chính mình.");
       }
+      if (campaign && !(await claimInstalledReferral(tx, {
+        guestSessionId: input.guestSessionId,
+        customerId: customer.id,
+        campaignId: campaign.id,
+      }))) {
+        throw new BookingConflictError("Nguồn giới thiệu trên thiết bị không còn hợp lệ hoặc đã gắn với khách khác.");
+      }
       if (normalizedVoucherCode && !voucher) throw new BookingConflictError("Mã ưu đãi không còn hiệu lực.");
       if (voucher?.serviceId && serviceIds.some((serviceId) => serviceId !== voucher.serviceId)) {
         throw new BookingConflictError("Ưu đãi này không áp dụng cho dịch vụ đã chọn.");
@@ -317,15 +334,27 @@ export async function createBookingGroup(input: BookingGroupInput) {
       const customerAccount = voucher && input.authenticatedCustomerId && (voucher.requiresVerifiedPhone || voucher.code === "WELCOME150")
         ? await tx.customerAccount.findUnique({ where: { customerId: customer.id } })
         : null;
-      if (voucher) {
-        const ruleError = voucherRuleError(voucher, {
-          subtotal: subtotalAmount,
-          serviceDurations: input.units.map((unit) => serviceRecords.find((item) => item.id === unit.serviceId)!.durationMin),
-          bookingStartTime: input.units[0]?.startTime,
-          authenticated: Boolean(input.authenticatedCustomerId),
-          phoneVerified: Boolean(customerAccount?.phoneVerifiedAt),
-          customer,
-        });
+      const affiliateBonusVoucher = campaign && voucher?.code === "WELCOME150" && customerAccount
+        ? await tx.voucher.findFirst({
+            where: {
+              code: "AFF50",
+              isActive: true,
+              OR: [{ startsAt: null }, { startsAt: { lte: now } }],
+              AND: [{ OR: [{ endsAt: null }, { endsAt: { gte: now } }] }],
+            },
+          })
+        : null;
+      const voucherContext = {
+        subtotal: subtotalAmount,
+        serviceDurations: input.units.map((unit) => serviceRecords.find((item) => item.id === unit.serviceId)!.durationMin),
+        bookingStartTime: input.units[0]?.startTime,
+        authenticated: Boolean(input.authenticatedCustomerId),
+        phoneVerified: Boolean(customerAccount?.phoneVerifiedAt),
+        customer,
+      };
+      for (const appliedVoucher of [voucher, affiliateBonusVoucher]) {
+        if (!appliedVoucher) continue;
+        const ruleError = voucherRuleError(appliedVoucher, voucherContext);
         if (ruleError) throw new BookingConflictError(ruleError);
       }
       const activeUsageFilter = {
@@ -334,13 +363,16 @@ export async function createBookingGroup(input: BookingGroupInput) {
           { status: "RESERVED", expiresAt: { gt: now } },
         ],
       } satisfies Prisma.VoucherUsageWhereInput;
-      if (voucher?.maxUsage) {
-        const used = await tx.voucherUsage.count({ where: { voucherId: voucher.id, ...activeUsageFilter } });
-        if (used >= voucher.maxUsage) throw new BookingConflictError("Ưu đãi đã hết lượt sử dụng.");
-      }
-      if (voucher?.maxPerCustomer) {
-        const used = await tx.voucherUsage.count({ where: { voucherId: voucher.id, customerId: customer.id, ...activeUsageFilter } });
-        if (used >= voucher.maxPerCustomer) throw new BookingConflictError("Khách hàng đã sử dụng hoặc đang giữ ưu đãi này.");
+      for (const appliedVoucher of [voucher, affiliateBonusVoucher]) {
+        if (!appliedVoucher) continue;
+        if (appliedVoucher.maxUsage) {
+          const used = await tx.voucherUsage.count({ where: { voucherId: appliedVoucher.id, ...activeUsageFilter } });
+          if (used >= appliedVoucher.maxUsage) throw new BookingConflictError(`Ưu đãi ${appliedVoucher.code} đã hết lượt sử dụng.`);
+        }
+        if (appliedVoucher.maxPerCustomer) {
+          const used = await tx.voucherUsage.count({ where: { voucherId: appliedVoucher.id, customerId: customer.id, ...activeUsageFilter } });
+          if (used >= appliedVoucher.maxPerCustomer) throw new BookingConflictError(`Khách hàng đã sử dụng hoặc đang giữ ưu đãi ${appliedVoucher.code}.`);
+        }
       }
       if (
         voucher?.code === "WELCOME150"
@@ -368,7 +400,14 @@ export async function createBookingGroup(input: BookingGroupInput) {
         return serviceEligible && groupEligible;
       }) ?? null;
 
-      const requestedDiscount = activePackage ? subtotalAmount : calculateVoucherDiscount(voucher, subtotalAmount);
+      const primaryVoucherDiscount = activePackage ? 0 : calculateVoucherDiscount(voucher, subtotalAmount);
+      const affiliateBonusDiscount = activePackage
+        ? 0
+        : Math.min(
+            Math.max(0, subtotalAmount - primaryVoucherDiscount),
+            calculateVoucherDiscount(affiliateBonusVoucher, subtotalAmount),
+          );
+      const requestedDiscount = activePackage ? subtotalAmount : primaryVoucherDiscount + affiliateBonusDiscount;
       const paymentBreakdown = calculatePaymentBreakdown({
         originalAmount: subtotalAmount,
         discountAmount: requestedDiscount,
@@ -388,7 +427,7 @@ export async function createBookingGroup(input: BookingGroupInput) {
           totalAmount,
           depositAmount,
           paidAmount: 0,
-          voucherCode: voucher?.code,
+          voucherCode: [voucher?.code, affiliateBonusVoucher?.code].filter(Boolean).join("+") || null,
           relationship: input.relationship ?? "SELF",
           careNote: input.careNote,
           source: input.source,
@@ -514,7 +553,7 @@ export async function createBookingGroup(input: BookingGroupInput) {
             therapistId: therapist.id,
             roomId: room.id,
             voucherId: index === 0 ? voucher?.id : undefined,
-            campaignId: campaign?.id,
+            campaignId: affiliateBonusVoucher ? campaign?.id : undefined,
             customerPackageId: activePackage?.id,
             startTime: start,
             endTime: end,
@@ -555,22 +594,29 @@ export async function createBookingGroup(input: BookingGroupInput) {
 
       if (voucher && bookingRecords[0]) {
         const voucherConfirmedImmediately = depositAmount === 0;
-        await tx.voucherUsage.create({
-          data: {
-            voucherId: voucher.id,
-            customerId: customer.id,
-            bookingId: bookingRecords[0].id,
-            status: voucherConfirmedImmediately ? "CONFIRMED" : "RESERVED",
-            expiresAt: voucherConfirmedImmediately ? null : holdExpiresAt,
-            confirmedAt: voucherConfirmedImmediately ? now : null,
-          },
-        });
+        const appliedVoucherDiscounts = [
+          { voucher, discountAmount: primaryVoucherDiscount },
+          ...(affiliateBonusVoucher ? [{ voucher: affiliateBonusVoucher, discountAmount: affiliateBonusDiscount }] : []),
+        ].filter((item) => item.discountAmount > 0);
+        for (const applied of appliedVoucherDiscounts) {
+          await tx.voucherUsage.create({
+            data: {
+              voucherId: applied.voucher.id,
+              customerId: customer.id,
+              bookingId: bookingRecords[0].id,
+              discountAmount: applied.discountAmount,
+              status: voucherConfirmedImmediately ? "CONFIRMED" : "RESERVED",
+              expiresAt: voucherConfirmedImmediately ? null : holdExpiresAt,
+              confirmedAt: voucherConfirmedImmediately ? now : null,
+            },
+          });
+        }
         if (voucherConfirmedImmediately && voucher.code === "WELCOME150" && customerAccount) {
           await tx.customerAccount.update({
             where: { id: customerAccount.id },
-            data: { creditBalance: Math.max(0, customerAccount.creditBalance - discountAmount) },
+            data: { creditBalance: Math.max(0, customerAccount.creditBalance - primaryVoucherDiscount) },
           });
-          if (discountAmount > 0) {
+          if (primaryVoucherDiscount > 0) {
             await tx.ledgerEntry.create({
               data: {
                 branchId: branch.id,
@@ -579,11 +625,25 @@ export async function createBookingGroup(input: BookingGroupInput) {
                 bookingId: bookingRecords[0].id,
                 category: "WELCOME_CREDIT",
                 direction: "OUT",
-                amount: discountAmount,
+                amount: primaryVoucherDiscount,
                 description: `Quyền lợi thành viên mới WELCOME150 · ${group.referenceCode}`,
               },
             });
           }
+        }
+        if (voucherConfirmedImmediately && affiliateBonusDiscount > 0) {
+          await tx.ledgerEntry.create({
+            data: {
+              branchId: branch.id,
+              customerId: customer.id,
+              bookingGroupId: group.id,
+              bookingId: bookingRecords[0].id,
+              category: "ADJUSTMENT",
+              direction: "OUT",
+              amount: affiliateBonusDiscount,
+              description: `Voucher cài app Affiliate AFF50 · ${campaign?.code} · ${group.referenceCode}`,
+            },
+          });
         }
       }
 

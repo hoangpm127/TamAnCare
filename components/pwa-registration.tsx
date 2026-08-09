@@ -2,11 +2,15 @@
 
 import { useEffect } from "react";
 import packageMetadata from "@/package.json";
+import { activateInstalledReferralAttribution } from "@/lib/referral-attribution";
 
 const RELOAD_KEY = `tam-an-pwa-reloaded:${packageMetadata.version}`;
 
 export function PwaRegistration() {
   useEffect(() => {
+    const standalone = window.matchMedia("(display-mode: standalone)").matches
+      || Boolean((navigator as Navigator & { standalone?: boolean }).standalone);
+    if (standalone) void activateInstalledReferralAttribution();
     if (process.env.NODE_ENV !== "production" || !("serviceWorker" in navigator)) return;
 
     let refreshing = false;

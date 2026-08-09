@@ -6,6 +6,8 @@ import QRCode from "qrcode";
 import { BadgePercent, Check, ChevronDown, Copy, Download, Gift, Link2, Loader2, QrCode as QrCodeIcon, Save, Share2, ShieldCheck, Sparkles, TrendingUp, UserCheck } from "lucide-react";
 import { referralTiers } from "@/lib/demo-data";
 import { useReferralSummary } from "@/lib/referral-store";
+import { translateCustomerText } from "@/lib/customer-i18n";
+import { useCustomerLanguage } from "@/components/customer-language-provider";
 import { cn, formatMoney } from "@/lib/utils";
 
 const STATUS_LABEL: Record<string, string> = {
@@ -27,6 +29,7 @@ function currentReferralTier(totalEarned: number) {
 }
 
 export default function ReferralPage() {
+  const { language } = useCustomerLanguage();
   const referral = useReferralSummary();
   const [copiedTarget, setCopiedTarget] = useState<"code" | "link" | null>(null);
   const [shareKitOpen, setShareKitOpen] = useState(false);
@@ -44,7 +47,10 @@ export default function ReferralPage() {
   };
 
   const referralPath = `/r/${referral.code}`;
-  const shareText = "Mình gửi bạn lời mời Tâm An Center: nhận ưu đãi cho lần trải nghiệm đầu tiên, đặt lịch ngay trên web và có thể cài lên màn hình điện thoại.";
+  const shareText = translateCustomerText(
+    "Mình gửi bạn lời mời Tâm An Center: cài webapp để nhận thêm 50K và cộng cùng quyền lợi thành viên mới 150K cho lần trải nghiệm đầu tiên đủ điều kiện.",
+    language,
+  );
 
   const invitedCount = referral.invited.length;
   const completedCount = referral.invited.filter((friend) => friend.status === "COMPLETED").length;
@@ -329,7 +335,7 @@ export default function ReferralPage() {
           </div>
         </div>
       </section>
-      <p className="mt-2 rounded-xl bg-[#fff7df] px-3.5 py-3 text-[11px] leading-5 text-[#715943] ring-1 ring-[#c59a3d]/35">Khách nhận ưu đãi khi đặt lịch đủ điều kiện; bạn nhận hoa hồng sau khi dịch vụ hoàn tất và thanh toán thành công.</p>
+      <p className="mt-2 rounded-xl bg-[#fff7df] px-3.5 py-3 text-[11px] leading-5 text-[#715943] ring-1 ring-[#c59a3d]/35">Khách phải cài và mở webapp để khóa nguồn giới thiệu. Bạn chỉ được ghi nhận hoa hồng sau khi dịch vụ hoàn tất và Bill còn lại đã thanh toán đủ; tip không tham gia phép tính.</p>
 
       <section className="mt-5">
         <div className="mb-2.5 flex items-end justify-between gap-4">

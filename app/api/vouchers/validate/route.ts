@@ -3,6 +3,8 @@ import { z } from "zod";
 import type { Prisma } from "@/app/generated/prisma/client";
 import { db } from "@/lib/db";
 import { getCustomerSession } from "@/lib/server/customer-session";
+import { getGuestSession } from "@/lib/server/guest-session";
+import { installedReferralForGuest } from "@/lib/server/referral-installation";
 import { consumeRateLimit, isSameOriginMutation, requestIp } from "@/lib/server/request-security";
 import { calculateVoucherDiscount, voucherRuleError } from "@/lib/server/voucher-rules";
 
@@ -28,7 +30,7 @@ export async function POST(request: Request) {
 
   const now = new Date();
   const code = parsed.data.code.toUpperCase();
-  const [voucher, customerSession] = await Promise.all([
+  const [voucher, customerSession, guestSession] = await Promise.all([
     db.voucher.findFirst({
       where: {
         code,
@@ -38,6 +40,7 @@ export async function POST(request: Request) {
       },
     }),
     getCustomerSession(),
+    getGuestSession(),
   ]);
   if (!voucher) return NextResponse.json({ valid: false, code, discountAmount: 0, message: "Mã ưu đãi không còn hiệu lực." });
   if (voucher.serviceId && parsed.data.serviceIds.some((serviceId) => serviceId !== voucher.serviceId)) {
@@ -86,10 +89,65 @@ export async function POST(request: Request) {
     }
   }
 
+  const primaryDiscount = calculateVoucherDiscount(voucher, parsed.data.subtotal);
+  const installedReferral = guestSession ? await installedReferralForGuest(guestSession.id) : null;
+  if (code === "WELCOME150" && customerSession && installedReferral) {
+    const affiliateBonus = await db.voucher.findFirst({
+      where: {
+        code: "AFF50",
+        isActive: true,
+        OR: [{ startsAt: null }, { startsAt: { lte: now } }],
+        AND: [{ OR: [{ endsAt: null }, { endsAt: { gte: now } }] }],
+      },
+    });
+    if (affiliateBonus) {
+      const [bonusGlobalUsage, bonusCustomerUsage] = await Promise.all([
+        affiliateBonus.maxUsage
+          ? db.voucherUsage.count({ where: { voucherId: affiliateBonus.id, ...activeUsageFilter(now) } })
+          : Promise.resolve(0),
+        affiliateBonus.maxPerCustomer
+          ? db.voucherUsage.count({ where: { voucherId: affiliateBonus.id, customerId: customerSession.customerId, ...activeUsageFilter(now) } })
+          : Promise.resolve(0),
+      ]);
+      const bonusRuleError = voucherRuleError(affiliateBonus, {
+        subtotal: parsed.data.subtotal,
+        serviceDurations: serviceRecords.map((item) => item.durationMin),
+        bookingStartTime: parsed.data.startTime,
+        authenticated: true,
+        phoneVerified: Boolean(customerSession.phoneVerifiedAt),
+        customer,
+      });
+      if (!bonusRuleError
+        && (!affiliateBonus.maxUsage || bonusGlobalUsage < affiliateBonus.maxUsage)
+        && (!affiliateBonus.maxPerCustomer || bonusCustomerUsage < affiliateBonus.maxPerCustomer)) {
+        const bonusDiscount = Math.min(
+          Math.max(0, parsed.data.subtotal - primaryDiscount),
+          calculateVoucherDiscount(affiliateBonus, parsed.data.subtotal),
+        );
+        return NextResponse.json({
+          valid: true,
+          code,
+          stackedCodes: [code, affiliateBonus.code],
+          discountAmount: primaryDiscount + bonusDiscount,
+          message: `Đã cộng ${code} và ${affiliateBonus.code}.`,
+        });
+      }
+    }
+  }
+
   return NextResponse.json({
     valid: true,
     code,
-    discountAmount: calculateVoucherDiscount(voucher, parsed.data.subtotal),
+    discountAmount: primaryDiscount,
     message: `Đã áp dụng ${code}.`,
   });
+}
+
+function activeUsageFilter(now: Date) {
+  return {
+    OR: [
+      { status: "CONFIRMED" },
+      { status: "RESERVED", expiresAt: { gt: now } },
+    ],
+  } satisfies Prisma.VoucherUsageWhereInput;
 }

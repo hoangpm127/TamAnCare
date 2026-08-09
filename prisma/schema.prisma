@@ -590,6 +590,7 @@ model Customer {
   consentRecords      ConsentRecord[]
   oauthIdentities     CustomerOAuthIdentity[]
   refundRequests      RefundRequest[]
+  claimedGuestReferrals GuestSession[]          @relation("GuestReferralCustomer")
   favoriteTherapist   Therapist?              @relation("FavoriteTherapist", fields: [favoriteTherapistId], references: [id])
 }
 
@@ -604,6 +605,7 @@ model Campaign {
   bookings   Booking[]
   vouchers   Voucher[]
   packagePurchases CustomerPackage[]
+  guestReferrals GuestSession[] @relation("GuestReferralCampaign")
 }
 
 model Voucher {
@@ -646,6 +648,7 @@ model VoucherUsage {
   voucherId   String
   customerId  String
   bookingId   String?
+  discountAmount Int      @default(0)
   usedAt      DateTime  @default(now())
   status      String    @default("CONFIRMED")
   expiresAt   DateTime?
@@ -1161,18 +1164,27 @@ model RateLimitCounter {
 }
 
 model GuestSession {
-  id             String                @id @default(cuid())
-  tokenHash      String                @unique
-  expiresAt      DateTime
-  lastSeenAt     DateTime              @default(now())
-  createdAt      DateTime              @default(now())
-  updatedAt      DateTime              @updatedAt
-  grants         BookingAccessGrant[]
-  paymentGrants  PaymentAccessGrant[]
-  businessGrants BusinessAccessGrant[]
-  consentRecords ConsentRecord[]
+  id                        String                @id @default(cuid())
+  tokenHash                 String                @unique
+  expiresAt                 DateTime
+  lastSeenAt                DateTime              @default(now())
+  referralCampaignId        String?
+  referralCapturedAt        DateTime?
+  referralInstalledAt       DateTime?
+  referralExpiresAt         DateTime?
+  referralClaimedCustomerId String?
+  createdAt                 DateTime              @default(now())
+  updatedAt                 DateTime              @updatedAt
+  grants                    BookingAccessGrant[]
+  paymentGrants             PaymentAccessGrant[]
+  businessGrants            BusinessAccessGrant[]
+  consentRecords            ConsentRecord[]
+  referralCampaign          Campaign?             @relation("GuestReferralCampaign", fields: [referralCampaignId], references: [id], onDelete: SetNull)
+  referralClaimedCustomer   Customer?             @relation("GuestReferralCustomer", fields: [referralClaimedCustomerId], references: [id], onDelete: SetNull)
 
   @@index([expiresAt])
+  @@index([referralCampaignId, referralInstalledAt])
+  @@index([referralClaimedCustomerId])
 }
 
 model ConsentRecord {

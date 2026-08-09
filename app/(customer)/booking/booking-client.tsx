@@ -138,7 +138,7 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [voucherChecking, setVoucherChecking] = useState(false);
-  const [voucherPreview, setVoucherPreview] = useState({ valid: true, discountAmount: 0, message: "" });
+  const [voucherPreview, setVoucherPreview] = useState({ valid: true, discountAmount: 0, message: "", stackedCodes: [] as string[] });
   const [acceptPolicies, setAcceptPolicies] = useState(false);
 
   const anchorServiceId = cart[0]?.serviceId ?? bookableServices[0].id;
@@ -168,9 +168,7 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
   const automaticVoucherCode = !voucherOptOut
     ? account?.welcomeCreditAvailable
       ? "WELCOME150"
-      : attributionCode && firstVisitEligible
-        ? "FIRST60"
-        : ""
+      : ""
     : "";
   const effectiveVoucherCode = (voucherCode || automaticVoucherCode).trim().toUpperCase();
 
@@ -297,7 +295,7 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
       queueMicrotask(() => {
         if (!active) return;
         setVoucherChecking(false);
-        setVoucherPreview({ valid: true, discountAmount: 0, message: "" });
+        setVoucherPreview({ valid: true, discountAmount: 0, message: "", stackedCodes: [] });
       });
       return () => { active = false; };
     }
@@ -305,7 +303,7 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
     queueMicrotask(() => {
       if (controller.signal.aborted) return;
       setVoucherChecking(true);
-      setVoucherPreview({ valid: false, discountAmount: 0, message: "" });
+      setVoucherPreview({ valid: false, discountAmount: 0, message: "", stackedCodes: [] });
     });
     fetch("/api/vouchers/validate", {
       method: "POST",
@@ -326,17 +324,18 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
           valid: Boolean(payload.valid),
           discountAmount: Number(payload.discountAmount ?? 0),
           message: String(payload.message ?? ""),
+          stackedCodes: Array.isArray(payload.stackedCodes) ? payload.stackedCodes.map(String) : [],
         });
       })
       .catch((caught) => {
         if (caught instanceof DOMException && caught.name === "AbortError") return;
-        setVoucherPreview({ valid: false, discountAmount: 0, message: "Không thể kiểm tra mã ưu đãi lúc này." });
+        setVoucherPreview({ valid: false, discountAmount: 0, message: "Không thể kiểm tra mã ưu đãi lúc này.", stackedCodes: [] });
       })
       .finally(() => {
         if (!controller.signal.aborted) setVoucherChecking(false);
       });
     return () => controller.abort();
-  }, [effectiveVoucherCode, subtotal, cart, slot?.startTime, phone]);
+  }, [attributionCode, effectiveVoucherCode, subtotal, cart, slot?.startTime, phone]);
 
   const dateOptions = useMemo(
     () => Array.from({ length: NEXT_DAYS }, (_, index) => addDays(new Date(), index)),
@@ -505,7 +504,9 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
         depositAmount,
         dueAmount: amountDueAtBranch,
         discount: appliedDiscount > 0 ? appliedDiscount : undefined,
-        voucherCode: !packageEligible && voucherDiscount > 0 ? effectiveVoucherCode : undefined,
+        voucherCode: !packageEligible && voucherDiscount > 0
+          ? (voucherPreview.stackedCodes.length ? voucherPreview.stackedCodes.join("+") : effectiveVoucherCode)
+          : undefined,
         count: bookingCodes.length,
         items: itemsPayload,
         branchId,
@@ -528,8 +529,9 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
             <div className="flex items-center gap-2 rounded-xl border border-[#c59a3d] bg-[#fbf2e7] px-3.5 py-2.5 text-xs text-[#8a5a12]">
               <Gift size={15} className="shrink-0" />
               <span>
-                Bạn được giới thiệu qua mã <strong className="font-mono">{attributionCode}</strong> — voucher{" "}
-                <strong>FIRST60</strong> đã tự động áp dụng.
+                Nguồn giới thiệu <strong className="font-mono">{attributionCode}</strong> đã kích hoạt sau khi cài app. {account?.welcomeCreditAvailable
+                  ? <><strong>WELCOME150 + AFF50</strong> sẽ được cộng cùng nhau cho Bill đủ điều kiện.</>
+                  : <>Tạo tài khoản mới để nhận và cộng đủ hai voucher.</>}
               </span>
             </div>
           ) : null}
@@ -841,7 +843,7 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
               </p>
               <div className="scrollbar-hide flex gap-2 overflow-x-auto pb-1">
                 {vouchers
-                  .filter((item) => item.active && ((account?.totalVisits ?? 0) === 0 || item.code !== "FIRST60"))
+                  .filter((item) => item.active && item.code !== "AFF50" && ((account?.totalVisits ?? 0) === 0 || item.code !== "FIRST60"))
                   .map((item) => {
                     const selected = effectiveVoucherCode === item.code;
                     const inventoryItem = voucherInventory[item.code];
@@ -904,9 +906,9 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
                 <div className="mt-2 flex flex-wrap items-center justify-between gap-2 rounded-lg bg-red-50 px-3 py-2">
                   <p className="text-xs font-medium text-red-700">{voucherPreview.message || "Mã voucher không hợp lệ hoặc đã hết hạn."}</p>
                   <span className="flex shrink-0 items-center gap-2">
-                    {attributionCode && effectiveVoucherCode === "FIRST60" ? (
+                    {attributionCode && effectiveVoucherCode === "WELCOME150" ? (
                       <Link href="/tai-khoan?returnTo=%2Fbooking" className="rounded-full bg-[#c64b32] px-3 py-1.5 text-[11px] font-semibold text-white">
-                        Đăng nhập / xác minh
+                        Đăng nhập / tạo tài khoản
                       </Link>
                     ) : null}
                     <button
@@ -984,7 +986,7 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
               ))}
               {voucherDiscount > 0 ? (
                 <div className="flex items-center justify-between gap-3 font-medium text-[#a85f29]">
-                  <span>Giảm ({effectiveVoucherCode})</span>
+                  <span>Giảm ({voucherPreview.stackedCodes.length ? voucherPreview.stackedCodes.join(" + ") : effectiveVoucherCode})</span>
                   <span>-{formatMoney(voucherDiscount)}</span>
                 </div>
               ) : null}

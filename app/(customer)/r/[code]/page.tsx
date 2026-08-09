@@ -15,7 +15,7 @@ export default async function ReferralLandingPage({ params }: { params: Promise<
     db.campaign.findFirst({ where: { code: normalizedCode, source: { startsWith: "AFFILIATE:" } } }),
     db.voucher.findFirst({
       where: {
-        code: "FIRST60",
+        code: "AFF50",
         isActive: true,
         OR: [{ startsAt: null }, { startsAt: { lte: now } }],
         AND: [{ OR: [{ endsAt: null }, { endsAt: { gte: now } }] }],

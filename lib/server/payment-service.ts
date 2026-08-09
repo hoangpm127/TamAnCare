@@ -112,9 +112,13 @@ export async function confirmIncomingPayment(
         include: { voucher: true },
       })
     : [];
-  if (group && reservedVoucherUsages.some((usage) => usage.voucher.code === "WELCOME150") && group.discountAmount > 0) {
+  const reservedWelcomeUsage = reservedVoucherUsages.find((usage) => usage.voucher.code === "WELCOME150");
+  const reservedWelcomeDiscount = reservedWelcomeUsage
+    ? reservedWelcomeUsage.discountAmount || (reservedVoucherUsages.length === 1 ? group?.discountAmount ?? 0 : 0)
+    : 0;
+  if (group && reservedWelcomeUsage && reservedWelcomeDiscount > 0) {
     const account = await tx.customerAccount.findUnique({ where: { customerId: group.customerId } });
-    if (!account || account.creditBalance < group.discountAmount) {
+    if (!account || account.creditBalance < reservedWelcomeDiscount) {
       throw new PaymentReconciliationError(
         "PAYMENT_NOT_PENDING",
         "Quyền lợi WELCOME150 không còn đủ để xác nhận booking; cần nhân viên kiểm tra.",
@@ -180,10 +184,10 @@ export async function confirmIncomingPayment(
           where: { id: usage.id },
           data: { status: "CONFIRMED", confirmedAt: confirmation.paidAt, expiresAt: null },
         });
-        if (usage.voucher.code === "WELCOME150" && group.discountAmount > 0) {
+        if (usage.voucher.code === "WELCOME150" && reservedWelcomeDiscount > 0) {
           await tx.customerAccount.update({
             where: { customerId: group.customerId },
-            data: { creditBalance: { decrement: group.discountAmount } },
+            data: { creditBalance: { decrement: reservedWelcomeDiscount } },
           });
           const welcomeCreditLedger = await tx.ledgerEntry.findFirst({
             where: { bookingGroupId: group.id, category: "WELCOME_CREDIT" },
@@ -199,8 +203,30 @@ export async function confirmIncomingPayment(
                 paymentTransactionId: payment.id,
                 category: "WELCOME_CREDIT",
                 direction: "OUT",
-                amount: group.discountAmount,
+                amount: reservedWelcomeDiscount,
                 description: `Quyền lợi thành viên mới WELCOME150 · ${referenceCode}`,
+                occurredAt: confirmation.paidAt,
+              },
+            });
+          }
+        }
+        if (usage.voucher.code === "AFF50" && usage.discountAmount > 0) {
+          const affiliateVoucherLedger = await tx.ledgerEntry.findFirst({
+            where: { bookingGroupId: group.id, category: "ADJUSTMENT", description: { startsWith: "Voucher cài app Affiliate AFF50" } },
+            select: { id: true },
+          });
+          if (!affiliateVoucherLedger) {
+            await tx.ledgerEntry.create({
+              data: {
+                branchId: payment.branchId,
+                customerId: group.customerId,
+                bookingGroupId: group.id,
+                bookingId: bookings[0]?.id,
+                paymentTransactionId: payment.id,
+                category: "ADJUSTMENT",
+                direction: "OUT",
+                amount: usage.discountAmount,
+                description: `Voucher cài app Affiliate AFF50 · ${referenceCode}`,
                 occurredAt: confirmation.paidAt,
               },
             });

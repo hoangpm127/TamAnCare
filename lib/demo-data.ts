@@ -664,8 +664,8 @@ export type ReferralFriend = {
 
 export const referral = {
   code: "MINHANH4567",
-  rewardForYou: "10% doanh thu dịch vụ/gói đủ điều kiện · đối soát 15 ngày",
-  rewardForFriend: "Khách mới nhận FIRST60; nếu tạo tài khoản, hệ thống ưu tiên quyền lợi WELCOME150",
+  rewardForYou: "10% doanh thu Bill dịch vụ đã hoàn tất và thanh toán đủ · đối soát 15 ngày",
+  rewardForFriend: "Cài app từ link để nhận AFF50 và cộng cùng WELCOME150 trong lần dịch vụ đầu tiên đủ điều kiện",
   totalEarned: 6450000,
   monthlyEarnings: [
     { month: "T2", amount: 700000 },

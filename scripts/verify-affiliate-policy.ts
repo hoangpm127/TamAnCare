@@ -29,4 +29,4 @@ assert.equal(affiliateOwnerEligible({ phoneVerifiedAt: null }, true), false);
 assert.equal(affiliateOwnerEligible({ phoneVerifiedAt: null }, false), true);
 assert.equal(affiliateOwnerEligible(null, false), false);
 
-console.log("Affiliate policy verified: owner identity, OTP gate, code normalization, 10% revenue share and 7-day return window.");
+console.log("Affiliate policy verified: owner eligibility, code normalization and 10% service-bill revenue share.");

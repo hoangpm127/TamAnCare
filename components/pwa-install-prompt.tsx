@@ -14,6 +14,7 @@ import {
   Smartphone,
   X,
 } from "lucide-react";
+import { activateInstalledReferralAttribution } from "@/lib/referral-attribution";
 
 type InstallPlatform = "ios" | "android" | "other";
 type InstallGuide = "ios" | "android" | null;
@@ -45,6 +46,7 @@ export function PwaInstallPrompt() {
   const [guide, setGuide] = useState<InstallGuide>(null);
   const [installPrompt, setInstallPrompt] = useState<InstallPromptEvent | null>(null);
   const [installedByEvent, setInstalledByEvent] = useState(false);
+  const [activationState, setActivationState] = useState<"idle" | "active" | "unavailable">("idle");
   const [copied, setCopied] = useState(false);
   const clientReady = useSyncExternalStore(subscribeToClientReady, () => true, () => false);
   const userAgent = clientReady ? navigator.userAgent : "";
@@ -71,15 +73,27 @@ export function PwaInstallPrompt() {
     };
   }, []);
 
+  useEffect(() => {
+    if (!installed || activationState !== "idle") return;
+    let active = true;
+    void activateInstalledReferralAttribution()
+      .then((code) => {
+        if (active) setActivationState(code ? "active" : "unavailable");
+      })
+      .catch(() => {
+        if (active) setActivationState("unavailable");
+      });
+    return () => { active = false; };
+  }, [activationState, installed]);
+
   async function installOnAndroid() {
     if (!installPrompt) {
       setGuide("android");
       return;
     }
     await installPrompt.prompt();
-    const choice = await installPrompt.userChoice;
+    await installPrompt.userChoice;
     setInstallPrompt(null);
-    if (choice.outcome === "accepted") setInstalledByEvent(true);
   }
 
   async function copyCurrentLink() {
@@ -96,7 +110,11 @@ export function PwaInstallPrompt() {
     return (
       <div className="flex items-center gap-2 rounded-2xl bg-amber-50 px-3.5 py-3 text-xs font-semibold text-amber-700 ring-1 ring-amber-200">
         <CheckCircle2 size={17} className="shrink-0" />
-        Tâm An Center đã ở trên màn hình chính của bạn.
+        {activationState === "active"
+          ? "Tâm An Center đã ở trên màn hình chính; nguồn giới thiệu và quà 50K đã được kích hoạt."
+          : activationState === "idle"
+            ? "Đang đồng bộ nguồn giới thiệu và quà 50K với thiết bị này..."
+            : "App đã được cài. Hãy mở Tâm An Center từ biểu tượng màn hình chính để hoàn tất quyền lợi 50K."}
       </div>
     );
   }
@@ -111,7 +129,7 @@ export function PwaInstallPrompt() {
           <div className="min-w-0 flex-1">
             <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#c64b32]">Webapp trên điện thoại</p>
             <h2 className="mt-1 text-base font-semibold tracking-tight">Cài Tâm An Center để mở lại trong một chạm</h2>
-            <p className="mt-1 text-xs leading-5 text-[#6f625c]">Không cần App Store hay CH Play. Mã giới thiệu đã lưu trên thiết bị và vẫn tự áp dụng khi bạn đặt lịch.</p>
+            <p className="mt-1 text-xs leading-5 text-[#6f625c]">Không cần App Store hay CH Play. Sau khi cài và mở từ biểu tượng app, nguồn giới thiệu cùng voucher 50K sẽ được khóa trên hệ thống.</p>
           </div>
         </div>
 

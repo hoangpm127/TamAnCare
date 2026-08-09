@@ -420,12 +420,22 @@ export async function PATCH(request: Request, context: { params: Promise<{ booki
             },
           });
           const affiliateCampaign = bookings[0].campaign;
+          const affiliateVoucherUsage = affiliateCampaign
+            ? await tx.voucherUsage.findFirst({
+                where: {
+                  bookingId: { in: bookings.map((item) => item.id) },
+                  status: "CONFIRMED",
+                  voucher: { code: "AFF50" },
+                },
+                select: { id: true },
+              })
+            : null;
           const affiliateEligible = affiliateVisitEligible({
             totalVisits: customer?.totalVisits ?? 0,
             lastVisitAt: customer?.lastVisitAt ?? null,
             completedAt: now,
           });
-          if (affiliateEligible && totalAmount > 0 && affiliateCampaign?.source.startsWith("AFFILIATE:")) {
+          if (affiliateVoucherUsage && affiliateEligible && totalAmount > 0 && affiliateCampaign?.source.startsWith("AFFILIATE:")) {
             const affiliateOwnerCustomerId = affiliateCustomerId(affiliateCampaign.source);
             if (affiliateOwnerCustomerId && affiliateOwnerCustomerId !== customerId) {
               const affiliate = await tx.customer.findUnique({

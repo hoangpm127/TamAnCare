@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import Link from "next/link";
 import { ArrowRight, BadgeCheck, CheckCircle2, Gift, LogIn, ShieldCheck, Sparkles } from "lucide-react";
 import { PwaInstallPrompt } from "@/components/pwa-install-prompt";
-import { setReferralAttribution } from "@/lib/referral-attribution";
+import { captureReferralAttribution } from "@/lib/referral-attribution";
 import { formatMoney } from "@/lib/utils";
 
 type ReferralOffer = {
@@ -17,7 +17,7 @@ type ReferralOffer = {
 
 export function ReferralLandingClient({ code, offer }: { code: string; offer: ReferralOffer }) {
   useEffect(() => {
-    setReferralAttribution(code);
+    void captureReferralAttribution(code);
   }, [code]);
 
   return (
@@ -43,8 +43,8 @@ export function ReferralLandingClient({ code, offer }: { code: string; offer: Re
               <p className="mt-2 text-[10px] font-bold uppercase tracking-[0.14em] text-[#76551d]">Quyền lợi dành cho bạn</p>
               {offer ? (
                 <>
-                  <p className="mt-1 text-2xl font-bold text-[#c64b32]">Giảm {formatMoney(offer.discountValue)}</p>
-                  <p className="mt-1 text-xs leading-5 text-[#715943]">Cho lần trải nghiệm đầu tiên · {offer.displayConstraint || `đơn từ ${formatMoney(offer.minimumSpend)}`}</p>
+                  <p className="mt-1 text-2xl font-bold text-[#c64b32]">Nhận thêm {formatMoney(offer.discountValue)}</p>
+                  <p className="mt-1 text-xs leading-5 text-[#715943]">Cài app từ lời mời này và cộng cùng WELCOME150 · tổng quyền lợi tới 200.000đ.</p>
                 </>
               ) : (
                 <p className="mt-1 text-sm font-semibold leading-6 text-[#c64b32]">Mã giới thiệu đã được ghi nhận. Hệ thống sẽ tự áp dụng ưu đãi đang còn hiệu lực.</p>
@@ -52,14 +52,14 @@ export function ReferralLandingClient({ code, offer }: { code: string; offer: Re
             </div>
 
             <div className="space-y-2.5 text-xs leading-5 text-[#554842]">
-              <p className="flex items-start gap-2"><CheckCircle2 size={16} className="mt-0.5 shrink-0 text-amber-700" /><span>Mã đã lưu trên điện thoại này trong 30 ngày và tự gắn vào booking.</span></p>
-              <p className="flex items-start gap-2"><ShieldCheck size={16} className="mt-0.5 shrink-0 text-[#c64b32]" /><span>Bạn chỉ cần tạo hồ sơ bằng họ tên, số điện thoại và Mã PIN Tâm An 4 số. Lễ tân sẽ đối chiếu ưu đãi khi bạn đến cơ sở.</span></p>
+              <p className="flex items-start gap-2"><CheckCircle2 size={16} className="mt-0.5 shrink-0 text-amber-700" /><span>Nguồn giới thiệu đang được giữ trong 30 ngày và sẽ được kích hoạt khi bạn mở Tâm An Center từ biểu tượng đã cài.</span></p>
+              <p className="flex items-start gap-2"><ShieldCheck size={16} className="mt-0.5 shrink-0 text-[#c64b32]" /><span>Tạo hồ sơ bằng họ tên, số điện thoại và Mã PIN Tâm An 4 số để dùng đồng thời WELCOME150 và quà Affiliate 50K trong lần dịch vụ đầu tiên đủ điều kiện.</span></p>
             </div>
 
             <div className="grid gap-2">
-              <Link href="/booking" className="flex w-full items-center justify-center gap-2 rounded-full bg-[#c64b32] px-5 py-3.5 text-sm font-semibold text-white shadow-md shadow-[#c64b32]/20">
-                <Sparkles size={16} /> Đặt lịch &amp; dùng ưu đãi <ArrowRight size={15} />
-              </Link>
+              <a href="#cai-app" className="flex w-full items-center justify-center gap-2 rounded-full bg-[#c64b32] px-5 py-3.5 text-sm font-semibold text-white shadow-md shadow-[#c64b32]/20">
+                <Sparkles size={16} /> Cài app trước để nhận đủ ưu đãi <ArrowRight size={15} />
+              </a>
               <Link href="/tai-khoan?returnTo=%2Fbooking" className="flex w-full items-center justify-center gap-2 rounded-full border border-[#dfcec4] bg-white px-5 py-3 text-xs font-semibold text-[#6f211f]">
                 <LogIn size={15} /> Đăng nhập nhanh trước khi đặt lịch
               </Link>
@@ -67,9 +67,11 @@ export function ReferralLandingClient({ code, offer }: { code: string; offer: Re
           </div>
         </section>
 
-        <PwaInstallPrompt />
+        <div id="cai-app" className="scroll-mt-20">
+          <PwaInstallPrompt />
+        </div>
 
-        <p className="px-4 text-center text-[10px] leading-4 text-[#826f66]">Bạn vẫn có thể dùng toàn bộ chức năng ngay trên web mà không cần cài đặt.</p>
+        <p className="px-4 text-center text-[10px] leading-4 text-[#826f66]">Bạn vẫn có thể dùng web để xem thông tin; quyền lợi Affiliate 50K chỉ kích hoạt sau khi cài và mở webapp.</p>
       </div>
     </main>
   );

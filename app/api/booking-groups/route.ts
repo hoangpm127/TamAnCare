@@ -3,6 +3,7 @@ import { BookingConflictError, bookingGroupToDto, createBookingGroup } from "@/l
 import { bookingGroupSchema } from "@/lib/validations";
 import { getCustomerSession } from "@/lib/server/customer-session";
 import { ensureGuestSession } from "@/lib/server/guest-session";
+import { installedReferralForGuest } from "@/lib/server/referral-installation";
 import { consumeRateLimit, isSameOriginMutation, privateIdentifierDigest, requestIp } from "@/lib/server/request-security";
 
 export async function POST(request: Request) {
@@ -31,10 +32,12 @@ export async function POST(request: Request) {
       );
     }
     const userAgent = request.headers.get("user-agent")?.trim();
+    const installedReferral = await installedReferralForGuest(guestSession.id);
     const group = await createBookingGroup({
       ...parsed.data,
       guestSessionId: guestSession.id,
       authenticatedCustomerId: customerSession?.customerId,
+      installedReferralCampaignId: installedReferral?.campaignId,
       consent: {
         subjectHash: privateIdentifierDigest(parsed.data.customerPhone.replace(/\s+/g, "")),
         ipHash: privateIdentifierDigest(requestIp(request)),

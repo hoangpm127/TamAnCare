@@ -43,7 +43,9 @@ export default async function Home() {
   const { branches, packagePlans, services, therapists, vouchers } = catalog;
   const featuredServices = services.filter((service) => service.popular).slice(0, 3);
   const firstVisitEligible = !account || account.customer.totalVisits === 0;
-  const featuredVouchers = vouchers.filter((voucher) => firstVisitEligible || voucher.code !== "FIRST60").slice(0, 3);
+  const featuredVouchers = vouchers
+    .filter((voucher) => voucher.code !== "AFF50" && (firstVisitEligible || voucher.code !== "FIRST60"))
+    .slice(0, 3);
   const featuredTherapists = therapists
     .filter((therapist) => therapist.status === "ACTIVE")
     .sort((a, b) => b.ratingAvg - a.ratingAvg);

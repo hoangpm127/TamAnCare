@@ -19,7 +19,6 @@ import { refreshWalletLedger } from "@/lib/wallet-ledger";
 import { BankTransferDetails } from "@/components/bank-transfer-details";
 import { VoucherCard } from "@/components/voucher-card";
 import { cn, formatMoney, makeBookingCode } from "@/lib/utils";
-import { useReferralAttribution } from "@/lib/referral-attribution";
 
 type PurchaseStep = "select" | "bank" | "bill" | "confirming" | "done";
 type PendingPackagePayment = { id: string; status: string; amount: number; paymentCode?: string | null };
@@ -30,7 +29,6 @@ function OffersContent() {
   const router = useRouter();
   const params = useSearchParams();
   const membership = useMembership();
-  const attributionCode = useReferralAttribution();
   const [catalog, setCatalog] = useState<PublicCatalog | null>(null);
   const [catalogError, setCatalogError] = useState("");
   const [firstVisitEligible, setFirstVisitEligible] = useState(true);
@@ -107,7 +105,7 @@ function OffersContent() {
       const response = await fetch("/api/packages/purchase", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ planId: selectedPlan.id, paymentCode, campaignCode: attributionCode ?? undefined }),
+        body: JSON.stringify({ planId: selectedPlan.id, paymentCode }),
       });
       const data = await response.json();
       if (response.status === 401) {
@@ -298,7 +296,7 @@ function OffersContent() {
       <p className="mb-1 mt-5 text-sm font-semibold">Voucher & mã giảm giá</p>
       <p className="mb-2.5 truncate text-xs text-[#826f66]">Ưu đãi phù hợp theo khung giờ và nhu cầu của bạn.</p>
       <div className="grid grid-cols-2 gap-3">
-        {vouchers.filter((voucher) => firstVisitEligible || voucher.code !== "FIRST60").map((voucher) => (
+        {vouchers.filter((voucher) => voucher.code !== "AFF50" && (firstVisitEligible || voucher.code !== "FIRST60")).map((voucher) => (
           <VoucherCard key={voucher.code} voucher={voucher} compact />
         ))}
       </div>

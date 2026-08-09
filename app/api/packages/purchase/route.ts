@@ -7,14 +7,11 @@ import { getCustomerSession } from "@/lib/server/customer-session";
 import { notifyCustomer } from "@/lib/server/notification-service";
 import { buildPaymentCode } from "@/lib/server/payment-service";
 import { consumeRateLimit, isSameOriginMutation } from "@/lib/server/request-security";
-import { affiliateCustomerId, affiliateOwnerEligible, normalizeAffiliateCode } from "@/lib/referral-policy";
-import { phoneVerificationRequired } from "@/lib/server/otp-delivery";
 
 const schema = z.object({
   planId: z.string().min(1),
   bankCode: z.string().min(2).max(30).optional(),
   paymentCode: z.string().min(8).max(80),
-  campaignCode: z.string().trim().max(80).optional(),
 });
 
 export async function POST(request: Request) {
@@ -44,17 +41,6 @@ export async function POST(request: Request) {
     },
   });
   if (!plan) return NextResponse.json({ error: "Không tìm thấy gói thành viên." }, { status: 404 });
-  const normalizedCampaignCode = normalizeAffiliateCode(parsed.data.campaignCode);
-  const campaign = normalizedCampaignCode
-    ? await db.campaign.findFirst({ where: { code: normalizedCampaignCode, source: { startsWith: "AFFILIATE:" } } })
-    : null;
-  if (parsed.data.campaignCode && !campaign) return NextResponse.json({ error: "Mã Affiliate không tồn tại hoặc đã ngừng hoạt động." }, { status: 409 });
-  const affiliateOwnerCustomerId = affiliateCustomerId(campaign?.source);
-  if (affiliateOwnerCustomerId === account.customerId) return NextResponse.json({ error: "Bạn không thể dùng mã Affiliate của chính mình." }, { status: 409 });
-  if (affiliateOwnerCustomerId) {
-    const affiliateOwner = await db.customerAccount.findUnique({ where: { customerId: affiliateOwnerCustomerId }, select: { phoneVerifiedAt: true } });
-    if (!affiliateOwnerEligible(affiliateOwner, phoneVerificationRequired())) return NextResponse.json({ error: "Mã Affiliate chưa được kích hoạt hoặc đã tạm ngừng." }, { status: 409 });
-  }
   const accountingBranchSetting = await db.systemSetting.findUnique({
     where: { scopeKey: "GLOBAL:business.accounting_branch_id" },
     select: { value: true },
@@ -69,7 +55,7 @@ export async function POST(request: Request) {
       where: {
         customerId: account.customerId,
         packagePlanId: plan.id,
-        campaignId: campaign?.id ?? null,
+        campaignId: null,
         status: "PAUSED",
         paymentTransaction: { status: "PENDING", createdAt: { gte: new Date(Date.now() - 30 * 60_000) } },
       },
@@ -105,7 +91,6 @@ export async function POST(request: Request) {
       data: {
         customerId: account.customerId,
         packagePlanId: plan.id,
-        campaignId: campaign?.id,
         paymentTransactionId: payment.id,
         sessionsTotal: plan.sessions,
         sessionsRemaining: plan.sessions,
