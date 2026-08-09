@@ -9,7 +9,7 @@ const BASE_URL = process.env.TEST_BASE_URL ?? "http://127.0.0.1:3000";
 const WEBHOOK_SECRET = process.env.TEST_SEPAY_WEBHOOK_SECRET ?? process.env.SEPAY_WEBHOOK_SECRET;
 const ACCOUNT_NUMBER = process.env.TEST_SEPAY_ACCOUNT_NUMBER
   ?? process.env.SEPAY_ACCOUNT_NUMBERS?.split(",")[0]?.trim();
-const QR_SECRET = process.env.BUSINESS_QR_SECRET ?? process.env.SESSION_SECRET;
+const QR_SECRET = process.env.TEST_BUSINESS_QR_SECRET ?? process.env.BUSINESS_QR_SECRET ?? process.env.SESSION_SECRET;
 const marker = `BIZE2E${Date.now().toString(36).toUpperCase()}`;
 const eventCode = `${marker}-OFFICE`;
 const customerPhone = `09${String(Date.now()).slice(-8)}`;
@@ -63,7 +63,7 @@ async function jsonRequest<T>(
 }
 
 function createQrToken(leadTherapistId: string) {
-  assert(QR_SECRET, "BUSINESS_QR_SECRET hoặc SESSION_SECRET chưa được cấu hình cho bài test.");
+  assert(QR_SECRET, "TEST_BUSINESS_QR_SECRET, BUSINESS_QR_SECRET hoặc SESSION_SECRET chưa được cấu hình cho bài test.");
   const compact = Buffer.from(JSON.stringify({ e: eventCode, t: leadTherapistId, v: 1 })).toString("base64url");
   const signature = createHmac("sha256", QR_SECRET)
     .update(`tam-an-business:${compact}`)
