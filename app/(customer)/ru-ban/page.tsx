@@ -338,6 +338,14 @@ export default function ReferralPage() {
           </div>
         </div>
       </section>
+      <section className="mt-3 rounded-xl border border-[#ead9cc] bg-[#fffaf6] p-3.5">
+        <p className="text-xs font-semibold text-[#6f211f]">Cách tính minh bạch giữa 3 bên</p>
+        <div className="mt-2 grid gap-2 text-[11px] leading-5 text-[#68574f] sm:grid-cols-3">
+          <p><strong className="block text-[#281b18]">Khách được mời</strong>Bill gốc − toàn bộ voucher = số thực thanh toán.</p>
+          <p><strong className="block text-[#281b18]">Người mời</strong>Nhận 10% số khách thực thanh toán sau ưu đãi.</p>
+          <p><strong className="block text-[#281b18]">Tâm An Center</strong>Còn lại số khách thanh toán − hoa hồng người mời, trước các chi phí vận hành khác.</p>
+        </div>
+      </section>
       <p className="mt-2 rounded-xl bg-[#fff7df] px-3.5 py-3 text-[11px] leading-5 text-[#715943] ring-1 ring-[#c59a3d]/35">Khách phải cài và mở webapp để khóa nguồn giới thiệu. Bạn chỉ được ghi nhận hoa hồng sau khi dịch vụ hoàn tất và Bill còn lại đã thanh toán đủ; tip không tham gia phép tính.</p>
 
       <section className="mt-5">

@@ -1,16 +1,42 @@
 import { db } from "../lib/db";
 import { BUSINESS_DISTRIBUTION_RATES, calculateBusinessDistribution } from "../lib/business-distribution";
-import { affiliateCommissionAmount, affiliateCustomerId } from "../lib/referral-policy";
+import { affiliateCustomerId, affiliateFinancialBreakdown } from "../lib/referral-policy";
 
 async function main() {
   const [campaigns, commissions, businessAffiliates, businessAssets, businessAttributions] = await Promise.all([
     db.campaign.findMany({
       where: { source: { startsWith: "AFFILIATE:" } },
-      select: { id: true, source: true, bookings: { select: { id: true, groupId: true, customerId: true, status: true, totalAmount: true, group: { select: { totalAmount: true } } } } },
+      select: {
+        id: true,
+        source: true,
+        bookings: {
+          select: {
+            id: true,
+            groupId: true,
+            customerId: true,
+            status: true,
+            basePrice: true,
+            therapistFee: true,
+            totalAmount: true,
+            voucherUsages: { select: { status: true, discountAmount: true, voucher: { select: { code: true } } } },
+            group: {
+              select: {
+                subtotalAmount: true,
+                totalAmount: true,
+                bookings: {
+                  select: {
+                    voucherUsages: { select: { status: true, discountAmount: true, voucher: { select: { code: true } } } },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
     }),
     db.ledgerEntry.findMany({
       where: { category: "OPERATING_EXPENSE", description: { startsWith: "Hoa hồng Affiliate" } },
-      select: { id: true, customerId: true, bookingId: true, bookingGroupId: true, amount: true, direction: true, expenseId: true },
+      select: { id: true, customerId: true, bookingId: true, bookingGroupId: true, paymentTransactionId: true, amount: true, direction: true, expenseId: true },
     }),
     db.businessAffiliate.findMany({
       select: { id: true, status: true, conflictDisclosureRequired: true, conflictDisclosureAcceptedAt: true },
@@ -30,6 +56,7 @@ async function main() {
   const ownerById = new Map(owners.map((owner) => [owner.customerId, owner]));
 
   const bookingOwner = new Map<string, { referredCustomerId: string; affiliateCustomerId: string | null; expectedCommission: number }>();
+  const financialsByOrder = new Map<string, ReturnType<typeof affiliateFinancialBreakdown>>();
   let selfReferralBookings = 0;
   let trackedBookings = 0;
   for (const campaign of campaigns) {
@@ -37,10 +64,18 @@ async function main() {
     for (const booking of campaign.bookings) {
       trackedBookings += 1;
       const targetId = booking.groupId ?? booking.id;
+      const voucherUsages = booking.group?.bookings.flatMap((item) => item.voucherUsages) ?? booking.voucherUsages;
+      const financials = affiliateFinancialBreakdown({
+        grossBillAmount: booking.group?.subtotalAmount ?? booking.basePrice + booking.therapistFee,
+        customerPaymentAmount: booking.group?.totalAmount ?? booking.totalAmount,
+        welcomeDiscountAmount: voucherUsages.filter((usage) => usage.status === "CONFIRMED" && usage.voucher.code === "WELCOME150").reduce((sum, usage) => sum + usage.discountAmount, 0),
+        affiliateDiscountAmount: voucherUsages.filter((usage) => usage.status === "CONFIRMED" && usage.voucher.code === "AFF50").reduce((sum, usage) => sum + usage.discountAmount, 0),
+      });
+      financialsByOrder.set(targetId, financials);
       bookingOwner.set(targetId, {
         referredCustomerId: booking.customerId,
         affiliateCustomerId: affiliateId,
-        expectedCommission: affiliateCommissionAmount(booking.group?.totalAmount ?? booking.totalAmount),
+        expectedCommission: financials.inviterCommissionAmount,
       });
       if (affiliateId === booking.customerId) selfReferralBookings += 1;
     }
@@ -98,6 +133,20 @@ async function main() {
       amountMismatchCommissionCount,
       malformedCommissionCount,
       referredCustomersWithDuplicateCommission: [...rewardsByReferredCustomer.values()].filter((count) => count > 1).length,
+      trackedCashFlow: [...financialsByOrder.values()].reduce((totals, item) => ({
+        grossBillAmount: totals.grossBillAmount + item.grossBillAmount,
+        invitedCustomerBenefitAmount: totals.invitedCustomerBenefitAmount + item.invitedCustomerBenefitAmount,
+        customerPaymentAmount: totals.customerPaymentAmount + item.customerPaymentAmount,
+        projectedInviterCommissionAmount: totals.projectedInviterCommissionAmount + item.inviterCommissionAmount,
+        projectedCenterNetAmount: totals.projectedCenterNetAmount + item.centerNetAmount,
+      }), {
+        grossBillAmount: 0,
+        invitedCustomerBenefitAmount: 0,
+        customerPaymentAmount: 0,
+        projectedInviterCommissionAmount: 0,
+        projectedCenterNetAmount: 0,
+      }),
+      packageCommissionCount: commissions.filter((commission) => !commission.bookingId && !commission.bookingGroupId && Boolean(commission.paymentTransactionId)).length,
     },
     businessAffiliate: {
       affiliateCount: businessAffiliates.length,

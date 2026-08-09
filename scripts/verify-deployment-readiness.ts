@@ -263,15 +263,22 @@ async function databaseChecks() {
     }
 
     const countFor = (role: string) => roleCounts.find((item) => item.role === role)?._count._all ?? 0;
-    for (const [role, minimum] of [["OWNER", 1], ["MANAGER", 2], ["RECEPTIONIST", 1], ["THERAPIST", 2], ["INVESTOR", 1]] as const) {
+    for (const [role, minimum] of [["OWNER", 1], ["MANAGER", 2], ["RECEPTIONIST", 1], ["INVESTOR", 1]] as const) {
       const count = countFor(role);
       add("Phân quyền", role, count >= minimum ? "PASS" : "FAIL", `${count} tài khoản hoạt động; yêu cầu tối thiểu ${minimum}`);
     }
+    const activeTherapistUsers = countFor("THERAPIST");
+    add(
+      "Phân quyền",
+      "KTV không đăng nhập hệ thống",
+      activeTherapistUsers === 0 ? "PASS" : "FAIL",
+      activeTherapistUsers === 0 ? "KTV chỉ còn là hồ sơ nhân sự để phân công" : `${activeTherapistUsers} tài khoản KTV vẫn đang hoạt động`,
+    );
     add(
       "Phân quyền",
       "Tài khoản UAT",
-      mode === "uat" ? (activeUatUsers >= 7 ? "PASS" : "FAIL") : (activeUatUsers === 0 ? "PASS" : "FAIL"),
-      mode === "uat" ? `${activeUatUsers}/7 tài khoản nội bộ UAT` : `${activeUatUsers} tài khoản UAT còn hoạt động trên production`,
+      mode === "uat" ? (activeUatUsers >= 5 ? "PASS" : "FAIL") : (activeUatUsers === 0 ? "PASS" : "FAIL"),
+      mode === "uat" ? `${activeUatUsers}/5 tài khoản nội bộ UAT` : `${activeUatUsers} tài khoản UAT còn hoạt động trên production`,
     );
 
     const managementWithoutMfa = await prisma.user.count({
@@ -307,7 +314,7 @@ async function databaseChecks() {
       prisma.user.findMany({
         where: {
           isActive: true,
-          role: { in: ["OWNER", "MANAGER", "RECEPTIONIST", "THERAPIST", "INVESTOR", "XGROUP_SUPER_ADMIN", "DISTRICT_SALES_MANAGER"] },
+          role: { in: ["OWNER", "MANAGER", "RECEPTIONIST", "INVESTOR", "XGROUP_SUPER_ADMIN", "DISTRICT_SALES_MANAGER"] },
         },
         select: { passwordHash: true, passwordChangedAt: true },
       }),

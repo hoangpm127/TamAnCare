@@ -11,6 +11,7 @@ const customerPhone = `05${String(Date.now()).slice(-8)}`;
 const customerPin = "2580";
 const customerNewPin = "3690";
 const ownerPassword = `Owner!${marker}Secure`;
+const retiredTherapistPassword = `Therapist!${marker}Secure`;
 const requestIp = `10.250.${Number(String(Date.now()).slice(-4, -2))}.${Number(String(Date.now()).slice(-2)) || 1}`;
 const customerJar = new Map<string, string>();
 const ownerJar = new Map<string, string>();
@@ -84,6 +85,7 @@ function rateKey(scope: string, identifier: string) {
 
 async function cleanup() {
   const owner = await db.user.findUnique({ where: { username: `owner_${marker.toLowerCase()}` }, select: { id: true } });
+  const retiredTherapist = await db.user.findUnique({ where: { username: `therapist_${marker.toLowerCase()}` }, select: { id: true } });
   const customer = await db.customer.findUnique({ where: { phone: customerPhone }, select: { id: true } });
   await db.$transaction(async (tx) => {
     if (owner) {
@@ -92,6 +94,10 @@ async function cleanup() {
       await tx.adminSession.deleteMany({ where: { userId: owner.id } });
       await tx.mfaRecoveryCode.deleteMany({ where: { userId: owner.id } });
       await tx.user.delete({ where: { id: owner.id } });
+    }
+    if (retiredTherapist) {
+      await tx.adminSession.deleteMany({ where: { userId: retiredTherapist.id } });
+      await tx.user.delete({ where: { id: retiredTherapist.id } });
     }
     if (customer) {
       await tx.notification.deleteMany({ where: { customerId: customer.id } });
@@ -123,6 +129,17 @@ async function main() {
   const owner = await db.user.create({
     data: { name: `Owner bảo mật ${marker}`, username: `owner_${marker.toLowerCase()}`, email: `${marker.toLowerCase()}@security.tests`, role: "OWNER", passwordHash: hashPassword(ownerPassword), passwordChangedAt: now },
   });
+  await db.user.create({
+    data: {
+      name: `KTV không đăng nhập ${marker}`,
+      username: `therapist_${marker.toLowerCase()}`,
+      email: `therapist-${marker.toLowerCase()}@security.tests`,
+      role: "THERAPIST",
+      passwordHash: hashPassword(retiredTherapistPassword),
+      passwordChangedAt: now,
+      isActive: true,
+    },
+  });
 
   try {
     const wrongPin = await request("/api/customer-auth/login", { body: { phone: customerPhone, pin: "2581" } });
@@ -133,6 +150,8 @@ async function main() {
 
     const ownerLogin = await request<{ account?: { id: string } }>("/api/admin-auth/login", { jar: ownerJar, body: { username: owner.username, password: ownerPassword } });
     assert(ownerLogin.response.ok && ownerLogin.payload.account?.id === owner.id, "Chủ kiểm thử không đăng nhập được.");
+    const retiredTherapistLogin = await request("/api/admin-auth/login", { body: { username: `therapist_${marker.toLowerCase()}`, password: retiredTherapistPassword } });
+    assert(retiredTherapistLogin.response.status === 401, "Tài khoản KTV vẫn đăng nhập được vào hệ thống CNTT.");
     const pinReset = await request<{ sessionsRevoked?: boolean }>(`/api/customers/${customer.id}/pin`, { method: "PUT", jar: ownerJar, body: { pin: customerNewPin } });
     assert(pinReset.response.ok && pinReset.payload.sessionsRevoked, "Lễ tân/Quản lý không cấp lại được Mã PIN.");
     assert(await db.customerSession.count({ where: { customerId: customer.id } }) === 0, "Cấp lại PIN chưa thu hồi tất cả phiên khách cũ.");
@@ -170,6 +189,7 @@ async function main() {
     console.log("✓ Cấp lại PIN tại quầy thu hồi phiên cũ và vô hiệu hóa PIN cũ");
     console.log("✓ TOTP được mã hóa, chống phát lại và bắt buộc ở lần đăng nhập sau");
     console.log("✓ Mã khôi phục chỉ dùng một lần, không lưu bản rõ trong CSDL");
+    console.log("✓ KTV chỉ là hồ sơ nhân sự, tài khoản THERAPIST bị từ chối đăng nhập");
   } finally {
     await cleanup();
   }

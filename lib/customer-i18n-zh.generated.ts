@@ -1,5 +1,17 @@
 // Generated from the canonical Vietnamese customer copy. Review brand, legal and medical wording before release.
 export const EXACT_CHINESE: Record<string, string> = {
+  "Cách tính minh bạch giữa 3 bên": "三方透明计算方式",
+  "Khách được mời": "受邀顾客",
+  "Bill gốc − toàn bộ voucher = số thực thanh toán.": "原始账单 − 所有优惠券 = 实际付款金额。",
+  "Người mời": "邀请人",
+  "Nhận 10% số khách thực thanh toán sau ưu đãi.": "获得顾客优惠后实际付款金额的10%。",
+  "Còn lại số khách thanh toán − hoa hồng người mời, trước các chi phí vận hành khác.": "顾客付款减去邀请人佣金，为扣除其他运营成本前的金额。",
+  "Khách thanh toán": "顾客付款",
+  "Bill gốc": "原始账单",
+  "Khách được ưu đãi": "顾客优惠",
+  "Người mời nhận": "邀请人获得",
+  "Tâm An còn lại": "Tâm An留存",
+  "10% số tiền khách thực trả sau ưu đãi, chỉ ghi nhận khi dịch vụ hoàn tất và thanh toán đủ · đối soát 15 ngày": "顾客优惠后实际付款金额的10%，仅在服务完成且全额付款后记录 · 15天结算",
   "Đã xác nhận · Sẵn sàng đón khách": "预约已确认 · 到店即可接待",
   "TÂM AN CENTER đang xếp KTV và giường/ghế": "TÂM AN CENTER 正在安排理疗师和床位/座椅",
   "TÂM AN CENTER đang xếp KTV và giường/ghế phù hợp": "TÂM AN CENTER 正在安排合适的理疗师和床位/座椅",

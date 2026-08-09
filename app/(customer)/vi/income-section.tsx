@@ -445,8 +445,16 @@ function FriendCard({
                       ) : null}
                     </span>
                     <span className="mt-0.5 block text-[10px] text-[#826f66]">
-                      Bạn chi {formatMoney(order.amount)} · {order.date}
+                      Khách thanh toán {formatMoney(order.amount)} · {order.date}
                     </span>
+                    {order.grossBillAmount !== undefined ? (
+                      <span className="mt-2 grid grid-cols-2 gap-1 rounded-lg border border-[#ead9cc] bg-white p-2 text-[9px] leading-4 text-[#68574f] sm:grid-cols-4">
+                        <span>Bill gốc<strong className="block text-[#281b18]">{formatMoney(order.grossBillAmount)}</strong></span>
+                        <span>Khách được ưu đãi<strong className="block text-[#c64b32]">-{formatMoney(order.invitedCustomerBenefitAmount ?? 0)}</strong></span>
+                        <span>Người mời nhận<strong className="block text-[#a85f29]">{formatMoney(order.commission)}</strong></span>
+                        <span>Tâm An còn lại<strong className="block text-[#281b18]">{formatMoney(order.centerNetAmount ?? Math.max(0, order.amount - order.commission))}</strong></span>
+                      </span>
+                    ) : null}
                   </span>
                   <span className="shrink-0 text-right">
                     <span className={cn("block text-sm font-semibold", order.status === "COMPLETED" ? "text-[#a85f29]" : "text-[#8a5a12]")}>

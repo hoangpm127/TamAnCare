@@ -647,6 +647,12 @@ export type ReferralOrder = {
   serviceLabel: string;
   amount: number;
   commission: number;
+  grossBillAmount?: number;
+  invitedCustomerBenefitAmount?: number;
+  welcomeDiscountAmount?: number;
+  affiliateDiscountAmount?: number;
+  otherDiscountAmount?: number;
+  centerNetAmount?: number;
   status: "SCHEDULED" | "COMPLETED";
   date: string;
   isoDate: string;
@@ -664,7 +670,7 @@ export type ReferralFriend = {
 
 export const referral = {
   code: "MINHANH4567",
-  rewardForYou: "10% doanh thu Bill dịch vụ đã hoàn tất và thanh toán đủ · đối soát 15 ngày",
+  rewardForYou: "10% số tiền khách thực trả sau ưu đãi, chỉ ghi nhận khi dịch vụ hoàn tất và thanh toán đủ · đối soát 15 ngày",
   rewardForFriend: "Cài app từ link để nhận AFF50 và cộng cùng WELCOME150 trong lần dịch vụ đầu tiên đủ điều kiện",
   totalEarned: 6450000,
   monthlyEarnings: [

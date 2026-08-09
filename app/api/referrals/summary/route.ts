@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { affiliateCommissionAmount, AFFILIATE_RECONCILIATION_DAYS } from "@/lib/referral-policy";
+import { affiliateFinancialBreakdown, AFFILIATE_RECONCILIATION_DAYS } from "@/lib/referral-policy";
 import { getCustomerSession } from "@/lib/server/customer-session";
 import { ledgerReportWhere } from "@/lib/server/ledger-reporting";
 import { phoneVerificationRequired } from "@/lib/server/otp-delivery";
@@ -44,7 +44,7 @@ export async function GET() {
       summary: {
         code,
         activationRequired,
-        rewardForYou: `10% doanh thu Bill dịch vụ đã hoàn tất và thanh toán đủ · đối soát ${AFFILIATE_RECONCILIATION_DAYS} ngày`,
+        rewardForYou: `10% số tiền khách thực trả sau ưu đãi, chỉ ghi nhận khi dịch vụ hoàn tất và thanh toán đủ · đối soát ${AFFILIATE_RECONCILIATION_DAYS} ngày`,
         rewardForFriend: "Cài app từ link để nhận AFF50 và cộng cùng WELCOME150 trong lần dịch vụ đầu tiên đủ điều kiện",
         profile: affiliateProfile,
         totalEarned: 0,
@@ -56,7 +56,17 @@ export async function GET() {
   const [bookings, commissions] = await Promise.all([
     db.booking.findMany({
       where: { campaignId: { in: campaigns.map((item) => item.id) } },
-      include: { customer: true, service: true, group: { include: { bookings: true } }, campaign: true },
+      include: {
+        customer: true,
+        service: true,
+        voucherUsages: { include: { voucher: { select: { code: true } } } },
+        group: {
+          include: {
+            bookings: { include: { voucherUsages: { include: { voucher: { select: { code: true } } } } } },
+          },
+        },
+        campaign: true,
+      },
       orderBy: { startTime: "desc" },
     }),
     db.ledgerEntry.findMany({
@@ -74,14 +84,36 @@ export async function GET() {
     const commission = commissionByOrder.get(orderId);
     const groupBookings = booking.group?.bookings ?? [booking];
     const category = groupBookings.length > 1 ? "GROUP" as const : "INDIVIDUAL" as const;
+    const voucherUsages = groupBookings.flatMap((item) => item.voucherUsages);
+    const welcomeDiscountAmount = voucherUsages
+      .filter((usage) => usage.status === "CONFIRMED" && usage.voucher.code === "WELCOME150")
+      .reduce((sum, usage) => sum + usage.discountAmount, 0);
+    const affiliateDiscountAmount = voucherUsages
+      .filter((usage) => usage.status === "CONFIRMED" && usage.voucher.code === "AFF50")
+      .reduce((sum, usage) => sum + usage.discountAmount, 0);
+    const financials = affiliateFinancialBreakdown({
+      grossBillAmount: booking.group?.subtotalAmount
+        ?? groupBookings.reduce((sum, item) => sum + item.basePrice + item.therapistFee, 0),
+      customerPaymentAmount: booking.group?.totalAmount
+        ?? groupBookings.reduce((sum, item) => sum + item.totalAmount, 0),
+      welcomeDiscountAmount,
+      affiliateDiscountAmount,
+    });
+    const commissionAmount = commission?.amount ?? financials.inviterCommissionAmount;
     return {
       id: orderId,
       friendId: booking.customerId,
       friendName: booking.customer.fullName,
       friendTotalVisits: booking.customer.totalVisits,
       serviceLabel: booking.group ? `${groupBookings.length} dịch vụ cùng lịch` : booking.service.name,
-      amount: booking.group?.totalAmount ?? booking.totalAmount,
-      commission: commission?.amount ?? affiliateCommissionAmount(booking.group?.totalAmount ?? booking.totalAmount),
+      amount: financials.customerPaymentAmount,
+      grossBillAmount: financials.grossBillAmount,
+      invitedCustomerBenefitAmount: financials.invitedCustomerBenefitAmount,
+      welcomeDiscountAmount: financials.welcomeDiscountAmount,
+      affiliateDiscountAmount: financials.affiliateDiscountAmount,
+      otherDiscountAmount: financials.otherDiscountAmount,
+      centerNetAmount: Math.max(0, financials.customerPaymentAmount - commissionAmount),
+      commission: commissionAmount,
       status: commission ? "COMPLETED" as const : "SCHEDULED" as const,
       bookingStatus: booking.group?.status ?? booking.status,
       date: displayDate(booking.startTime),
@@ -114,6 +146,12 @@ export async function GET() {
       date: order.date,
       isoDate: order.isoDate,
       category: order.category,
+      grossBillAmount: order.grossBillAmount,
+      invitedCustomerBenefitAmount: order.invitedCustomerBenefitAmount,
+      welcomeDiscountAmount: order.welcomeDiscountAmount,
+      affiliateDiscountAmount: order.affiliateDiscountAmount,
+      otherDiscountAmount: order.otherDiscountAmount,
+      centerNetAmount: order.centerNetAmount,
     }));
     const reward = friendOrders.filter((item) => item.status === "COMPLETED").reduce((sum, item) => sum + item.commission, 0);
     return {
@@ -136,7 +174,7 @@ export async function GET() {
     summary: {
       code,
       activationRequired,
-      rewardForYou: `10% doanh thu Bill dịch vụ đã hoàn tất và thanh toán đủ · đối soát ${AFFILIATE_RECONCILIATION_DAYS} ngày`,
+      rewardForYou: `10% số tiền khách thực trả sau ưu đãi, chỉ ghi nhận khi dịch vụ hoàn tất và thanh toán đủ · đối soát ${AFFILIATE_RECONCILIATION_DAYS} ngày`,
       rewardForFriend: "Cài app từ link để nhận AFF50 và cộng cùng WELCOME150 trong lần dịch vụ đầu tiên đủ điều kiện",
       profile: affiliateProfile,
       totalEarned: commissions.reduce((sum, item) => sum + item.amount, 0),

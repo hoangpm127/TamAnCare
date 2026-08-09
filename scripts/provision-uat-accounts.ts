@@ -13,10 +13,9 @@ const UAT_USERNAMES = [
   "uat.manager.cs1",
   "uat.manager.cs2",
   "uat.reception.cs1",
-  "uat.ktv.cs1",
-  "uat.ktv.cs2",
   "uat.investor",
 ] as const;
+const LEGACY_THERAPIST_USERNAMES = ["uat.ktv.cs1", "uat.ktv.cs2"] as const;
 
 type Credential = {
   role: string;
@@ -61,7 +60,7 @@ const dryRun = process.argv.includes("--dry-run");
 
 async function deactivateUatAccounts() {
   const users = await prisma.user.findMany({
-    where: { username: { in: [...UAT_USERNAMES] } },
+    where: { username: { in: [...UAT_USERNAMES, ...LEGACY_THERAPIST_USERNAMES] } },
     select: { id: true },
   });
   const userIds = users.map((user) => user.id);
@@ -113,7 +112,7 @@ async function deactivateUatAccounts() {
 async function upsertInternalUser(input: {
   username: (typeof UAT_USERNAMES)[number];
   name: string;
-  role: "OWNER" | "MANAGER" | "RECEPTIONIST" | "THERAPIST" | "INVESTOR";
+  role: "OWNER" | "MANAGER" | "RECEPTIONIST" | "INVESTOR";
   branchId?: string;
   password: string;
 }) {
@@ -159,12 +158,6 @@ async function provision() {
   const branches = await prisma.branch.findMany({ orderBy: { createdAt: "asc" }, take: 2 });
   if (branches.length < 2) throw new Error("CSDL cần có ít nhất hai cơ sở trước khi tạo tài khoản UAT.");
   const [branch1, branch2] = branches;
-  const therapists = await Promise.all([
-    prisma.therapist.findFirst({ where: { branchId: branch1.id, status: "ACTIVE" }, orderBy: { fullName: "asc" } }),
-    prisma.therapist.findFirst({ where: { branchId: branch2.id, status: "ACTIVE" }, orderBy: { fullName: "asc" } }),
-  ]);
-  if (!therapists[0] || !therapists[1]) throw new Error("Mỗi cơ sở cần ít nhất một KTV đang hoạt động.");
-
   if (dryRun) {
     console.log(JSON.stringify({
       action: "provision",
@@ -179,14 +172,22 @@ async function provision() {
   const affiliatePhone = requiredPhone("UAT_AFFILIATE_CUSTOMER_PHONE");
   if (newCustomerPhone === affiliatePhone) throw new Error("Hai số điện thoại UAT phải khác nhau.");
 
+  const retiredTherapistUsers = await prisma.user.findMany({
+    where: { OR: [{ role: "THERAPIST" }, { username: { in: [...LEGACY_THERAPIST_USERNAMES] } }] },
+    select: { id: true },
+  });
+  const retiredTherapistUserIds = retiredTherapistUsers.map((user) => user.id);
+  await prisma.$transaction([
+    prisma.adminSession.deleteMany({ where: { userId: { in: retiredTherapistUserIds } } }),
+    prisma.user.updateMany({ where: { id: { in: retiredTherapistUserIds } }, data: { isActive: false } }),
+  ]);
+
   const credentials: Credential[] = [];
   const internal = [
     { username: "uat.owner", name: "Chủ Tâm An · UAT", role: "OWNER", scope: "Toàn hệ thống", branchId: undefined },
     { username: "uat.manager.cs1", name: "Quản lý Cơ sở 1 · UAT", role: "MANAGER", scope: branch1.name, branchId: branch1.id },
     { username: "uat.manager.cs2", name: "Quản lý Cơ sở 2 · UAT", role: "MANAGER", scope: branch2.name, branchId: branch2.id },
     { username: "uat.reception.cs1", name: "Lễ tân Cơ sở 1 · UAT", role: "RECEPTIONIST", scope: branch1.name, branchId: branch1.id },
-    { username: "uat.ktv.cs1", name: therapists[0].fullName, role: "THERAPIST", scope: branch1.name, branchId: branch1.id },
-    { username: "uat.ktv.cs2", name: therapists[1].fullName, role: "THERAPIST", scope: branch2.name, branchId: branch2.id },
     { username: "uat.investor", name: "Nhà đầu tư · UAT", role: "INVESTOR", scope: "Danh mục đầu tư UAT", branchId: undefined },
   ] as const;
 

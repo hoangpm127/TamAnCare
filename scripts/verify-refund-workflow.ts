@@ -5,7 +5,7 @@ const BASE_URL = process.env.TEST_BASE_URL ?? "http://127.0.0.1:3000";
 const marker = `REFUND${Date.now().toString(36).toUpperCase()}`;
 const managerPassword = `Manager!${marker}`;
 const ownerPassword = `Owner!${marker}`;
-const customerPassword = `Customer!${marker}`;
+const customerPin = "4826";
 const customerPhone = `07${String(Date.now()).slice(-8)}`;
 const managerJar = new Map<string, string>();
 const ownerJar = new Map<string, string>();
@@ -94,7 +94,7 @@ async function main() {
     const customer = await tx.customer.create({
       data: { fullName: `Khách ${marker}`, phone: customerPhone, commonIssues: [], totalSpend: 250_000, totalVisits: 1, segment: "RETURNING" },
     });
-    await tx.customerAccount.create({ data: { customerId: customer.id, phone: customerPhone, passwordHash: hashPassword(customerPassword), creditBalance: 0 } });
+    await tx.customerAccount.create({ data: { customerId: customer.id, phone: customerPhone, pinHash: hashPassword(customerPin), creditBalance: 0 } });
     const group = await tx.bookingGroup.create({
       data: { referenceCode: marker, branchId: branch.id, customerId: customer.id, subtotalAmount: 250_000, totalAmount: 250_000, depositAmount: 0, paidAmount: 250_000, status: "COMPLETED", paymentStatus: "PAID" },
     });
@@ -161,7 +161,7 @@ async function main() {
     assert(afterFinance.payload.serviceRevenue === baselineFinance.payload.serviceRevenue - 250_000, "Doanh thu thuần chưa đảo giảm đúng số tiền hoàn.");
     assert(afterFinance.payload.tips === baselineFinance.payload.tips, "Tip KTV không được thay đổi bởi hoàn tiền dịch vụ.");
 
-    const customerLogin = await request<{ account?: { customerId: string } }>("/api/customer-auth/login", { jar: customerJar, body: { phone: customerPhone, password: customerPassword } });
+    const customerLogin = await request<{ account?: { customerId: string } }>("/api/customer-auth/login", { jar: customerJar, body: { phone: customerPhone, pin: customerPin } });
     assert(customerLogin.response.ok, "Khách kiểm thử không đăng nhập được.");
     const wallet = await request<{ entries: Array<{ paymentStatus?: string; amount: number; note?: string }> }>("/api/customer-finance", { jar: customerJar });
     const refundEntry = wallet.payload.entries.find((item) => item.paymentStatus === "REFUND");

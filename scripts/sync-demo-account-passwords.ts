@@ -18,20 +18,12 @@ const prisma = new PrismaClient({ adapter: new PrismaPg({ connectionString: data
 async function main() {
   const branches = await prisma.branch.findMany({ orderBy: { createdAt: "asc" }, take: 2 });
   if (branches.length < 2) throw new Error("Cần có hai cơ sở trước khi đồng bộ tài khoản demo.");
-  const therapists = await Promise.all(branches.map((branch) => prisma.therapist.findFirst({
-    where: { branchId: branch.id, status: "ACTIVE" },
-    orderBy: { fullName: "asc" },
-  })));
-  if (!therapists[0] || !therapists[1]) throw new Error("Mỗi cơ sở cần có ít nhất một KTV hoạt động.");
-
   const definitions = [
     { username: "admin", name: "Admin Tâm An", role: "OWNER", branchId: null, therapistId: null },
     { username: "quanlycs1", name: "Quản lý Cơ sở 1", role: "MANAGER", branchId: branches[0].id, therapistId: null },
     { username: "quanlycs2", name: "Quản lý Cơ sở 2", role: "MANAGER", branchId: branches[1].id, therapistId: null },
     { username: "letancs1", name: "Lễ tân Cơ sở 1", role: "RECEPTIONIST", branchId: branches[0].id, therapistId: null },
     { username: "letancs2", name: "Lễ tân Cơ sở 2", role: "RECEPTIONIST", branchId: branches[1].id, therapistId: null },
-    { username: "ktvcs1", name: therapists[0].fullName, role: "THERAPIST", branchId: branches[0].id, therapistId: therapists[0].id },
-    { username: "ktvcs2", name: therapists[1].fullName, role: "THERAPIST", branchId: branches[1].id, therapistId: therapists[1].id },
     { username: "nhadaututaman", name: "Nhà đầu tư Tâm An", role: "INVESTOR", branchId: null, therapistId: null },
   ] as const;
 
@@ -62,8 +54,15 @@ async function main() {
   }
 
   const userIds = accounts.map((account) => account.id);
+  const retiredTherapistUsers = await prisma.user.findMany({
+    where: { role: "THERAPIST", isActive: true },
+    select: { id: true },
+  });
+  const retiredTherapistUserIds = retiredTherapistUsers.map((user) => user.id);
   await prisma.$transaction([
     prisma.adminSession.deleteMany({ where: { userId: { in: userIds } } }),
+    prisma.adminSession.deleteMany({ where: { userId: { in: retiredTherapistUserIds } } }),
+    prisma.user.updateMany({ where: { id: { in: retiredTherapistUserIds } }, data: { isActive: false } }),
   ]);
 
   const investor = accounts.find((account) => account.username === "nhadaututaman");

@@ -79,7 +79,7 @@ export function AdminLoginClient() {
 
             <div className="p-5 lg:p-7">
               <div className="flex items-start justify-between gap-4">
-                <div><p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#c64b32]">Xác thực nội bộ</p><h2 className="mt-1 text-xl font-semibold">Đăng nhập quản trị</h2><p className="mt-1 text-xs leading-5 text-[#826f66]">Dành cho Xgroup, Admin, Trưởng phòng Quận, Quản lý, Lễ tân, KTV và Nhà đầu tư được cấp quyền.</p></div>
+                <div><p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#c64b32]">Xác thực nội bộ</p><h2 className="mt-1 text-xl font-semibold">Đăng nhập quản trị</h2><p className="mt-1 text-xs leading-5 text-[#826f66]">Vận hành hằng ngày tập trung vào Admin và Lễ tân. Các vai trò quản lý, Xgroup và Nhà đầu tư chỉ dùng khi được cấp quyền.</p></div>
                 <ShieldCheck className="shrink-0 text-[#c64b32]" size={30} />
               </div>
 

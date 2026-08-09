@@ -24,7 +24,7 @@ const EMPTY: ReferralSummary = {
   authenticated: false,
   activationRequired: false,
   code: "",
-  rewardForYou: "10% doanh thu Bill dịch vụ đã hoàn tất và thanh toán đủ · đối soát 15 ngày",
+  rewardForYou: "10% số tiền khách thực trả sau ưu đãi, chỉ ghi nhận khi dịch vụ hoàn tất và thanh toán đủ · đối soát 15 ngày",
   rewardForFriend: "Cài app từ link để nhận AFF50 và cộng cùng WELCOME150 trong lần dịch vụ đầu tiên đủ điều kiện",
   totalEarned: 0,
   monthlyEarnings: [],

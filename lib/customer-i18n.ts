@@ -12,6 +12,18 @@ export const CUSTOMER_LANGUAGE_STORAGE_KEY = "tam-an-customer-language";
 export const CUSTOMER_LANGUAGE_COOKIE_KEY = "tam_customer_language";
 
 const EXACT_KOREAN: Record<string, string> = {
+  "Cách tính minh bạch giữa 3 bên": "세 당사자 간 투명한 계산 방식",
+  "Khách được mời": "초대받은 고객",
+  "Bill gốc − toàn bộ voucher = số thực thanh toán.": "원래 결제 금액 − 모든 바우처 = 실제 결제 금액입니다.",
+  "Người mời": "초대한 사람",
+  "Nhận 10% số khách thực thanh toán sau ưu đãi.": "고객이 혜택 적용 후 실제 결제한 금액의 10%를 받습니다.",
+  "Còn lại số khách thanh toán − hoa hồng người mời, trước các chi phí vận hành khác.": "고객 결제 금액에서 추천 수수료를 뺀 금액이며 기타 운영비 차감 전입니다.",
+  "Khách thanh toán": "고객 결제",
+  "Bill gốc": "원래 결제 금액",
+  "Khách được ưu đãi": "고객 혜택",
+  "Người mời nhận": "추천인 수익",
+  "Tâm An còn lại": "Tâm An 잔여 금액",
+  "10% số tiền khách thực trả sau ưu đãi, chỉ ghi nhận khi dịch vụ hoàn tất và thanh toán đủ · đối soát 15 ngày": "혜택 적용 후 고객의 실제 결제 금액 중 10%이며, 서비스 완료 및 전액 결제 후에만 기록됩니다 · 15일 정산",
   "Đã xác nhận · Sẵn sàng đón khách": "예약 확정 · 방문 준비 완료",
   "TÂM AN CENTER đang xếp KTV và giường/ghế": "TÂM AN CENTER에서 테라피스트와 침대/의자를 배정하고 있습니다",
   "TÂM AN CENTER đang xếp KTV và giường/ghế phù hợp": "TÂM AN CENTER에서 적합한 테라피스트와 침대/의자를 배정하고 있습니다",

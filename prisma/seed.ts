@@ -44,7 +44,6 @@ function validateSeedPasswords() {
     "SEED_RECEPTION_CS1_PASSWORD",
     "SEED_RECEPTION_CS2_PASSWORD",
     "SEED_INVESTOR_PASSWORD",
-    "SEED_THERAPIST_PASSWORD",
     "SEED_CUSTOMER_PASSWORD",
   ].forEach(requiredSeedPassword);
 }
@@ -347,18 +346,6 @@ async function seedCatalog() {
           },
         },
       });
-      await prisma.user.create({
-        data: {
-          therapistId,
-          name: demo?.fullName ?? `KTV ${branchItem.id.toUpperCase()} ${String(index + 1).padStart(2, "0")}`,
-          username: `ktv.${branchItem.id}.${String(index + 1).padStart(2, "0")}`,
-          email: `ktv.${branchItem.id}.${String(index + 1).padStart(2, "0")}@tamancare.local`,
-          passwordHash: hashPassword(requiredSeedPassword("SEED_THERAPIST_PASSWORD")),
-          passwordChangedAt: new Date(),
-          role: "THERAPIST",
-          branchId: branchItem.id,
-        },
-      });
     }
 
     for (const room of facilityRoomsForBranch(branchItem.id)) {
@@ -625,22 +612,6 @@ async function seedCustomersAndBookings() {
         createdAt: new Date(Math.min(Date.now(), booking.startTime.getTime() - 45 * 60 * 1000)),
       })),
     });
-    if (therapist) {
-      const therapistUser = await prisma.user.findFirst({ where: { role: "THERAPIST", branchId, name: therapist.fullName } });
-      if (therapistUser) {
-        await prisma.notification.create({
-          data: {
-            userId: therapistUser.id,
-            branchId,
-            type: completed ? "FINANCE" : "BOOKING",
-            title: completed ? `Tip cuối ngày · ${customer.fullName}` : `Lịch phục vụ · ${customer.fullName}`,
-            body: completed ? `Tip KTV ngoài bill ${tipAmount.toLocaleString("vi-VN")}đ đã được ghi nhận.` : `${service.name} · ${booking.bookingCode}.`,
-            actionUrl: `/therapist/bookings/${booking.bookingCode}`,
-            createdAt: new Date(Math.min(Date.now(), booking.startTime.getTime() - 30 * 60 * 1000)),
-          },
-        });
-      }
-    }
   }
 }
 

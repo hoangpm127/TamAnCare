@@ -1,5 +1,17 @@
 // Generated from the canonical Vietnamese customer copy. Review brand, legal and medical wording before release.
 export const EXACT_ENGLISH: Record<string, string> = {
+  "Cách tính minh bạch giữa 3 bên": "Transparent calculation for all three parties",
+  "Khách được mời": "Invited customer",
+  "Bill gốc − toàn bộ voucher = số thực thanh toán.": "Original bill − all vouchers = amount actually paid.",
+  "Người mời": "Inviter",
+  "Nhận 10% số khách thực thanh toán sau ưu đãi.": "Receives 10% of what the customer actually pays after discounts.",
+  "Còn lại số khách thanh toán − hoa hồng người mời, trước các chi phí vận hành khác.": "Customer payment minus inviter commission, before other operating costs.",
+  "Khách thanh toán": "Customer pays",
+  "Bill gốc": "Original bill",
+  "Khách được ưu đãi": "Customer benefit",
+  "Người mời nhận": "Inviter receives",
+  "Tâm An còn lại": "Tâm An retains",
+  "10% số tiền khách thực trả sau ưu đãi, chỉ ghi nhận khi dịch vụ hoàn tất và thanh toán đủ · đối soát 15 ngày": "10% of the amount the customer actually pays after discounts, recorded only after the service is completed and fully paid · 15-day reconciliation",
   "Đã xác nhận · Sẵn sàng đón khách": "Confirmed · Ready for your visit",
   "TÂM AN CENTER đang xếp KTV và giường/ghế": "TÂM AN CENTER is assigning a therapist and bed/chair",
   "TÂM AN CENTER đang xếp KTV và giường/ghế phù hợp": "TÂM AN CENTER is assigning a suitable therapist and bed/chair",

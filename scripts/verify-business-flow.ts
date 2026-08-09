@@ -160,31 +160,17 @@ async function main() {
     orderBy: { createdAt: "asc" },
   });
   const fixturePasswordHash = hashPassword(`Business!${marker}`);
-  const [owner, therapistUser] = await Promise.all([
-    db.user.create({
-      data: {
-        name: `Owner QA ${marker}`,
-        username: `owner_${marker.toLowerCase()}`,
-        email: `owner-${marker.toLowerCase()}@business.tests`,
-        passwordHash: fixturePasswordHash,
-        passwordChangedAt: new Date(),
-        role: "OWNER",
-      },
-    }),
-    db.user.create({
-      data: {
-        name: lead.fullName,
-        username: `therapist_${marker.toLowerCase()}`,
-        email: `therapist-${marker.toLowerCase()}@business.tests`,
-        passwordHash: fixturePasswordHash,
-        passwordChangedAt: new Date(),
-        role: "THERAPIST",
-        branchId: branch.id,
-        therapistId: lead.id,
-      },
-    }),
-  ]);
-  fixtureUserIds.push(owner.id, therapistUser.id);
+  const owner = await db.user.create({
+    data: {
+      name: `Owner QA ${marker}`,
+      username: `owner_${marker.toLowerCase()}`,
+      email: `owner-${marker.toLowerCase()}@business.tests`,
+      passwordHash: fixturePasswordHash,
+      passwordChangedAt: new Date(),
+      role: "OWNER",
+    },
+  });
+  fixtureUserIds.push(owner.id);
   const customer = await db.customer.create({
     data: { fullName: `Khách Business ${marker}`, phone: customerPhone, firstSource: `BUSINESS_E2E:${marker}` },
   });
@@ -311,7 +297,7 @@ async function main() {
   assert(review.persisted && review.rating === 5, "Đánh giá Business chưa được ghi nhận.");
 
   const notificationCount = await db.notification.count({ where: { actionUrl: { contains: eventCode } } });
-  assert(notificationCount >= 8, "Chuỗi thông báo Business chưa đủ cho khách, KTV và quản lý.");
+  assert(notificationCount >= 6, "Chuỗi thông báo Business chưa đủ cho khách và quản lý.");
 
   console.log("BUSINESS_FLOW_OK", JSON.stringify({
     status: completed.status,

@@ -1,7 +1,9 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import {
   affiliateCustomerId,
   affiliateCommissionAmount,
+  affiliateFinancialBreakdown,
   affiliateOwnerEligible,
   affiliateVisitEligible,
   AFFILIATE_COMMISSION_RATE_BPS,
@@ -13,6 +15,24 @@ import { safeCustomerReturnPath } from "../lib/safe-return-path";
 assert.equal(AFFILIATE_COMMISSION_RATE_BPS, 1_000);
 assert.equal(AFFILIATE_RECONCILIATION_DAYS, 15);
 assert.equal(affiliateCommissionAmount(450_000), 45_000);
+assert.deepEqual(
+  affiliateFinancialBreakdown({
+    grossBillAmount: 840_000,
+    customerPaymentAmount: 640_000,
+    welcomeDiscountAmount: 150_000,
+    affiliateDiscountAmount: 50_000,
+  }),
+  {
+    grossBillAmount: 840_000,
+    welcomeDiscountAmount: 150_000,
+    affiliateDiscountAmount: 50_000,
+    otherDiscountAmount: 0,
+    invitedCustomerBenefitAmount: 200_000,
+    customerPaymentAmount: 640_000,
+    inviterCommissionAmount: 64_000,
+    centerNetAmount: 576_000,
+  },
+);
 assert.equal(affiliateVisitEligible({ totalVisits: 0, lastVisitAt: null, completedAt: new Date() }), true);
 assert.equal(affiliateVisitEligible({ totalVisits: 1, lastVisitAt: new Date("2026-08-01T00:00:00Z"), completedAt: new Date("2026-08-07T00:00:00Z") }), true);
 assert.equal(affiliateVisitEligible({ totalVisits: 1, lastVisitAt: new Date("2026-08-01T00:00:00Z"), completedAt: new Date("2026-08-09T00:00:01Z") }), false);
@@ -28,5 +48,9 @@ assert.equal(affiliateOwnerEligible({ phoneVerifiedAt: new Date() }, true), true
 assert.equal(affiliateOwnerEligible({ phoneVerifiedAt: null }, true), false);
 assert.equal(affiliateOwnerEligible({ phoneVerifiedAt: null }, false), true);
 assert.equal(affiliateOwnerEligible(null, false), false);
+assert.ok(
+  !readFileSync(new URL("../lib/server/payment-service.ts", import.meta.url), "utf8").includes("Hoa hồng Affiliate gói"),
+  "Mua gói dài hạn không được cộng hoa hồng trước khi khách hoàn tất một dịch vụ đủ điều kiện.",
+);
 
-console.log("Affiliate policy verified: owner eligibility, code normalization and 10% service-bill revenue share.");
+console.log("Affiliate policy verified: owner eligibility, code normalization and reconciled three-party cash flow.");

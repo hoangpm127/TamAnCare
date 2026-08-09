@@ -7,6 +7,53 @@ export function affiliateCommissionAmount(revenueAmount: number) {
   return Math.max(0, Math.round(Math.max(0, revenueAmount) * AFFILIATE_COMMISSION_RATE_BPS / 10_000));
 }
 
+export type AffiliateFinancialBreakdown = {
+  grossBillAmount: number;
+  welcomeDiscountAmount: number;
+  affiliateDiscountAmount: number;
+  otherDiscountAmount: number;
+  invitedCustomerBenefitAmount: number;
+  customerPaymentAmount: number;
+  inviterCommissionAmount: number;
+  centerNetAmount: number;
+};
+
+/**
+ * Một nguồn tính duy nhất cho dòng tiền Affiliate cá nhân.
+ *
+ * Bill gốc = ưu đãi của khách được mời + số khách thanh toán.
+ * Số khách thanh toán = hoa hồng người mời + doanh thu còn lại của Tâm An.
+ * Tip không được truyền vào đây vì luôn nằm ngoài Bill và GMV.
+ */
+export function affiliateFinancialBreakdown(input: {
+  grossBillAmount: number;
+  customerPaymentAmount: number;
+  welcomeDiscountAmount?: number;
+  affiliateDiscountAmount?: number;
+}): AffiliateFinancialBreakdown {
+  const grossBillAmount = Math.max(0, Math.round(input.grossBillAmount));
+  const customerPaymentAmount = Math.min(grossBillAmount, Math.max(0, Math.round(input.customerPaymentAmount)));
+  const totalDiscountAmount = grossBillAmount - customerPaymentAmount;
+  const welcomeDiscountAmount = Math.min(totalDiscountAmount, Math.max(0, Math.round(input.welcomeDiscountAmount ?? 0)));
+  const affiliateDiscountAmount = Math.min(
+    totalDiscountAmount - welcomeDiscountAmount,
+    Math.max(0, Math.round(input.affiliateDiscountAmount ?? 0)),
+  );
+  const otherDiscountAmount = totalDiscountAmount - welcomeDiscountAmount - affiliateDiscountAmount;
+  const inviterCommissionAmount = affiliateCommissionAmount(customerPaymentAmount);
+
+  return {
+    grossBillAmount,
+    welcomeDiscountAmount,
+    affiliateDiscountAmount,
+    otherDiscountAmount,
+    invitedCustomerBenefitAmount: totalDiscountAmount,
+    customerPaymentAmount,
+    inviterCommissionAmount,
+    centerNetAmount: customerPaymentAmount - inviterCommissionAmount,
+  };
+}
+
 export function affiliateVisitEligible(input: {
   totalVisits: number;
   lastVisitAt: Date | null;

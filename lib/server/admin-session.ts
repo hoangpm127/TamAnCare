@@ -17,6 +17,7 @@ const LEGACY_COOKIE_NAME = "tt_admin_session";
 const SESSION_DAYS = 30;
 const MAX_FAILED_LOGINS = 5;
 const ACCOUNT_LOCK_MINUTES = 15;
+const ACTIVE_INTERNAL_ROLES = ["OWNER", "MANAGER", "RECEPTIONIST", "INVESTOR", "XGROUP_SUPER_ADMIN", "DISTRICT_SALES_MANAGER"] as const;
 const DUMMY_PASSWORD_HASH = "scrypt:0123456789abcdef0123456789abcdef:115babb3388379f33e3094f0913751b9fff81cce9585c9edc92b9afb5330c9ecb004a51ef9dcaab762d5bb920e30c0a38422bff9b0f449054775ab71f6d7b6c6";
 
 function tokenHash(token: string) {
@@ -121,7 +122,7 @@ export async function createAdminSession(username: string, password: string, mfa
   const user = await db.user.findFirst({
     where: {
       username: { equals: normalizedUsername, mode: "insensitive" },
-      role: { in: ["OWNER", "MANAGER", "RECEPTIONIST", "THERAPIST", "INVESTOR", "XGROUP_SUPER_ADMIN", "DISTRICT_SALES_MANAGER"] },
+      role: { in: [...ACTIVE_INTERNAL_ROLES] },
     },
     include: { branch: true },
   });
@@ -198,7 +199,7 @@ export async function getAdminSession() {
     where: { tokenHash: tokenHash(token) },
     include: { user: { include: { branch: true } } },
   });
-  if (!session || session.expiresAt <= new Date() || !session.user.isActive) return null;
+  if (!session || session.expiresAt <= new Date() || !session.user.isActive || session.user.role === "THERAPIST") return null;
   return userToAccount(session.user);
 }
 

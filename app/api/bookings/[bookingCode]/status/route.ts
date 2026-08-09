@@ -8,7 +8,7 @@ import { money, notifyCustomer, notifyOperations, notifyTherapist } from "@/lib/
 import { isSameOriginMutation, privateIdentifierDigest, requestIp } from "@/lib/server/request-security";
 import { isCustomerAudienceRequest } from "@/lib/request-audience";
 import {
-  affiliateCommissionAmount,
+  affiliateFinancialBreakdown,
   affiliateCustomerId,
   affiliateOwnerEligible,
   affiliateVisitEligible,
@@ -59,7 +59,7 @@ export async function PATCH(request: Request, context: { params: Promise<{ booki
       async (tx) => {
         const directBooking = await tx.booking.findUnique({
           where: { bookingCode },
-          include: { group: true, customer: true, service: true, therapist: true, campaign: true },
+          include: { group: true, customer: true, service: true, therapist: true, campaign: true, voucherUsages: { include: { voucher: { select: { code: true } } } } },
         });
         const directGroup = directBooking
           ? null
@@ -67,7 +67,7 @@ export async function PATCH(request: Request, context: { params: Promise<{ booki
         const groupId = directBooking?.groupId ?? directGroup?.id;
         const group = directBooking?.group ?? directGroup;
         const bookings = groupId
-          ? await tx.booking.findMany({ where: { groupId }, include: { service: true, therapist: true, campaign: true }, orderBy: { startTime: "asc" } })
+          ? await tx.booking.findMany({ where: { groupId }, include: { service: true, therapist: true, campaign: true, voucherUsages: { include: { voucher: { select: { code: true } } } } }, orderBy: { startTime: "asc" } })
           : directBooking
             ? [directBooking]
             : [];
@@ -423,7 +423,14 @@ export async function PATCH(request: Request, context: { params: Promise<{ booki
                   },
                 });
                 if (!commissionExists) {
-                  const commissionAmount = affiliateCommissionAmount(totalAmount);
+                  const confirmedVoucherUsages = bookings.flatMap((item) => item.voucherUsages).filter((usage) => usage.status === "CONFIRMED");
+                  const financials = affiliateFinancialBreakdown({
+                    grossBillAmount: group?.subtotalAmount ?? bookings.reduce((sum, item) => sum + item.basePrice + item.therapistFee, 0),
+                    customerPaymentAmount: totalAmount,
+                    welcomeDiscountAmount: confirmedVoucherUsages.filter((usage) => usage.voucher.code === "WELCOME150").reduce((sum, usage) => sum + usage.discountAmount, 0),
+                    affiliateDiscountAmount: confirmedVoucherUsages.filter((usage) => usage.voucher.code === "AFF50").reduce((sum, usage) => sum + usage.discountAmount, 0),
+                  });
+                  const commissionAmount = financials.inviterCommissionAmount;
                   const commissionExpense = await tx.expense.create({
                     data: {
                       branchId,
@@ -452,7 +459,7 @@ export async function PATCH(request: Request, context: { params: Promise<{ booki
                     branchId,
                     type: "FINANCE",
                     title: `Đã ghi nhận hoa hồng Affiliate ${money(commissionAmount)}`,
-                    body: `${customer?.fullName ?? "Khách được giới thiệu"} đã hoàn tất lượt đủ điều kiện qua mã ${affiliateCampaign.code}. Đối soát theo kỳ ${AFFILIATE_RECONCILIATION_DAYS} ngày.`,
+                    body: `${customer?.fullName ?? "Khách được giới thiệu"} thanh toán ${money(financials.customerPaymentAmount)} sau ưu đãi; hoa hồng của bạn là 10% = ${money(commissionAmount)}. Đối soát theo kỳ ${AFFILIATE_RECONCILIATION_DAYS} ngày.`,
                     actionUrl: "/vi?tab=income",
                   });
                   await notifyOperations(tx, {
@@ -460,7 +467,7 @@ export async function PATCH(request: Request, context: { params: Promise<{ booki
                     audience: "MANAGEMENT",
                     type: "FINANCE",
                     title: `Phát sinh hoa hồng Affiliate · ${affiliate.fullName}`,
-                    body: `${affiliateCampaign.code} · ${referenceCode} · ${money(commissionAmount)} đã hạch toán vào chi phí Marketing.`,
+                    body: `${affiliateCampaign.code} · ${referenceCode} · khách ưu đãi ${money(financials.invitedCustomerBenefitAmount)} · thực trả ${money(financials.customerPaymentAmount)} · người mời ${money(commissionAmount)} · Tâm An còn ${money(financials.centerNetAmount)} trước chi phí khác.`,
                     actionUrl: "/admin/finance",
                   });
                 }
