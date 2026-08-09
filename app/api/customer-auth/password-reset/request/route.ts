@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { after, NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
+import { firebasePhonePublicConfig } from "@/lib/firebase-phone-server";
 import {
   deliverPasswordResetCode,
   normalizeRecoveryPhone,
@@ -31,6 +32,18 @@ export async function POST(request: Request) {
       { error: "Đã có quá nhiều yêu cầu. Vui lòng thử lại sau." },
       { status: 429, headers: { "Retry-After": String(retryAfter) } },
     );
+  }
+
+  if (passwordResetDeliveryMode() === "FIREBASE") {
+    const firebase = firebasePhonePublicConfig();
+    if (!firebase) return NextResponse.json({ error: "Firebase Phone Auth chưa được cấu hình đầy đủ." }, { status: 503 });
+    return NextResponse.json({
+      accepted: true,
+      deliveryConfigured: true,
+      provider: "FIREBASE",
+      firebase,
+      message: "Google đã gửi mã khôi phục tới số điện thoại của bạn.",
+    }, { status: 202 });
   }
 
   const [account, challengeId, code] = await Promise.all([

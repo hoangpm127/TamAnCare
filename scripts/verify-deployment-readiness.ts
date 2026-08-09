@@ -109,10 +109,12 @@ const otpCredentials = otpProvider === "ESMS"
   ? ["ESMS_API_KEY", "ESMS_SECRET_KEY"]
   : otpProvider === "SPEEDSMS"
     ? ["SPEEDSMS_ACCESS_TOKEN"]
+  : otpProvider === "FIREBASE"
+    ? ["FIREBASE_PHONE_API_KEY", "FIREBASE_PHONE_AUTH_DOMAIN", "FIREBASE_PHONE_PROJECT_ID", "FIREBASE_PHONE_APP_ID"]
   : otpProvider === "WEBHOOK"
     ? ["OTP_DELIVERY_WEBHOOK_URL", "OTP_DELIVERY_WEBHOOK_TOKEN"]
     : [];
-const otpConfigured = ["ESMS", "SPEEDSMS", "WEBHOOK"].includes(otpProvider ?? "")
+const otpConfigured = ["ESMS", "SPEEDSMS", "FIREBASE", "WEBHOOK"].includes(otpProvider ?? "")
   && otpCredentials.every((envName) => !isPlaceholder(process.env[envName]))
   && !(mode === "production" && otpProvider === "ESMS" && process.env.ESMS_SANDBOX === "true")
   && !(mode === "production" && !otpTemplatesApproved)

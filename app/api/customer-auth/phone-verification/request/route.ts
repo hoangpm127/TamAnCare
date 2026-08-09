@@ -3,6 +3,7 @@ import type { PhoneOtpPurpose } from "@/app/generated/prisma/client";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
+import { firebasePhonePublicConfig } from "@/lib/firebase-phone-server";
 import { getCustomerOAuthPendingIdentityId } from "@/lib/server/customer-oauth";
 import { getCustomerSession } from "@/lib/server/customer-session";
 import { deliverOtpCode, inspectOtpDeliveryReadiness, phoneVerificationOnSignupRequired, phoneVerificationRequired } from "@/lib/server/otp-delivery";
@@ -60,6 +61,17 @@ export async function POST(request: Request) {
       const identityId = await getCustomerOAuthPendingIdentityId();
       if (!identityId) return NextResponse.json({ error: "Phiên đăng nhập Google/Facebook đã hết hạn." }, { status: 401 });
     }
+  }
+
+  if (readiness.provider === "FIREBASE") {
+    const firebase = firebasePhonePublicConfig();
+    if (!firebase) return NextResponse.json({ error: "Firebase Phone Auth chưa được cấu hình đầy đủ." }, { status: 503 });
+    return NextResponse.json({
+      provider: "FIREBASE",
+      firebase,
+      expiresMinutes: PHONE_OTP_TTL_MINUTES,
+      message: `Google sẽ gửi mã xác minh tới số ${phone.slice(0, 3)}****${phone.slice(-3)}.`,
+    }, { status: 202 });
   }
 
   const challengeId = randomUUID();

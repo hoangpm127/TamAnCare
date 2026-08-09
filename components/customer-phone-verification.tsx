@@ -1,7 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { CheckCircle2, Loader2, MessageSquareText, ShieldCheck } from "lucide-react";
+import {
+  startFirebasePhoneVerification,
+  type FirebasePhoneClientConfig,
+  type FirebasePhoneConfirmation,
+} from "@/lib/firebase-phone-client";
 
 type VerificationPurpose = "CUSTOMER_SIGNUP" | "CUSTOMER_SOCIAL_SIGNUP" | "ACCOUNT_PHONE";
 
@@ -10,6 +15,8 @@ type VerificationConfig = {
   configured: boolean;
   codeLength: number;
   expiresMinutes: number;
+  provider?: string | null;
+  firebase?: FirebasePhoneClientConfig | null;
 };
 
 export function CustomerPhoneVerification({
@@ -25,6 +32,8 @@ export function CustomerPhoneVerification({
 }) {
   const callbackRef = useRef(onVerificationChange);
   const requirementCallbackRef = useRef(onRequiredChange);
+  const firebaseConfirmationRef = useRef<FirebasePhoneConfirmation | null>(null);
+  const recaptchaId = `phone-verification-${useId().replace(/:/g, "")}`;
   const [config, setConfig] = useState<VerificationConfig | null | undefined>(undefined);
   const [challengeId, setChallengeId] = useState("");
   const [code, setCode] = useState("");
@@ -68,6 +77,14 @@ export function CustomerPhoneVerification({
         setMessage(payload.message ?? "Số điện thoại đã được xác minh.");
         return;
       }
+      if (payload.provider === "FIREBASE") {
+        const firebase = (payload.firebase ?? config?.firebase) as FirebasePhoneClientConfig | null | undefined;
+        if (!firebase) throw new Error("Thiếu cấu hình xác minh Firebase.");
+        firebaseConfirmationRef.current = await startFirebasePhoneVerification(firebase, phone, recaptchaId);
+        setChallengeId("firebase");
+        setMessage(payload.message ?? "Google đã gửi mã xác minh qua SMS.");
+        return;
+      }
       setChallengeId(payload.challengeId);
       setMessage(payload.message ?? "Mã xác minh đã được gửi.");
     } catch (reason) {
@@ -81,10 +98,16 @@ export function CustomerPhoneVerification({
     setBusy(true);
     setError("");
     try {
+      const firebaseIdToken = config?.provider === "FIREBASE"
+        ? await firebaseConfirmationRef.current?.confirm(code)
+        : undefined;
+      if (config?.provider === "FIREBASE" && !firebaseIdToken) throw new Error("Vui lòng gửi lại mã xác minh.");
       const response = await fetch("/api/customer-auth/phone-verification/verify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone, purpose, challengeId, code }),
+        body: JSON.stringify(config?.provider === "FIREBASE"
+          ? { phone, purpose, firebaseIdToken }
+          : { phone, purpose, challengeId, code }),
       });
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error ?? "Mã xác minh chưa đúng.");
@@ -111,6 +134,7 @@ export function CustomerPhoneVerification({
 
   return (
     <div className="rounded-2xl bg-[#fcf5ef] p-3 ring-1 ring-[#e7d6ca]">
+      <div id={recaptchaId} />
       <div className="flex items-start gap-2.5">
         <MessageSquareText size={17} className="mt-0.5 shrink-0 text-[#c64b32]" />
         <div className="min-w-0 flex-1">

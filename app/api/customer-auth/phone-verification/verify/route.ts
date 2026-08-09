@@ -1,10 +1,12 @@
+import { createHash, randomUUID } from "node:crypto";
 import type { PhoneOtpPurpose } from "@/app/generated/prisma/client";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
+import { verifyFirebasePhoneIdToken } from "@/lib/firebase-phone-server";
 import { getCustomerOAuthPendingIdentityId } from "@/lib/server/customer-oauth";
 import { getCustomerSession } from "@/lib/server/customer-session";
-import { inspectEsmsDeliveryStatus, phoneVerificationOnSignupRequired, phoneVerificationRequired } from "@/lib/server/otp-delivery";
+import { inspectEsmsDeliveryStatus, otpDeliveryMode, phoneVerificationOnSignupRequired, phoneVerificationRequired } from "@/lib/server/otp-delivery";
 import {
   createPhoneVerificationToken,
   isVietnamMobilePhone,
@@ -19,8 +21,9 @@ const allowedPurposes = ["CUSTOMER_SIGNUP", "CUSTOMER_SOCIAL_SIGNUP", "ACCOUNT_P
 const schema = z.object({
   phone: z.string().trim().min(8).max(20),
   purpose: z.enum(allowedPurposes),
-  challengeId: z.string().uuid(),
-  code: z.string().regex(new RegExp(`^\\d{${PHONE_OTP_CODE_LENGTH}}$`)),
+  challengeId: z.string().uuid().optional(),
+  code: z.string().regex(new RegExp(`^\\d{${PHONE_OTP_CODE_LENGTH}}$`)).optional(),
+  firebaseIdToken: z.string().min(100).max(8_192).optional(),
 });
 
 export async function POST(request: Request) {
@@ -46,6 +49,51 @@ export async function POST(request: Request) {
   } else if (purpose === "CUSTOMER_SOCIAL_SIGNUP") {
     const identityId = await getCustomerOAuthPendingIdentityId();
     if (!identityId) return NextResponse.json({ error: "Phiên đăng nhập Google/Facebook đã hết hạn." }, { status: 401 });
+  }
+
+  if (otpDeliveryMode() === "FIREBASE") {
+    if (!parsed.data.firebaseIdToken) return NextResponse.json({ error: "Phiên xác minh Firebase chưa hợp lệ." }, { status: 400 });
+    const firebaseIdentity = await verifyFirebasePhoneIdToken(parsed.data.firebaseIdToken);
+    if (!firebaseIdentity || firebaseIdentity.phone !== phone) {
+      return NextResponse.json({ error: "Mã không đúng, đã hết hạn hoặc số điện thoại không khớp." }, { status: 400 });
+    }
+
+    const now = new Date();
+    const digest = phoneHash(phone);
+    const verification = createPhoneVerificationToken();
+    const challengeId = randomUUID();
+    await db.$transaction(async (tx) => {
+      await tx.phoneOtpChallenge.updateMany({
+        where: { phoneHash: digest, purpose, consumedAt: null },
+        data: { consumedAt: now },
+      });
+      await tx.phoneOtpChallenge.create({
+        data: {
+          id: challengeId,
+          customerId: purpose === "ACCOUNT_PHONE" ? customerSession!.customerId : null,
+          phoneHash: digest,
+          purpose,
+          codeHash: createHash("sha256").update(`${challengeId}:${firebaseIdentity.uid}`).digest("hex"),
+          verificationTokenHash: verification.tokenHash,
+          expiresAt: new Date(now.getTime() + 10 * 60_000),
+          verifiedAt: now,
+          consumedAt: purpose === "ACCOUNT_PHONE" ? now : null,
+          deliveryStatus: "SENT",
+          deliveryReference: `firebase:${firebaseIdentity.uid}`.slice(0, 200),
+        },
+      });
+      if (purpose === "ACCOUNT_PHONE") {
+        await tx.customerAccount.update({ where: { customerId: customerSession!.customerId }, data: { phoneVerifiedAt: now } });
+      }
+    });
+    await clearRateLimit("phone-otp-verify", `${requestIp(request)}:${phone}`);
+    return NextResponse.json(purpose === "ACCOUNT_PHONE"
+      ? { verified: true, message: "Số điện thoại đã được xác minh." }
+      : { verified: true, verificationToken: verification.token, expiresMinutes: 10 });
+  }
+
+  if (!parsed.data.challengeId || !parsed.data.code) {
+    return NextResponse.json({ error: "Mã xác minh hoặc phiên gửi mã chưa hợp lệ." }, { status: 400 });
   }
 
   const now = new Date();

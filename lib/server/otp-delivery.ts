@@ -1,5 +1,7 @@
 import "server-only";
 
+import { firebasePhonePublicConfig } from "@/lib/firebase-phone-server";
+
 export type OtpDeliveryTemplate =
   | "TAMAN_PHONE_VERIFICATION"
   | "TAMAN_PASSWORD_RESET";
@@ -55,8 +57,8 @@ type SpeedSmsResponse = {
 
 export type OtpDeliveryReadiness = {
   state: "READY" | "DISABLED" | "PENDING_TEMPLATE" | "MISCONFIGURED" | "PROVIDER_UNAVAILABLE";
-  provider: "ESMS" | "SPEEDSMS" | "WEBHOOK" | "DISABLED" | "TEST_MODE";
-  channel: "SMS" | "WEBHOOK" | "TEST" | "NONE";
+  provider: "ESMS" | "SPEEDSMS" | "FIREBASE" | "WEBHOOK" | "DISABLED" | "TEST_MODE";
+  channel: "SMS" | "FIREBASE" | "WEBHOOK" | "TEST" | "NONE";
   detail: string;
   templateId?: number;
 };
@@ -66,7 +68,7 @@ let esmsTemplateCache: { key: string; expiresAt: number; template: EsmsTemplate 
 
 function configuredProvider() {
   const explicit = process.env.OTP_PROVIDER?.trim().toUpperCase();
-  if (explicit === "ESMS" || explicit === "SPEEDSMS" || explicit === "WEBHOOK" || explicit === "DISABLED") return explicit;
+  if (explicit === "ESMS" || explicit === "SPEEDSMS" || explicit === "FIREBASE" || explicit === "WEBHOOK" || explicit === "DISABLED") return explicit;
   if (process.env.SPEEDSMS_ACCESS_TOKEN?.trim()) return "SPEEDSMS";
   if (process.env.ESMS_API_KEY?.trim() && process.env.ESMS_SECRET_KEY?.trim()) return "ESMS";
   if (process.env.OTP_DELIVERY_WEBHOOK_URL?.trim() && process.env.OTP_DELIVERY_WEBHOOK_TOKEN?.trim()) return "WEBHOOK";
@@ -173,6 +175,11 @@ export async function inspectOtpDeliveryReadiness(): Promise<OtpDeliveryReadines
     return process.env.OTP_DELIVERY_WEBHOOK_URL?.trim() && process.env.OTP_DELIVERY_WEBHOOK_TOKEN?.trim()
       ? { state: "READY", provider: "WEBHOOK", channel: "WEBHOOK", detail: "Gateway OTP đã sẵn sàng." }
       : { state: "MISCONFIGURED", provider: "WEBHOOK", channel: "WEBHOOK", detail: "Gateway OTP thiếu URL hoặc token." };
+  }
+  if (mode === "FIREBASE") {
+    return firebasePhonePublicConfig()
+      ? { state: "READY", provider: "FIREBASE", channel: "FIREBASE", detail: "Firebase Phone Auth đã sẵn sàng cho SMS OTP." }
+      : { state: "MISCONFIGURED", provider: "FIREBASE", channel: "FIREBASE", detail: "Thiếu cấu hình Firebase Phone Auth." };
   }
   if (mode === "SPEEDSMS") {
     const accessToken = process.env.SPEEDSMS_ACCESS_TOKEN?.trim();
@@ -358,5 +365,6 @@ export async function deliverOtpCode(input: OtpDeliveryInput): Promise<OtpDelive
   if (mode === "ESMS") return deliverWithEsms(input);
   if (mode === "SPEEDSMS") return deliverWithSpeedSms(input);
   if (mode === "WEBHOOK") return deliverWithWebhook(input);
+  if (mode === "FIREBASE") throw new Error("FIREBASE_CLIENT_VERIFICATION_REQUIRED");
   throw new Error("OTP_DELIVERY_DISABLED");
 }

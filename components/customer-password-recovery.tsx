@@ -1,7 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useRef, useState } from "react";
 import { ArrowLeft, CheckCircle2, KeyRound, Loader2, MessageSquareText, ShieldCheck } from "lucide-react";
+import {
+  startFirebasePhoneVerification,
+  type FirebasePhoneClientConfig,
+  type FirebasePhoneConfirmation,
+} from "@/lib/firebase-phone-client";
 
 export function CustomerPasswordRecovery({ initialPhone, onClose }: { initialPhone: string; onClose: () => void }) {
   const [step, setStep] = useState<"request" | "confirm" | "success">("request");
@@ -9,9 +14,13 @@ export function CustomerPasswordRecovery({ initialPhone, onClose }: { initialPho
   const [code, setCode] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmation, setConfirmation] = useState("");
+  const [provider, setProvider] = useState("");
+  const [codeLength, setCodeLength] = useState(8);
   const [deliveryConfigured, setDeliveryConfigured] = useState(true);
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const firebaseConfirmationRef = useRef<FirebasePhoneConfirmation | null>(null);
+  const recaptchaId = `password-recovery-${useId().replace(/:/g, "")}`;
 
   async function requestCode(event: React.FormEvent) {
     event.preventDefault();
@@ -29,6 +38,16 @@ export function CustomerPasswordRecovery({ initialPhone, onClose }: { initialPho
       if (payload.deliveryConfigured === false) {
         setMessage("Kênh khôi phục mật khẩu đang tạm bảo trì. Vui lòng liên hệ Tâm An Center để được hỗ trợ.");
         return;
+      }
+      if (payload.provider === "FIREBASE") {
+        const firebase = payload.firebase as FirebasePhoneClientConfig | null | undefined;
+        if (!firebase) throw new Error("Thiếu cấu hình xác minh Firebase.");
+        firebaseConfirmationRef.current = await startFirebasePhoneVerification(firebase, phone, recaptchaId);
+        setProvider("FIREBASE");
+        setCodeLength(6);
+      } else {
+        setProvider(payload.provider ?? "");
+        setCodeLength(8);
       }
       setMessage(payload.message ?? "Nếu tài khoản tồn tại, mã khôi phục sẽ được gửi.");
       setStep("confirm");
@@ -48,10 +67,16 @@ export function CustomerPasswordRecovery({ initialPhone, onClose }: { initialPho
     setSubmitting(true);
     setMessage("");
     try {
+      const firebaseIdToken = provider === "FIREBASE"
+        ? await firebaseConfirmationRef.current?.confirm(code)
+        : undefined;
+      if (provider === "FIREBASE" && !firebaseIdToken) throw new Error("Vui lòng gửi lại mã khôi phục.");
       const response = await fetch("/api/customer-auth/password-reset/confirm", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone, code, newPassword }),
+        body: JSON.stringify(provider === "FIREBASE"
+          ? { phone, firebaseIdToken, newPassword }
+          : { phone, code, newPassword }),
       });
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error ?? "Không thể đặt lại mật khẩu.");
@@ -77,13 +102,14 @@ export function CustomerPasswordRecovery({ initialPhone, onClose }: { initialPho
 
   return (
     <section className="mt-4 rounded-2xl bg-[#fcf5ef] p-4 ring-1 ring-[#e7d6ca]">
+      <div id={recaptchaId} />
       <div className="flex items-start gap-3">
         <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-[#c64b32] ring-1 ring-[#e7d6ca]">
           {step === "request" ? <MessageSquareText size={17} /> : <KeyRound size={17} />}
         </span>
         <div className="min-w-0 flex-1">
           <h2 className="text-sm font-semibold">{step === "request" ? "Khôi phục bằng mã xác nhận" : "Nhập mã và mật khẩu mới"}</h2>
-          <p className="mt-1 text-[11px] leading-5 text-[#786a63]">Mã gồm 8 số, chỉ dùng một lần và hết hạn sau 10 phút.</p>
+          <p className="mt-1 text-[11px] leading-5 text-[#786a63]">Mã gồm {codeLength} số, chỉ dùng một lần và hết hạn sau 10 phút.</p>
         </div>
         <button type="button" onClick={onClose} aria-label="Đóng khôi phục mật khẩu" className="text-[#786a63]"><ArrowLeft size={17} /></button>
       </div>
@@ -103,8 +129,8 @@ export function CustomerPasswordRecovery({ initialPhone, onClose }: { initialPho
         <form onSubmit={confirmReset} className="mt-3 space-y-3">
           <p className="rounded-xl bg-white p-3 text-[11px] leading-5 text-[#68574f] ring-1 ring-[#e7d6ca]">{message}</p>
           {!deliveryConfigured ? <p role="alert" className="rounded-xl bg-amber-50 p-3 text-[11px] leading-5 text-amber-900 ring-1 ring-amber-200">Kênh SMS/Zalo chưa được cấu hình ở môi trường này. Chủ hệ thống cần kết nối nhà cung cấp trước khi dùng thật.</p> : null}
-          <label className="block text-xs font-semibold">Mã xác nhận 8 số
-            <input required inputMode="numeric" pattern="[0-9]{8}" maxLength={8} value={code} onChange={(event) => setCode(event.target.value.replace(/\D/g, ""))} className="mt-1.5 w-full rounded-xl border border-[#e7d6ca] bg-white px-3 py-3 text-center font-mono text-lg tracking-[0.3em] outline-none focus:border-[#c64b32]" />
+          <label className="block text-xs font-semibold">Mã xác nhận {codeLength} số
+            <input required inputMode="numeric" pattern={`[0-9]{${codeLength}}`} maxLength={codeLength} value={code} onChange={(event) => setCode(event.target.value.replace(/\D/g, ""))} className="mt-1.5 w-full rounded-xl border border-[#e7d6ca] bg-white px-3 py-3 text-center font-mono text-lg tracking-[0.3em] outline-none focus:border-[#c64b32]" />
           </label>
           <label className="block text-xs font-semibold">Mật khẩu mới · tối thiểu 15 ký tự
             <input required type="password" minLength={15} maxLength={72} autoComplete="new-password" value={newPassword} onChange={(event) => setNewPassword(event.target.value)} className="mt-1.5 w-full rounded-xl border border-[#e7d6ca] bg-white px-3 py-3 text-sm outline-none focus:border-[#c64b32]" />

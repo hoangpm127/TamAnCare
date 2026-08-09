@@ -1,6 +1,6 @@
 {
   "name": "tam-an-center",
-  "version": "1.5.6",
+  "version": "1.5.7",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -43,6 +43,7 @@
     "@types/qrcode": "^1.5.6",
     "clsx": "^2.1.1",
     "date-fns": "^4.4.0",
+    "firebase": "^12.17.1",
     "lucide-react": "^1.23.0",
     "next": "^16.3.0",
     "oauth4webapi": "3.8.6",
@@ -77,6 +78,7 @@
     "postcss": "8.5.25",
     "valibot": "1.4.2",
     "sharp": "0.35.0",
+    "js-yaml": "4.3.1",
     "@hono/node-server": "2.0.11"
   }
 }
