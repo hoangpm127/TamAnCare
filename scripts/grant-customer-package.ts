@@ -1,8 +1,16 @@
 import { addDays } from "date-fns";
 import { db } from "../lib/db";
-import { isVietnamMobilePhone, normalizeVietnamPhone } from "../lib/server/phone-otp";
 
 const CONFIRMATION = "GRANT_ACTIVE_CUSTOMER_PACKAGE";
+
+function normalizeVietnamPhone(value: string) {
+  const digits = value.replace(/\D/g, "");
+  return digits.startsWith("84") ? `0${digits.slice(2)}` : digits;
+}
+
+function isVietnamMobilePhone(value: string) {
+  return /^0(?:3|5|7|8|9)\d{8}$/.test(normalizeVietnamPhone(value));
+}
 
 async function main() {
   if (process.env.CONFIRM_PACKAGE_GRANT !== CONFIRMATION) {
