@@ -5,8 +5,9 @@ import { hashPassword } from "../lib/password";
 import { affiliateCommissionAmount } from "../lib/referral-policy";
 
 const BASE_URL = process.env.TEST_BASE_URL ?? "http://127.0.0.1:3000";
-const TEST_WEBHOOK_SECRET = process.env.TEST_SEPAY_WEBHOOK_SECRET ?? "local-e2e-webhook-secret";
-const TEST_ACCOUNT_NUMBER = process.env.TEST_SEPAY_ACCOUNT_NUMBER ?? "12346666888";
+const TEST_WEBHOOK_SECRET = process.env.TEST_SEPAY_WEBHOOK_SECRET ?? process.env.SEPAY_WEBHOOK_SECRET ?? "local-e2e-webhook-secret";
+const TEST_ACCOUNT_NUMBER = process.env.TEST_SEPAY_ACCOUNT_NUMBER ?? process.env.NEXT_PUBLIC_PAYMENT_ACCOUNT_NUMBER ?? "12346666888";
+const PRODUCTION_CONFIRMATION = "RUN_TAGGED_AFFILIATE_E2E_WITH_CLEANUP";
 const marker = `AFFE2E${Date.now().toString(36).toUpperCase()}`;
 const ownerPhone = `09${String(Date.now()).slice(-8)}`;
 const friendPhone = `08${String(Date.now() + 1).slice(-8)}`;
@@ -164,7 +165,10 @@ async function cleanup() {
 }
 
 async function main() {
-  assert(process.env.APP_ENV !== "production", "Không chạy bài test Affiliate E2E trên production.");
+  assert(
+    process.env.APP_ENV !== "production" || process.env.ALLOW_PRODUCTION_AFFILIATE_E2E === PRODUCTION_CONFIRMATION,
+    `Không chạy bài test Affiliate E2E trên production nếu chưa đặt ALLOW_PRODUCTION_AFFILIATE_E2E=${PRODUCTION_CONFIRMATION}.`,
+  );
   const ownerJar: CookieJar = new Map();
   const friendJar: CookieJar = new Map();
   const adminJar: CookieJar = new Map();
