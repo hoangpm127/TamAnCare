@@ -562,7 +562,7 @@ export async function createBookingGroup(input: BookingGroupInput) {
             ? 0
             : Math.min(
                 Math.max(0, depositAmount - allocatedDeposit),
-                Math.round(unitSubtotal * BOOKING_POLICY.depositPercent / 100),
+                Math.round(unitTotal * BOOKING_POLICY.depositPercent / 100),
               );
         allocatedDeposit += unitDeposit;
 
@@ -684,7 +684,7 @@ export async function createBookingGroup(input: BookingGroupInput) {
             bankCode: input.bankCode,
             paymentCode: buildPaymentCode(group.referenceCode, "DEPOSIT"),
             idempotencyKey: `deposit:${group.referenceCode}`,
-            note: "Cọc cho tài khoản nền tảng: 10% giá trị Bill ban đầu trước ưu đãi; chờ ngân hàng đối soát.",
+            note: "Cọc cho tài khoản nền tảng: 10% giá trị cuối cùng sau ưu đãi; chờ ngân hàng đối soát.",
           },
         });
       }

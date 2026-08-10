@@ -493,8 +493,8 @@ async function main() {
   });
   assert(!voucherBooking.usedPackage && voucherBooking.depositPayment?.status === "PENDING", "WELCOME150 không tạo đúng yêu cầu cọc.");
   assert(
-    voucherBooking.depositAmount === Math.round((service.basePrice + service.therapistFee) * 0.1),
-    "Tiền cọc voucher chưa bằng 10% giá trị Bill ban đầu trước ưu đãi.",
+    voucherBooking.depositAmount === Math.round(voucherBooking.totalAmount * 0.1),
+    "Tiền cọc voucher chưa bằng 10% giá trị cuối sau ưu đãi.",
   );
   let account = await db.customerAccount.findUniqueOrThrow({ where: { customerId: voucherCustomerId } });
   let voucherUsage = await db.voucherUsage.findFirstOrThrow({ where: { booking: { group: { referenceCode: voucherReference } } } });

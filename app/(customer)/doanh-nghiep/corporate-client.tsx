@@ -297,7 +297,7 @@ export function CorporateClient({ businessCatalog }: { businessCatalog: Business
             </p>
             <h1 className="mt-1.5 text-lg font-semibold tracking-tight">Yêu cầu {inquiryCode}</h1>
             <p className="mt-1.5 text-sm leading-6 text-[#68574f]">
-              Tâm An Center đã tự động lên báo giá cho {companyName}. Bạn chỉ cần đặt cọc {depositPolicy.percent}% giá trị ban đầu để giữ lịch, đội ngũ
+              Tâm An Center đã tự động lên báo giá cho {companyName}. Bạn chỉ cần đặt cọc {depositPolicy.percent}% giá sau ưu đãi để giữ lịch, đội ngũ
               chúng tôi sẽ xác nhận & triển khai dịch vụ tận nơi.
             </p>
 
@@ -333,10 +333,10 @@ export function CorporateClient({ businessCatalog }: { businessCatalog: Business
               <span className="min-w-0">
                 <span className="block text-sm font-semibold">Cọc nền tảng để giữ lịch</span>
                 <span className="mt-0.5 block text-base font-bold text-[#c64b32]">
-                  {formatMoney(depositAmount)} <span className="text-xs font-normal text-[#826f66]">({depositPolicy.percent}% giá trị ban đầu)</span>
+                  {formatMoney(depositAmount)} <span className="text-xs font-normal text-[#826f66]">({depositPolicy.percent}% giá sau ưu đãi)</span>
                 </span>
                 <span className="mt-1 block text-xs text-[#826f66]">
-                  Còn lại {formatMoney(amountDueOnsite)} = 90% giá trị ban đầu trừ ưu đãi, thanh toán riêng sau dịch vụ.
+                  Còn lại {formatMoney(amountDueOnsite)} = giá cuối sau ưu đãi trừ tiền cọc, thanh toán riêng sau dịch vụ.
                 </span>
               </span>
             </div>
@@ -361,12 +361,12 @@ export function CorporateClient({ businessCatalog }: { businessCatalog: Business
           <div className="bg-gradient-to-br from-[#211514] via-[#4b2619] to-[#8b2b28] px-5 py-6 text-white">
             <p className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-[#e7c878]"><ShieldCheck size={13} /> Thanh toán bảo mật · {inquiryCode}</p>
             <h1 className="mt-2 text-xl font-semibold">Chọn ngân hàng chuyển khoản</h1>
-            <p className="mt-1 text-xs leading-5 text-white/70">Số tiền cọc chuyển vào tài khoản nền tảng đã được khóa bằng 10% giá trị ban đầu: <strong className="text-white">{formatMoney(depositAmount)}</strong>.</p>
+            <p className="mt-1 text-xs leading-5 text-white/70">Số tiền cọc chuyển vào tài khoản nền tảng đã được khóa bằng 10% giá sau ưu đãi: <strong className="text-white">{formatMoney(depositAmount)}</strong>.</p>
           </div>
           <div className="p-5">
             <div className="mb-4 grid grid-cols-3 rounded-2xl bg-[#fbf2e7] p-3 text-center"><span className="text-[9px] text-[#826f66]">Sau ưu đãi<strong className="mt-1 block text-xs text-[#281b18]">{formatMoney(total)}</strong></span><span className="border-x border-[#e7d6ca] text-[9px] text-[#826f66]">Cọc nền tảng<strong className="mt-1 block text-xs text-[#c64b32]">{formatMoney(depositAmount)}</strong></span><span className="text-[9px] text-[#826f66]">Còn lại<strong className="mt-1 block text-xs text-[#281b18]">{formatMoney(amountDueOnsite)}</strong></span></div>
             <p className="mb-2.5 flex items-center gap-2 text-sm font-semibold"><Wallet size={16} className="text-[#c64b32]" /> VietQR đặt cọc Tâm An Business</p>
-            {pendingPayment?.paymentCode ? <BankTransferDetails amount={depositAmount} transferContent={pendingPayment.paymentCode} onConfirm={confirmDeposit} helperText="Đây là tài khoản nhận cọc của nền tảng. SePay tự động đối soát đúng 10% giá trị ban đầu và đưa giao dịch vào sổ liên quan." /> : <div className="rounded-2xl bg-[#f7f3ef] p-5 text-center"><Loader2 className="mx-auto animate-spin text-[#c64b32]" size={24} /><p className="mt-2 text-sm font-semibold">Đang tạo VietQR đặt cọc…</p></div>}
+            {pendingPayment?.paymentCode ? <BankTransferDetails amount={depositAmount} transferContent={pendingPayment.paymentCode} onConfirm={confirmDeposit} helperText="Đây là tài khoản nhận cọc của nền tảng. SePay tự động đối soát đúng 10% giá sau ưu đãi và đưa giao dịch vào sổ liên quan." /> : <div className="rounded-2xl bg-[#f7f3ef] p-5 text-center"><Loader2 className="mx-auto animate-spin text-[#c64b32]" size={24} /><p className="mt-2 text-sm font-semibold">Đang tạo VietQR đặt cọc…</p></div>}
             {submitError ? <p className="mt-3 rounded-xl bg-red-50 p-3 text-xs font-medium text-red-700">{submitError}</p> : null}
             <button type="button" onClick={() => setStage("deposit")} className="mt-3 w-full py-2 text-xs font-semibold text-[#826f66]">Quay lại xem báo giá</button>
           </div>
@@ -405,7 +405,7 @@ export function CorporateClient({ businessCatalog }: { businessCatalog: Business
             </span>
             <p className="text-xs leading-5 text-white/75">
               <strong className="font-semibold">Tâm An Center sẽ tự động lên báo giá</strong> — bạn chỉ cần đặt cọc{" "}
-              {depositPolicy.percent}% giá trị ban đầu trước ưu đãi để xác nhận, đội ngũ chúng tôi sẽ xác nhận & triển khai dịch vụ tận nơi.
+              {depositPolicy.percent}% giá cuối sau ưu đãi để xác nhận, đội ngũ chúng tôi sẽ xác nhận & triển khai dịch vụ tận nơi.
             </p>
           </div>
         </div>
@@ -687,7 +687,7 @@ export function CorporateClient({ businessCatalog }: { businessCatalog: Business
             <span className="text-xl font-semibold text-[#c64b32]">{formatMoney(total)}</span>
           </div>
           <p className="mt-1.5 text-[11px] text-[#826f66]">
-            Báo giá tự động theo thông tin bạn nhập. Đặt cọc {depositPolicy.percent}% giá trị ban đầu trước ưu đãi để giữ lịch, đội ngũ Tâm An Center sẽ xác nhận đầu
+            Báo giá tự động theo thông tin bạn nhập. Đặt cọc {depositPolicy.percent}% giá cuối sau ưu đãi để giữ lịch, đội ngũ Tâm An Center sẽ xác nhận đầu
             người thực tế trước khi triển khai.
           </p>
 

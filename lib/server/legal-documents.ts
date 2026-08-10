@@ -139,8 +139,8 @@ const PRIVACY: LegalDocument = {
 const BOOKING_POLICY: LegalDocument = {
   type: "BOOKING_POLICY",
   title: "Chính sách đặt lịch, đặt cọc và sử dụng dịch vụ",
-  version: "2026-08-04-draft.2",
-  effectiveDate: "04/08/2026 (dự thảo)",
+  version: "2026-08-10-draft.3",
+  effectiveDate: "10/08/2026 (dự thảo)",
   summary: "Các quy tắc vận hành được áp dụng khi khách giữ chỗ, đổi lịch, check-in và hoàn tất thanh toán.",
   sections: [
     {
@@ -154,7 +154,7 @@ const BOOKING_POLICY: LegalDocument = {
     {
       heading: "2. Giá và tiền đặt cọc",
       paragraphs: [
-        "Tiền cọc bằng 10% giá trị Bill ban đầu trước ưu đãi và không vượt quá số tiền thực trả. Hệ thống hiển thị rõ tổng trước giảm, khoản giảm, tổng sau giảm, cọc và số còn lại trước khi khách chuyển khoản.",
+        "Tiền cọc bằng 10% giá trị cuối cùng sau toàn bộ ưu đãi và không vượt quá số tiền thực trả. Hệ thống hiển thị rõ tổng trước giảm, khoản giảm, tổng sau giảm, cọc và số còn lại trước khi khách chuyển khoản.",
         "Khung giờ chỉ được giữ trong thời hạn hiển thị. Booking chưa nhận được khoản cọc hợp lệ có thể tự hết hạn để trả lại năng lực phục vụ. Trạng thái thanh toán căn cứ vào giao dịch ngân hàng đã đối soát.",
       ],
     },

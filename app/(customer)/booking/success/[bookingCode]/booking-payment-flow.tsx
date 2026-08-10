@@ -412,7 +412,7 @@ export function BookingPaymentFlow({ referenceCode }: { referenceCode: string })
           {stage === "awaiting" ? (
             <div className="rounded-2xl border border-[#d2ad5d]/60 bg-gradient-to-br from-[#2a1916] via-[#4b2619] to-[#7d211f] p-4 text-white shadow-lg">
               <p className="flex items-center gap-2 text-sm font-semibold text-[#e7c878]"><Wallet size={16} /> {summary.packageName ? `Sẵn sàng dùng ${summary.packageName}` : "Sẵn sàng giữ lịch bằng khoản cọc"}</p>
-              <p className="mt-1.5 text-xs leading-5 text-white/70">{summary.packageName ? "Xác nhận để hệ thống giữ lượt gói và gửi lịch cho cơ sở duyệt." : "Khoản cọc bằng 10% giá trị Bill ban đầu trước ưu đãi và được chuyển vào tài khoản nền tảng."}</p>
+              <p className="mt-1.5 text-xs leading-5 text-white/70">{summary.packageName ? "Xác nhận để hệ thống giữ lượt gói và gửi lịch cho cơ sở duyệt." : "Khoản cọc bằng 10% giá trị cuối cùng sau ưu đãi và được chuyển vào tài khoản nền tảng."}</p>
               <button type="button" onClick={beginTransfer} className="mt-3 w-full rounded-full bg-[#e7c878] px-4 py-3 text-sm font-semibold text-[#3d1f12]">{summary.packageName ? "Dùng lượt gói để giữ lịch" : "Chuyển khoản đặt cọc dịch vụ"}</button>
             </div>
           ) : stage === "preparing" ? (
@@ -435,7 +435,7 @@ export function BookingPaymentFlow({ referenceCode }: { referenceCode: string })
           ) : (
             <>
               <p className="mb-2.5 flex items-center gap-2 text-sm font-semibold"><Wallet size={16} className="text-[#c64b32]" /> Quét VietQR hoặc mở ứng dụng ngân hàng</p>
-              <BankTransferDetails amount={summary.depositAmount} transferContent={paymentCode ?? draft.referenceCode} onConfirm={confirmDeposit} helperText="Đây là tài khoản nhận cọc của nền tảng. Bill chỉ ghi nhận đã cọc sau khi SePay đối soát đúng 10% giá trị ban đầu." />
+              <BankTransferDetails amount={summary.depositAmount} transferContent={paymentCode ?? draft.referenceCode} onConfirm={confirmDeposit} helperText="Đây là tài khoản nhận cọc của nền tảng. Bill chỉ ghi nhận đã cọc sau khi SePay đối soát đúng 10% giá sau ưu đãi." />
             </>
           )}
           {error ? <p className="mt-3 rounded-xl bg-red-50 p-3 text-sm text-red-700">{error}</p> : null}

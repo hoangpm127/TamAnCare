@@ -49,11 +49,12 @@ export async function GET() {
         profile: affiliateProfile,
         totalEarned: 0,
         monthlyEarnings: [],
+        invitedCount: 0,
         invited: [],
       },
     });
   }
-  const [bookings, commissions] = await Promise.all([
+  const [bookings, commissions, claimedReferrals] = await Promise.all([
     db.booking.findMany({
       where: { campaignId: { in: campaigns.map((item) => item.id) } },
       include: {
@@ -72,6 +73,19 @@ export async function GET() {
     db.ledgerEntry.findMany({
       where: { ...ledgerReportWhere(), customerId: account.customerId, category: "OPERATING_EXPENSE", description: { startsWith: "Hoa hồng Affiliate" } },
       orderBy: { occurredAt: "desc" },
+    }),
+    db.guestSession.findMany({
+      where: {
+        referralCampaignId: { in: campaigns.map((item) => item.id) },
+        referralClaimedCustomerId: { not: null },
+        NOT: { referralClaimedCustomerId: account.customerId },
+      },
+      select: {
+        referralClaimedCustomerId: true,
+        referralInstalledAt: true,
+        referralClaimedCustomer: { select: { fullName: true, createdAt: true } },
+      },
+      orderBy: { referralInstalledAt: "desc" },
     }),
   ]);
 
@@ -136,7 +150,21 @@ export async function GET() {
     return projected ? [projected] : [];
   });
 
-  const friends = [...new Map(orders.map((order) => [order.friendId, order.friendName])).entries()].map(([friendId, name]) => {
+  const claimedByCustomer = new Map(
+    claimedReferrals.flatMap((referral) => referral.referralClaimedCustomerId && referral.referralClaimedCustomer
+      ? [[referral.referralClaimedCustomerId, {
+          name: referral.referralClaimedCustomer.fullName,
+          joinedAt: displayDate(referral.referralInstalledAt ?? referral.referralClaimedCustomer.createdAt),
+        }] as const]
+      : []),
+  );
+  const invitedCustomerIds = [...new Set([
+    ...claimedByCustomer.keys(),
+    ...orders.map((order) => order.friendId),
+  ])];
+  const friends = invitedCustomerIds.map((friendId) => {
+    const claim = claimedByCustomer.get(friendId);
+    const name = orders.find((order) => order.friendId === friendId)?.friendName ?? claim?.name ?? "Thành viên mới";
     const friendOrders = orders.filter((order) => order.friendId === friendId).map((order) => ({
       id: order.id,
       serviceLabel: order.serviceLabel,
@@ -158,8 +186,10 @@ export async function GET() {
       name,
       status: friendOrders.some((item) => item.status === "COMPLETED") ? "COMPLETED" as const : "PENDING" as const,
       reward,
-      joinedAt: friendOrders.at(-1)?.date ?? "",
-      note: friendOrders.some((item) => item.category === "GROUP") ? "Khách theo nhóm" : "Khách cá nhân",
+      joinedAt: claim?.joinedAt ?? friendOrders.at(-1)?.date ?? "",
+      note: friendOrders.length === 0
+        ? "Đã tạo tài khoản từ lời mời"
+        : friendOrders.some((item) => item.category === "GROUP") ? "Khách theo nhóm" : "Khách cá nhân",
       orders: friendOrders,
     };
   });
@@ -179,6 +209,7 @@ export async function GET() {
       profile: affiliateProfile,
       totalEarned: commissions.reduce((sum, item) => sum + item.amount, 0),
       monthlyEarnings,
+      invitedCount: friends.length,
       invited: friends,
     },
   });

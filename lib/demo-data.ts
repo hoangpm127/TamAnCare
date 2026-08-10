@@ -1342,7 +1342,7 @@ export const packagePlans = [
 
 export const depositPolicy = {
   percent: 10,
-  description: "Cọc nền tảng bằng 10% giá trị Bill ban đầu trước ưu đãi; phần còn lại bằng 90% giá trị ban đầu trừ ưu đãi.",
+  description: "Cọc nền tảng bằng 10% giá trị cuối cùng sau ưu đãi; phần còn lại bằng giá cuối sau ưu đãi trừ tiền cọc.",
 };
 
 export const reminders = [

@@ -320,12 +320,16 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
       .then(async (response) => {
         const payload = await response.json();
         if (!response.ok && !payload.message) throw new Error("Không thể kiểm tra mã ưu đãi.");
+        const canonicalCode = typeof payload.canonicalCode === "string" ? payload.canonicalCode.trim().toUpperCase() : "";
         setVoucherPreview({
           valid: Boolean(payload.valid),
           discountAmount: Number(payload.discountAmount ?? 0),
           message: String(payload.message ?? ""),
           stackedCodes: Array.isArray(payload.stackedCodes) ? payload.stackedCodes.map(String) : [],
         });
+        if (canonicalCode && voucherCode.trim().toUpperCase() === effectiveVoucherCode && canonicalCode !== effectiveVoucherCode) {
+          setVoucherCode(canonicalCode);
+        }
       })
       .catch((caught) => {
         if (caught instanceof DOMException && caught.name === "AbortError") return;
@@ -335,7 +339,7 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
         if (!controller.signal.aborted) setVoucherChecking(false);
       });
     return () => controller.abort();
-  }, [attributionCode, effectiveVoucherCode, subtotal, cart, slot?.startTime, phone]);
+  }, [attributionCode, effectiveVoucherCode, subtotal, cart, slot?.startTime, phone, voucherCode]);
 
   const dateOptions = useMemo(
     () => Array.from({ length: NEXT_DAYS }, (_, index) => addDays(new Date(), index)),
@@ -951,10 +955,10 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
               <span className="min-w-0">
                 <span className="block text-sm font-semibold">Đặt cọc xác nhận giữ chỗ</span>
                 <span className="mt-0.5 block text-base font-bold text-[#c64b32]">
-                  {formatMoney(depositAmount)} <span className="text-xs font-normal text-[#826f66]">({catalog.depositPercent}% giá Bill ban đầu)</span>
+                  {formatMoney(depositAmount)} <span className="text-xs font-normal text-[#826f66]">({catalog.depositPercent}% giá sau ưu đãi)</span>
                 </span>
                 <span className="mt-1 block text-xs text-[#826f66]">
-                  Chuyển vào tài khoản nền tảng để giữ chỗ. Phần còn lại {formatMoney(amountDueAtBranch)} = 90% giá Bill ban đầu trừ ưu đãi, thanh toán riêng cho cơ sở sau dịch vụ.
+                  Chuyển vào tài khoản nền tảng để giữ chỗ. Phần còn lại {formatMoney(amountDueAtBranch)} = giá cuối sau ưu đãi trừ tiền cọc, thanh toán riêng cho cơ sở sau dịch vụ.
                 </span>
               </span>
             </div>
@@ -999,7 +1003,7 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
               <div className="mt-3 space-y-1.5 rounded-xl bg-[#f8ebe5] p-3 text-sm">
                 <div className="flex items-center justify-between gap-3 font-semibold text-[#c64b32]">
                   <span className="flex items-center gap-1.5">
-                    <Wallet size={13} /> Cọc nền tảng · 10% giá gốc
+                    <Wallet size={13} /> Cọc nền tảng · 10% giá sau ưu đãi
                   </span>
                   <span>{formatMoney(depositAmount)}</span>
                 </div>

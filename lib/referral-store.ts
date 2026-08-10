@@ -10,6 +10,7 @@ export type ReferralSummary = {
   rewardForFriend: string;
   totalEarned: number;
   monthlyEarnings: Array<{ month: string; amount: number }>;
+  invitedCount: number;
   invited: ReferralFriend[];
   profile: {
     affiliateArea: string | null;
@@ -28,6 +29,7 @@ const EMPTY: ReferralSummary = {
   rewardForFriend: "Cài app từ link để nhận AFF50 và cộng cùng WELCOME150 trong lần dịch vụ đầu tiên đủ điều kiện",
   totalEarned: 0,
   monthlyEarnings: [],
+  invitedCount: 0,
   invited: [],
   profile: null,
 };

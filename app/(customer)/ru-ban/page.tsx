@@ -52,7 +52,7 @@ export default function ReferralPage() {
     language,
   );
 
-  const invitedCount = referral.invited.length;
+  const invitedCount = referral.invitedCount;
   const completedCount = referral.invited.filter((friend) => friend.status === "COMPLETED").length;
   const conversionRate = invitedCount ? Math.round((completedCount / invitedCount) * 100) : 0;
 

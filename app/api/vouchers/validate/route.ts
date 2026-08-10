@@ -29,28 +29,47 @@ export async function POST(request: Request) {
   if (!rateLimit.allowed) return NextResponse.json({ valid: false, discountAmount: 0, message: "Bạn kiểm tra quá nhiều mã. Vui lòng thử lại sau." }, { status: 429 });
 
   const now = new Date();
-  const code = parsed.data.code.toUpperCase();
-  if (code === "AFF50") {
+  const requestedCode = parsed.data.code.toUpperCase();
+  const [customerSession, guestSession] = await Promise.all([
+    getCustomerSession(),
+    getGuestSession(),
+  ]);
+  const installedReferral = await installedReferralForIdentity({
+    guestSessionId: guestSession?.id,
+    customerId: customerSession?.customerId,
+  });
+  if (requestedCode === "AFF50") {
     return NextResponse.json({
       valid: false,
-      code,
+      code: requestedCode,
       discountAmount: 0,
       message: "Quà giới thiệu 50K được tự động cộng cùng ưu đãi thành viên mới 150K khi bạn mở đúng link, cài app và chọn dịch vụ từ 200.000đ. Bạn không cần nhập mã AFF50.",
     });
   }
-  const [voucher, customerSession, guestSession] = await Promise.all([
-    db.voucher.findFirst({
-      where: {
-        code,
-        isActive: true,
-        OR: [{ startsAt: null }, { startsAt: { lte: now } }],
-        AND: [{ OR: [{ endsAt: null }, { endsAt: { gte: now } }] }],
-      },
-    }),
-    getCustomerSession(),
-    getGuestSession(),
-  ]);
-  if (!voucher) return NextResponse.json({ valid: false, code, discountAmount: 0, message: "Mã ưu đãi không còn hiệu lực." });
+  const referralCodeAlias = Boolean(installedReferral && requestedCode === installedReferral.code);
+  const code = referralCodeAlias ? "WELCOME150" : requestedCode;
+  const voucher = await db.voucher.findFirst({
+    where: {
+      code,
+      isActive: true,
+      OR: [{ startsAt: null }, { startsAt: { lte: now } }],
+      AND: [{ OR: [{ endsAt: null }, { endsAt: { gte: now } }] }],
+    },
+  });
+  if (!voucher) {
+    const affiliateCampaign = await db.campaign.findFirst({
+      where: { code: requestedCode, source: { startsWith: "AFFILIATE:" } },
+      select: { id: true },
+    });
+    return NextResponse.json({
+      valid: false,
+      code: requestedCode,
+      discountAmount: 0,
+      message: affiliateCampaign
+        ? "Đây là mã giới thiệu, không phải mã voucher. Hãy mở đúng link hoặc QR lời mời; hệ thống sẽ tự cộng quyền lợi 150K + 50K."
+        : "Mã ưu đãi không tồn tại hoặc đã hết thời hạn áp dụng.",
+    });
+  }
   if (voucher.serviceId && parsed.data.serviceIds.some((serviceId) => serviceId !== voucher.serviceId)) {
     return NextResponse.json({ valid: false, code, discountAmount: 0, message: "Ưu đãi này không áp dụng cho dịch vụ đã chọn." });
   }
@@ -98,10 +117,6 @@ export async function POST(request: Request) {
   }
 
   const primaryDiscount = calculateVoucherDiscount(voucher, parsed.data.subtotal);
-  const installedReferral = await installedReferralForIdentity({
-    guestSessionId: guestSession?.id,
-    customerId: customerSession?.customerId,
-  });
   if (code === "WELCOME150" && customerSession && installedReferral) {
     const affiliateBonus = await db.voucher.findFirst({
       where: {
@@ -138,6 +153,7 @@ export async function POST(request: Request) {
         return NextResponse.json({
           valid: true,
           code,
+          ...(referralCodeAlias ? { canonicalCode: code } : {}),
           stackedCodes: [code, affiliateBonus.code],
           discountAmount: primaryDiscount + bonusDiscount,
           message: `Đã cộng ${code} và ${affiliateBonus.code}.`,
@@ -149,6 +165,7 @@ export async function POST(request: Request) {
   return NextResponse.json({
     valid: true,
     code,
+    ...(referralCodeAlias ? { canonicalCode: code } : {}),
     discountAmount: primaryDiscount,
     message: `Đã áp dụng ${code}.`,
   });

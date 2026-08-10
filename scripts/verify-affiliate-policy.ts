@@ -62,8 +62,9 @@ assert.ok(
   "Booking phải khôi phục nguồn Affiliate phía máy chủ sau khi lời mời đã gắn vào tài khoản.",
 );
 assert.ok(
-  voucherValidationSource.includes('if (code === "AFF50")')
-    && voucherValidationSource.includes("Bạn không cần nhập mã AFF50"),
+  voucherValidationSource.includes('if (requestedCode === "AFF50")')
+    && voucherValidationSource.includes("Bạn không cần nhập mã AFF50")
+    && voucherValidationSource.includes('referralCodeAlias ? "WELCOME150" : requestedCode'),
   "AFF50 phải được tự động cộng thay vì cho khách nhập như voucher thông thường.",
 );
 assert.ok(

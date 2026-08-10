@@ -180,7 +180,7 @@ async function main() {
   assert(grossBillAmount >= 200_000, `Bill kiểm thử cần đạt tối thiểu 200.000đ, hiện là ${grossBillAmount}.`);
   const invitedBenefitAmount = 200_000;
   const customerPaymentAmount = grossBillAmount - invitedBenefitAmount;
-  const depositAmount = Math.round(grossBillAmount * 0.1);
+  const depositAmount = Math.round(customerPaymentAmount * 0.1);
   const checkoutAmount = customerPaymentAmount - depositAmount;
   const inviterCommissionAmount = affiliateCommissionAmount(customerPaymentAmount);
   const centerNetAmount = customerPaymentAmount - inviterCommissionAmount;
@@ -251,6 +251,13 @@ async function main() {
   const customerSessionToken = friendJar.get("ta_customer_session_v2");
   assert(customerSessionToken, "Phiên thành viên chưa được tạo sau đăng ký.");
   const recoveredFriendJar: CookieJar = new Map([["ta_customer_session_v2", customerSessionToken]]);
+  const ownerSummaryAfterSignup = await jsonRequest<{ summary: { invitedCount: number; invited: Array<{ status: string; orders: unknown[] }> } }>("/api/referrals/summary", { jar: ownerJar });
+  assert(
+    ownerSummaryAfterSignup.summary.invitedCount === 1
+      && ownerSummaryAfterSignup.summary.invited[0]?.status === "PENDING"
+      && ownerSummaryAfterSignup.summary.invited[0]?.orders.length === 0,
+    "Ô Đã mời chưa tăng ngay sau khi khách tạo tài khoản từ lời mời.",
+  );
   const startTime = await availableSlot(service.id, branch.id);
   let affiliateVoucher = await db.voucher.findUnique({ where: { code: "AFF50" } });
   if (affiliateVoucher?.startsAt && affiliateVoucher.startsAt > new Date()) {
@@ -262,6 +269,17 @@ async function main() {
   assert(
     affiliateVoucher?.isActive && (!affiliateVoucher.startsAt || affiliateVoucher.startsAt <= new Date()) && (!affiliateVoucher.endsAt || affiliateVoucher.endsAt >= new Date()),
     `AFF50 chưa hoạt động (${JSON.stringify(affiliateVoucher)}).`,
+  );
+  const referralAliasVoucher = await jsonRequest<{ valid: boolean; code: string; canonicalCode?: string; stackedCodes?: string[]; discountAmount: number }>("/api/vouchers/validate", {
+    jar: recoveredFriendJar,
+    body: { code: campaignCode, subtotal: grossBillAmount, serviceIds: [service.id], startTime, customerPhone: friendPhone },
+  });
+  assert(
+    referralAliasVoucher.valid
+      && referralAliasVoucher.canonicalCode === "WELCOME150"
+      && referralAliasVoucher.stackedCodes?.join("+") === "WELCOME150+AFF50"
+      && referralAliasVoucher.discountAmount === invitedBenefitAmount,
+    "Mã lời mời đã ghi nhận chưa được nhận diện thành WELCOME150 + AFF50.",
   );
   const voucher = await jsonRequest<{ valid: boolean; code: string; stackedCodes?: string[]; discountAmount: number }>("/api/vouchers/validate", {
     jar: recoveredFriendJar,
@@ -303,7 +321,7 @@ async function main() {
   });
   assert(booking.booking.subtotalAmount === grossBillAmount, "Bill gốc Affiliate không khớp bảng giá thật.");
   assert(booking.booking.discountAmount === invitedBenefitAmount && booking.booking.totalAmount === customerPaymentAmount, "Số khách thanh toán sau ưu đãi chưa đúng.");
-  assert(booking.booking.depositAmount === depositAmount, "Cọc chưa bằng 10% Bill gốc trước ưu đãi.");
+  assert(booking.booking.depositAmount === depositAmount, "Cọc chưa bằng 10% số tiền cuối sau ưu đãi.");
   assert(booking.booking.voucherCode === "WELCOME150+AFF50", "Booking chưa lưu đủ hai mã ưu đãi.");
   assert(booking.booking.depositPayment?.status === "PENDING", "Booking chưa tạo yêu cầu cọc SePay.");
 
@@ -383,7 +401,9 @@ async function main() {
       "first_referral_is_locked_before_install_and_cannot_be_overwritten",
       "installed_referral_recovers_from_customer_account_without_original_guest_cookie",
       "new_member_receives_welcome150_plus_aff50",
-      "deposit_is_ten_percent_of_original_bill",
+      "invite_count_increments_immediately_after_referred_signup",
+      "recorded_referral_code_resolves_to_welcome150_plus_aff50",
+      "deposit_is_ten_percent_of_final_price_after_discounts",
       "commission_is_not_recorded_before_full_payment_and_completion",
       "reception_controls_checkin_service_checkout_and_completion",
       "affiliate_commission_is_ten_percent_of_customer_payment_once",

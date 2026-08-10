@@ -1397,6 +1397,14 @@ const DYNAMIC_CATALOG_COPY = [
   ["Bộ triển khai Onsite", "온사이트 준비 세트", "Onsite setup", "上门服务物资套装"],
   ["Sau buổi onsite, khách đủ điều kiện nhận voucher quay lại cơ sở", "온사이트 서비스 후 조건을 충족한 고객은 센터 재방문 바우처를 받을 수 있습니다", "After the onsite session, eligible guests receive a return-to-center voucher", "上门服务结束后，符合条件的顾客可获得到店回访优惠券"],
   ["Chương trình onsite hiện chưa nhận lịch mới.", "현재 온사이트 프로그램은 신규 예약을 받지 않습니다.", "The onsite program is not accepting new bookings at the moment.", "上门服务项目目前暂不接受新预约。"],
+  ["Đã tạo tài khoản từ lời mời", "초대 링크로 계정 생성 완료", "Account created from the invitation", "已通过邀请创建账户"],
+  ["Đây là mã giới thiệu, không phải mã voucher. Hãy mở đúng link hoặc QR lời mời; hệ thống sẽ tự cộng quyền lợi 150K + 50K.", "추천 코드는 바우처 코드가 아닙니다. 올바른 초대 링크 또는 QR을 열면 150K + 50K 혜택이 자동 적용됩니다.", "This is a referral code, not a voucher code. Open the correct invitation link or QR and the 150K + 50K benefits will be applied automatically.", "这是推荐码，不是优惠券码。请打开正确的邀请链接或二维码，系统会自动叠加150K + 50K优惠。"],
+  ["Mã ưu đãi không tồn tại hoặc đã hết thời hạn áp dụng.", "혜택 코드가 존재하지 않거나 사용 기간이 종료되었습니다.", "The voucher code does not exist or its validity period has ended.", "优惠码不存在或已超过有效期。"],
+  ["Cọc nền tảng · 10% giá sau ưu đãi", "플랫폼 보증금 · 혜택 적용 후 금액의 10%", "Platform deposit · 10% of the price after discounts", "平台订金 · 优惠后价格的10%"],
+  ["Khoản cọc bằng 10% giá trị cuối cùng sau ưu đãi và được chuyển vào tài khoản nền tảng.", "보증금은 혜택 적용 후 최종 금액의 10%이며 플랫폼 계좌로 이체됩니다.", "The deposit is 10% of the final price after discounts and is transferred to the platform account.", "订金为优惠后最终价格的10%，并转入平台账户。"],
+  ["Đây là tài khoản nhận cọc của nền tảng. Bill chỉ ghi nhận đã cọc sau khi SePay đối soát đúng 10% giá sau ưu đãi.", "플랫폼 보증금 전용 계좌입니다. SePay가 혜택 적용 후 금액의 10%를 정확히 대조한 뒤에만 결제 내역에 보증금이 반영됩니다.", "This is the platform deposit account. The bill records the deposit only after SePay verifies 10% of the price after discounts.", "这是平台订金账户。只有SePay核对优惠后价格的10%后，账单才会记录已付订金。"],
+  ["Đây là tài khoản nhận cọc của nền tảng. SePay tự động đối soát đúng 10% giá sau ưu đãi và đưa giao dịch vào sổ liên quan.", "플랫폼 보증금 전용 계좌입니다. SePay가 혜택 적용 후 금액의 10%를 자동 대조하고 관련 원장에 거래를 기록합니다.", "This is the platform deposit account. SePay automatically verifies 10% of the price after discounts and records the transaction in the related ledger.", "这是平台订金账户。SePay会自动核对优惠后价格的10%，并将交易记入相关账簿。"],
+  ["Tiền cọc bằng 10% giá trị cuối cùng sau toàn bộ ưu đãi và không vượt quá số tiền thực trả. Hệ thống hiển thị rõ tổng trước giảm, khoản giảm, tổng sau giảm, cọc và số còn lại trước khi khách chuyển khoản.", "보증금은 모든 혜택 적용 후 최종 결제 금액의 10%이며 실제 결제 금액을 초과하지 않습니다. 이체 전에 할인 전 금액, 할인액, 할인 후 금액, 보증금과 잔액을 명확히 표시합니다.", "The deposit is 10% of the final price after all discounts and never exceeds the amount actually payable. Before transfer, the system clearly shows the pre-discount total, discount, post-discount total, deposit and remaining balance.", "订金为所有优惠后最终应付金额的10%，且不超过实际应付金额。转账前，系统会清楚显示优惠前总额、优惠金额、优惠后总额、订金及剩余金额。"],
 ] as const;
 
 type TranslatedCustomerLanguage = Exclude<CustomerLanguage, "vi">;
@@ -1416,6 +1424,10 @@ export const CUSTOMER_TRANSLATION_SOURCE_KEYS = Object.freeze([
 ]);
 
 const KOREAN_REPLACEMENTS: Array<[string, string]> = [
+  ["giá cuối sau ưu đãi trừ tiền cọc, thanh toán riêng cho cơ sở sau dịch vụ.", "혜택 적용 후 최종 금액에서 보증금을 뺀 금액이며 서비스 후 지점에서 별도로 결제합니다."],
+  ["giá cuối sau ưu đãi trừ tiền cọc, thanh toán riêng sau dịch vụ.", "혜택 적용 후 최종 금액에서 보증금을 뺀 금액이며 서비스 후 별도로 결제합니다."],
+  ["giá cuối sau ưu đãi", "혜택 적용 후 최종 금액"],
+  ["giá sau ưu đãi", "혜택 적용 후 금액"],
   ["Tip gợi ý", "권장 팁"],
   ["trao trực tiếp", "직접 전달"],
   ["Mỗi khách một lần", "고객당 1회"],
@@ -1795,6 +1807,10 @@ const EXACT_CHINESE_OVERRIDES: Record<string, string> = {
 };
 
 const ENGLISH_REPLACEMENTS: Array<[string, string]> = [
+  ["giá cuối sau ưu đãi trừ tiền cọc, thanh toán riêng cho cơ sở sau dịch vụ.", "the final price after discounts minus the deposit, paid separately at the location after the service."],
+  ["giá cuối sau ưu đãi trừ tiền cọc, thanh toán riêng sau dịch vụ.", "the final price after discounts minus the deposit, paid separately after the service."],
+  ["giá cuối sau ưu đãi", "final price after discounts"],
+  ["giá sau ưu đãi", "price after discounts"],
   ["Tip gợi ý", "Suggested tip"],
   ["trao trực tiếp", "give directly"],
   ["Mỗi khách một lần", "Once per guest"],
@@ -1877,6 +1893,10 @@ const ENGLISH_REPLACEMENTS: Array<[string, string]> = [
 ];
 
 const CHINESE_REPLACEMENTS: Array<[string, string]> = [
+  ["giá cuối sau ưu đãi trừ tiền cọc, thanh toán riêng cho cơ sở sau dịch vụ.", "优惠后最终价格减去订金，并在服务结束后于门店另行支付。"],
+  ["giá cuối sau ưu đãi trừ tiền cọc, thanh toán riêng sau dịch vụ.", "优惠后最终价格减去订金，并在服务结束后另行支付。"],
+  ["giá cuối sau ưu đãi", "优惠后最终价格"],
+  ["giá sau ưu đãi", "优惠后价格"],
   ["Tip gợi ý", "建议小费"],
   ["trao trực tiếp", "直接交给理疗师"],
   ["Mỗi khách một lần", "每位顾客限用一次"],

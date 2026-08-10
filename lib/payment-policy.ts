@@ -7,8 +7,8 @@ type PaymentBreakdownInput = {
 
 /**
  * Quy tắc thanh toán thống nhất của Tâm An Center:
- * - cọc = tỷ lệ trên giá trị Bill ban đầu, trước ưu đãi;
- * - còn lại = giá trị sau ưu đãi trừ tiền cọc;
+ * - cọc = tỷ lệ trên giá trị cuối cùng sau toàn bộ ưu đãi;
+ * - còn lại = giá trị cuối cùng trừ tiền cọc;
  * - lượt gói đã trả trước không phát sinh cọc hoặc công nợ.
  */
 export function calculatePaymentBreakdown({
@@ -31,7 +31,7 @@ export function calculatePaymentBreakdown({
   }
 
   const totalAmount = Math.max(0, safeOriginal - safeDiscount);
-  const requestedDeposit = Math.round(safeOriginal * Math.max(0, depositPercent) / 100);
+  const requestedDeposit = Math.round(totalAmount * Math.max(0, depositPercent) / 100);
   const depositAmount = Math.min(totalAmount, requestedDeposit);
 
   return {
