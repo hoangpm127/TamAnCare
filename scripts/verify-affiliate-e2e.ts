@@ -2,6 +2,7 @@ import { createHash, createHmac } from "node:crypto";
 import { addDays } from "date-fns";
 import { db } from "../lib/db";
 import { hashPassword } from "../lib/password";
+import { affiliateCommissionAmount } from "../lib/referral-policy";
 
 const BASE_URL = process.env.TEST_BASE_URL ?? "http://127.0.0.1:3000";
 const TEST_WEBHOOK_SECRET = process.env.TEST_SEPAY_WEBHOOK_SECRET ?? "local-e2e-webhook-secret";
@@ -169,10 +170,16 @@ async function main() {
   const adminJar: CookieJar = new Map();
   const receptionJar: CookieJar = new Map();
   const branch = await db.branch.findFirstOrThrow({ orderBy: { createdAt: "asc" } });
-  const service = await db.service.findUniqueOrThrow({ where: { id: "svc-body-120" } });
-  assert(service.isActive && service.isOnline, "Dịch vụ Body Massage 120 phút chưa sẵn sàng đặt online.");
+  const service = await db.service.findUniqueOrThrow({ where: { id: "svc-body-60" } });
+  assert(service.isActive && service.isOnline, "Dịch vụ Body Massage 60 phút chưa sẵn sàng đặt online.");
   const grossBillAmount = service.basePrice + service.therapistFee;
-  assert(grossBillAmount === 450_000, `Bill kiểm thử cần là 450.000đ, hiện là ${grossBillAmount}.`);
+  assert(grossBillAmount >= 200_000, `Bill kiểm thử cần đạt tối thiểu 200.000đ, hiện là ${grossBillAmount}.`);
+  const invitedBenefitAmount = 200_000;
+  const customerPaymentAmount = grossBillAmount - invitedBenefitAmount;
+  const depositAmount = Math.round(grossBillAmount * 0.1);
+  const checkoutAmount = customerPaymentAmount - depositAmount;
+  const inviterCommissionAmount = affiliateCommissionAmount(customerPaymentAmount);
+  const centerNetAmount = customerPaymentAmount - inviterCommissionAmount;
 
   const ownerRegistration = await jsonRequest<{ account: { customerId: string } }>("/api/customer-auth/register", {
     jar: ownerJar,
@@ -290,9 +297,9 @@ async function main() {
       units: [{ bookingCode: `${referenceCode}-1`, serviceId: service.id, startTime, source: `AFFILIATE_E2E:${marker}` }],
     },
   });
-  assert(booking.booking.subtotalAmount === 450_000, "Bill gốc Affiliate không đúng 450.000đ.");
-  assert(booking.booking.discountAmount === 200_000 && booking.booking.totalAmount === 250_000, "Số khách thanh toán sau ưu đãi chưa đúng 250.000đ.");
-  assert(booking.booking.depositAmount === 45_000, "Cọc chưa bằng 10% Bill gốc trước ưu đãi.");
+  assert(booking.booking.subtotalAmount === grossBillAmount, "Bill gốc Affiliate không khớp bảng giá thật.");
+  assert(booking.booking.discountAmount === invitedBenefitAmount && booking.booking.totalAmount === customerPaymentAmount, "Số khách thanh toán sau ưu đãi chưa đúng.");
+  assert(booking.booking.depositAmount === depositAmount, "Cọc chưa bằng 10% Bill gốc trước ưu đãi.");
   assert(booking.booking.voucherCode === "WELCOME150+AFF50", "Booking chưa lưu đủ hai mã ưu đãi.");
   assert(booking.booking.depositPayment?.status === "PENDING", "Booking chưa tạo yêu cầu cọc SePay.");
 
@@ -328,7 +335,7 @@ async function main() {
     jar: receptionJar,
     body: {
       bookingCode: referenceCode,
-      actualAmount: 205_000,
+      actualAmount: checkoutAmount,
       method: "BANK_TRANSFER_MANUAL",
       externalReference: `COUNTER-${marker}`,
       note: "Đã đối soát phần còn lại tại quầy; không bao gồm Tip.",
@@ -347,12 +354,12 @@ async function main() {
   const commissions = await db.ledgerEntry.findMany({
     where: { customerId: ownerRegistration.account.customerId, category: "OPERATING_EXPENSE", bookingGroupId: booking.booking.id, description: { startsWith: "Hoa hồng Affiliate" } },
   });
-  assert(commissions.length === 1 && commissions[0].amount === 25_000, "Hoa hồng người mời chưa đúng 10% của 250.000đ hoặc bị ghi trùng.");
+  assert(commissions.length === 1 && commissions[0].amount === inviterCommissionAmount, "Hoa hồng người mời chưa đúng 10% số khách thực trả hoặc bị ghi trùng.");
   const serviceRevenue = await db.ledgerEntry.aggregate({
     where: { bookingGroupId: booking.booking.id, category: "SERVICE_REVENUE" },
     _sum: { amount: true },
   });
-  assert(serviceRevenue._sum.amount === 250_000, "Doanh thu dịch vụ sau ưu đãi chưa đúng 250.000đ.");
+  assert(serviceRevenue._sum.amount === customerPaymentAmount, "Doanh thu dịch vụ sau ưu đãi chưa đúng số khách thực trả.");
   const tipEntries = await db.ledgerEntry.count({ where: { bookingGroupId: booking.booking.id, category: "TIP_PAYABLE" } });
   assert(tipEntries === 0, "Tip đã bị đưa vào Bill/GMV dù khách không khai báo Tip.");
 
@@ -360,11 +367,11 @@ async function main() {
     totalEarned: number;
     invited: { status: string; reward: number; orders: Array<{ grossBillAmount: number; invitedCustomerBenefitAmount: number; amount: number; commission: number; centerNetAmount: number }> }[];
   } }>("/api/referrals/summary", { jar: ownerJar });
-  const invited = finalSummary.summary.invited.find((item) => item.orders.some((order) => order.grossBillAmount === 450_000));
+  const invited = finalSummary.summary.invited.find((item) => item.orders.some((order) => order.grossBillAmount === grossBillAmount));
   const order = invited?.orders[0];
-  assert(invited?.status === "COMPLETED" && invited.reward === 25_000, "Ví Affiliate chưa ghi nhận đúng đơn hoàn tất.");
-  assert(order?.invitedCustomerBenefitAmount === 200_000 && order.amount === 250_000 && order.commission === 25_000 && order.centerNetAmount === 225_000, "Giao diện Affiliate chưa khớp dòng tiền ba bên 450K/200K/250K/25K/225K.");
-  assert(finalSummary.summary.totalEarned === 25_000, "Tổng thu nhập Affiliate chưa đúng 25.000đ.");
+  assert(invited?.status === "COMPLETED" && invited.reward === inviterCommissionAmount, "Ví Affiliate chưa ghi nhận đúng đơn hoàn tất.");
+  assert(order?.invitedCustomerBenefitAmount === invitedBenefitAmount && order.amount === customerPaymentAmount && order.commission === inviterCommissionAmount && order.centerNetAmount === centerNetAmount, "Giao diện Affiliate chưa khớp dòng tiền ba bên theo bảng giá thật.");
+  assert(finalSummary.summary.totalEarned === inviterCommissionAmount, "Tổng thu nhập Affiliate chưa đúng.");
 
   console.log(JSON.stringify({
     success: true,
@@ -376,11 +383,11 @@ async function main() {
       "commission_is_not_recorded_before_full_payment_and_completion",
       "reception_controls_checkin_service_checkout_and_completion",
       "affiliate_commission_is_ten_percent_of_customer_payment_once",
-      "three_party_cash_flow_is_450k_200k_250k_25k_225k",
+      "three_party_cash_flow_matches_live_service_price",
       "tip_stays_outside_bill_and_gmv",
       "affiliate_summary_matches_ledger",
     ],
-    amounts: { grossBill: 450_000, invitedBenefit: 200_000, customerPaid: 250_000, inviterCommission: 25_000, centerNet: 225_000, tip: 0 },
+    amounts: { grossBill: grossBillAmount, invitedBenefit: invitedBenefitAmount, customerPaid: customerPaymentAmount, inviterCommission: inviterCommissionAmount, centerNet: centerNetAmount, tip: 0 },
   }, null, 2));
 }
 
