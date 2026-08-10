@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, BadgeCheck, CheckCircle2, Gift, LogIn, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowRight, BadgeCheck, CheckCircle2, Gift, Loader2, LogIn, ShieldCheck, Sparkles } from "lucide-react";
 import { PwaInstallPrompt } from "@/components/pwa-install-prompt";
 import { captureReferralAttribution } from "@/lib/referral-attribution";
 import { formatMoney } from "@/lib/utils";
@@ -16,8 +16,21 @@ type ReferralOffer = {
 } | null;
 
 export function ReferralLandingClient({ code, offer }: { code: string; offer: ReferralOffer }) {
+  const [captureState, setCaptureState] = useState<"saving" | "saved" | "error">("saving");
+  const [protectedCode, setProtectedCode] = useState(code);
+
   useEffect(() => {
-    void captureReferralAttribution(code);
+    let active = true;
+    void captureReferralAttribution(code)
+      .then((result) => {
+        if (!active) return;
+        if (result?.code) setProtectedCode(result.code);
+        setCaptureState(result ? "saved" : "error");
+      })
+      .catch(() => {
+        if (active) setCaptureState("error");
+      });
+    return () => { active = false; };
   }, [code]);
 
   return (
@@ -33,11 +46,22 @@ export function ReferralLandingClient({ code, offer }: { code: string; offer: Re
             <p className="relative mt-3 text-[11px] font-bold uppercase tracking-[0.16em] text-[#ffe3a8]">Một người bạn đã gửi tặng bạn</p>
             <h1 className="relative mt-1 text-2xl font-semibold tracking-tight">Lời mời trải nghiệm Tâm An Center</h1>
             <span className="relative mt-3 inline-flex items-center gap-1.5 rounded-full bg-black/15 px-3 py-1.5 font-mono text-xs ring-1 ring-white/15">
-              <BadgeCheck size={14} /> Mã {code}
+              <BadgeCheck size={14} /> Mã {protectedCode}
             </span>
           </div>
 
           <div className="space-y-4 p-5">
+            <div className={`flex items-start gap-2 rounded-2xl px-3.5 py-3 text-xs leading-5 ring-1 ${captureState === "error" ? "bg-amber-50 text-amber-800 ring-amber-200" : "bg-emerald-50 text-emerald-800 ring-emerald-200"}`}>
+              {captureState === "saving" ? <Loader2 size={17} className="mt-0.5 shrink-0 animate-spin" /> : <ShieldCheck size={17} className="mt-0.5 shrink-0" />}
+              <span>
+                {captureState === "saving"
+                  ? "Đang giữ quà và nguồn người mời trên hệ thống…"
+                  : captureState === "saved"
+                    ? "Đã giữ quà và nguồn người mời trong 30 ngày. Bạn có thể thoát ra, mở lại hoặc cài app mà không mất ghi nhận."
+                    : "Thiết bị đang mất kết nối. Hãy mở lại đúng link này khi có mạng trước khi cài app để hệ thống giữ chắc quyền lợi."}
+              </span>
+            </div>
+
             <div className="rounded-2xl bg-[#fff7df] p-4 text-center ring-1 ring-[#c59a3d]/45">
               <Sparkles className="mx-auto text-[#c64b32]" size={22} />
               <p className="mt-2 text-[10px] font-bold uppercase tracking-[0.14em] text-[#76551d]">Quyền lợi dành cho bạn</p>

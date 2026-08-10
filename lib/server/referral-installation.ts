@@ -33,18 +33,28 @@ export async function captureGuestReferral(guestSessionId: string, code: string)
   });
   if (!current) return null;
 
-  // Sau khi app đã được cài, nguồn đầu tiên được khóa để tránh ghi đè Affiliate.
-  if (current.referralInstalledAt && current.referralExpiresAt && current.referralExpiresAt > now && current.referralCampaign) {
+  // First-touch attribution: a valid invitation is protected immediately,
+  // rather than waiting until the webapp installation has finished.
+  if (current.referralExpiresAt && current.referralExpiresAt > now && current.referralCampaign) {
     return {
-      state: "ACTIVE" as const,
+      state: current.referralInstalledAt ? "ACTIVE" as const : "PENDING" as const,
       code: current.referralCampaign.code,
       expiresAt: current.referralExpiresAt,
     };
   }
 
   const expiresAt = new Date(now.getTime() + REFERRAL_INSTALL_ATTRIBUTION_DAYS * 86_400_000);
-  await db.guestSession.update({
-    where: { id: current.id },
+  // The conditional update makes the first capture atomic when multiple tabs
+  // or invitation links race on the same device.
+  await db.guestSession.updateMany({
+    where: {
+      id: current.id,
+      OR: [
+        { referralCampaignId: null },
+        { referralExpiresAt: null },
+        { referralExpiresAt: { lte: now } },
+      ],
+    },
     data: {
       referralCampaignId: campaign.id,
       referralCapturedAt: now,
@@ -53,7 +63,16 @@ export async function captureGuestReferral(guestSessionId: string, code: string)
       referralClaimedCustomerId: null,
     },
   });
-  return { state: "PENDING" as const, code: campaign.code, expiresAt };
+  const captured = await db.guestSession.findUnique({
+    where: { id: current.id },
+    include: { referralCampaign: true },
+  });
+  if (!captured?.referralCampaign || !captured.referralExpiresAt || captured.referralExpiresAt <= now) return null;
+  return {
+    state: captured.referralInstalledAt ? "ACTIVE" as const : "PENDING" as const,
+    code: captured.referralCampaign.code,
+    expiresAt: captured.referralExpiresAt,
+  };
 }
 
 export async function activateGuestReferral(input: { guestSessionId: string; code?: string; customerId?: string }) {
@@ -73,7 +92,8 @@ export async function activateGuestReferral(input: { guestSessionId: string; cod
     });
   }
   if (!session.referralCampaign || !session.referralExpiresAt || session.referralExpiresAt <= now) return null;
-  if (input.code && normalizeAffiliateCode(input.code) !== session.referralCampaign.code) return null;
+  // The protected server-side first touch is authoritative if local browser
+  // storage still contains a later or stale invitation code.
   if (session.referralClaimedCustomerId && input.customerId && session.referralClaimedCustomerId !== input.customerId) return null;
 
   const updated = await db.guestSession.update({
@@ -108,18 +128,69 @@ export async function installedReferralForGuest(guestSessionId: string) {
   };
 }
 
+export async function bindInstalledReferralToCustomer(guestSessionId: string, customerId: string) {
+  const now = new Date();
+  const result = await db.guestSession.updateMany({
+    where: {
+      id: guestSessionId,
+      referralCampaignId: { not: null },
+      referralInstalledAt: { not: null },
+      referralExpiresAt: { gt: now },
+      OR: [
+        { referralClaimedCustomerId: null },
+        { referralClaimedCustomerId: customerId },
+      ],
+    },
+    data: { referralClaimedCustomerId: customerId },
+  });
+  return result.count === 1;
+}
+
+export async function installedReferralForCustomer(customerId: string) {
+  const now = new Date();
+  const session = await db.guestSession.findFirst({
+    where: {
+      referralClaimedCustomerId: customerId,
+      referralInstalledAt: { not: null },
+      referralExpiresAt: { gt: now },
+    },
+    include: { referralCampaign: true },
+    orderBy: { referralInstalledAt: "asc" },
+  });
+  if (!session?.referralCampaign || !session.referralExpiresAt) return null;
+  const campaign = await eligibleCampaign(db, session.referralCampaign.code);
+  if (!campaign || campaign.id !== session.referralCampaign.id) return null;
+  return {
+    campaignId: campaign.id,
+    code: campaign.code,
+    claimedCustomerId: customerId,
+  };
+}
+
+export async function installedReferralForIdentity(input: { guestSessionId?: string; customerId?: string }) {
+  const guestReferral = input.guestSessionId
+    ? await installedReferralForGuest(input.guestSessionId)
+    : null;
+  if (guestReferral && (!guestReferral.claimedCustomerId || guestReferral.claimedCustomerId === input.customerId)) {
+    return guestReferral;
+  }
+  return input.customerId ? installedReferralForCustomer(input.customerId) : null;
+}
+
 export async function claimInstalledReferral(
   tx: Prisma.TransactionClient,
   input: { guestSessionId?: string; customerId: string; campaignId: string },
 ) {
-  if (!input.guestSessionId) return false;
   const now = new Date();
   const session = await tx.guestSession.findFirst({
     where: {
-      id: input.guestSessionId,
       referralCampaignId: input.campaignId,
       referralInstalledAt: { not: null },
       referralExpiresAt: { gt: now },
+      OR: [
+        ...(input.guestSessionId ? [{ id: input.guestSessionId }] : []),
+        { referralClaimedCustomerId: input.customerId },
+      ],
     },
   });
   if (!session || (session.referralClaimedCustomerId && session.referralClaimedCustomerId !== input.customerId)) return false;

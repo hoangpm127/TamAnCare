@@ -168,11 +168,11 @@ async function main() {
   const friendJar: CookieJar = new Map();
   const adminJar: CookieJar = new Map();
   const receptionJar: CookieJar = new Map();
-  const branch = await db.branch.findUniqueOrThrow({ where: { id: "tam-an-center-tay-ho" } });
+  const branch = await db.branch.findFirstOrThrow({ orderBy: { createdAt: "asc" } });
   const service = await db.service.findUniqueOrThrow({ where: { id: "svc-body-120" } });
-  assert(service.isActive && service.isOnline, "Dịch vụ 790K chưa sẵn sàng đặt online.");
+  assert(service.isActive && service.isOnline, "Dịch vụ Body Massage 120 phút chưa sẵn sàng đặt online.");
   const grossBillAmount = service.basePrice + service.therapistFee;
-  assert(grossBillAmount === 790_000, `Bill kiểm thử cần là 790.000đ, hiện là ${grossBillAmount}.`);
+  assert(grossBillAmount === 450_000, `Bill kiểm thử cần là 450.000đ, hiện là ${grossBillAmount}.`);
 
   const ownerRegistration = await jsonRequest<{ account: { customerId: string } }>("/api/customer-auth/register", {
     jar: ownerJar,
@@ -181,17 +181,36 @@ async function main() {
   const ownerSummary = await jsonRequest<{ summary: { code: string; activationRequired: boolean } }>("/api/referrals/summary", { jar: ownerJar });
   assert(!ownerSummary.summary.activationRequired && ownerSummary.summary.code, "Người mời chưa nhận được mã Affiliate sau đăng ký.");
   const campaignCode = ownerSummary.summary.code;
+  const competingCampaign = await db.campaign.create({
+    data: {
+      code: `${marker}ALT`,
+      name: `Affiliate cạnh tranh · ${marker}`,
+      source: `AFFILIATE:${ownerRegistration.account.customerId}`,
+      manualCost: 0,
+    },
+  });
 
   const captured = await jsonRequest<{ state: string; code: string }>("/api/referrals/install-attribution", {
     jar: friendJar,
     body: { action: "CAPTURE", code: campaignCode },
   });
   assert(captured.state === "PENDING" && captured.code === campaignCode, "Link Affiliate chưa được ghi nhận trên thiết bị người nhận.");
+  const protectedCapture = await jsonRequest<{ state: string; code: string }>("/api/referrals/install-attribution", {
+    jar: friendJar,
+    body: { action: "CAPTURE", code: competingCampaign.code },
+  });
+  assert(
+    protectedCapture.state === "PENDING" && protectedCapture.code === campaignCode,
+    "Nguồn Affiliate đầu tiên bị link mở sau ghi đè trước khi cài app.",
+  );
   const activated = await jsonRequest<{ state: string; code: string }>("/api/referrals/install-attribution", {
     jar: friendJar,
-    body: { action: "ACTIVATE", code: campaignCode },
+    body: { action: "ACTIVATE", code: competingCampaign.code },
   });
-  assert(activated.state === "ACTIVE", "Cài webapp chưa kích hoạt nguồn Affiliate.");
+  assert(
+    activated.state === "ACTIVE" && activated.code === campaignCode,
+    "Cài webapp chưa kích hoạt đúng nguồn Affiliate đầu tiên đã được bảo vệ.",
+  );
 
   const friendRegistration = await jsonRequest<{ account: { customerId: string } }>("/api/customer-auth/register", {
     jar: friendJar,
@@ -205,11 +224,6 @@ async function main() {
     attributedGuests.length === 1 && friendJar.has("tt_guest_session_v1"),
     `Phiên cài app Affiliate không còn sau đăng ký (cookies=${[...friendJar.keys()].join(",")}, sessions=${attributedGuests.length}).`,
   );
-  const claimed = await jsonRequest<{ state: string; code: string }>("/api/referrals/install-attribution", {
-    jar: friendJar,
-    body: { action: "ACTIVATE", code: campaignCode },
-  });
-  assert(claimed.state === "ACTIVE", "Nguồn Affiliate chưa được gắn với tài khoản thành viên sau đăng ký.");
   const guestToken = friendJar.get("tt_guest_session_v1")!;
   const activeGuest = await db.guestSession.findUnique({
     where: { tokenHash: createHash("sha256").update(guestToken).digest("hex") },
@@ -223,6 +237,9 @@ async function main() {
       && activeGuest.referralClaimedCustomerId === friendRegistration.account.customerId,
     "Cookie thiết bị không còn trỏ tới nguồn Affiliate đang hiệu lực.",
   );
+  const customerSessionToken = friendJar.get("ta_customer_session_v2");
+  assert(customerSessionToken, "Phiên thành viên chưa được tạo sau đăng ký.");
+  const recoveredFriendJar: CookieJar = new Map([["ta_customer_session_v2", customerSessionToken]]);
   const startTime = await availableSlot(service.id, branch.id);
   let affiliateVoucher = await db.voucher.findUnique({ where: { code: "AFF50" } });
   if (affiliateVoucher?.startsAt && affiliateVoucher.startsAt > new Date()) {
@@ -236,7 +253,7 @@ async function main() {
     `AFF50 chưa hoạt động (${JSON.stringify(affiliateVoucher)}).`,
   );
   const voucher = await jsonRequest<{ valid: boolean; code: string; stackedCodes?: string[]; discountAmount: number }>("/api/vouchers/validate", {
-    jar: friendJar,
+    jar: recoveredFriendJar,
     body: { code: "WELCOME150", subtotal: grossBillAmount, serviceIds: [service.id], startTime, customerPhone: friendPhone },
   });
   assert(
@@ -256,7 +273,7 @@ async function main() {
     paymentStatus: string;
     depositPayment: { paymentCode: string; amount: number; status: string } | null;
   } }>("/api/booking-groups", {
-    jar: friendJar,
+    jar: recoveredFriendJar,
     body: {
       referenceCode,
       branchId: branch.id,
@@ -273,9 +290,9 @@ async function main() {
       units: [{ bookingCode: `${referenceCode}-1`, serviceId: service.id, startTime, source: `AFFILIATE_E2E:${marker}` }],
     },
   });
-  assert(booking.booking.subtotalAmount === 790_000, "Bill gốc Affiliate không đúng 790.000đ.");
-  assert(booking.booking.discountAmount === 200_000 && booking.booking.totalAmount === 590_000, "Số khách thanh toán sau ưu đãi chưa đúng 590.000đ.");
-  assert(booking.booking.depositAmount === 79_000, "Cọc chưa bằng 10% Bill gốc trước ưu đãi.");
+  assert(booking.booking.subtotalAmount === 450_000, "Bill gốc Affiliate không đúng 450.000đ.");
+  assert(booking.booking.discountAmount === 200_000 && booking.booking.totalAmount === 250_000, "Số khách thanh toán sau ưu đãi chưa đúng 250.000đ.");
+  assert(booking.booking.depositAmount === 45_000, "Cọc chưa bằng 10% Bill gốc trước ưu đãi.");
   assert(booking.booking.voucherCode === "WELCOME150+AFF50", "Booking chưa lưu đủ hai mã ưu đãi.");
   assert(booking.booking.depositPayment?.status === "PENDING", "Booking chưa tạo yêu cầu cọc SePay.");
 
@@ -311,7 +328,7 @@ async function main() {
     jar: receptionJar,
     body: {
       bookingCode: referenceCode,
-      actualAmount: 511_000,
+      actualAmount: 205_000,
       method: "BANK_TRANSFER_MANUAL",
       externalReference: `COUNTER-${marker}`,
       note: "Đã đối soát phần còn lại tại quầy; không bao gồm Tip.",
@@ -330,12 +347,12 @@ async function main() {
   const commissions = await db.ledgerEntry.findMany({
     where: { customerId: ownerRegistration.account.customerId, category: "OPERATING_EXPENSE", bookingGroupId: booking.booking.id, description: { startsWith: "Hoa hồng Affiliate" } },
   });
-  assert(commissions.length === 1 && commissions[0].amount === 59_000, "Hoa hồng người mời chưa đúng 10% của 590.000đ hoặc bị ghi trùng.");
+  assert(commissions.length === 1 && commissions[0].amount === 25_000, "Hoa hồng người mời chưa đúng 10% của 250.000đ hoặc bị ghi trùng.");
   const serviceRevenue = await db.ledgerEntry.aggregate({
     where: { bookingGroupId: booking.booking.id, category: "SERVICE_REVENUE" },
     _sum: { amount: true },
   });
-  assert(serviceRevenue._sum.amount === 590_000, "Doanh thu dịch vụ sau ưu đãi chưa đúng 590.000đ.");
+  assert(serviceRevenue._sum.amount === 250_000, "Doanh thu dịch vụ sau ưu đãi chưa đúng 250.000đ.");
   const tipEntries = await db.ledgerEntry.count({ where: { bookingGroupId: booking.booking.id, category: "TIP_PAYABLE" } });
   assert(tipEntries === 0, "Tip đã bị đưa vào Bill/GMV dù khách không khai báo Tip.");
 
@@ -343,26 +360,27 @@ async function main() {
     totalEarned: number;
     invited: { status: string; reward: number; orders: Array<{ grossBillAmount: number; invitedCustomerBenefitAmount: number; amount: number; commission: number; centerNetAmount: number }> }[];
   } }>("/api/referrals/summary", { jar: ownerJar });
-  const invited = finalSummary.summary.invited.find((item) => item.orders.some((order) => order.grossBillAmount === 790_000));
+  const invited = finalSummary.summary.invited.find((item) => item.orders.some((order) => order.grossBillAmount === 450_000));
   const order = invited?.orders[0];
-  assert(invited?.status === "COMPLETED" && invited.reward === 59_000, "Ví Affiliate chưa ghi nhận đúng đơn hoàn tất.");
-  assert(order?.invitedCustomerBenefitAmount === 200_000 && order.amount === 590_000 && order.commission === 59_000 && order.centerNetAmount === 531_000, "Giao diện Affiliate chưa khớp dòng tiền ba bên 790K/200K/590K/59K/531K.");
-  assert(finalSummary.summary.totalEarned === 59_000, "Tổng thu nhập Affiliate chưa đúng 59.000đ.");
+  assert(invited?.status === "COMPLETED" && invited.reward === 25_000, "Ví Affiliate chưa ghi nhận đúng đơn hoàn tất.");
+  assert(order?.invitedCustomerBenefitAmount === 200_000 && order.amount === 250_000 && order.commission === 25_000 && order.centerNetAmount === 225_000, "Giao diện Affiliate chưa khớp dòng tiền ba bên 450K/200K/250K/25K/225K.");
+  assert(finalSummary.summary.totalEarned === 25_000, "Tổng thu nhập Affiliate chưa đúng 25.000đ.");
 
   console.log(JSON.stringify({
     success: true,
     checks: [
-      "referral_link_is_captured_then_locked_after_webapp_activation",
+      "first_referral_is_locked_before_install_and_cannot_be_overwritten",
+      "installed_referral_recovers_from_customer_account_without_original_guest_cookie",
       "new_member_receives_welcome150_plus_aff50",
       "deposit_is_ten_percent_of_original_bill",
       "commission_is_not_recorded_before_full_payment_and_completion",
       "reception_controls_checkin_service_checkout_and_completion",
       "affiliate_commission_is_ten_percent_of_customer_payment_once",
-      "three_party_cash_flow_is_790k_200k_590k_59k_531k",
+      "three_party_cash_flow_is_450k_200k_250k_25k_225k",
       "tip_stays_outside_bill_and_gmv",
       "affiliate_summary_matches_ledger",
     ],
-    amounts: { grossBill: 790_000, invitedBenefit: 200_000, customerPaid: 590_000, inviterCommission: 59_000, centerNet: 531_000, tip: 0 },
+    amounts: { grossBill: 450_000, invitedBenefit: 200_000, customerPaid: 250_000, inviterCommission: 25_000, centerNet: 225_000, tip: 0 },
   }, null, 2));
 }
 

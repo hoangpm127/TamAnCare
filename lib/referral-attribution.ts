@@ -94,10 +94,13 @@ export async function captureReferralAttribution(code: string) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ action: "CAPTURE", code }),
   });
-  if (!response.ok) return false;
+  if (!response.ok) return null;
   const payload = await response.json() as { state?: "PENDING" | "ACTIVE"; code?: string; expiresAt?: string };
-  if (payload.state === "ACTIVE" && payload.code) storeAttribution(payload.code, "ACTIVE", payload.expiresAt);
-  return true;
+  if ((payload.state === "PENDING" || payload.state === "ACTIVE") && payload.code) {
+    storeAttribution(payload.code, payload.state, payload.expiresAt);
+    return { state: payload.state, code: payload.code, expiresAt: payload.expiresAt };
+  }
+  return null;
 }
 
 export async function activateInstalledReferralAttribution(code = pendingReferralCode()) {

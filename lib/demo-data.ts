@@ -1211,6 +1211,19 @@ export const vouchers = [
     active: true,
   },
   {
+    code: "AFF50",
+    name: "Quà cài app từ lời mời 50K",
+    description: "Tặng thêm 50.000đ cho khách cài Tâm An Center từ link giới thiệu; cộng cùng quyền lợi thành viên mới trong lần dịch vụ đầu tiên.",
+    type: "FIXED" as const,
+    value: 50000,
+    usage: "0/100",
+    minSpend: 200000,
+    expiresAt: formatUtcDDMMYYYY(addDaysUtc(today, 365)),
+    constraint: "Cài app từ link giới thiệu · mỗi khách một lần",
+    accent: "#c64b32",
+    active: true,
+  },
+  {
     code: "FIRST60",
     name: "Ưu đãi khách mới 60 phút",
     description: "Dành cho khách đặt lịch lần đầu tại Tâm An Center, áp dụng cho dịch vụ từ 60 phút trở lên.",
@@ -1221,7 +1234,7 @@ export const vouchers = [
     expiresAt: formatUtcDDMMYYYY(addDaysUtc(today, 21)),
     constraint: "Khách mới, mọi khung giờ",
     accent: "#9f1d20",
-    active: true,
+    active: false,
   },
   {
     code: "SANG70",

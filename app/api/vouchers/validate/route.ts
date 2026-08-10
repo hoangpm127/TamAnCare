@@ -4,7 +4,7 @@ import type { Prisma } from "@/app/generated/prisma/client";
 import { db } from "@/lib/db";
 import { getCustomerSession } from "@/lib/server/customer-session";
 import { getGuestSession } from "@/lib/server/guest-session";
-import { installedReferralForGuest } from "@/lib/server/referral-installation";
+import { installedReferralForIdentity } from "@/lib/server/referral-installation";
 import { consumeRateLimit, isSameOriginMutation, requestIp } from "@/lib/server/request-security";
 import { calculateVoucherDiscount, voucherRuleError } from "@/lib/server/voucher-rules";
 
@@ -90,7 +90,10 @@ export async function POST(request: Request) {
   }
 
   const primaryDiscount = calculateVoucherDiscount(voucher, parsed.data.subtotal);
-  const installedReferral = guestSession ? await installedReferralForGuest(guestSession.id) : null;
+  const installedReferral = await installedReferralForIdentity({
+    guestSessionId: guestSession?.id,
+    customerId: customerSession?.customerId,
+  });
   if (code === "WELCOME150" && customerSession && installedReferral) {
     const affiliateBonus = await db.voucher.findFirst({
       where: {

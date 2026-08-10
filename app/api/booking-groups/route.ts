@@ -3,7 +3,7 @@ import { BookingConflictError, bookingGroupToDto, createBookingGroup } from "@/l
 import { bookingGroupSchema } from "@/lib/validations";
 import { getCustomerSession } from "@/lib/server/customer-session";
 import { ensureGuestSession } from "@/lib/server/guest-session";
-import { installedReferralForGuest } from "@/lib/server/referral-installation";
+import { installedReferralForIdentity } from "@/lib/server/referral-installation";
 import { consumeRateLimit, isSameOriginMutation, privateIdentifierDigest, requestIp } from "@/lib/server/request-security";
 
 export async function POST(request: Request) {
@@ -32,7 +32,10 @@ export async function POST(request: Request) {
       );
     }
     const userAgent = request.headers.get("user-agent")?.trim();
-    const installedReferral = await installedReferralForGuest(guestSession.id);
+    const installedReferral = await installedReferralForIdentity({
+      guestSessionId: guestSession.id,
+      customerId: customerSession?.customerId,
+    });
     const group = await createBookingGroup({
       ...parsed.data,
       guestSessionId: guestSession.id,
