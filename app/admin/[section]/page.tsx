@@ -10,6 +10,7 @@ import { AdminCalendarOperations } from "@/components/admin-calendar-operations"
 import { AdminCustomerTimeline } from "@/components/admin-customer-timeline";
 import { AdminRoomOperations } from "@/components/admin-room-operations";
 import { AdminTherapistOperations } from "@/components/admin-therapist-operations";
+import { AdminServiceOperations } from "@/components/admin-service-operations";
 import { canAccessAdminSection, type AdminAccount } from "@/lib/admin-auth";
 import { getAdminSession } from "@/lib/server/admin-session";
 
@@ -194,6 +195,13 @@ export default async function AdminSectionPage({ params }: { params: Promise<{ s
   if (slug === "customers") return <AdminCustomerTimeline />;
   if (slug === "rooms") return <AdminRoomOperations />;
   if (slug === "therapists") return <AdminTherapistOperations />;
+  if (slug === "services") {
+    const services = await db.service.findMany({
+      include: { _count: { select: { bookings: true, packagePlans: true, therapists: true, vouchers: true } } },
+      orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
+    });
+    return <AdminServiceOperations initialServices={services.map((service) => ({ ...service, updatedAt: service.updatedAt.toISOString() }))} />;
+  }
   if (slug === "settings") {
     if (!["OWNER", "BRANCH_MANAGER"].includes(session.role)) notFound();
     const [settings, settingBranches] = await Promise.all([

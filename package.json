@@ -1,6 +1,6 @@
 {
   "name": "tam-an-center",
-  "version": "1.8.14",
+  "version": "1.9.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -35,7 +35,6 @@
     "uat:archive-stale-business": "tsx scripts/archive-stale-uat-business.ts",
     "audit:affiliate": "tsx scripts/audit-affiliate-readiness.ts",
     "e2e:purge-customers": "tsx scripts/purge-customer-e2e-data.ts",
-    "admin:grant-package": "tsx scripts/grant-customer-package.ts",
     "uat:readiness": "tsx scripts/verify-deployment-readiness.ts --mode=uat",
     "prod:readiness": "tsx scripts/verify-deployment-readiness.ts --mode=production",
     "job:maintenance": "node scripts/invoke-maintenance-job.mjs",
