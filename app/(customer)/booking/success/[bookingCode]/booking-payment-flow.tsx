@@ -177,7 +177,11 @@ export function BookingPaymentFlow({ referenceCode }: { referenceCode: string })
         branchId: draft.summary.branchId,
         customerName: draft.requestPayloads[0]?.customerName ?? draft.summary.nickName ?? "Khách Tâm An",
         customerPhone: draft.requestPayloads[0]?.customerPhone ?? "",
-        voucherCode: draft.summary.voucherCode,
+        // summary.voucherCode is presentation text and may contain the stacked
+        // label "WELCOME150+AFF50". The API expects the primary voucher only;
+        // AFF50 is derived again from the account-bound referral on the server.
+        voucherCode: draft.requestPayloads[0]?.voucherCode
+          ?? draft.summary.voucherCode?.split("+")[0],
         campaignCode: draft.requestPayloads[0]?.campaignCode,
         relationship: draft.summary.relationship,
         careNote: draft.summary.careNote,

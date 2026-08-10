@@ -307,7 +307,9 @@ async function main() {
       branchId: branch.id,
       customerName: `Khách được mời ${marker}`,
       customerPhone: friendPhone,
-      voucherCode: "WELCOME150",
+      // Match the exact stacked display value persisted by the real mobile UI.
+      // The server must recover the primary code and re-derive AFF50 safely.
+      voucherCode: "WELCOME150+AFF50",
       // A stale client-side code must not override the account-bound source.
       campaignCode: competingCampaign.code,
       relationship: "SELF",
@@ -403,6 +405,7 @@ async function main() {
       "installed_referral_recovers_from_customer_account_without_original_guest_cookie",
       "stale_device_referral_cannot_override_server_attribution",
       "new_member_receives_welcome150_plus_aff50",
+      "mobile_checkout_accepts_stacked_voucher_display_value",
       "invite_count_increments_immediately_after_referred_signup",
       "recorded_referral_code_resolves_to_welcome150_plus_aff50",
       "deposit_is_ten_percent_of_final_price_after_discounts",

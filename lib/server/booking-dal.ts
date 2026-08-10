@@ -302,7 +302,16 @@ export async function createBookingGroup(input: BookingGroupInput) {
       }, 0);
 
       const now = new Date();
-      const normalizedVoucherCode = input.voucherCode?.trim().toUpperCase();
+      const requestedVoucherCode = input.voucherCode?.trim().toUpperCase();
+      const requestedVoucherParts = requestedVoucherCode?.split("+").map((code) => code.trim()).filter(Boolean) ?? [];
+      // Backward compatibility for installed PWAs that cached v1.8.11: the
+      // checkout draft used the display label WELCOME150+AFF50 as if it were a
+      // single voucher code. AFF50 is still granted only from the server-bound
+      // referral below; this merely recovers the primary voucher.
+      const normalizedVoucherCode = requestedVoucherParts.includes("WELCOME150")
+        && requestedVoucherParts.every((code) => code === "WELCOME150" || code === "AFF50")
+        ? "WELCOME150"
+        : requestedVoucherCode;
       const voucher = normalizedVoucherCode
         ? await tx.voucher.findFirst({
             where: {
@@ -342,6 +351,9 @@ export async function createBookingGroup(input: BookingGroupInput) {
         campaignId: campaign.id,
       }))) {
         throw new BookingConflictError("Nguồn giới thiệu trên thiết bị không còn hợp lệ hoặc đã gắn với khách khác.");
+      }
+      if (normalizedVoucherCode === "AFF50") {
+        throw new BookingConflictError("AFF50 được hệ thống tự cộng từ lời mời hợp lệ; bạn không cần nhập mã này.");
       }
       if (normalizedVoucherCode && !voucher) throw new BookingConflictError("Mã ưu đãi không còn hiệu lực.");
       if (voucher?.serviceId && serviceIds.some((serviceId) => serviceId !== voucher.serviceId)) {

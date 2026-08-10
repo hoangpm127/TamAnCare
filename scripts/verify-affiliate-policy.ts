@@ -50,12 +50,18 @@ assert.equal(affiliateOwnerEligible({ phoneVerifiedAt: null }, false), true);
 assert.equal(affiliateOwnerEligible(null, false), false);
 const bookingDalSource = readFileSync(new URL("../lib/server/booking-dal.ts", import.meta.url), "utf8");
 const bookingRouteSource = readFileSync(new URL("../app/api/booking-groups/route.ts", import.meta.url), "utf8");
+const bookingPaymentFlowSource = readFileSync(new URL("../app/(customer)/booking/success/[bookingCode]/booking-payment-flow.tsx", import.meta.url), "utf8");
 const voucherValidationSource = readFileSync(new URL("../app/api/vouchers/validate/route.ts", import.meta.url), "utf8");
 assert.ok(
   bookingDalSource.includes('code: "AFF50"')
     && bookingDalSource.includes("primaryVoucherDiscount + affiliateBonusDiscount")
     && bookingDalSource.includes("appliedVoucherDiscounts"),
   "Booking Affiliate phải cộng WELCOME150 + AFF50 và lưu riêng từng VoucherUsage để đối soát.",
+);
+assert.ok(
+  bookingPaymentFlowSource.includes("draft.requestPayloads[0]?.voucherCode")
+    && bookingDalSource.includes('requestedVoucherParts.includes("WELCOME150")'),
+  "Thanh toán mobile phải gửi mã chính và backend phải tương thích với bản nháp cũ WELCOME150+AFF50.",
 );
 assert.ok(
   bookingRouteSource.includes("campaignCode: installedReferral?.code")
