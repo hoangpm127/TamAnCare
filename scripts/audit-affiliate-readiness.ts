@@ -3,7 +3,7 @@ import { BUSINESS_DISTRIBUTION_RATES, calculateBusinessDistribution } from "../l
 import { affiliateCustomerId, affiliateFinancialBreakdown } from "../lib/referral-policy";
 
 async function main() {
-  const [campaigns, commissions, businessAffiliates, businessAssets, businessAttributions] = await Promise.all([
+  const [campaigns, commissions, guestReferralSessions, businessAffiliates, businessAssets, businessAttributions] = await Promise.all([
     db.campaign.findMany({
       where: { source: { startsWith: "AFFILIATE:" } },
       select: {
@@ -37,6 +37,14 @@ async function main() {
     db.ledgerEntry.findMany({
       where: { category: "OPERATING_EXPENSE", description: { startsWith: "Hoa hồng Affiliate" } },
       select: { id: true, customerId: true, bookingId: true, bookingGroupId: true, paymentTransactionId: true, amount: true, direction: true, expenseId: true },
+    }),
+    db.guestSession.findMany({
+      where: { referralCampaignId: { not: null } },
+      select: {
+        referralInstalledAt: true,
+        referralExpiresAt: true,
+        referralClaimedCustomerId: true,
+      },
     }),
     db.businessAffiliate.findMany({
       select: { id: true, status: true, conflictDisclosureRequired: true, conflictDisclosureAcceptedAt: true },
@@ -124,6 +132,11 @@ async function main() {
       ownerCount: ownerIds.length,
       campaignWithoutAccountOwnerCount: ownerIds.filter((id) => !ownerById.has(id)).length,
       unverifiedOwnerCount: owners.filter((owner) => !owner.phoneVerifiedAt).length,
+      referralSessionCount: guestReferralSessions.length,
+      pendingReferralSessionCount: guestReferralSessions.filter((session) => !session.referralInstalledAt).length,
+      activeReferralSessionCount: guestReferralSessions.filter((session) => Boolean(session.referralInstalledAt)).length,
+      claimedReferralSessionCount: guestReferralSessions.filter((session) => Boolean(session.referralClaimedCustomerId)).length,
+      expiredReferralSessionCount: guestReferralSessions.filter((session) => Boolean(session.referralExpiresAt && session.referralExpiresAt <= new Date())).length,
       trackedBookingCount: trackedBookings,
       selfReferralBookingCount: selfReferralBookings,
       commissionCount: commissions.length,

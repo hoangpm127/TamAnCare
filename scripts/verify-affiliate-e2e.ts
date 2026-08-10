@@ -214,15 +214,6 @@ async function main() {
     protectedCapture.state === "PENDING" && protectedCapture.code === campaignCode,
     "Nguồn Affiliate đầu tiên bị link mở sau ghi đè trước khi cài app.",
   );
-  const activated = await jsonRequest<{ state: string; code: string }>("/api/referrals/install-attribution", {
-    jar: friendJar,
-    body: { action: "ACTIVATE", code: competingCampaign.code },
-  });
-  assert(
-    activated.state === "ACTIVE" && activated.code === campaignCode,
-    "Cài webapp chưa kích hoạt đúng nguồn Affiliate đầu tiên đã được bảo vệ.",
-  );
-
   const friendRegistration = await jsonRequest<{ account: { customerId: string } }>("/api/customer-auth/register", {
     jar: friendJar,
     body: { fullName: `Khách được mời ${marker}`, phone: friendPhone, pin: friendPin, acceptTerms: true, acceptPrivacy: true, marketingOptIn: false },
@@ -247,6 +238,14 @@ async function main() {
       && activeGuest.referralExpiresAt > new Date()
       && activeGuest.referralClaimedCustomerId === friendRegistration.account.customerId,
     "Cookie thiết bị không còn trỏ tới nguồn Affiliate đang hiệu lực.",
+  );
+  const activated = await jsonRequest<{ state: string; code: string }>("/api/referrals/install-attribution", {
+    jar: friendJar,
+    body: { action: "ACTIVATE", code: competingCampaign.code },
+  });
+  assert(
+    activated.state === "ACTIVE" && activated.code === campaignCode,
+    "Tạo tài khoản chưa khóa đúng nguồn Affiliate đầu tiên đã được bảo vệ.",
   );
   const customerSessionToken = friendJar.get("ta_customer_session_v2");
   assert(customerSessionToken, "Phiên thành viên chưa được tạo sau đăng ký.");
@@ -309,7 +308,8 @@ async function main() {
       customerName: `Khách được mời ${marker}`,
       customerPhone: friendPhone,
       voucherCode: "WELCOME150",
-      campaignCode,
+      // A stale client-side code must not override the account-bound source.
+      campaignCode: competingCampaign.code,
       relationship: "SELF",
       source: `AFFILIATE_E2E:${marker}`,
       bankCode: "TESTBANK",
@@ -399,7 +399,9 @@ async function main() {
     success: true,
     checks: [
       "first_referral_is_locked_before_install_and_cannot_be_overwritten",
+      "captured_referral_is_bound_to_account_on_signup",
       "installed_referral_recovers_from_customer_account_without_original_guest_cookie",
+      "stale_device_referral_cannot_override_server_attribution",
       "new_member_receives_welcome150_plus_aff50",
       "invite_count_increments_immediately_after_referred_signup",
       "recorded_referral_code_resolves_to_welcome150_plus_aff50",

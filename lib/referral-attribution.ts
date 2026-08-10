@@ -1,4 +1,4 @@
-import { useSyncExternalStore } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 
 const STORAGE_KEY = "tam-an-referral-attribution";
 const ATTRIBUTION_TTL_MS = 30 * 24 * 60 * 60 * 1000;
@@ -51,7 +51,11 @@ function getServerSnapshot(): string | null {
 }
 
 export function useReferralAttribution() {
-  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  const attribution = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  useEffect(() => {
+    void reconcileReferralAttribution();
+  }, []);
+  return attribution;
 }
 
 function readStoredAttribution() {
@@ -81,6 +85,29 @@ function storeAttribution(code: string, state: "PENDING" | "ACTIVE", expiresAt?:
   };
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(attribution));
   notify();
+}
+
+function clearAttribution() {
+  window.localStorage.removeItem(STORAGE_KEY);
+  notify();
+}
+
+async function reconcileReferralAttribution() {
+  try {
+    const response = await fetch("/api/referrals/install-attribution", { cache: "no-store" });
+    if (!response.ok) return;
+    const payload = await response.json() as { state?: "ACTIVE" | "NONE"; code?: string };
+    if (payload.state === "ACTIVE" && payload.code) {
+      storeAttribution(payload.code, "ACTIVE");
+    } else if (payload.state === "NONE" && getSnapshot()) {
+      // Remove only an ACTIVE local value. A freshly captured PENDING value is
+      // still needed by the install prompt before sign-up.
+      clearAttribution();
+    }
+  } catch {
+    // Offline PWAs keep their current local state until server reconciliation
+    // becomes available again.
+  }
 }
 
 export function pendingReferralCode() {

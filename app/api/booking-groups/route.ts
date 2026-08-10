@@ -41,7 +41,9 @@ export async function POST(request: Request) {
       // The server-side binding is authoritative after an invitation has been
       // attached to an account. Do not depend on browser storage surviving an
       // app install, logout, or a switch between browser and installed PWA.
-      campaignCode: installedReferral?.code ?? parsed.data.campaignCode,
+      // Never trust a campaign code retained in localStorage. It may belong to
+      // a deleted test campaign or another account on the same phone.
+      campaignCode: installedReferral?.code,
       guestSessionId: guestSession.id,
       authenticatedCustomerId: customerSession?.customerId,
       installedReferralCampaignId: installedReferral?.campaignId,

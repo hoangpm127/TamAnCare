@@ -7,7 +7,7 @@ import { createCustomerSession, customerAccountDto, getCustomerSession } from "@
 import { createCustomerMembership } from "@/lib/server/customer-registration";
 import { getGuestSession } from "@/lib/server/guest-session";
 import { isVietnamMobilePhone, normalizeVietnamPhone } from "@/lib/server/phone-otp";
-import { bindInstalledReferralToCustomer } from "@/lib/server/referral-installation";
+import { bindCapturedReferralToCustomer } from "@/lib/server/referral-installation";
 import { consumeRateLimit, isSameOriginMutation, privateIdentifierDigest, requestIp } from "@/lib/server/request-security";
 
 const schema = z.object({
@@ -63,7 +63,7 @@ export async function POST(request: Request) {
     });
   await createCustomerSession(account.customerId);
   const guestSession = await getGuestSession();
-  if (guestSession) await bindInstalledReferralToCustomer(guestSession.id, account.customerId);
+  if (guestSession) await bindCapturedReferralToCustomer(guestSession.id, account.customerId);
   const session = await getCustomerSession();
   return NextResponse.json({ account: session ? customerAccountDto(session) : customerAccountDto(account) }, { status: 201 });
 }

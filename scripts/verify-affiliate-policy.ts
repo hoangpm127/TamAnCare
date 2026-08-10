@@ -58,8 +58,9 @@ assert.ok(
   "Booking Affiliate phải cộng WELCOME150 + AFF50 và lưu riêng từng VoucherUsage để đối soát.",
 );
 assert.ok(
-  bookingRouteSource.includes("campaignCode: installedReferral?.code ?? parsed.data.campaignCode"),
-  "Booking phải khôi phục nguồn Affiliate phía máy chủ sau khi lời mời đã gắn vào tài khoản.",
+  bookingRouteSource.includes("campaignCode: installedReferral?.code")
+    && !bookingRouteSource.includes("campaignCode: installedReferral?.code ?? parsed.data.campaignCode"),
+  "Booking phải chỉ tin nguồn Affiliate phía máy chủ, không dùng mã cũ còn lưu trên thiết bị.",
 );
 assert.ok(
   voucherValidationSource.includes('if (requestedCode === "AFF50")')

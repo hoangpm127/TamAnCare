@@ -5,7 +5,7 @@ import { verifyPassword } from "@/lib/password";
 import { createCustomerSession, customerAccountDto } from "@/lib/server/customer-session";
 import { getGuestSession } from "@/lib/server/guest-session";
 import { isVietnamMobilePhone, normalizeVietnamPhone } from "@/lib/server/phone-otp";
-import { bindInstalledReferralToCustomer } from "@/lib/server/referral-installation";
+import { bindCapturedReferralToCustomer } from "@/lib/server/referral-installation";
 import { clearRateLimit, consumeRateLimit, isSameOriginMutation, requestIp } from "@/lib/server/request-security";
 
 const schema = z.object({
@@ -42,7 +42,7 @@ export async function POST(request: Request) {
   }
   await createCustomerSession(account.customerId);
   const guestSession = await getGuestSession();
-  if (guestSession) await bindInstalledReferralToCustomer(guestSession.id, account.customerId);
+  if (guestSession) await bindCapturedReferralToCustomer(guestSession.id, account.customerId);
   await Promise.all([
     clearRateLimit("customer-login-ip", requestIp(request)),
     clearRateLimit("customer-login-account", identity),

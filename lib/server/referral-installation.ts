@@ -128,20 +128,26 @@ export async function installedReferralForGuest(guestSessionId: string) {
   };
 }
 
-export async function bindInstalledReferralToCustomer(guestSessionId: string, customerId: string) {
+export async function bindCapturedReferralToCustomer(guestSessionId: string, customerId: string) {
   const now = new Date();
   const result = await db.guestSession.updateMany({
     where: {
       id: guestSessionId,
       referralCampaignId: { not: null },
-      referralInstalledAt: { not: null },
       referralExpiresAt: { gt: now },
       OR: [
         { referralClaimedCustomerId: null },
         { referralClaimedCustomerId: customerId },
       ],
     },
-    data: { referralClaimedCustomerId: customerId },
+    // A successful membership sign-up/login is the durable hand-off point.
+    // Browser and installed-PWA storage can be isolated (notably on iOS), so
+    // waiting for a client-only install event can lose an otherwise valid
+    // first-touch referral. The server record remains the source of truth.
+    data: {
+      referralClaimedCustomerId: customerId,
+      referralInstalledAt: now,
+    },
   });
   return result.count === 1;
 }

@@ -1,14 +1,28 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getCustomerSession } from "@/lib/server/customer-session";
-import { ensureGuestSession } from "@/lib/server/guest-session";
-import { activateGuestReferral, captureGuestReferral } from "@/lib/server/referral-installation";
+import { ensureGuestSession, getGuestSession } from "@/lib/server/guest-session";
+import { activateGuestReferral, captureGuestReferral, installedReferralForIdentity } from "@/lib/server/referral-installation";
 import { consumeRateLimit, isSameOriginMutation } from "@/lib/server/request-security";
 
 const schema = z.discriminatedUnion("action", [
   z.object({ action: z.literal("CAPTURE"), code: z.string().trim().min(4).max(80) }),
   z.object({ action: z.literal("ACTIVATE"), code: z.string().trim().min(4).max(80).optional() }),
 ]);
+
+export async function GET() {
+  const [guest, customer] = await Promise.all([getGuestSession(), getCustomerSession()]);
+  const referral = await installedReferralForIdentity({
+    guestSessionId: guest?.id,
+    customerId: customer?.customerId,
+  });
+  return NextResponse.json(
+    referral
+      ? { state: "ACTIVE", code: referral.code }
+      : { state: "NONE" },
+    { headers: { "Cache-Control": "private, no-store" } },
+  );
+}
 
 export async function POST(request: Request) {
   if (!isSameOriginMutation(request)) return NextResponse.json({ error: "Yêu cầu không hợp lệ." }, { status: 403 });
