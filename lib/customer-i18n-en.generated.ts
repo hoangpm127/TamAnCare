@@ -57,6 +57,7 @@ export const EXACT_ENGLISH: Record<string, string> = {
   "10% doanh thu Bill dịch vụ đã hoàn tất và thanh toán đủ · đối soát 15 ngày": "10% of fully paid, completed service bill revenue · 15-day reconciliation",
   "Cài app từ link để nhận AFF50 và cộng cùng WELCOME150 trong lần dịch vụ đầu tiên đủ điều kiện": "Install the app from the link to receive AFF50 together with WELCOME150 on the first eligible service",
   "Đã cộng WELCOME150 và AFF50.": "WELCOME150 and AFF50 have been combined.",
+  "Quà giới thiệu 50K được tự động cộng cùng ưu đãi thành viên mới 150K khi bạn mở đúng link, cài app và chọn dịch vụ từ 200.000đ. Bạn không cần nhập mã AFF50.": "The 50K referral gift is automatically added to the 150K new-member gift when you open the correct link, install the app, and choose services worth at least 200,000 VND. You do not need to enter AFF50.",
   "Hãy cài và mở Tâm An Center từ biểu tượng app trước khi dùng quyền lợi Affiliate.": "Install Tâm An Center and open it from the app icon before using the Affiliate benefit.",
   "Nguồn giới thiệu trên thiết bị không còn hợp lệ hoặc đã gắn với khách khác.": "The referral source on this device is no longer valid or is linked to another guest.",
   "Tài khoản mới · Bill từ 200K · được cộng AFF50 khi cài app qua link giới thiệu": "New account · bill from 200K · AFF50 added after installing through a referral link",

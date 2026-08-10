@@ -57,6 +57,7 @@ export const EXACT_CHINESE: Record<string, string> = {
   "10% doanh thu Bill dịch vụ đã hoàn tất và thanh toán đủ · đối soát 15 ngày": "已完成且全额支付的服务账单收入10% · 15天对账",
   "Cài app từ link để nhận AFF50 và cộng cùng WELCOME150 trong lần dịch vụ đầu tiên đủ điều kiện": "通过链接安装应用，首次符合条件的服务可同时使用AFF50和WELCOME150",
   "Đã cộng WELCOME150 và AFF50.": "WELCOME150与AFF50已叠加。",
+  "Quà giới thiệu 50K được tự động cộng cùng ưu đãi thành viên mới 150K khi bạn mở đúng link, cài app và chọn dịch vụ từ 200.000đ. Bạn không cần nhập mã AFF50.": "打开正确的邀请链接、安装应用并选择满200,000越南盾的服务后，50K邀请礼遇将自动与150K新会员礼遇叠加，无需手动输入AFF50。",
   "Hãy cài và mở Tâm An Center từ biểu tượng app trước khi dùng quyền lợi Affiliate.": "使用Affiliate优惠前，请先安装Tâm An Center并从应用图标打开。",
   "Nguồn giới thiệu trên thiết bị không còn hợp lệ hoặc đã gắn với khách khác.": "此设备上的推荐来源已失效或已关联其他客人。",
   "Tài khoản mới · Bill từ 200K · được cộng AFF50 khi cài app qua link giới thiệu": "新账户 · 账单满200K · 通过推荐链接安装应用可叠加AFF50",

@@ -30,6 +30,14 @@ export async function POST(request: Request) {
 
   const now = new Date();
   const code = parsed.data.code.toUpperCase();
+  if (code === "AFF50") {
+    return NextResponse.json({
+      valid: false,
+      code,
+      discountAmount: 0,
+      message: "Quà giới thiệu 50K được tự động cộng cùng ưu đãi thành viên mới 150K khi bạn mở đúng link, cài app và chọn dịch vụ từ 200.000đ. Bạn không cần nhập mã AFF50.",
+    });
+  }
   const [voucher, customerSession, guestSession] = await Promise.all([
     db.voucher.findFirst({
       where: {

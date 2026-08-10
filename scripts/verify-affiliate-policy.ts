@@ -49,11 +49,22 @@ assert.equal(affiliateOwnerEligible({ phoneVerifiedAt: null }, true), false);
 assert.equal(affiliateOwnerEligible({ phoneVerifiedAt: null }, false), true);
 assert.equal(affiliateOwnerEligible(null, false), false);
 const bookingDalSource = readFileSync(new URL("../lib/server/booking-dal.ts", import.meta.url), "utf8");
+const bookingRouteSource = readFileSync(new URL("../app/api/booking-groups/route.ts", import.meta.url), "utf8");
+const voucherValidationSource = readFileSync(new URL("../app/api/vouchers/validate/route.ts", import.meta.url), "utf8");
 assert.ok(
   bookingDalSource.includes('code: "AFF50"')
     && bookingDalSource.includes("primaryVoucherDiscount + affiliateBonusDiscount")
     && bookingDalSource.includes("appliedVoucherDiscounts"),
   "Booking Affiliate phải cộng WELCOME150 + AFF50 và lưu riêng từng VoucherUsage để đối soát.",
+);
+assert.ok(
+  bookingRouteSource.includes("campaignCode: installedReferral?.code ?? parsed.data.campaignCode"),
+  "Booking phải khôi phục nguồn Affiliate phía máy chủ sau khi lời mời đã gắn vào tài khoản.",
+);
+assert.ok(
+  voucherValidationSource.includes('if (code === "AFF50")')
+    && voucherValidationSource.includes("Bạn không cần nhập mã AFF50"),
+  "AFF50 phải được tự động cộng thay vì cho khách nhập như voucher thông thường.",
 );
 assert.ok(
   !readFileSync(new URL("../lib/server/payment-service.ts", import.meta.url), "utf8").includes("Hoa hồng Affiliate gói"),

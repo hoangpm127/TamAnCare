@@ -38,6 +38,10 @@ export async function POST(request: Request) {
     });
     const group = await createBookingGroup({
       ...parsed.data,
+      // The server-side binding is authoritative after an invitation has been
+      // attached to an account. Do not depend on browser storage surviving an
+      // app install, logout, or a switch between browser and installed PWA.
+      campaignCode: installedReferral?.code ?? parsed.data.campaignCode,
       guestSessionId: guestSession.id,
       authenticatedCustomerId: customerSession?.customerId,
       installedReferralCampaignId: installedReferral?.campaignId,

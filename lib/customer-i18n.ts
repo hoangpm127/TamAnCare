@@ -69,6 +69,7 @@ const EXACT_KOREAN: Record<string, string> = {
   "10% doanh thu Bill dịch vụ đã hoàn tất và thanh toán đủ · đối soát 15 ngày": "완료되고 전액 결제된 서비스 결제 금액의 10% · 15일 정산",
   "Cài app từ link để nhận AFF50 và cộng cùng WELCOME150 trong lần dịch vụ đầu tiên đủ điều kiện": "링크에서 앱을 설치하면 조건을 충족하는 첫 서비스 이용 시 AFF50과 WELCOME150을 함께 받을 수 있습니다",
   "Đã cộng WELCOME150 và AFF50.": "WELCOME150과 AFF50이 함께 적용되었습니다.",
+  "Quà giới thiệu 50K được tự động cộng cùng ưu đãi thành viên mới 150K khi bạn mở đúng link, cài app và chọn dịch vụ từ 200.000đ. Bạn không cần nhập mã AFF50.": "올바른 초대 링크를 열고 앱을 설치한 뒤 200,000동 이상 서비스를 선택하면 추천 혜택 50K가 신규 회원 혜택 150K와 자동으로 함께 적용됩니다. AFF50 코드를 직접 입력할 필요가 없습니다.",
   "Hãy cài và mở Tâm An Center từ biểu tượng app trước khi dùng quyền lợi Affiliate.": "Affiliate 혜택을 사용하기 전에 Tâm An Center를 설치하고 앱 아이콘에서 열어 주세요.",
   "Nguồn giới thiệu trên thiết bị không còn hợp lệ hoặc đã gắn với khách khác.": "이 기기의 추천 정보가 더 이상 유효하지 않거나 다른 고객에게 연결되어 있습니다.",
   "Tài khoản mới · Bill từ 200K · được cộng AFF50 khi cài app qua link giới thiệu": "신규 계정 · 결제 금액 200K 이상 · 추천 링크로 앱 설치 시 AFF50 함께 적용",
