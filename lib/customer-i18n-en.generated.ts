@@ -1,5 +1,15 @@
 // Generated from the canonical Vietnamese customer copy. Review brand, legal and medical wording before release.
 export const EXACT_ENGLISH: Record<string, string> = {
+  "Bạn nhận 200.000đ": "You receive 200,000 VND",
+  "150.000đ quà thành viên mới + 50.000đ từ lời mời.": "150,000 VND new-member gift + 50,000 VND invitation gift.",
+  "Đang lưu lời mời…": "Saving your invitation…",
+  "Đã lưu lời mời trong 30 ngày. Thoát ra hoặc cài app cũng không mất quà.": "Your invitation is saved for 30 days. Closing the page or installing the app will not lose your gift.",
+  "Chưa lưu được lời mời. Hãy mở lại link này khi có mạng.": "The invitation could not be saved. Reopen this link when you are online.",
+  "Cài app để giữ quà trên điện thoại": "Install the app to keep your gift on this phone",
+  "Không cần App Store hay CH Play.": "No App Store or CH Play needed.",
+  "Đã cài? Tạo hồ sơ và đặt lịch": "Already installed? Create a profile and book",
+  "Chỉ cần họ tên, số điện thoại và Mã PIN Tâm An 4 số.": "All you need is your name, phone number, and 4-digit Tâm An PIN.",
+  "Ưu đãi được áp dụng cho lần trải nghiệm đầu tiên đủ điều kiện.": "The offer applies to your first eligible visit.",
   "Cách tính minh bạch giữa 3 bên": "Transparent calculation for all three parties",
   "Khách được mời": "Invited customer",
   "Bill gốc − toàn bộ voucher = số thực thanh toán.": "Original bill − all vouchers = amount actually paid.",

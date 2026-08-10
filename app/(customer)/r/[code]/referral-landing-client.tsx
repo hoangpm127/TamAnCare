@@ -2,10 +2,9 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, BadgeCheck, CheckCircle2, Gift, Loader2, LogIn, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowRight, CheckCircle2, Gift, Loader2, ShieldCheck } from "lucide-react";
 import { PwaInstallPrompt } from "@/components/pwa-install-prompt";
 import { captureReferralAttribution } from "@/lib/referral-attribution";
-import { formatMoney } from "@/lib/utils";
 
 type ReferralOffer = {
   code: string;
@@ -17,15 +16,12 @@ type ReferralOffer = {
 
 export function ReferralLandingClient({ code, offer }: { code: string; offer: ReferralOffer }) {
   const [captureState, setCaptureState] = useState<"saving" | "saved" | "error">("saving");
-  const [protectedCode, setProtectedCode] = useState(code);
 
   useEffect(() => {
     let active = true;
     void captureReferralAttribution(code)
       .then((result) => {
-        if (!active) return;
-        if (result?.code) setProtectedCode(result.code);
-        setCaptureState(result ? "saved" : "error");
+        if (active) setCaptureState(result ? "saved" : "error");
       })
       .catch(() => {
         if (active) setCaptureState("error");
@@ -34,69 +30,43 @@ export function ReferralLandingClient({ code, offer }: { code: string; offer: Re
   }, [code]);
 
   return (
-    <main className="min-h-[calc(100vh-56px)] bg-[radial-gradient(circle_at_top,#ffe8d8_0%,#fdf8f3_42%,#fdf8f3_100%)] px-4 py-5 text-[#281b18] sm:py-10">
-      <div className="mx-auto w-full max-w-md space-y-3">
-        <section className="overflow-hidden rounded-[1.75rem] border border-[#e7d6ca] bg-white shadow-xl">
-          <div className="relative overflow-hidden bg-gradient-to-br from-[#b6403a] via-[#c64b32] to-[#4c191b] px-5 pb-6 pt-7 text-center text-white">
-            <div className="absolute -right-10 -top-12 h-36 w-36 rounded-full bg-white/8" />
-            <div className="absolute -bottom-16 -left-8 h-32 w-32 rounded-full bg-[#e7c878]/10" />
-            <span className="relative mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-white/15 shadow-inner ring-1 ring-white/20">
-              <Gift size={25} />
-            </span>
-            <p className="relative mt-3 text-[11px] font-bold uppercase tracking-[0.16em] text-[#ffe3a8]">Một người bạn đã gửi tặng bạn</p>
-            <h1 className="relative mt-1 text-2xl font-semibold tracking-tight">Lời mời trải nghiệm Tâm An Center</h1>
-            <span className="relative mt-3 inline-flex items-center gap-1.5 rounded-full bg-black/15 px-3 py-1.5 font-mono text-xs ring-1 ring-white/15">
-              <BadgeCheck size={14} /> Mã {protectedCode}
-            </span>
-          </div>
-
-          <div className="space-y-4 p-5">
-            <div className={`flex items-start gap-2 rounded-2xl px-3.5 py-3 text-xs leading-5 ring-1 ${captureState === "error" ? "bg-amber-50 text-amber-800 ring-amber-200" : "bg-emerald-50 text-emerald-800 ring-emerald-200"}`}>
-              {captureState === "saving" ? <Loader2 size={17} className="mt-0.5 shrink-0 animate-spin" /> : <ShieldCheck size={17} className="mt-0.5 shrink-0" />}
-              <span>
-                {captureState === "saving"
-                  ? "Đang giữ quà và nguồn người mời trên hệ thống…"
-                  : captureState === "saved"
-                    ? "Đã giữ quà và nguồn người mời trong 30 ngày. Bạn có thể thoát ra, mở lại hoặc cài app mà không mất ghi nhận."
-                    : "Thiết bị đang mất kết nối. Hãy mở lại đúng link này khi có mạng trước khi cài app để hệ thống giữ chắc quyền lợi."}
-              </span>
-            </div>
-
-            <div className="rounded-2xl bg-[#fff7df] p-4 text-center ring-1 ring-[#c59a3d]/45">
-              <Sparkles className="mx-auto text-[#c64b32]" size={22} />
-              <p className="mt-2 text-[10px] font-bold uppercase tracking-[0.14em] text-[#76551d]">Quyền lợi dành cho bạn</p>
-              {offer ? (
-                <>
-                  <p className="mt-1 text-2xl font-bold text-[#c64b32]">Nhận thêm {formatMoney(offer.discountValue)}</p>
-                  <p className="mt-1 text-xs leading-5 text-[#715943]">Cài app từ lời mời này và cộng cùng WELCOME150 · tổng quyền lợi tới 200.000đ.</p>
-                </>
-              ) : (
-                <p className="mt-1 text-sm font-semibold leading-6 text-[#c64b32]">Mã giới thiệu đã được ghi nhận. Hệ thống sẽ tự áp dụng ưu đãi đang còn hiệu lực.</p>
-              )}
-            </div>
-
-            <div className="space-y-2.5 text-xs leading-5 text-[#554842]">
-              <p className="flex items-start gap-2"><CheckCircle2 size={16} className="mt-0.5 shrink-0 text-amber-700" /><span>Nguồn giới thiệu đang được giữ trong 30 ngày và sẽ được kích hoạt khi bạn mở Tâm An Center từ biểu tượng đã cài.</span></p>
-              <p className="flex items-start gap-2"><ShieldCheck size={16} className="mt-0.5 shrink-0 text-[#c64b32]" /><span>Tạo hồ sơ bằng họ tên, số điện thoại và Mã PIN Tâm An 4 số để dùng đồng thời WELCOME150 và quà Affiliate 50K trong lần dịch vụ đầu tiên đủ điều kiện.</span></p>
-            </div>
-
-            <div className="grid gap-2">
-              <a href="#cai-app" className="flex w-full items-center justify-center gap-2 rounded-full bg-[#c64b32] px-5 py-3.5 text-sm font-semibold text-white shadow-md shadow-[#c64b32]/20">
-                <Sparkles size={16} /> Cài app trước để nhận đủ ưu đãi <ArrowRight size={15} />
-              </a>
-              <Link href="/tai-khoan?returnTo=%2Fbooking" className="flex w-full items-center justify-center gap-2 rounded-full border border-[#dfcec4] bg-white px-5 py-3 text-xs font-semibold text-[#6f211f]">
-                <LogIn size={15} /> Đăng nhập nhanh trước khi đặt lịch
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        <div id="cai-app" className="scroll-mt-20">
-          <PwaInstallPrompt />
+    <main className="min-h-[calc(100dvh-56px)] bg-[radial-gradient(circle_at_top,#ffe4d2_0%,#fdf8f3_48%,#fdf8f3_100%)] px-4 py-4 text-[#281b18] sm:py-8">
+      <section className="mx-auto w-full max-w-md overflow-hidden rounded-[1.75rem] border border-[#e7d6ca] bg-white shadow-xl">
+        <div className="relative overflow-hidden bg-gradient-to-br from-[#b6403a] via-[#c64b32] to-[#4c191b] px-5 py-6 text-center text-white">
+          <div className="absolute -right-10 -top-12 h-36 w-36 rounded-full bg-white/8" />
+          <div className="absolute -bottom-16 -left-8 h-32 w-32 rounded-full bg-[#e7c878]/10" />
+          <span className="relative mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15 shadow-inner ring-1 ring-white/20">
+            <Gift size={23} />
+          </span>
+          <p className="relative mt-3 text-[10px] font-bold uppercase tracking-[0.16em] text-[#ffe3a8]">Một người bạn đã gửi tặng bạn</p>
+          <h1 className="relative mt-1 text-[1.75rem] font-bold leading-tight tracking-tight">Bạn nhận 200.000đ</h1>
+          <p className="relative mt-2 text-xs leading-5 text-white/85">150.000đ quà thành viên mới + 50.000đ từ lời mời.</p>
         </div>
 
-        <p className="px-4 text-center text-[10px] leading-4 text-[#826f66]">Bạn vẫn có thể dùng web để xem thông tin; quyền lợi Affiliate 50K chỉ kích hoạt sau khi cài và mở webapp.</p>
-      </div>
+        <div className="space-y-3 p-4">
+          <div className={`flex items-start gap-2 rounded-2xl px-3.5 py-3 text-xs leading-5 ring-1 ${captureState === "error" ? "bg-amber-50 text-amber-800 ring-amber-200" : "bg-emerald-50 text-emerald-800 ring-emerald-200"}`}>
+            {captureState === "saving" ? <Loader2 size={17} className="mt-0.5 shrink-0 animate-spin" /> : captureState === "saved" ? <CheckCircle2 size={17} className="mt-0.5 shrink-0" /> : <ShieldCheck size={17} className="mt-0.5 shrink-0" />}
+            <span>
+              {captureState === "saving"
+                ? "Đang lưu lời mời…"
+                : captureState === "saved"
+                  ? "Đã lưu lời mời trong 30 ngày. Thoát ra hoặc cài app cũng không mất quà."
+                  : "Chưa lưu được lời mời. Hãy mở lại link này khi có mạng."}
+            </span>
+          </div>
+
+          <PwaInstallPrompt compact />
+
+          <Link href="/tai-khoan?returnTo=%2Fbooking" className="flex w-full items-center justify-center gap-2 rounded-full bg-[#c64b32] px-5 py-3.5 text-sm font-semibold text-white shadow-md shadow-[#c64b32]/20">
+            Đã cài? Tạo hồ sơ và đặt lịch <ArrowRight size={16} />
+          </Link>
+
+          <div className="space-y-1 text-center text-[11px] leading-5 text-[#74645c]">
+            <p>Chỉ cần họ tên, số điện thoại và Mã PIN Tâm An 4 số.</p>
+            {offer ? <p>Ưu đãi được áp dụng cho lần trải nghiệm đầu tiên đủ điều kiện.</p> : null}
+          </div>
+        </div>
+      </section>
     </main>
   );
 }

@@ -1,5 +1,15 @@
 // Generated from the canonical Vietnamese customer copy. Review brand, legal and medical wording before release.
 export const EXACT_CHINESE: Record<string, string> = {
+  "Bạn nhận 200.000đ": "您可享200,000越南盾礼遇",
+  "150.000đ quà thành viên mới + 50.000đ từ lời mời.": "新会员礼遇150,000越南盾 + 邀请礼遇50,000越南盾。",
+  "Đang lưu lời mời…": "正在保存邀请信息……",
+  "Đã lưu lời mời trong 30 ngày. Thoát ra hoặc cài app cũng không mất quà.": "邀请信息已保存30天。关闭页面或安装应用都不会丢失礼遇。",
+  "Chưa lưu được lời mời. Hãy mở lại link này khi có mạng.": "暂时无法保存邀请信息。联网后请重新打开此链接。",
+  "Cài app để giữ quà trên điện thoại": "安装应用，将礼遇保存在手机上",
+  "Không cần App Store hay CH Play.": "无需App Store或CH Play。",
+  "Đã cài? Tạo hồ sơ và đặt lịch": "已安装？创建资料并预约",
+  "Chỉ cần họ tên, số điện thoại và Mã PIN Tâm An 4 số.": "只需姓名、手机号和4位Tâm An PIN码。",
+  "Ưu đãi được áp dụng cho lần trải nghiệm đầu tiên đủ điều kiện.": "礼遇适用于首次符合条件的体验。",
   "Cách tính minh bạch giữa 3 bên": "三方透明计算方式",
   "Khách được mời": "受邀顾客",
   "Bill gốc − toàn bộ voucher = số thực thanh toán.": "原始账单 − 所有优惠券 = 实际付款金额。",

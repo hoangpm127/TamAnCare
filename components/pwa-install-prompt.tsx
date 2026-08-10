@@ -42,7 +42,7 @@ function subscribeToClientReady() {
   return () => undefined;
 }
 
-export function PwaInstallPrompt() {
+export function PwaInstallPrompt({ compact = false }: { compact?: boolean }) {
   const [guide, setGuide] = useState<InstallGuide>(null);
   const [installPrompt, setInstallPrompt] = useState<InstallPromptEvent | null>(null);
   const [installedByEvent, setInstalledByEvent] = useState(false);
@@ -123,13 +123,13 @@ export function PwaInstallPrompt() {
     <>
       <section className="overflow-hidden rounded-2xl border border-[#e7d6ca] bg-gradient-to-br from-white to-[#fff6ef] shadow-sm">
         <div className="flex items-start gap-3 p-4">
-          <span className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-[#211716] shadow-md ring-1 ring-[#d8b86a]">
+          <span className={`flex shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-[#211716] shadow-md ring-1 ring-[#d8b86a] ${compact ? "h-10 w-10" : "h-12 w-12"}`}>
             <Image src="/icon-192.png" alt="Biểu tượng Tâm An Center" width={48} height={48} className="h-full w-full object-cover" />
           </span>
           <div className="min-w-0 flex-1">
-            <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#c64b32]">Webapp trên điện thoại</p>
-            <h2 className="mt-1 text-base font-semibold tracking-tight">Cài Tâm An Center để mở lại trong một chạm</h2>
-            <p className="mt-1 text-xs leading-5 text-[#6f625c]">Không cần App Store hay CH Play. Sau khi cài và mở từ biểu tượng app, nguồn giới thiệu cùng voucher 50K sẽ được khóa trên hệ thống.</p>
+            {compact ? null : <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#c64b32]">Webapp trên điện thoại</p>}
+            <h2 className={`${compact ? "text-sm" : "mt-1 text-base"} font-semibold tracking-tight`}>{compact ? "Cài app để giữ quà trên điện thoại" : "Cài Tâm An Center để mở lại trong một chạm"}</h2>
+            <p className="mt-1 text-xs leading-5 text-[#6f625c]">{compact ? "Không cần App Store hay CH Play." : "Không cần App Store hay CH Play. Sau khi cài và mở từ biểu tượng app, nguồn giới thiệu cùng voucher 50K sẽ được khóa trên hệ thống."}</p>
           </div>
         </div>
 
@@ -139,23 +139,23 @@ export function PwaInstallPrompt() {
           </div>
         ) : null}
 
-        <div className="grid grid-cols-2 gap-2 border-t border-[#eee1d8] p-3">
-          <button
+        <div className={`grid gap-2 border-t border-[#eee1d8] p-3 ${platform === "other" ? "grid-cols-2" : "grid-cols-1"}`}>
+          {platform !== "android" ? <button
             type="button"
             onClick={() => setGuide("ios")}
             className={`flex min-h-12 items-center justify-between gap-2 rounded-xl border px-3 py-2.5 text-left transition ${platform === "ios" ? "border-[#c64b32] bg-[#f8ebe5] text-[#8b1b1e]" : "border-[#e7d6ca] bg-white text-[#433a36]"}`}
           >
             <span><span className="block text-xs font-semibold">Cài trên iPhone</span><span className="mt-0.5 block text-[10px] opacity-70">Qua Safari</span></span>
             <ChevronRight size={15} className="shrink-0" />
-          </button>
-          <button
+          </button> : null}
+          {platform !== "ios" ? <button
             type="button"
             onClick={() => void installOnAndroid()}
             className={`flex min-h-12 items-center justify-between gap-2 rounded-xl border px-3 py-2.5 text-left transition ${platform === "android" ? "border-[#c64b32] bg-[#c64b32] text-white" : "border-[#e7d6ca] bg-white text-[#433a36]"}`}
           >
             <span><span className="block text-xs font-semibold">Cài trên Android</span><span className="mt-0.5 block text-[10px] opacity-70">{installPrompt ? "Cài ngay" : "Qua Chrome"}</span></span>
             <Download size={15} className="shrink-0" />
-          </button>
+          </button> : null}
         </div>
       </section>
 

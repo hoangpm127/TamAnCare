@@ -31,7 +31,7 @@ const NAV_ITEMS = [
 ];
 
 const HIDE_BOTTOM_NAV_PREFIXES = ["/booking/success", "/review", "/office", "/chat"];
-function CustomerTopbar({ pathname }: { pathname: string }) {
+function CustomerTopbar({ pathname, minimal = false }: { pathname: string; minimal?: boolean }) {
   const router = useRouter();
   const notificationsList = useAllNotifications();
   const unreadCount = notificationsList.filter((item) => !item.read).length;
@@ -58,7 +58,7 @@ function CustomerTopbar({ pathname }: { pathname: string }) {
             <NavigationPendingIndicator />
           </Link>
         </div>
-        <div className="flex items-center gap-1.5 sm:gap-2">
+        {minimal ? null : <div className="flex items-center gap-1.5 sm:gap-2">
           <Link
             href="/don-cua-toi?tab=upcoming"
             className="tap-feedback relative inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#fbf2e7] text-[#76551d] ring-1 ring-[#76551d]/10 sm:h-9 sm:w-9"
@@ -96,7 +96,7 @@ function CustomerTopbar({ pathname }: { pathname: string }) {
             ) : null}
             <NavigationPendingIndicator />
           </Link>
-        </div>
+        </div>}
       </div>
     </header>
   );
@@ -141,14 +141,15 @@ function CustomerBottomNav({ pathname }: { pathname: string }) {
 
 export function CustomerShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const showBottomNav = !HIDE_BOTTOM_NAV_PREFIXES.some((prefix) => pathname.startsWith(prefix));
+  const focusedReferralLanding = pathname.startsWith("/r/");
+  const showBottomNav = !focusedReferralLanding && !HIDE_BOTTOM_NAV_PREFIXES.some((prefix) => pathname.startsWith(prefix));
 
   return (
     <div className="flex min-h-dvh flex-col bg-[#fdf8f3]">
-      <CustomerTopbar pathname={pathname} />
-      <ActiveServiceBanner />
+      <CustomerTopbar pathname={pathname} minimal={focusedReferralLanding} />
+      {focusedReferralLanding ? null : <ActiveServiceBanner />}
       <div className="customer-app flex-1">{children}</div>
-      <footer className={cn("shrink-0 border-t border-[#c59a3d]/55 bg-gradient-to-br from-[#4c191b] via-[#7c2927] to-[#b85336] px-4 py-4 text-center text-[11px] font-medium leading-5 text-[#fff4df] shadow-[inset_0_1px_0_rgba(232,207,138,0.18)]", showBottomNav && "mb-[calc(68px+env(safe-area-inset-bottom))] md:mb-0")}>
+      {focusedReferralLanding ? null : <footer className={cn("shrink-0 border-t border-[#c59a3d]/55 bg-gradient-to-br from-[#4c191b] via-[#7c2927] to-[#b85336] px-4 py-4 text-center text-[11px] font-medium leading-5 text-[#fff4df] shadow-[inset_0_1px_0_rgba(232,207,138,0.18)]", showBottomNav && "mb-[calc(68px+env(safe-area-inset-bottom))] md:mb-0")}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/tam-an-center-mark-transparent.png" alt="" width={58} height={58} className="mx-auto mb-1 h-12 w-12 object-contain drop-shadow" />
         <BrandWordmark className="mx-auto h-[21px] w-40 text-[#e8cf8a]" />
@@ -157,9 +158,9 @@ export function CustomerShell({ children }: { children: React.ReactNode }) {
           <Link href="/chinh-sach-rieng-tu" className="transition-colors hover:text-[#e7c878]">Bảo vệ dữ liệu</Link>
           <Link href="/chinh-sach-dat-lich" className="transition-colors hover:text-[#e7c878]">Đặt lịch & đặt cọc</Link>
         </div>
-      </footer>
+      </footer>}
       {showBottomNav ? <CustomerBottomNav pathname={pathname} /> : null}
-      <FreeConsultationPopup />
+      {focusedReferralLanding ? null : <FreeConsultationPopup />}
     </div>
   );
 }

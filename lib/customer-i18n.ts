@@ -12,6 +12,16 @@ export const CUSTOMER_LANGUAGE_STORAGE_KEY = "tam-an-customer-language";
 export const CUSTOMER_LANGUAGE_COOKIE_KEY = "tam_customer_language";
 
 const EXACT_KOREAN: Record<string, string> = {
+  "Bạn nhận 200.000đ": "총 200,000동 혜택",
+  "150.000đ quà thành viên mới + 50.000đ từ lời mời.": "신규 회원 혜택 150,000동 + 초대 혜택 50,000동.",
+  "Đang lưu lời mời…": "초대 정보를 저장하고 있습니다…",
+  "Đã lưu lời mời trong 30 ngày. Thoát ra hoặc cài app cũng không mất quà.": "초대 정보가 30일 동안 저장되었습니다. 페이지를 닫거나 앱을 설치해도 혜택이 사라지지 않습니다.",
+  "Chưa lưu được lời mời. Hãy mở lại link này khi có mạng.": "초대 정보를 저장하지 못했습니다. 인터넷 연결 후 이 링크를 다시 열어 주세요.",
+  "Cài app để giữ quà trên điện thoại": "휴대전화에 앱을 설치해 혜택 보관",
+  "Không cần App Store hay CH Play.": "App Store나 CH Play가 필요하지 않습니다.",
+  "Đã cài? Tạo hồ sơ và đặt lịch": "이미 설치했나요? 프로필 만들고 예약하기",
+  "Chỉ cần họ tên, số điện thoại và Mã PIN Tâm An 4 số.": "이름, 전화번호와 Tâm An 4자리 PIN만 있으면 됩니다.",
+  "Ưu đãi được áp dụng cho lần trải nghiệm đầu tiên đủ điều kiện.": "조건을 충족하는 첫 이용에 혜택이 적용됩니다.",
   "Cách tính minh bạch giữa 3 bên": "세 당사자 간 투명한 계산 방식",
   "Khách được mời": "초대받은 고객",
   "Bill gốc − toàn bộ voucher = số thực thanh toán.": "원래 결제 금액 − 모든 바우처 = 실제 결제 금액입니다.",
