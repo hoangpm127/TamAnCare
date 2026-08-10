@@ -8,7 +8,7 @@ import { phoneVerificationRequired } from "@/lib/server/otp-delivery";
 const COOKIE_NAME = "ta_customer_session_v2";
 const LEGACY_COOKIE_NAME = "ta_customer_session";
 const SESSION_DAYS = 365;
-const SESSION_RENEW_THRESHOLD_DAYS = 30;
+const SESSION_RENEW_AFTER_DAYS = 30;
 
 function tokenHash(token: string) {
   return createHash("sha256").update(token).digest("hex");
@@ -58,7 +58,8 @@ export async function getCustomerSession(options: { renew?: boolean } = {}) {
   });
   const now = new Date();
   if (!session || session.expiresAt <= now) return null;
-  if (options.renew && session.expiresAt.getTime() - now.getTime() <= SESSION_RENEW_THRESHOLD_DAYS * 86_400_000) {
+  const renewWhenRemainingDays = SESSION_DAYS - SESSION_RENEW_AFTER_DAYS;
+  if (options.renew && session.expiresAt.getTime() - now.getTime() <= renewWhenRemainingDays * 86_400_000) {
     const expiresAt = new Date(now.getTime() + SESSION_DAYS * 86_400_000);
     await db.customerSession.update({ where: { id: session.id }, data: { expiresAt } });
     cookieStore.set(COOKIE_NAME, token, cookieOptions(expiresAt));

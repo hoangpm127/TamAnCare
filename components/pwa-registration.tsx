@@ -12,6 +12,15 @@ export function PwaRegistration() {
   useEffect(() => {
     const standalone = window.matchMedia("(display-mode: standalone)").matches
       || Boolean((navigator as Navigator & { standalone?: boolean }).standalone);
+
+    // Keep an active customer's long-lived, HttpOnly session fresh whenever the
+    // website or installed PWA is opened. The endpoint only renews periodically,
+    // so regular launches do not create a database write on every visit.
+    void fetch("/api/customer-auth/session", {
+      cache: "no-store",
+      credentials: "same-origin",
+    }).catch(() => undefined);
+
     if (isAdminWorkspacePath(window.location.pathname)) rememberAdminWorkspace(window.location.pathname);
     if (standalone && window.location.pathname === "/" && prefersAdminWorkspace()) {
       void fetch("/api/admin-auth/session", { cache: "no-store" })
