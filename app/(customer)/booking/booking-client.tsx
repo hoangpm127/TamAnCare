@@ -47,6 +47,8 @@ type Slot = {
   availableRooms: { id: string; name: string; type: string }[];
   remainingCapacity: number;
   isAvailable: boolean;
+  allocationMode: "SINGLE" | "SAME_ROOM" | "SPLIT_ROOMS" | "UNAVAILABLE";
+  roomCount: number;
 };
 
 type RecommendedVoucher = CatalogVoucher & {
@@ -401,11 +403,6 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
     let ignore = false;
     let controller: AbortController | null = null;
 
-    const query = new URLSearchParams({ serviceId: anchorServiceId, date, includeUnavailable: "true" });
-    if (branchId) {
-      query.set("branchId", branchId);
-    }
-
     async function loadAvailability(showLoading: boolean) {
       controller?.abort();
       controller = new AbortController();
@@ -414,7 +411,16 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
         setError("");
       }
       try {
-        const response = await fetch(`/api/availability?${query.toString()}`, {
+        const response = await fetch("/api/availability", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            date,
+            branchId,
+            includeUnavailable: true,
+            therapistId: effectiveTherapistId || undefined,
+            units: cart.map((line) => ({ serviceId: line.serviceId, people: line.people })),
+          }),
           cache: "no-store",
           signal: controller.signal,
         });
@@ -451,7 +457,7 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
       window.clearInterval(refreshTimer);
       window.removeEventListener("focus", refreshOnFocus);
     };
-  }, [anchorServiceId, date, branchId]);
+  }, [branchId, cart, date, effectiveTherapistId]);
 
   function toggleService(serviceId: string) {
     setSelectedSlotStartTime("");
@@ -520,15 +526,11 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
 
     const bookingCodes = units.map(() => makeBookingCode());
     const requestPayloads = units.map((unit, index) => {
-      const assignedRoom = slot.availableRooms[index % Math.max(1, slot.availableRooms.length)]?.id;
-      const assignedTherapist =
-        effectiveTherapistId || slot.availableTherapists[index % Math.max(1, slot.availableTherapists.length)]?.id;
       return {
         bookingCode: bookingCodes[index],
         serviceId: unit.serviceId,
         startTime: slot.startTime,
-        therapistId: assignedTherapist,
-        roomId: assignedRoom,
+        therapistId: effectiveTherapistId || undefined,
         customerName: nickName || undefined,
         customerPhone: phone || undefined,
         nickName: nickName || undefined,
@@ -870,7 +872,13 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
                       >
                         <span className="flex items-center gap-1"><Clock size={12} /> {item.startTime.slice(11, 16)}</span>
                         <span className={cn("text-[9px] font-medium", active ? "text-white/80" : "opacity-80")}>
-                          {selectedTherapist && !isGroupBooking ? (canBook ? "Rảnh" : "Bận") : canBook ? `${item.remainingCapacity} chỗ rảnh` : "Đã kín"}
+                          {selectedTherapist && !isGroupBooking
+                            ? (canBook ? "Rảnh" : "Bận")
+                            : isGroupBooking
+                              ? (canBook ? "Đủ chỗ cho nhóm" : "Không đủ chỗ cho nhóm")
+                              : canBook
+                                ? `${item.remainingCapacity} chỗ rảnh`
+                                : "Đã kín"}
                         </span>
                       </button>
                     );
@@ -878,7 +886,11 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
                 </div>
               )}
               <p className="mt-2 text-center text-[10px] leading-4 text-[#7b6c65]">
-                KTV và giường được giữ trọn thời lượng dịch vụ: 10:00 + 90 phút → bận đến 11:30. Ca cuối {selectedBranch?.lastBookingTime ?? "21:00"} chỉ hiện khi toàn bộ dịch vụ kết thúc trước giờ đóng cửa.
+                {isGroupBooking && selectedAvailabilitySlot?.isAvailable
+                  ? selectedAvailabilitySlot.allocationMode === "SAME_ROOM"
+                    ? "Khung giờ này có đủ KTV và giường phù hợp; hệ thống đang ưu tiên xếp cả nhóm chung một phòng."
+                    : "Khung giờ này đủ KTV và giường phù hợp; do không còn một phòng đủ giường, lễ tân sẽ xếp các phòng gần nhau."
+                  : "KTV và giường được kiểm tra trong toàn bộ thời lượng dịch vụ và thời gian chuẩn bị, nên chỉ hiện những khung giờ có thể phục vụ trọn vẹn."}
               </p>
             </div>
           </div>

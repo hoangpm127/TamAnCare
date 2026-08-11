@@ -1,12 +1,21 @@
 import { z } from "zod";
 
 export const availabilitySchema = z.object({
-  serviceId: z.string().min(1),
+  serviceId: z.string().min(1).optional(),
+  units: z.array(z.object({
+    serviceId: z.string().min(1),
+    people: z.coerce.number().int().min(1).max(6),
+  })).min(1).max(6).optional(),
   date: z.string().min(10),
   durationMinutes: z.coerce.number().int().positive().optional(),
   therapistId: z.string().optional(),
   branchId: z.string().optional(),
   includeUnavailable: z.coerce.boolean().optional(),
+}).refine((value) => Boolean(value.serviceId || value.units?.length), {
+  message: "Cần có dịch vụ để kiểm tra lịch trống.",
+}).refine((value) => (value.units?.reduce((sum, unit) => sum + unit.people, 0) ?? 1) <= 6, {
+  message: "Một nhóm đặt lịch tối đa 6 người.",
+  path: ["units"],
 });
 
 export const bookingSchema = z.object({
