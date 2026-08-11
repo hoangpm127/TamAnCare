@@ -31,7 +31,7 @@ export const ADMIN_SECTION_META: Record<AdminSectionSlug, AdminSectionMeta> = {
   customers: { label: "Khách hàng", shortDescription: "Hồ sơ & chi tiêu", description: "Quản lý hồ sơ, lịch sử sử dụng, phân nhóm và tổng chi tiêu của khách.", icon: UsersRound },
   therapists: { label: "Kỹ thuật viên", shortDescription: "Lịch & đánh giá", description: "Theo dõi chuyên môn, số lượt phục vụ, khách đặt lại và điểm đánh giá.", icon: BadgeCheck },
   services: { label: "Dịch vụ", shortDescription: "Giá & thời lượng", description: "Quản lý danh mục dịch vụ, thời lượng, giá bán và trạng thái nhận lịch.", icon: Sparkles },
-  rooms: { label: "Phòng & giường", shortDescription: "Tài nguyên cơ sở", description: "Theo dõi trạng thái hoạt động và khả năng đáp ứng của từng tài nguyên.", icon: BedDouble },
+  rooms: { label: "Sơ đồ cơ sở", shortDescription: "Tầng · phòng · giường", description: "Điều phối mặt bằng, khách, KTV và trạng thái phục vụ theo thời gian thực.", icon: BedDouble },
   vouchers: { label: "Voucher", shortDescription: "Mã & số lượt", description: "Kiểm soát mức giảm, điều kiện áp dụng và số lượng voucher còn lại.", icon: TicketPercent },
   packages: { label: "Gói dài hạn", shortDescription: "Buổi & hạn dùng", description: "Quản lý giá gói, số buổi tặng, thời hạn và lượng gói đã bán.", icon: PackageOpen },
   campaigns: { label: "Chiến dịch", shortDescription: "Nguồn khách", description: "Đối chiếu nguồn quảng bá, lượng booking, doanh thu và chi phí thu hút khách.", icon: Megaphone },

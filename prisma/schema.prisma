@@ -105,6 +105,14 @@ enum TherapistStatus {
   HIDDEN
 }
 
+enum AttendanceStatus {
+  PRESENT
+  LATE
+  ABSENT
+  LEAVE
+  OFF
+}
+
 enum TherapistProfileApprovalStatus {
   DRAFT
   PENDING
@@ -309,21 +317,23 @@ enum RefundRequestStatus {
 }
 
 model Branch {
-  id                   String               @id @default(cuid())
+  id                   String                @id @default(cuid())
   name                 String
   address              String
   phone                String?
-  qrVersion            Int                  @default(1)
-  openTime             String               @default("09:00")
-  closeTime            String               @default("24:00")
-  lastBookingTime      String               @default("23:00")
-  seatCapacity         Int                  @default(18)
-  bufferMinutes        Int                  @default(15)
-  createdAt            DateTime             @default(now())
-  updatedAt            DateTime             @updatedAt
+  qrVersion            Int                   @default(1)
+  openTime             String                @default("09:00")
+  closeTime            String                @default("24:00")
+  lastBookingTime      String                @default("23:00")
+  seatCapacity         Int                   @default(18)
+  bufferMinutes        Int                   @default(15)
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
   bookings             Booking[]
   rooms                Room[]
+  facilityFloors       FacilityFloor[]
   therapists           Therapist[]
+  therapistAttendances TherapistAttendance[]
   officeEvents         OfficeEvent[]
   users                User[]
   bookingGroups        BookingGroup[]
@@ -373,6 +383,7 @@ model User {
   refundRequestsCompleted        RefundRequest[]         @relation("RefundCompletedBy")
   investmentOpportunitiesCreated InvestmentOpportunity[]
   managedBusinessDistrict        BusinessDistrict?       @relation("BusinessDistrictManager")
+  attendanceRecords              TherapistAttendance[]   @relation("TherapistAttendanceRecorder")
 
   @@index([therapistId])
 }
@@ -550,6 +561,7 @@ model Therapist {
   services              Service[]
   favoriteOf            Customer[]                     @relation("FavoriteTherapist")
   weeklySchedules       TherapistWeeklySchedule[]
+  attendanceRecords     TherapistAttendance[]
 
   @@index([profileApprovalStatus, branchId])
 }
@@ -569,18 +581,79 @@ model TherapistWeeklySchedule {
   @@index([weekday, isActive])
 }
 
+model TherapistAttendance {
+  id                   String           @id @default(cuid())
+  therapistId          String
+  branchId             String
+  workDate             DateTime         @db.Date
+  status               AttendanceStatus @default(PRESENT)
+  scheduledStartMinute Int?
+  scheduledEndMinute   Int?
+  checkInAt            DateTime?
+  checkOutAt           DateTime?
+  lateMinutes          Int              @default(0)
+  note                 String?
+  recordedByUserId     String
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+  therapist            Therapist        @relation(fields: [therapistId], references: [id], onDelete: Cascade)
+  branch               Branch           @relation(fields: [branchId], references: [id], onDelete: Restrict)
+  recordedBy           User             @relation("TherapistAttendanceRecorder", fields: [recordedByUserId], references: [id], onDelete: Restrict)
+
+  @@unique([therapistId, workDate])
+  @@index([branchId, workDate, status])
+  @@index([recordedByUserId, createdAt])
+}
+
+model FacilityFloor {
+  id        String         @id @default(cuid())
+  branchId  String
+  name      String
+  status    RoomStatus     @default(ACTIVE)
+  sortOrder Int            @default(0)
+  note      String?
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  branch    Branch         @relation(fields: [branchId], references: [id], onDelete: Restrict)
+  rooms     FacilityRoom[]
+
+  @@unique([branchId, name])
+  @@index([branchId, status, sortOrder])
+}
+
+model FacilityRoom {
+  id        String        @id @default(cuid())
+  floorId   String
+  name      String
+  status    RoomStatus    @default(ACTIVE)
+  sortOrder Int           @default(0)
+  note      String?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  floor     FacilityFloor @relation(fields: [floorId], references: [id], onDelete: Restrict)
+  beds      Room[]
+
+  @@unique([floorId, name])
+  @@index([floorId, status, sortOrder])
+}
+
 model Room {
   id                 String            @id @default(cuid())
   branchId           String
+  facilityRoomId     String?
   name               String
   type               RoomType
   status             RoomStatus        @default(ACTIVE)
   suitableCategories ServiceCategory[]
+  sortOrder          Int               @default(0)
   note               String?
   createdAt          DateTime          @default(now())
   updatedAt          DateTime          @updatedAt
   branch             Branch            @relation(fields: [branchId], references: [id])
+  facilityRoom       FacilityRoom?     @relation(fields: [facilityRoomId], references: [id], onDelete: Restrict)
   bookings           Booking[]
+
+  @@index([facilityRoomId, status, sortOrder])
 }
 
 model Customer {

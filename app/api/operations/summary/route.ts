@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getAdminSession } from "@/lib/server/admin-session";
+import { activeBedWhere } from "@/lib/server/facility-operations";
 
 function dateAt(value: string | null, end = false) {
   if (!value) return null;
@@ -33,7 +34,7 @@ export async function GET(request: Request) {
       orderBy: { startTime: "asc" },
     }),
     db.therapist.findMany({ where: { ...(branchId ? { branchId } : {}), status: "ACTIVE" } }),
-    db.room.findMany({ where: { ...(branchId ? { branchId } : {}) } }),
+    db.room.findMany({ where: { ...(branchId ? { branchId } : {}) }, include: { facilityRoom: { include: { floor: true } } } }),
   ]);
   const bookings = rawBookings.filter((item) => inDayPart(item.startTime, dayPart));
   const operationalBookings = bookings.filter((item) => !["CANCELLED", "NO_SHOW"].includes(item.status));
@@ -62,8 +63,8 @@ export async function GET(request: Request) {
     },
     seatCapacity: branchRecords.reduce((sum, item) => sum + item.seatCapacity, 0),
     activeTherapists: therapists.length,
-    activeRooms: rooms.filter((item) => item.status === "ACTIVE").length,
-    maintenanceRooms: rooms.filter((item) => item.status === "MAINTENANCE").length,
+    activeRooms: await db.room.count({ where: { ...(branchId ? { branchId } : {}), AND: [activeBedWhere()] } }),
+    maintenanceRooms: rooms.filter((item) => item.status !== "HIDDEN" && (item.status !== "ACTIVE" || item.facilityRoom?.status !== "ACTIVE" || item.facilityRoom?.floor.status !== "ACTIVE")).length,
     roomUtilization: availableMinutes ? Math.min(100, Math.round((bookedMinutes / availableMinutes) * 100)) : 0,
     therapistUtilization: Math.min(100, Math.round((bookedMinutes / therapistMinutes) * 100)),
     averageRating: therapists.length ? therapists.reduce((sum, item) => sum + item.ratingAvg, 0) / therapists.length : 0,

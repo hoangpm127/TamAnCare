@@ -2,6 +2,7 @@ import "server-only";
 
 import { addMinutes } from "date-fns";
 import { therapistWorksDuring } from "@/lib/server/therapist-schedule";
+import { activeBedWhere } from "@/lib/server/facility-operations";
 import type { Prisma } from "@/app/generated/prisma/client";
 
 export const BOOKING_AUTO_CONFIRM_KEY = "booking.auto_confirm";
@@ -134,7 +135,7 @@ export async function maybeAutoConfirmBookingGroup(
         const candidates = await client.room.findMany({
           where: {
             branchId: group.branchId,
-            status: "ACTIVE",
+            AND: [activeBedWhere()],
             suitableCategories: { has: booking.service.category },
           },
           orderBy: { name: "asc" },

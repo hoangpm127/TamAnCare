@@ -18,6 +18,7 @@ import { phoneVerificationRequired } from "@/lib/server/otp-delivery";
 import { claimInstalledReferral } from "@/lib/server/referral-installation";
 import { bookingWindowError, calculateSlotResources, intervalsOverlapWithBuffer, timeToMinutes } from "@/lib/scheduling-policy";
 import { therapistWorksDuring } from "@/lib/server/therapist-schedule";
+import { activeBedWhere } from "@/lib/server/facility-operations";
 import { hasActiveWelcomeVoucher, WELCOME_VOUCHER_CODE } from "@/lib/welcome-voucher";
 
 const BUSINESS_TIME_ZONE = "Asia/Ho_Chi_Minh";
@@ -145,7 +146,7 @@ async function findAvailability(
       orderBy: [{ ratingAvg: "desc" }, { fullName: "asc" }],
     }),
     client.room.findMany({
-      where: { branchId: branch.id, status: "ACTIVE", suitableCategories: { has: service.category } },
+      where: { branchId: branch.id, AND: [activeBedWhere()], suitableCategories: { has: service.category } },
       select: { id: true, name: true, type: true },
       orderBy: { name: "asc" },
     }),
@@ -552,7 +553,7 @@ export async function createBookingGroup(input: BookingGroupInput) {
           },
         });
         const roomCandidates = await tx.room.findMany({
-          where: { branchId: branch.id, status: "ACTIVE", suitableCategories: { has: service.category as ServiceCategory } },
+          where: { branchId: branch.id, AND: [activeBedWhere()], suitableCategories: { has: service.category as ServiceCategory } },
           orderBy: { name: "asc" },
         });
         const conflicts = await tx.booking.findMany({
