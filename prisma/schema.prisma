@@ -146,6 +146,19 @@ enum PackageStatus {
   USED_UP
 }
 
+enum PackageLedgerEvent {
+  PURCHASE_CREATED
+  REFERRAL_CAPTURED
+  ACTIVATED
+  SESSION_RESERVED
+  SESSION_RELEASED
+  SESSION_USED
+  EXPIRED
+  STATUS_CHANGED
+  BALANCE_IMPORTED
+  TRANSFERRED
+}
+
 enum OfficeRegistrationStatus {
   REGISTERED
   CHECKED_IN
@@ -296,33 +309,34 @@ enum RefundRequestStatus {
 }
 
 model Branch {
-  id                  String               @id @default(cuid())
-  name                String
-  address             String
-  phone               String?
-  qrVersion           Int                  @default(1)
-  openTime            String               @default("09:00")
-  closeTime           String               @default("24:00")
-  lastBookingTime     String               @default("23:00")
-  seatCapacity        Int                  @default(18)
-  bufferMinutes       Int                  @default(15)
-  createdAt           DateTime             @default(now())
-  updatedAt           DateTime             @updatedAt
-  bookings            Booking[]
-  rooms               Room[]
-  therapists          Therapist[]
-  officeEvents        OfficeEvent[]
-  users               User[]
-  bookingGroups       BookingGroup[]
-  payments            PaymentTransaction[]
-  ledgerEntries       LedgerEntry[]
-  expenses            Expense[]
-  expenseEvidence     ExpenseEvidence[]
-  tipPayouts          TipPayout[]
-  notifications       Notification[]
-  investorAllocations InvestorAllocation[]
-  auditLogs           AdminAuditLog[]
-  refundRequests      RefundRequest[]
+  id                   String               @id @default(cuid())
+  name                 String
+  address              String
+  phone                String?
+  qrVersion            Int                  @default(1)
+  openTime             String               @default("09:00")
+  closeTime            String               @default("24:00")
+  lastBookingTime      String               @default("23:00")
+  seatCapacity         Int                  @default(18)
+  bufferMinutes        Int                  @default(15)
+  createdAt            DateTime             @default(now())
+  updatedAt            DateTime             @updatedAt
+  bookings             Booking[]
+  rooms                Room[]
+  therapists           Therapist[]
+  officeEvents         OfficeEvent[]
+  users                User[]
+  bookingGroups        BookingGroup[]
+  payments             PaymentTransaction[]
+  ledgerEntries        LedgerEntry[]
+  packageLedgerEntries PackageLedgerEntry[]
+  expenses             Expense[]
+  expenseEvidence      ExpenseEvidence[]
+  tipPayouts           TipPayout[]
+  notifications        Notification[]
+  investorAllocations  InvestorAllocation[]
+  auditLogs            AdminAuditLog[]
+  refundRequests       RefundRequest[]
 }
 
 model User {
@@ -591,7 +605,8 @@ model Customer {
   createdAt             DateTime                @default(now())
   updatedAt             DateTime                @updatedAt
   bookings              Booking[]
-  packages              CustomerPackage[]
+  packages              CustomerPackage[]       @relation("CustomerPackageOwner")
+  referredPackages      CustomerPackage[]       @relation("CustomerPackageReferrer")
   reminders             Reminder[]
   reviews               Review[]
   voucherUsages         VoucherUsage[]
@@ -601,6 +616,7 @@ model Customer {
   bookingGroups         BookingGroup[]
   payments              PaymentTransaction[]
   ledgerEntries         LedgerEntry[]
+  packageLedgerEntries  PackageLedgerEntry[]
   monthlyPolicies       CustomerMonthlyPolicy[]
   notifications         Notification[]
   consentRecords        ConsentRecord[]
@@ -679,47 +695,64 @@ model VoucherUsage {
 }
 
 model PackagePlan {
-  id            String            @id @default(cuid())
+  id            String               @id @default(cuid())
   name          String
   description   String?
   serviceId     String?
   sessions      Int
-  paidSessions  Int               @default(0)
-  bonusSessions Int               @default(0)
+  paidSessions  Int                  @default(0)
+  bonusSessions Int                  @default(0)
   validityDays  Int
   price         Int
   badge         String?
-  isHighlighted Boolean           @default(false)
-  isActive      Boolean           @default(true)
-  shareable     Boolean           @default(false)
-  transferable  Boolean           @default(false)
-  createdAt     DateTime          @default(now())
-  updatedAt     DateTime          @updatedAt
-  service       Service?          @relation(fields: [serviceId], references: [id])
+  isHighlighted Boolean              @default(false)
+  isActive      Boolean              @default(true)
+  shareable     Boolean              @default(false)
+  transferable  Boolean              @default(false)
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+  service       Service?             @relation(fields: [serviceId], references: [id])
   customerPacks CustomerPackage[]
+  ledgerEntries PackageLedgerEntry[]
 }
 
 model CustomerPackage {
-  id                   String              @id @default(cuid())
+  id                   String               @id @default(cuid())
   customerId           String
   packagePlanId        String
-  paymentTransactionId String?             @unique
+  paymentTransactionId String?              @unique
   campaignId           String?
+  referrerCustomerId   String?
+  referrerInput        String?
+  referrerName         String?
+  referrerPhone        String?
+  planNameSnapshot     String?
+  planPriceSnapshot    Int?
+  serviceIdSnapshot    String?
+  serviceNameSnapshot  String?
+  validityDaysSnapshot Int?
+  shareableSnapshot    Boolean?
+  transferableSnapshot Boolean?
   sessionsTotal        Int
   sessionsRemaining    Int
-  sessionsReserved     Int                 @default(0)
+  sessionsReserved     Int                  @default(0)
   expiresAt            DateTime
-  status               PackageStatus       @default(ACTIVE)
+  status               PackageStatus        @default(ACTIVE)
+  activatedAt          DateTime?
   note                 String?
-  createdAt            DateTime            @default(now())
-  updatedAt            DateTime            @updatedAt
+  createdAt            DateTime             @default(now())
+  updatedAt            DateTime             @updatedAt
   bookings             Booking[]
-  customer             Customer            @relation(fields: [customerId], references: [id])
-  packagePlan          PackagePlan         @relation(fields: [packagePlanId], references: [id])
-  campaign             Campaign?           @relation(fields: [campaignId], references: [id])
-  paymentTransaction   PaymentTransaction? @relation(fields: [paymentTransactionId], references: [id])
+  ledgerEntries        PackageLedgerEntry[]
+  customer             Customer             @relation("CustomerPackageOwner", fields: [customerId], references: [id])
+  referrerCustomer     Customer?            @relation("CustomerPackageReferrer", fields: [referrerCustomerId], references: [id], onDelete: SetNull)
+  packagePlan          PackagePlan          @relation(fields: [packagePlanId], references: [id])
+  campaign             Campaign?            @relation(fields: [campaignId], references: [id])
+  paymentTransaction   PaymentTransaction?  @relation(fields: [paymentTransactionId], references: [id])
 
   @@index([campaignId, createdAt])
+  @@index([referrerCustomerId, createdAt])
+  @@index([status, createdAt])
 }
 
 model Booking {
@@ -770,6 +803,7 @@ model Booking {
   group                    BookingGroup?        @relation(fields: [groupId], references: [id])
   payments                 PaymentTransaction[]
   ledgerEntries            LedgerEntry[]
+  packageLedgerEntries     PackageLedgerEntry[]
   tipPayout                TipPayout?
   reminders                Reminder[]
   review                   Review?
@@ -781,32 +815,33 @@ model Booking {
 }
 
 model BookingGroup {
-  id             String               @id @default(cuid())
-  referenceCode  String               @unique
-  branchId       String
-  customerId     String
-  subtotalAmount Int
-  discountAmount Int                  @default(0)
-  totalAmount    Int
-  depositAmount  Int
-  paidAmount     Int                  @default(0)
-  voucherCode    String?
-  relationship   String               @default("SELF")
-  careNote       String?
-  source         String?
-  status         BookingStatus        @default(PENDING)
-  paymentStatus  PaymentStatus        @default(UNPAID)
-  holdExpiresAt  DateTime?
-  createdAt      DateTime             @default(now())
-  updatedAt      DateTime             @updatedAt
-  branch         Branch               @relation(fields: [branchId], references: [id])
-  customer       Customer             @relation(fields: [customerId], references: [id])
-  bookings       Booking[]
-  payments       PaymentTransaction[]
-  ledgerEntries  LedgerEntry[]
-  accessGrants   BookingAccessGrant[]
-  consentRecords ConsentRecord[]
-  refundRequests RefundRequest[]
+  id                   String               @id @default(cuid())
+  referenceCode        String               @unique
+  branchId             String
+  customerId           String
+  subtotalAmount       Int
+  discountAmount       Int                  @default(0)
+  totalAmount          Int
+  depositAmount        Int
+  paidAmount           Int                  @default(0)
+  voucherCode          String?
+  relationship         String               @default("SELF")
+  careNote             String?
+  source               String?
+  status               BookingStatus        @default(PENDING)
+  paymentStatus        PaymentStatus        @default(UNPAID)
+  holdExpiresAt        DateTime?
+  createdAt            DateTime             @default(now())
+  updatedAt            DateTime             @updatedAt
+  branch               Branch               @relation(fields: [branchId], references: [id])
+  customer             Customer             @relation(fields: [customerId], references: [id])
+  bookings             Booking[]
+  payments             PaymentTransaction[]
+  ledgerEntries        LedgerEntry[]
+  packageLedgerEntries PackageLedgerEntry[]
+  accessGrants         BookingAccessGrant[]
+  consentRecords       ConsentRecord[]
+  refundRequests       RefundRequest[]
 
   @@index([status, paymentStatus, holdExpiresAt])
 }
@@ -838,6 +873,7 @@ model PaymentTransaction {
   branch               Branch                @relation(fields: [branchId], references: [id])
   customer             Customer?             @relation(fields: [customerId], references: [id])
   ledgerEntries        LedgerEntry[]
+  packageLedgerEntries PackageLedgerEntry[]
   webhookEvents        PaymentWebhookEvent[]
   customerPackage      CustomerPackage?
   accessGrants         PaymentAccessGrant[]
@@ -950,6 +986,42 @@ model LedgerEntry {
   @@index([category, occurredAt])
   @@index([dataOrigin, occurredAt])
   @@index([officeEventId, occurredAt])
+}
+
+model PackageLedgerEntry {
+  id                   String              @id @default(cuid())
+  customerPackageId    String
+  packagePlanId        String
+  customerId           String
+  branchId             String?
+  paymentTransactionId String?
+  bookingId            String?
+  bookingGroupId       String?
+  event                PackageLedgerEvent
+  availableDelta       Int                 @default(0)
+  reservedDelta        Int                 @default(0)
+  usedDelta            Int                 @default(0)
+  amount               Int                 @default(0)
+  description          String
+  metadata             Json?
+  idempotencyKey       String              @unique
+  occurredAt           DateTime            @default(now())
+  createdAt            DateTime            @default(now())
+  customerPackage      CustomerPackage     @relation(fields: [customerPackageId], references: [id])
+  packagePlan          PackagePlan         @relation(fields: [packagePlanId], references: [id])
+  customer             Customer            @relation(fields: [customerId], references: [id])
+  branch               Branch?             @relation(fields: [branchId], references: [id])
+  paymentTransaction   PaymentTransaction? @relation(fields: [paymentTransactionId], references: [id])
+  booking              Booking?            @relation(fields: [bookingId], references: [id])
+  bookingGroup         BookingGroup?       @relation(fields: [bookingGroupId], references: [id])
+
+  @@index([customerPackageId, occurredAt])
+  @@index([packagePlanId, occurredAt])
+  @@index([customerId, occurredAt])
+  @@index([event, occurredAt])
+  @@index([paymentTransactionId])
+  @@index([bookingId])
+  @@index([bookingGroupId])
 }
 
 model Expense {

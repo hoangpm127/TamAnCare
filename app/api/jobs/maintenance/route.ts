@@ -5,6 +5,7 @@ import { isCronAuthorized } from "@/lib/server/cron-auth";
 import { money, notifyCustomer, notifyOperations, notifyTherapist } from "@/lib/server/notification-service";
 import { sendBusinessEndReminder } from "@/lib/server/business-service";
 import { maybeAutoConfirmBookingGroup } from "@/lib/server/booking-automation";
+import { recordPackageLedger } from "@/lib/server/package-ledger";
 import { welcomeVoucherGrantedCutoff } from "@/lib/welcome-voucher";
 
 export const dynamic = "force-dynamic";
@@ -30,6 +31,47 @@ export async function POST(request: Request) {
   const now = new Date();
   const day = businessDayRange(now);
   const expiredBookingGroups = await expireUnpaidBookingHolds();
+  const duePackages = await db.customerPackage.findMany({
+    where: { status: "ACTIVE", expiresAt: { lte: now } },
+    select: {
+      id: true,
+      customerId: true,
+      packagePlanId: true,
+      sessionsRemaining: true,
+      sessionsReserved: true,
+      planNameSnapshot: true,
+      paymentTransaction: { select: { branchId: true } },
+      packagePlan: { select: { name: true } },
+    },
+    orderBy: { expiresAt: "asc" },
+    take: 500,
+  });
+  let expiredPackages = 0;
+  for (const customerPackage of duePackages) {
+    const changed = await db.$transaction(async (tx) => {
+      const updated = await tx.customerPackage.updateMany({
+        where: { id: customerPackage.id, status: "ACTIVE", expiresAt: { lte: now } },
+        data: { status: "EXPIRED" },
+      });
+      if (!updated.count) return false;
+      await recordPackageLedger(tx, {
+        customerPackageId: customerPackage.id,
+        packagePlanId: customerPackage.packagePlanId,
+        customerId: customerPackage.customerId,
+        branchId: customerPackage.paymentTransaction?.branchId,
+        event: "EXPIRED",
+        description: `${customerPackage.planNameSnapshot ?? customerPackage.packagePlan.name} đã hết hạn`,
+        metadata: {
+          sessionsRemaining: customerPackage.sessionsRemaining,
+          sessionsReserved: customerPackage.sessionsReserved,
+        },
+        idempotencyKey: `package:expired:${customerPackage.id}`,
+        occurredAt: now,
+      });
+      return true;
+    });
+    if (changed) expiredPackages += 1;
+  }
 
   const paidPendingGroups = await db.bookingGroup.findMany({
     where: { status: "PENDING", paymentStatus: { in: ["DEPOSITED", "PAID"] } },
@@ -241,6 +283,7 @@ export async function POST(request: Request) {
     success: true,
     businessDate: day.date,
     expiredBookingGroups,
+    expiredPackages,
     paidPendingBookings: paidPendingGroups.length,
     automaticallyConfirmedBookings,
     bookingsWaitingForResources,

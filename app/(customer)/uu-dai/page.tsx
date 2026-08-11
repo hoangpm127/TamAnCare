@@ -12,6 +12,7 @@ import {
   Loader2,
   PackagePlus,
   QrCode,
+  UserRound,
 } from "lucide-react";
 import type { PublicCatalog } from "@/lib/catalog-types";
 import { activateMembership, useMembership } from "@/lib/membership";
@@ -36,6 +37,7 @@ function OffersContent() {
   const [step, setStep] = useState<PurchaseStep>("select");
   const [paymentError, setPaymentError] = useState("");
   const [pendingPayment, setPendingPayment] = useState<PendingPackagePayment | null>(null);
+  const [referrer, setReferrer] = useState("");
   const packagePlans = catalog?.packagePlans ?? EMPTY_PLANS;
   const vouchers = catalog?.vouchers ?? EMPTY_VOUCHERS;
   const selectedPlan = packagePlans.find((plan) => plan.id === selectedPlanId);
@@ -105,7 +107,7 @@ function OffersContent() {
       const response = await fetch("/api/packages/purchase", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ planId: selectedPlan.id, paymentCode }),
+        body: JSON.stringify({ planId: selectedPlan.id, paymentCode, referrer: referrer.trim() || undefined }),
       });
       const data = await response.json();
       if (response.status === 401) {
@@ -231,6 +233,20 @@ function OffersContent() {
                 <span className="text-xs text-[#826f66]">Số tiền kích hoạt</span>
                 <span className="text-base font-bold text-[#c64b32]">{formatMoney(selectedPlan.price)}</span>
               </div>
+              <label className="mt-2.5 block rounded-xl border border-[#e7d6ca] bg-white p-3">
+                <span className="flex items-center gap-1.5 text-xs font-semibold text-[#4a2d16]">
+                  <UserRound size={14} /> Người giới thiệu <span className="font-normal text-[#9a8378]">(không bắt buộc)</span>
+                </span>
+                <input
+                  value={referrer}
+                  onChange={(event) => setReferrer(event.target.value)}
+                  maxLength={120}
+                  autoComplete="off"
+                  className="mt-2 h-10 w-full rounded-lg border border-[#e3d6ce] bg-[#fffdfa] px-3 text-xs outline-none focus:border-[#c64b32]"
+                  placeholder="Tên, số điện thoại hoặc mã Affiliate"
+                />
+                <span className="mt-1.5 block text-[10px] leading-4 text-[#826f66]">Tâm An lưu thông tin này cùng giao dịch để đối soát minh bạch.</span>
+              </label>
               {paymentError ? <p className="mt-2 rounded-xl bg-red-50 p-3 text-xs font-medium text-red-700">{paymentError}</p> : null}
               <button
                 type="button"

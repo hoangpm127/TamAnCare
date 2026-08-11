@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { type PackageMutationInput } from "@/lib/offer-admin";
 import { cn, formatMoney } from "@/lib/utils";
+import { AdminPackageDashboard } from "@/components/admin-package-dashboard";
 
 export type AdminPackageView = {
   id: string;
@@ -250,6 +251,8 @@ export function AdminPackageOperations({ initialPackages, services }: { initialP
           <span className="rounded-full bg-[#fff2cc] px-2.5 py-1 text-[#76551d]">{counts.sold} thẻ đã tạo</span>
         </div>
       </section>
+
+      <AdminPackageDashboard packages={packages.map((item) => ({ id: item.id, name: item.name }))} />
 
       <section className="mt-3 rounded-2xl border border-[#d2ad5d]/55 bg-white p-2.5 shadow-sm">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center">

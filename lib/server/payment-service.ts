@@ -4,6 +4,7 @@ import { createHash } from "node:crypto";
 import type { Prisma, TransactionType } from "@/app/generated/prisma/client";
 import { maybeAutoConfirmBookingGroup, type BookingAutomationResult } from "@/lib/server/booking-automation";
 import { money, notifyCustomer, notifyOperations, notifyTherapist } from "@/lib/server/notification-service";
+import { recordPackageLedger } from "@/lib/server/package-ledger";
 import { markBusinessLeadStage } from "@/lib/server/xgroup-attribution";
 
 type PaymentClient = Prisma.TransactionClient;
@@ -307,10 +308,12 @@ export async function confirmIncomingPayment(
 
   if (payment.type === "SERVICE_PAYMENT" && payment.customerPackage) {
     const customerPackage = payment.customerPackage;
-    const expiry = new Date(confirmation.paidAt.getTime() + customerPackage.packagePlan.validityDays * 24 * 60 * 60 * 1000);
+    const packageName = customerPackage.planNameSnapshot ?? customerPackage.packagePlan.name;
+    const validityDays = customerPackage.validityDaysSnapshot ?? customerPackage.packagePlan.validityDays;
+    const expiry = new Date(confirmation.paidAt.getTime() + validityDays * 24 * 60 * 60 * 1000);
     await tx.customerPackage.update({
       where: { id: customerPackage.id },
-      data: { status: "ACTIVE", expiresAt: expiry },
+      data: { status: "ACTIVE", expiresAt: expiry, activatedAt: confirmation.paidAt },
     });
     if (customerId) {
       await tx.customer.update({
@@ -331,17 +334,30 @@ export async function confirmIncomingPayment(
           category: "SERVICE_REVENUE",
           direction: "IN",
           amount: payment.amount,
-          description: `Gói thành viên · ${customerPackage.packagePlan.name}`,
+          description: `Gói thành viên · ${packageName}`,
           occurredAt: confirmation.paidAt,
         },
       });
     }
+    await recordPackageLedger(tx, {
+      customerPackageId: customerPackage.id,
+      packagePlanId: customerPackage.packagePlanId,
+      customerId: customerPackage.customerId,
+      branchId: payment.branchId,
+      paymentTransactionId: payment.id,
+      event: "ACTIVATED",
+      amount: payment.amount,
+      description: `Kích hoạt ${packageName} sau khi nhận đủ thanh toán`,
+      metadata: { method: confirmation.method, externalReference: confirmation.externalReference },
+      idempotencyKey: `package:activated:${customerPackage.id}`,
+      occurredAt: confirmation.paidAt,
+    });
     if (customerId) {
       await notifyCustomer(tx, customerId, {
         branchId: payment.branchId,
         type: "PAYMENT",
-        title: `Đã kích hoạt ${customerPackage.packagePlan.name}`,
-        body: `${customerPackage.sessionsTotal} buổi · giá trị ${money(payment.amount)} · hạn dùng ${customerPackage.packagePlan.validityDays} ngày.`,
+        title: `Đã kích hoạt ${packageName}`,
+        body: `${customerPackage.sessionsTotal} buổi · giá trị ${money(payment.amount)} · hạn dùng ${validityDays} ngày.`,
         actionUrl: "/toi",
       });
     }
@@ -349,7 +365,7 @@ export async function confirmIncomingPayment(
       branchId: payment.branchId,
       type: "FINANCE",
       title: `Đã bán gói thành viên · ${customerName}`,
-      body: `${customerPackage.packagePlan.name} · ${money(payment.amount)} đã được đối soát và ghi nhận doanh thu.`,
+      body: `${packageName} · ${money(payment.amount)} đã được đối soát và ghi nhận doanh thu.`,
       actionUrl: "/admin/finance",
     });
     return { payment: updatedPayment, tipAmount: 0, idempotent: false };

@@ -21,15 +21,7 @@ export default async function CustomerProfilePage({ params }: { params: Promise<
   const session = await getAdminSession();
   if (!session || session.mustChangePassword || !canAccessAdminSection(session, "customers")) notFound();
   const customer = await db.customer.findFirst({
-    where: {
-      id,
-      ...(session.role === "OWNER" ? {} : {
-        OR: [
-          { bookings: { some: { branchId: session.branchId ?? "__none__" } } },
-          { firstSource: { endsWith: `:${session.branchId ?? "__none__"}` } },
-        ],
-      }),
-    },
+    where: { id },
     include: {
       account: { select: { pinHash: true } },
       favoriteTherapist: true,
@@ -50,14 +42,15 @@ export default async function CustomerProfilePage({ params }: { params: Promise<
         <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#c64b32]">CRM profile</p>
         <h1 className="mt-1 text-2xl font-semibold">{customer.fullName}</h1>
         <p className="mt-2 text-[#68574f]">{customer.phone}</p>
-        <div className="mt-5 grid gap-4 sm:grid-cols-4">
+        <div className="mt-5 grid gap-4 sm:grid-cols-5">
+          <Metric label="Tài khoản" value={customer.account ? "Đã đăng ký" : "Chưa đăng ký"} />
           <Metric label="Phân nhóm" value={resourceStatusLabel(customer.segment)} />
           <Metric label="Tổng lượt" value={customer.totalVisits} />
           <Metric label="Tổng chi" value={formatMoney(customer.totalSpend)} />
           <Metric label="KTV yêu thích" value={customer.favoriteTherapist?.fullName ?? "Chưa ghi nhận"} />
         </div>
         <div className="mt-5 rounded-lg bg-[#fcf3ed] p-4 text-sm text-[#68574f]">{customer.internalNote ?? "Chưa có ghi chú CRM."}</div>
-        {customer.packages.length ? <div className="mt-3 rounded-lg bg-[#fbf2e7] p-4 text-sm text-[#68574f]">Gói thành viên: <strong>{customer.packages.map((item) => `${item.packagePlan.name} (${item.sessionsRemaining}/${item.sessionsTotal} buổi)`).join(", ")}</strong></div> : null}
+        {customer.packages.length ? <div className="mt-3 rounded-lg bg-[#fbf2e7] p-4 text-sm text-[#68574f]">Gói thành viên: <strong>{customer.packages.map((item) => `${item.planNameSnapshot ?? item.packagePlan.name} (${item.sessionsRemaining}/${item.sessionsTotal} buổi)`).join(", ")}</strong></div> : null}
         {customer.account ? <AdminCustomerPinReset customerId={customer.id} configured={Boolean(customer.account.pinHash)} /> : null}
       </section>
 

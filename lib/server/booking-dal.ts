@@ -8,6 +8,7 @@ import { db } from "@/lib/db";
 import { maybeAutoConfirmBookingGroup } from "@/lib/server/booking-automation";
 import { legalDocumentEvidence } from "@/lib/server/legal-documents";
 import { money, notifyCustomer, notifyOperations, notifyTherapist } from "@/lib/server/notification-service";
+import { recordPackageLedger } from "@/lib/server/package-ledger";
 import { buildPaymentCode } from "@/lib/server/payment-service";
 import { minimumTipForBookings, minimumTipForDuration } from "@/lib/tip-policy";
 import { calculatePaymentBreakdown } from "@/lib/payment-policy";
@@ -432,8 +433,10 @@ export async function createBookingGroup(input: BookingGroupInput) {
           })
         : [];
       const activePackage = packageCandidates.find((item) => {
-        const serviceEligible = !item.packagePlan.serviceId || serviceIds.every((serviceId) => serviceId === item.packagePlan.serviceId);
-        const groupEligible = input.units.length === 1 || item.packagePlan.shareable;
+        const packageServiceId = item.serviceIdSnapshot ?? item.packagePlan.serviceId;
+        const packageShareable = item.shareableSnapshot ?? item.packagePlan.shareable;
+        const serviceEligible = !packageServiceId || serviceIds.every((serviceId) => serviceId === packageServiceId);
+        const groupEligible = input.units.length === 1 || packageShareable;
         return serviceEligible && groupEligible;
       }) ?? null;
 
@@ -634,6 +637,20 @@ export async function createBookingGroup(input: BookingGroupInput) {
         if (packageReservation.count !== 1) {
           throw new BookingConflictError("Gói dịch vụ vừa hết lượt khả dụng. Vui lòng kiểm tra lại.");
         }
+        await recordPackageLedger(tx, {
+          customerPackageId: activePackage.id,
+          packagePlanId: activePackage.packagePlanId,
+          customerId: activePackage.customerId,
+          branchId: branch.id,
+          bookingId: bookingRecords[0]?.id,
+          bookingGroupId: group.id,
+          event: "SESSION_RESERVED",
+          availableDelta: -bookingRecords.length,
+          reservedDelta: bookingRecords.length,
+          description: `Giữ ${bookingRecords.length} lượt cho lịch ${group.referenceCode}`,
+          metadata: { bookingIds: bookingRecords.map((item) => item.id) },
+          idempotencyKey: `package:reserve:${activePackage.id}:${group.id}`,
+        });
       }
 
       if (voucher && bookingRecords[0]) {
@@ -720,7 +737,7 @@ export async function createBookingGroup(input: BookingGroupInput) {
           type: "BOOKING",
           title: bookingAutomation?.confirmed
             ? "Chúc mừng! Lịch dùng gói đã được AI xác nhận"
-            : `Đã giữ ${bookingRecords.length} lượt từ ${activePackage.packagePlan.name}`,
+            : `Đã giữ ${bookingRecords.length} lượt từ ${activePackage.planNameSnapshot ?? activePackage.packagePlan.name}`,
           body: bookingAutomation?.confirmed
             ? `${group.referenceCode} đã được xếp ${bookingAutomation.assignments.map((item) => `${item.therapistName} · ${item.roomName}`).join(", ")}. Khi đến, bạn chỉ cần đọc họ tên và số điện thoại để lễ tân tiếp nhận.`
             : `${group.referenceCode} không cần đặt cọc thêm; cơ sở đang xác nhận lịch và vị trí phục vụ.`,
@@ -751,7 +768,7 @@ export async function createBookingGroup(input: BookingGroupInput) {
         title: bookingAutomation?.confirmed ? `AI đã xác nhận & điều phối · ${customer.fullName}` : `Yêu cầu booking mới · ${customer.fullName}`,
         body: bookingAutomation?.confirmed
           ? `${group.referenceCode} · ${bookingRecords.length} khách · ${bookingAutomation.assignments.map((item) => `${item.therapistName} tại ${item.roomName}`).join(", ")}. Không cần duyệt lại.`
-          : `${group.referenceCode} · ${bookingRecords.length} khách · ${activePackage ? `đã giữ lượt ${activePackage.packagePlan.name}` : depositAmount > 0 ? `chờ đối soát cọc ${money(depositAmount)}` : "không cần đặt cọc"}${group.relationship === "BOSS" ? " · Mời sếp, ưu tiên bố trí gần nhau" : group.relationship === "FRIEND" ? " · Mời bạn, ưu tiên bố trí gần nhau" : ""}.`,
+          : `${group.referenceCode} · ${bookingRecords.length} khách · ${activePackage ? `đã giữ lượt ${activePackage.planNameSnapshot ?? activePackage.packagePlan.name}` : depositAmount > 0 ? `chờ đối soát cọc ${money(depositAmount)}` : "không cần đặt cọc"}${group.relationship === "BOSS" ? " · Mời sếp, ưu tiên bố trí gần nhau" : group.relationship === "FRIEND" ? " · Mời bạn, ưu tiên bố trí gần nhau" : ""}.`,
         actionUrl: "/admin/bookings",
       });
       if (bookingAutomation?.confirmed) {
@@ -856,7 +873,7 @@ export function bookingGroupToDto(group: NonNullable<Awaited<ReturnType<typeof g
     holdExpiresAt: group.holdExpiresAt?.toISOString() ?? null,
     usedPackage: Boolean(first?.customerPackageId),
     customerPackageId: first?.customerPackageId ?? null,
-    packageName: first?.customerPackage?.packagePlan.name ?? null,
+    packageName: first?.customerPackage?.planNameSnapshot ?? first?.customerPackage?.packagePlan.name ?? null,
     depositPayment: depositPayment ? {
       id: depositPayment.id,
       status: depositPayment.status,
@@ -920,7 +937,7 @@ export function bookingToDto(booking: {
   therapist: { fullName: string } | null;
   therapistId: string | null;
   room: { name: string } | null;
-  customerPackage?: { packagePlan: { name: string } } | null;
+  customerPackage?: { planNameSnapshot?: string | null; packagePlan: { name: string } } | null;
 }) {
   return {
     id: booking.id,
@@ -955,7 +972,7 @@ export function bookingToDto(booking: {
     completedAt: booking.completedAt?.toISOString() ?? null,
     usedPackage: Boolean(booking.customerPackageId),
     customerPackageId: booking.customerPackageId,
-    packageName: booking.customerPackage?.packagePlan.name ?? null,
+    packageName: booking.customerPackage?.planNameSnapshot ?? booking.customerPackage?.packagePlan.name ?? null,
     relationship: "SELF",
     careNote: booking.note,
     createdAt: booking.createdAt.toISOString(),

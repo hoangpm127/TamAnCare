@@ -117,7 +117,7 @@ export async function GET() {
       items: group.bookings.map((item) => ({ name: item.service.name, qty: 1, amount: item.basePrice + item.therapistFee })),
       bookingCode: group.referenceCode,
       note: customerPackage
-        ? `${completed ? "Đã hoàn tất" : "Đã giữ"} lượt trong ${customerPackage.packagePlan.name}`
+        ? `${completed ? "Đã hoàn tất" : "Đã giữ"} lượt trong ${customerPackage.planNameSnapshot ?? customerPackage.packagePlan.name}`
         : completed
           ? "Đã thanh toán đầy đủ tại Tâm An Center"
           : group.status === "CANCELLED"
@@ -135,7 +135,7 @@ export async function GET() {
               ? "PAID_IN_FULL"
               : "DEPOSIT_ONLY",
       serviceStatus,
-      packageName: customerPackage?.packagePlan.name,
+      packageName: customerPackage?.planNameSnapshot ?? customerPackage?.packagePlan.name,
     }];
   });
   const directEntries = directBookings.flatMap((booking) => {
@@ -173,7 +173,7 @@ export async function GET() {
       items: [{ name: booking.service.name, qty: 1, amount: booking.basePrice + booking.therapistFee }],
       bookingCode: booking.bookingCode,
       note: customerPackage
-        ? `${completed ? "Đã hoàn tất" : "Đã giữ"} lượt trong ${customerPackage.packagePlan.name}`
+        ? `${completed ? "Đã hoàn tất" : "Đã giữ"} lượt trong ${customerPackage.planNameSnapshot ?? customerPackage.packagePlan.name}`
         : completed
           ? "Đã thanh toán đầy đủ tại Tâm An Center"
           : booking.status === "CANCELLED"
@@ -191,7 +191,7 @@ export async function GET() {
               ? "PAID_IN_FULL"
               : "DEPOSIT_ONLY",
       serviceStatus,
-      packageName: customerPackage?.packagePlan.name,
+      packageName: customerPackage?.planNameSnapshot ?? customerPackage?.packagePlan.name,
     }];
   });
   const auxiliaryEntries = auxiliaryPayments.map((payment) => {

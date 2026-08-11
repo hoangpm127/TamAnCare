@@ -5,6 +5,7 @@ import { reminderSchedule } from "@/lib/reminder";
 import { statusSchema } from "@/lib/validations";
 import { getAdminSession } from "@/lib/server/admin-session";
 import { money, notifyCustomer, notifyOperations, notifyTherapist } from "@/lib/server/notification-service";
+import { recordPackageLedger } from "@/lib/server/package-ledger";
 import { isSameOriginMutation, privateIdentifierDigest, requestIp } from "@/lib/server/request-security";
 import { isCustomerAudienceRequest } from "@/lib/request-audience";
 import {
@@ -218,6 +219,22 @@ export async function PATCH(request: Request, context: { params: Promise<{ booki
                   status: customerPackage.expiresAt > now ? "ACTIVE" : "EXPIRED",
                 },
               });
+              const packageBooking = bookings.find((item) => item.customerPackageId === customerPackage.id);
+              await recordPackageLedger(tx, {
+                customerPackageId: customerPackage.id,
+                packagePlanId: customerPackage.packagePlanId,
+                customerId: customerPackage.customerId,
+                branchId,
+                bookingId: packageBooking?.id,
+                bookingGroupId: groupId,
+                event: "SESSION_RELEASED",
+                availableDelta: released,
+                reservedDelta: -released,
+                description: `Hoàn ${released} lượt do hủy lịch ${referenceCode}`,
+                metadata: { bookingIds: bookings.filter((item) => item.customerPackageId === customerPackage.id).map((item) => item.id) },
+                idempotencyKey: `package:release:${customerPackage.id}:${groupId ?? bookings[0].id}`,
+                occurredAt: now,
+              });
             }
           }
           await tx.voucherUsage.updateMany({
@@ -372,6 +389,22 @@ export async function PATCH(request: Request, context: { params: Promise<{ booki
             await tx.customerPackage.update({
               where: { id: customerPackage.id },
               data: { sessionsReserved, status: nextPackageStatus },
+            });
+            const packageBooking = bookings.find((item) => item.customerPackageId === customerPackage.id);
+            await recordPackageLedger(tx, {
+              customerPackageId: customerPackage.id,
+              packagePlanId: customerPackage.packagePlanId,
+              customerId: customerPackage.customerId,
+              branchId,
+              bookingId: packageBooking?.id,
+              bookingGroupId: groupId,
+              event: "SESSION_USED",
+              reservedDelta: -consumed,
+              usedDelta: consumed,
+              description: `Đã sử dụng ${consumed} lượt cho lịch ${referenceCode}`,
+              metadata: { bookingIds: bookings.filter((item) => item.customerPackageId === customerPackage.id).map((item) => item.id) },
+              idempotencyKey: `package:used:${customerPackage.id}:${groupId ?? bookings[0].id}`,
+              occurredAt: now,
             });
           }
 

@@ -46,9 +46,9 @@ export async function GET() {
     membership: {
       id: customerPackage.id,
       planId: customerPackage.packagePlanId,
-      planName: customerPackage.packagePlan.name,
-      serviceId: customerPackage.packagePlan.serviceId,
-      shareable: customerPackage.packagePlan.shareable,
+      planName: customerPackage.planNameSnapshot ?? customerPackage.packagePlan.name,
+      serviceId: customerPackage.serviceIdSnapshot ?? customerPackage.packagePlan.serviceId,
+      shareable: customerPackage.shareableSnapshot ?? customerPackage.packagePlan.shareable,
       badge: null,
       totalSessions: customerPackage.sessionsTotal,
       availableSessions: customerPackage.sessionsRemaining,

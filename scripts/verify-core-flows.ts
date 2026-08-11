@@ -226,6 +226,9 @@ async function cleanup() {
     await tx.review.deleteMany({ where: { OR: [{ customerId: { in: customerIds } }, { bookingId: { in: bookingIds } }] } });
     await tx.voucherUsage.deleteMany({ where: { OR: [{ customerId: { in: customerIds } }, { bookingId: { in: bookingIds } }] } });
     await tx.tipPayout.deleteMany({ where: { bookingId: { in: bookingIds } } });
+    await tx.packageLedgerEntry.deleteMany({
+      where: { OR: [{ customerId: { in: customerIds } }, { bookingGroupId: { in: groupIds } }, { bookingId: { in: bookingIds } }, { paymentTransactionId: { in: paymentIds } }] },
+    });
     await tx.ledgerEntry.deleteMany({
       where: { OR: [{ customerId: { in: customerIds } }, { bookingGroupId: { in: groupIds } }, { bookingId: { in: bookingIds } }, { paymentTransactionId: { in: paymentIds } }] },
     });
@@ -397,6 +400,15 @@ async function main() {
   await updateStatus(firstReference, "CANCELLED", adminJar);
   packageState = await db.customerPackage.findUniqueOrThrow({ where: { id: customerPackage.id } });
   assert(packageState.sessionsRemaining === 3 && packageState.sessionsReserved === 0, "Hủy booking chưa hoàn lại lượt gói.");
+  const cancelledPackageLedger = await db.packageLedgerEntry.findMany({
+    where: { customerPackageId: customerPackage.id },
+    orderBy: { occurredAt: "asc" },
+  });
+  assert(
+    cancelledPackageLedger.some((entry) => entry.event === "SESSION_RESERVED" && entry.availableDelta === -1 && entry.reservedDelta === 1)
+      && cancelledPackageLedger.some((entry) => entry.event === "SESSION_RELEASED" && entry.availableDelta === 1 && entry.reservedDelta === -1),
+    "Sổ gói chưa ghi đủ lần giữ và hoàn lượt khi hủy lịch.",
+  );
 
   const secondReference = `${marker}-PKGDONE`;
   const secondBooking = await createBooking({
@@ -445,6 +457,14 @@ async function main() {
   await updateStatus(secondReference, "COMPLETED", adminJar);
   packageState = await db.customerPackage.findUniqueOrThrow({ where: { id: customerPackage.id } });
   assert(packageState.sessionsRemaining === 2 && packageState.sessionsReserved === 0, "Hoàn tất chưa chuyển lượt giữ thành lượt đã dùng.");
+  const completedPackageLedger = await db.packageLedgerEntry.findMany({
+    where: { customerPackageId: customerPackage.id },
+    orderBy: { occurredAt: "asc" },
+  });
+  assert(
+    completedPackageLedger.some((entry) => entry.event === "SESSION_USED" && entry.reservedDelta === -1 && entry.usedDelta === 1),
+    "Sổ gói chưa ghi lần sử dụng sau khi hoàn tất dịch vụ.",
+  );
   const completedGroup = await db.bookingGroup.findUniqueOrThrow({ where: { referenceCode: secondReference }, include: { bookings: true } });
   const completedBookingId = completedGroup.bookings[0].id;
   const [zeroRevenueCount, tipLedger, tipPayout] = await Promise.all([
@@ -655,6 +675,7 @@ async function main() {
     success: true,
     checks: [
       "package_reserve_and_cancel_restore",
+      "package_ledger_reserve_release_and_use",
       "package_complete_without_bill_or_tip_transaction",
       "reception_checkout_stops_timer_and_is_idempotent",
       "direct_tip_is_optional_and_rejected_from_bill",

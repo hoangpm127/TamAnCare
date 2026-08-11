@@ -19,15 +19,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
   if (!parsed.success) return NextResponse.json({ error: "Mã PIN phải gồm đúng 4 số." }, { status: 400 });
   const { id } = await params;
   const customer = await db.customer.findFirst({
-    where: {
-      id,
-      ...(session.role === "OWNER" ? {} : {
-        OR: [
-          { bookings: { some: { branchId: session.branchId ?? "__none__" } } },
-          { firstSource: { endsWith: `:${session.branchId ?? "__none__"}` } },
-        ],
-      }),
-    },
+    where: { id },
     include: { account: true },
   });
   if (!customer?.account) return NextResponse.json({ error: "Khách hàng chưa có hồ sơ đăng nhập." }, { status: 404 });
