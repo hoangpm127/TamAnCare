@@ -8,12 +8,23 @@ import { customerPinError, normalizeCustomerPin } from "@/lib/customer-pin";
 import { formatMoney } from "@/lib/utils";
 import { signalCustomerAccountChanged, type CustomerAccountView } from "@/lib/customer-account";
 
+function welcomeExpiryLabel(value: string) {
+  return new Intl.DateTimeFormat("vi-VN", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    timeZone: "Asia/Ho_Chi_Minh",
+  }).format(new Date(value));
+}
+
 export function CustomerAccountClient({
+  initialMode = "register",
   returnTo = "/tai-khoan",
 }: {
+  initialMode?: "register" | "login";
   returnTo?: string;
 }) {
-  const [mode, setMode] = useState<"register" | "login">("register");
+  const [mode, setMode] = useState<"register" | "login">(initialMode);
   const [account, setAccount] = useState<CustomerAccountView | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -72,7 +83,7 @@ export function CustomerAccountClient({
   async function submit(event: React.FormEvent) {
     event.preventDefault();
     if (mode === "register") {
-      const pinError = customerPinError(pin, phone);
+      const pinError = customerPinError(pin);
       if (pinError) {
         setError(pinError);
         return;
@@ -118,7 +129,7 @@ export function CustomerAccountClient({
   async function savePin(event: React.FormEvent) {
     event.preventDefault();
     if (!account) return;
-    const validationError = customerPinError(pin, account.phone);
+    const validationError = customerPinError(pin);
     if (validationError) {
       setPinMessage(validationError);
       return;
@@ -159,6 +170,7 @@ export function CustomerAccountClient({
               <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-[#76551d]">Ưu đãi đang có</p>
               <p className="mt-1 text-2xl font-bold text-[#c64b32]">{formatMoney(account.creditBalance)}</p>
               <p className="mt-1 text-xs leading-5 text-[#715943]">Hệ thống tự ưu tiên WELCOME150 cho lần đặt dịch vụ đầu tiên đủ điều kiện.</p>
+              {account.welcomeCreditExpiresAt ? <p className="mt-1 text-[11px] font-semibold text-[#76551d]">HSD {welcomeExpiryLabel(account.welcomeCreditExpiresAt)} · 7 ngày kể từ ngày nhận</p> : null}
             </div>
             <Link href="/booking" className="mt-4 flex w-full items-center justify-center rounded-full bg-[#c64b32] px-5 py-3 text-sm font-semibold text-white">Đặt lịch và dùng ưu đãi</Link>
             <button type="button" onClick={() => void logout()} className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-full border border-[#e7d6ca] px-5 py-2.5 text-xs font-semibold text-[#68574f]"><LogOut size={14} /> Đăng xuất</button>
@@ -201,9 +213,9 @@ export function CustomerAccountClient({
     <main className="mx-auto max-w-xl px-4 py-6 text-[#281b18] sm:px-6">
       <section className="overflow-hidden rounded-3xl bg-white shadow-xl ring-1 ring-[#e7d6ca]">
         <div className="bg-gradient-to-br from-[#2b1815] via-[#5c2718] to-[#93352d] px-5 py-6 text-white">
-          <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.15em] text-[#e7c878]"><Gift size={15} /> Thành viên mới</p>
-          <h1 className="mt-2 text-2xl font-semibold">Tạo tài khoản, nhận ngay 150K</h1>
-          <p className="mt-2 text-sm leading-6 text-white/75">Bạn vẫn có thể xem và đặt lịch không cần đăng nhập. Tài khoản chỉ giúp giữ ưu đãi, lịch sử và chăm sóc cá nhân hóa.</p>
+          <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.15em] text-[#e7c878]"><Gift size={15} /> {mode === "login" ? "Hồ sơ khách hàng" : "Thành viên mới"}</p>
+          <h1 className="mt-2 text-2xl font-semibold">{mode === "login" ? "Chào mừng bạn trở lại" : "Tạo tài khoản, nhận ngay 150K"}</h1>
+          <p className="mt-2 text-sm leading-6 text-white/75">{mode === "login" ? "Đăng nhập để xem ưu đãi, lịch sử và thông tin chăm sóc của bạn." : "Bạn vẫn có thể xem và đặt lịch không cần đăng nhập. Tài khoản chỉ giúp giữ ưu đãi, lịch sử và chăm sóc cá nhân hóa."}</p>
         </div>
         <div className="p-5">
           <div className="grid grid-cols-2 rounded-full bg-[#f6eee8] p-1">
@@ -213,13 +225,14 @@ export function CustomerAccountClient({
           <form onSubmit={submit} className="mt-4 space-y-3">
             {mode === "register" ? <label className="block text-xs font-semibold">Họ tên<span className="mt-1.5 flex items-center gap-2 rounded-xl border border-[#e7d6ca] px-3"><UserRound size={15} className="text-[#c64b32]" /><input required value={fullName} onChange={(event) => setFullName(event.target.value)} className="min-w-0 flex-1 py-3 text-sm outline-none" /></span></label> : null}
             <label className="block text-xs font-semibold">Số điện thoại<span className="mt-1.5 flex items-center gap-2 rounded-xl border border-[#e7d6ca] px-3"><Phone size={15} className="text-[#c64b32]" /><input required inputMode="tel" autoComplete="tel" value={phone} onChange={(event) => setPhone(event.target.value)} className="min-w-0 flex-1 py-3 text-sm outline-none" /></span></label>
-            <label className="block text-xs font-semibold">Mã PIN Tâm An · 4 số<PinInput pin={pin} showPin={showPin} setPin={setPin} setShowPin={setShowPin} /><span className="mt-1.5 block text-[11px] font-normal leading-5 text-[#786a63]">Mã riêng để mở hồ sơ, ưu đãi và thu nhập Affiliate. Hãy chọn 4 số dễ nhớ với riêng bạn; tránh 0000, 1234, ngày sinh và 4 số cuối điện thoại.</span></label>
+            <label className="block text-xs font-semibold">
+              Mã PIN Tâm An · 4 số
+              <PinInput pin={pin} showPin={showPin} setPin={setPin} setShowPin={setShowPin} />
+            </label>
+            <p className="mt-1 text-[11px] leading-4 text-[#826f66]">
+              Mã PIN dùng để đăng nhập, sử dụng voucher, affiliate,... Nếu quý khách quên mã PIN, xin vui lòng đến quầy lễ tân để cấp lại mã PIN!
+            </p>
             {mode === "register" ? (
-              <>
-              <div className="rounded-2xl bg-[#fff7df] p-3 text-[11px] leading-5 text-[#715943] ring-1 ring-[#c59a3d]/35">
-                <p className="font-semibold text-[#6f211f]">Không cần mã SMS hay mật khẩu dài.</p>
-                <p className="mt-1">Chỉ cần nhớ Mã PIN Tâm An 4 số. Phiên đăng nhập tự gia hạn khi bạn còn sử dụng webapp; nếu quên mã, lễ tân sẽ hỗ trợ sau khi đối chiếu trực tiếp tại cơ sở.</p>
-              </div>
               <div className="space-y-2 rounded-2xl bg-[#fcf5ef] p-3 ring-1 ring-[#e7d6ca]">
                 <label className="flex cursor-pointer items-start gap-2.5 text-xs leading-5 text-[#554842]">
                   <input
@@ -244,7 +257,6 @@ export function CustomerAccountClient({
                   <span>Nhận ưu đãi và gợi ý chăm sóc. Không bắt buộc và có thể rút lại sau.</span>
                 </label>
               </div>
-              </>
             ) : null}
             {error ? <p role="alert" aria-live="polite" className="rounded-xl bg-red-50 p-3 text-xs font-medium text-red-700">{error}</p> : null}
             <button disabled={submitting || pin.length !== 4 || (mode === "register" && !acceptRequired)} className="flex w-full items-center justify-center gap-2 rounded-full bg-[#c64b32] px-5 py-3 text-sm font-semibold text-white disabled:opacity-60">{submitting ? <Loader2 className="animate-spin" size={16} /> : <ShieldCheck size={16} />}{mode === "register" ? "Tạo tài khoản & nhận 150K" : "Đăng nhập"}</button>

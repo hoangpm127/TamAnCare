@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { rankVoucherCandidates, type VoucherRankingCandidate, type VoucherRankingContext } from "../lib/voucher-ranking";
+import { hasActiveWelcomeVoucher, welcomeVoucherExpiresAt } from "../lib/welcome-voucher";
 
 const createdAt = new Date("2026-08-11T00:00:00+07:00");
 
@@ -48,4 +49,13 @@ assert.ok(!rankVoucherCandidates(welcomeAlreadyUsed, {
 const bodySoldOut = baseCandidates.map((item) => item.code === "BODY279" ? { ...item, inventoryAvailable: false } : item);
 assert.equal(firstCode({ audience: "NEW", minuteOfDay: 10 * 60, serviceIds: ["svc-body-60"] }, bodySoldOut), "WELCOME150");
 
-console.log("✓ Xếp hạng voucher đúng theo khung giờ, khách mới/quay lại và lịch sử WELCOME150.");
+const grantedAt = new Date("2026-08-11T08:30:00+07:00");
+const expiresAt = new Date("2026-08-18T08:30:00+07:00");
+const welcomeAccount = { creditBalance: 150_000, welcomeCreditGrantedAt: grantedAt };
+assert.equal(welcomeVoucherExpiresAt(grantedAt)?.toISOString(), expiresAt.toISOString());
+assert.equal(hasActiveWelcomeVoucher(welcomeAccount, new Date(expiresAt.getTime() - 1)), true);
+assert.equal(hasActiveWelcomeVoucher(welcomeAccount, expiresAt), false);
+assert.equal(hasActiveWelcomeVoucher({ ...welcomeAccount, creditBalance: 0 }, grantedAt), false);
+assert.equal(hasActiveWelcomeVoucher({ ...welcomeAccount, welcomeCreditGrantedAt: null }, grantedAt), false);
+
+console.log("✓ Xếp hạng voucher và hạn WELCOME150 7 ngày hoạt động đúng.");

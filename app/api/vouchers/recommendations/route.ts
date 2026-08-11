@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { getCustomerSession } from "@/lib/server/customer-session";
 import { calculateVoucherDiscount, voucherRuleError } from "@/lib/server/voucher-rules";
 import { rankVoucherCandidates, type VoucherAudience } from "@/lib/voucher-ranking";
+import { hasActiveWelcomeVoucher, WELCOME_VOUCHER_CODE, welcomeVoucherExpiresAt } from "@/lib/welcome-voucher";
 
 export const dynamic = "force-dynamic";
 
@@ -59,6 +60,7 @@ export async function GET(request: Request) {
   const effectiveStartTime = parsed.data.startTime ? new Date(parsed.data.startTime) : now;
   const account = await getCustomerSession();
   const customer = account?.customer ?? null;
+  const welcomeVoucherAvailable = hasActiveWelcomeVoucher(account, now);
   const audience: VoucherAudience = !customer
     ? "ANONYMOUS"
     : customer.totalVisits > 0 || customer.lastVisitAt
@@ -70,7 +72,10 @@ export async function GET(request: Request) {
       isActive: true,
       code: { not: "AFF50" },
       OR: [{ startsAt: null }, { startsAt: { lte: now } }],
-      AND: [{ OR: [{ endsAt: null }, { endsAt: { gte: now } }] }],
+      AND: [
+        { OR: [{ endsAt: null }, { endsAt: { gte: now } }] },
+        { OR: [{ serviceId: null }, { service: { is: { isActive: true, isOnline: true } } }] },
+      ],
     },
     orderBy: { createdAt: "asc" },
   });
@@ -126,12 +131,12 @@ export async function GET(request: Request) {
               phoneVerified: Boolean(account?.phoneVerifiedAt),
               customer,
             });
-    if (!eligibilityReason && voucher.code === "WELCOME150" && account && account.creditBalance <= 0) {
-      eligibilityReason = "Quyền lợi WELCOME150 không còn khả dụng.";
+    if (!eligibilityReason && voucher.code === WELCOME_VOUCHER_CODE && account && !welcomeVoucherAvailable) {
+      eligibilityReason = "WELCOME150 đã hết hạn hoặc không còn khả dụng.";
     }
-    const hideWelcome = voucher.code === "WELCOME150" && Boolean(account && (
+    const hideWelcome = voucher.code === WELCOME_VOUCHER_CODE && Boolean(account && (
       customerUsage > 0
-      || account.creditBalance <= 0
+      || !welcomeVoucherAvailable
       || (customer?.totalVisits ?? 0) > 0
     ));
     return {
@@ -155,7 +160,11 @@ export async function GET(request: Request) {
     type: voucher.discountType,
     value: voucher.discountValue,
     minSpend: voucher.minimumSpend,
-    expiresAt: expiryLabel(voucher.endsAt),
+    expiresAt: voucher.code === WELCOME_VOUCHER_CODE
+      ? account
+        ? expiryLabel(welcomeVoucherExpiresAt(account.welcomeCreditGrantedAt))
+        : "7 ngày kể từ ngày nhận"
+      : expiryLabel(voucher.endsAt),
     constraint: voucher.displayConstraint || voucher.description,
     accent: voucher.accentColor,
     active: voucher.isActive,

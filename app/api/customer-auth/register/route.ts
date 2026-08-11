@@ -25,7 +25,7 @@ export async function POST(request: Request) {
   if (!parsed.success) return NextResponse.json({ error: "Họ tên, số điện thoại hoặc Mã PIN chưa hợp lệ." }, { status: 400 });
   if (!isVietnamMobilePhone(parsed.data.phone)) return NextResponse.json({ error: "Vui lòng nhập đúng số điện thoại di động Việt Nam." }, { status: 400 });
   const phone = normalizeVietnamPhone(parsed.data.phone);
-  const pinError = customerPinError(parsed.data.pin, phone);
+  const pinError = customerPinError(parsed.data.pin);
   if (pinError) return NextResponse.json({ error: pinError }, { status: 400 });
   const [ipLimit, phoneLimit] = await Promise.all([
     consumeRateLimit({ scope: "customer-register-ip", identifier: requestIp(request), limit: 10, windowMs: 24 * 60 * 60_000 }),

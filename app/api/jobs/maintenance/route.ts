@@ -5,6 +5,7 @@ import { isCronAuthorized } from "@/lib/server/cron-auth";
 import { money, notifyCustomer, notifyOperations, notifyTherapist } from "@/lib/server/notification-service";
 import { sendBusinessEndReminder } from "@/lib/server/business-service";
 import { maybeAutoConfirmBookingGroup } from "@/lib/server/booking-automation";
+import { welcomeVoucherGrantedCutoff } from "@/lib/welcome-voucher";
 
 export const dynamic = "force-dynamic";
 
@@ -82,6 +83,16 @@ export async function POST(request: Request) {
   }
 
   const cleanup = await db.$transaction(async (tx) => {
+    const expiredWelcomeCredits = await tx.customerAccount.updateMany({
+      where: {
+        creditBalance: { gt: 0 },
+        OR: [
+          { welcomeCreditGrantedAt: null },
+          { welcomeCreditGrantedAt: { lte: welcomeVoucherGrantedCutoff(now) } },
+        ],
+      },
+      data: { creditBalance: 0 },
+    });
     const paymentGrants = await tx.paymentAccessGrant.deleteMany({
       where: { OR: [{ expiresAt: { lte: now } }, { guestSession: { expiresAt: { lte: now } } }] },
     });
@@ -114,6 +125,7 @@ export async function POST(request: Request) {
       where: { usedAt: null, createdAt: { lt: new Date(now.getTime() - 24 * 60 * 60_000) } },
     });
     return {
+      expiredWelcomeCredits: expiredWelcomeCredits.count,
       paymentGrants: paymentGrants.count,
       businessGrants: businessGrants.count,
       customerSessions: customerSessions.count,

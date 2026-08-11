@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Settings, UserRound } from "lucide-react";
+import { LogIn, Settings, UserRound } from "lucide-react";
 import { useCustomerAccount } from "@/lib/customer-account";
 import { useCustomerProfile } from "@/lib/customer-profile-store";
 import { calculateWalletTotalExpense, useWalletLedger } from "@/lib/wallet-ledger";
@@ -40,13 +40,24 @@ export function AccountProfileCard() {
           <p className="truncate text-base font-semibold">{displayName}</p>
           <p className="text-xs text-[#68574f]">{displayPhone}</p>
         </div>
-        <Link
-          href="/toi/cai-dat"
-          aria-label="Cài đặt thông tin cá nhân"
-          className="ml-auto flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#f8ebe5] text-[#c64b32] transition hover:bg-[#f9ddd7]"
-        >
-          <Settings size={19} />
-        </Link>
+        <div className="ml-auto flex shrink-0 items-center gap-2">
+          {ready && !account ? (
+            <Link
+              href="/tai-khoan?mode=login&returnTo=%2Ftoi"
+              className="inline-flex h-10 items-center justify-center gap-1.5 rounded-full bg-[#c64b32] px-3.5 text-xs font-semibold text-white shadow-sm transition hover:bg-[#ad3f2b]"
+            >
+              <LogIn size={15} />
+              Đăng nhập
+            </Link>
+          ) : null}
+          <Link
+            href="/toi/cai-dat"
+            aria-label="Cài đặt thông tin cá nhân"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#f8ebe5] text-[#c64b32] transition hover:bg-[#f9ddd7]"
+          >
+            <Settings size={19} />
+          </Link>
+        </div>
       </div>
 
       <div className="mt-3.5 grid grid-cols-3 divide-x divide-[#eee0d6] border-t border-[#eee0d6] pt-3 text-center">

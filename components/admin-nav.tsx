@@ -40,6 +40,7 @@ import { useAdminBookingRequests } from "@/lib/admin-booking-store";
 import { AdminCustomerFab, AdminExpenseAction } from "@/components/admin-quick-actions";
 import { usePublicCatalog } from "@/lib/catalog-store";
 import { NavigationPendingIndicator } from "@/components/navigation-pending-indicator";
+import { NOTIFICATION_TONE_STYLES, presentNotification } from "@/lib/notification-presentation";
 
 const PRIORITY_ITEMS = [
   { slug: "dashboard", label: "Tổng quan", icon: LayoutDashboard, href: "/admin" },
@@ -76,7 +77,7 @@ type InvestorNotificationItem = {
 
 function notificationTime(value: string) {
   const elapsedMinutes = Math.max(0, Math.round((Date.now() - new Date(value).getTime()) / 60_000));
-  if (elapsedMinutes < 2) return "Vừa xong";
+  if (elapsedMinutes < 2) return "Vừa cập nhật";
   if (elapsedMinutes < 60) return `${elapsedMinutes} phút trước`;
   if (elapsedMinutes < 1_440) return `${Math.floor(elapsedMinutes / 60)} giờ trước`;
   return new Intl.DateTimeFormat("vi-VN", { day: "2-digit", month: "2-digit", timeZone: "Asia/Ho_Chi_Minh" }).format(new Date(value));
@@ -251,33 +252,35 @@ export function AdminNav() {
             <section className="absolute inset-x-0 bottom-0 flex h-[88dvh] flex-col overflow-hidden rounded-t-[2rem] border-t border-[#d6b45e]/18 bg-[#1b1211] text-white shadow-2xl sm:bottom-auto sm:left-auto sm:right-6 sm:top-16 sm:h-auto sm:max-h-[86dvh] sm:w-[430px] sm:rounded-2xl sm:border">
               <div className="shrink-0 bg-gradient-to-br from-[#3c271f] via-[#271817] to-[#160f0e] p-4">
                 <div className="flex items-start justify-between gap-3">
-                  <div><p className="flex items-center gap-1.5 text-sm font-semibold"><Bell size={16} className="text-[#e7c878]" /> Bản tin Nhà đầu tư</p><p className="mt-1 text-[10px] text-white/55">Thông tin từ Admin, đội ngũ đầu tư và Investor Care.</p></div>
+                  <div><p className="flex items-center gap-1.5 text-sm font-semibold"><Bell size={16} className="text-[#e7c878]" /> Bản tin Nhà đầu tư</p><p className="mt-1 text-[10px] text-white/55">Hiệu quả đầu tư, cơ hội mới và quyền lợi dành cho bạn.</p></div>
                   <button type="button" onClick={() => setNotificationsOpen(false)} className="flex h-8 w-8 items-center justify-center rounded-full bg-white/8 text-white/65" aria-label="Đóng"><X size={17} /></button>
                 </div>
                 <div className="mt-3 flex items-center justify-between rounded-xl border border-white/7 bg-white/[0.045] px-3 py-2">
-                  <span className="text-[10px] text-white/60"><strong className="text-sm text-[#e7c878]">{unreadInvestorNotifications}</strong> bản tin chưa đọc</span>
-                  <button type="button" onClick={markAllInvestorNotificationsRead} disabled={unreadInvestorNotifications === 0} className="inline-flex items-center gap-1 rounded-full bg-[#d6b45e] px-2.5 py-1.5 text-[10px] font-bold text-[#3a261a] disabled:opacity-40"><CheckCheck size={13} /> Đọc tất cả</button>
+                  <span className="text-[10px] text-white/60"><strong className="text-sm text-[#e7c878]">{unreadInvestorNotifications}</strong> cập nhật mới</span>
+                  <button type="button" onClick={markAllInvestorNotificationsRead} disabled={unreadInvestorNotifications === 0} className="inline-flex items-center gap-1 rounded-full bg-[#d6b45e] px-2.5 py-1.5 text-[10px] font-bold text-[#3a261a] disabled:opacity-40"><CheckCheck size={13} /> Đã xem tất cả</button>
                 </div>
               </div>
               <div className="scrollbar-hide shrink-0 overflow-x-auto border-b border-white/7 bg-[#211615] p-3">
                 <div className="flex gap-1.5">
                   {([[
                     "ALL", "Tất cả", Bell,
-                  ], ["UNREAD", "Chưa đọc", Check], ["FINANCE", "Cơ hội mới", Rocket], ["PROMOTION", "Đặc quyền", Gem], ["SYSTEM", "Điều hành", Newspaper]] as const).map(([value, label, Icon]) => <button key={value} type="button" onClick={() => setInvestorNotificationFilter(value)} className={cn("inline-flex shrink-0 items-center gap-1 rounded-full border px-2.5 py-1.5 text-[9px] font-semibold", investorNotificationFilter === value ? "border-[#d6b45e] bg-[#d6b45e] text-[#382319]" : "border-white/9 text-white/48")}><Icon size={11} /> {label}</button>)}
+                  ], ["UNREAD", "Chưa xem", Check], ["FINANCE", "Cơ hội mới", Rocket], ["PROMOTION", "Đặc quyền", Gem], ["SYSTEM", "Cập nhật chung", Newspaper]] as const).map(([value, label, Icon]) => <button key={value} type="button" onClick={() => setInvestorNotificationFilter(value)} className={cn("inline-flex shrink-0 items-center gap-1 rounded-full border px-2.5 py-1.5 text-[9px] font-semibold", investorNotificationFilter === value ? "border-[#d6b45e] bg-[#d6b45e] text-[#382319]" : "border-white/9 text-white/48")}><Icon size={11} /> {label}</button>)}
                 </div>
               </div>
               <div className="min-h-0 flex-1 space-y-2 overflow-y-auto p-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] sm:pb-3">
                 {investorNotificationsLoading ? <div className="rounded-2xl border border-white/7 p-8 text-center text-[10px] text-white/40">Đang cập nhật bản tin…</div> : null}
                 {!investorNotificationsLoading && filteredInvestorNotifications.map((item) => {
                   const Icon = item.type === "FINANCE" ? Rocket : item.type === "PROMOTION" ? Gem : Newspaper;
-                  const source = item.type === "FINANCE" ? "Đội ngũ đầu tư" : item.type === "PROMOTION" ? "Investor Care" : "Admin Tâm An";
-                  return <div key={item.id} className={cn("flex items-start gap-2 rounded-2xl border p-2.5", item.read ? "border-white/7 bg-white/[0.025]" : "border-[#d6b45e]/22 bg-gradient-to-r from-[#d6b45e]/[0.09] to-white/[0.025]")}>
+                  const source = item.type === "FINANCE" ? "Đội ngũ đầu tư" : item.type === "PROMOTION" ? "Chăm sóc nhà đầu tư" : "Tâm An Center";
+                  const presentation = presentNotification(item.title, item.body);
+                  const tone = NOTIFICATION_TONE_STYLES[presentation.tone];
+                  return <div key={item.id} className={cn("flex items-start gap-2 rounded-2xl border p-2.5", tone.darkCard, item.read && "opacity-70")}>
                     <button type="button" onClick={() => openInvestorNotification(item)} className="flex min-w-0 flex-1 items-start gap-2.5 text-left">
-                      <span className={cn("mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl", item.type === "FINANCE" ? "bg-emerald-300/10 text-emerald-200" : item.type === "PROMOTION" ? "bg-[#d6b45e]/10 text-[#e7c878]" : "bg-sky-300/10 text-sky-200")}><Icon size={16} /></span>
-                      <span className="min-w-0 flex-1"><span className="flex items-start gap-1"><strong className="min-w-0 flex-1 text-[11px] leading-4">{item.title}</strong>{!item.read ? <i className="mt-1 h-2 w-2 shrink-0 rounded-full bg-[#d6b45e]" /> : null}</span><span className="mt-1 block text-[10px] leading-4 text-white/48">{item.body}</span><span className="mt-1.5 block text-[9px] font-medium text-white/30">{source} · {notificationTime(item.createdAt)}</span></span>
+                      <span className={cn("mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl", tone.darkIcon)}><Icon size={16} /></span>
+                      <span className="min-w-0 flex-1"><span className="flex items-start gap-1"><strong className="min-w-0 flex-1 text-[11px] leading-4">{presentation.title}</strong>{!item.read ? <i className={cn("mt-1 h-2 w-2 shrink-0 rounded-full", tone.dot)} /> : null}</span><span className={cn("mt-1 inline-flex rounded-full px-2 py-0.5 text-[8px] font-semibold", tone.darkBadge)}>{presentation.label}</span><span className="mt-1 block text-[10px] leading-4 text-white/55">{presentation.body}</span><span className="mt-1.5 block text-[9px] font-medium text-white/30">{source} · {notificationTime(item.createdAt)}</span></span>
                       <ChevronRight size={14} className="mt-3 shrink-0 text-[#d6b45e]/65" />
                     </button>
-                    {!item.read ? <button type="button" onClick={() => markInvestorNotificationRead(item.id)} className="mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/6 text-emerald-200" aria-label="Đánh dấu đã đọc"><Check size={13} /></button> : null}
+                    {!item.read ? <button type="button" onClick={() => markInvestorNotificationRead(item.id)} className={cn("mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/6", tone.darkIcon)} aria-label="Đánh dấu đã xem"><Check size={13} /></button> : null}
                   </div>;
                 })}
                 {!investorNotificationsLoading && filteredInvestorNotifications.length === 0 ? <div className="rounded-2xl border border-dashed border-white/10 p-8 text-center text-[10px] text-white/40">Không có bản tin phù hợp bộ lọc.</div> : null}
@@ -432,22 +435,22 @@ export function AdminNav() {
         <div className="fixed inset-0 z-50 overflow-y-auto bg-[#fdf8f3] text-[#281b18]">
           <header className="sticky top-0 z-10 border-b border-[#e7d6ca] bg-white/95 shadow-[0_1px_12px_rgba(159,29,32,0.06)] backdrop-blur">
             <div className="mx-auto flex h-14 max-w-3xl items-center justify-between px-4 sm:px-6">
-              <div className="flex min-w-0 items-center gap-1.5"><button type="button" onClick={() => setNotificationsOpen(false)} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[#281b18] hover:bg-[#f8ebe5]" aria-label="Quay lại"><ChevronLeft size={20} /></button><span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#f8ebe5] text-[#c64b32]"><Bell size={16} /></span><div className="min-w-0"><p className="truncate text-sm font-semibold">Thông báo quản trị</p><p className="truncate text-[9px] font-medium text-[#c64b32]">{session.branchLabel}</p></div></div>
+              <div className="flex min-w-0 items-center gap-1.5"><button type="button" onClick={() => setNotificationsOpen(false)} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[#281b18] hover:bg-[#f8ebe5]" aria-label="Quay lại"><ChevronLeft size={20} /></button><span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#f8ebe5] text-[#c64b32]"><Bell size={16} /></span><div className="min-w-0"><p className="truncate text-sm font-semibold">Cập nhật vận hành</p><p className="truncate text-[9px] font-medium text-[#c64b32]">{session.branchLabel}</p></div></div>
               <button type="button" onClick={() => setNotificationsOpen(false)} className="flex h-9 w-9 items-center justify-center rounded-full bg-[#f8ebe5] text-[#c64b32]" aria-label="Đóng"><X size={17} /></button>
             </div>
           </header>
 
           <main className="mx-auto max-w-3xl px-4 py-5 pb-[calc(env(safe-area-inset-bottom)+1.5rem)] sm:px-6">
-            <div className="mb-4 flex items-center gap-2"><Bell className="text-[#c64b32]" size={20} /><div><h1 className="text-xl font-semibold tracking-tight">Thông báo</h1><p className="mt-0.5 text-[10px] text-[#826f66]">Booking, cơ sở, tài chính và mối quan hệ khách hàng.</p></div></div>
+            <div className="mb-4 flex items-center gap-2"><Bell className="text-[#c64b32]" size={20} /><div><h1 className="text-xl font-semibold tracking-tight">Việc cần theo dõi</h1><p className="mt-0.5 text-[10px] text-[#826f66]">Lịch hẹn, thanh toán và chăm sóc khách hàng.</p></div></div>
 
             <section className="rounded-2xl border border-[#e7d6ca] bg-white p-3 shadow-sm">
               <div className="flex items-center justify-between gap-3">
-                <div><p className="text-xs font-semibold">Trung tâm thông báo</p><p className="mt-0.5 text-[10px] text-[#826f66]">{unreadNotificationCount} thông báo chưa đọc</p></div>
-                <button type="button" onClick={markAllAdminNotificationsRead} disabled={unreadNotificationCount === 0} className="inline-flex items-center gap-1.5 rounded-full bg-[#f8ebe5] px-3 py-2 text-[11px] font-semibold text-[#c64b32] disabled:opacity-45"><CheckCheck size={14} /> Đọc tất cả</button>
+                <div><p className="text-xs font-semibold">Cập nhật công việc</p><p className="mt-0.5 text-[10px] text-[#826f66]">{unreadNotificationCount} việc mới cần xem</p></div>
+                <button type="button" onClick={markAllAdminNotificationsRead} disabled={unreadNotificationCount === 0} className="inline-flex items-center gap-1.5 rounded-full bg-[#f8ebe5] px-3 py-2 text-[11px] font-semibold text-[#c64b32] disabled:opacity-45"><CheckCheck size={14} /> Đã xem tất cả</button>
               </div>
               <div className="scrollbar-hide -mx-1 mt-2 flex gap-2 overflow-x-auto px-1 py-1">
                 {([
-                  ["ALL", "Tất cả", Bell], ["UNREAD", "Chưa đọc", Check], ["BOOKING", "Booking", CalendarCheck], ["BRANCH", "Cơ sở", Building2], ["VIP", "MQH · VIP", Crown], ["FINANCE", "Tài chính", ReceiptText],
+                  ["ALL", "Tất cả", Bell], ["UNREAD", "Chưa xem", Check], ["BOOKING", "Lịch hẹn", CalendarCheck], ["BRANCH", "Cơ sở", Building2], ["VIP", "Khách hàng", Crown], ["FINANCE", "Tài chính", ReceiptText],
                 ] as const).map(([value, label, Icon]) => <button key={value} type="button" onClick={() => setNotificationFilter(value)} className={cn("inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-semibold", notificationFilter === value ? "border-[#c64b32] bg-[#c64b32] text-white" : "border-[#e7d6ca] text-[#68574f]")}><Icon size={13} /> {label}</button>)}
               </div>
               {session.role === "OWNER" ? <div className="scrollbar-hide -mx-1 mt-1 flex gap-1.5 overflow-x-auto px-1 py-1">{[{ id: "all", label: "Toàn hệ thống" }, ...branches.map((item) => ({ id: item.id, label: item.label })), { id: "system", label: "Chi hệ thống" }].map((item) => <button key={item.id} type="button" onClick={() => setNotificationBranch(item.id)} className={cn("shrink-0 rounded-full border px-2.5 py-1.5 text-[10px] font-semibold", notificationBranch === item.id ? "border-[#dca9a2] bg-[#fae9e4] text-[#c64b32] shadow-sm shadow-[#c64b32]/8" : "border-transparent bg-[#f5f0ec] text-[#786962]")}>{item.label}</button>)}</div> : null}
@@ -457,18 +460,21 @@ export function AdminNav() {
               {filteredAdminNotifications.map((item) => {
                 const unread = isNotificationUnread(item);
                 const Icon = item.kind === "booking" ? CalendarCheck : item.kind === "vip" ? Crown : item.kind === "finance" ? ReceiptText : item.kind === "branch" ? Building2 : item.kind === "system" ? Sparkles : UsersRound;
-                return <article key={item.id} className={cn("flex gap-3 border-b border-[#eee0d6] px-4 py-3 last:border-b-0", unread && "bg-gradient-to-r from-[#fff3ee] to-white")}>
-                  <span className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-xl", item.kind === "vip" ? "bg-[#fff7df] text-[#76551d]" : item.kind === "finance" || item.kind === "system" ? "bg-[#fbf2e7] text-[#76551d]" : "bg-[#f8ebe5] text-[#c64b32]")}><Icon size={17} /></span>
+                const presentation = presentNotification(item.title, item.body);
+                const tone = NOTIFICATION_TONE_STYLES[presentation.tone];
+                return <article key={item.id} className={cn("flex gap-3 border-b border-l-4 px-4 py-3 last:border-b-0", tone.card, item.read && "bg-white/70")}>
+                  <span className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-xl", tone.icon)}><Icon size={17} /></span>
                   <div className="min-w-0 flex-1">
                     <Link href={item.href} onClick={() => { markNotificationRead(item.id); setNotificationsOpen(false); }} className="block">
-                      <div className="flex items-start gap-1.5"><p className="min-w-0 flex-1 text-sm font-semibold leading-5">{item.title}</p>{unread ? <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[#a93a36]" /> : null}<ChevronRight size={14} className="mt-1 shrink-0 text-[#9f7428]" /></div>
-                      <p className="mt-1 text-xs leading-5 text-[#68574f]">{item.body}</p>
+                      <div className="flex items-start gap-1.5"><p className="min-w-0 flex-1 text-sm font-semibold leading-5">{presentation.title}</p>{unread ? <span className={cn("mt-1.5 h-2 w-2 shrink-0 rounded-full", tone.dot)} /> : null}<ChevronRight size={14} className={cn("mt-1 shrink-0", tone.action)} /></div>
+                      <span className={cn("mt-1.5 inline-flex rounded-full px-2 py-1 text-[9px] font-semibold", tone.badge)}>{presentation.label}</span>
+                      <p className="mt-1 text-xs leading-5 text-[#68574f]">{presentation.body}</p>
                     </Link>
-                    <div className="mt-2 flex items-center justify-between gap-2"><p className="text-[10px] text-[#826f66]">{item.branchId === "system" ? "Toàn hệ thống" : branches.find((branch) => branch.id === item.branchId)?.label} · {notificationTime(item.createdAt)}</p>{unread ? <button type="button" onClick={() => markNotificationRead(item.id)} className="inline-flex shrink-0 items-center gap-1 rounded-full border border-[#e7d6ca] px-2 py-1 text-[10px] font-semibold text-[#c64b32]"><Check size={11} /> Đánh dấu đã đọc</button> : <span className="inline-flex items-center gap-1 text-[10px] text-[#826f66]"><CheckCheck size={11} /> Đã đọc</span>}</div>
+                    <div className="mt-2 flex items-center justify-between gap-2"><p className="text-[10px] text-[#826f66]">{item.branchId === "system" ? "Toàn hệ thống" : branches.find((branch) => branch.id === item.branchId)?.label} · {notificationTime(item.createdAt)}</p>{unread ? <button type="button" onClick={() => markNotificationRead(item.id)} className={cn("inline-flex shrink-0 items-center gap-1 rounded-full border border-current px-2 py-1 text-[10px] font-semibold", tone.action)}><Check size={11} /> Đã xem</button> : <span className="inline-flex items-center gap-1 text-[10px] text-[#826f66]"><CheckCheck size={11} /> Đã xem</span>}</div>
                   </div>
                 </article>;
               })}
-              {filteredAdminNotifications.length === 0 ? <div className="p-10 text-center text-xs text-[#826f66]">Không có thông báo phù hợp bộ lọc.</div> : null}
+              {filteredAdminNotifications.length === 0 ? <div className="p-10 text-center text-xs text-[#826f66]">Chưa có việc nào trong nhóm này.</div> : null}
             </div>
           </main>
         </div>

@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { BadgePercent, Bell, Building2, CheckCheck, ChevronRight, CircleDollarSign, FileCheck2, FolderKanban, KeyRound, LayoutDashboard, LogOut, Menu, ShieldCheck, X } from "lucide-react";
 import { useAdminSession } from "@/components/admin-session-provider";
+import { NOTIFICATION_TONE_STYLES, presentNotification } from "@/lib/notification-presentation";
 import { cn } from "@/lib/utils";
 
 const NAV = [
@@ -82,7 +83,36 @@ export function XgroupShell({ children }: { children: React.ReactNode }) {
 
       {moreOpen ? <div className="fixed inset-0 z-50 bg-[#fbf2e7] p-4 pt-[calc(env(safe-area-inset-top)+1rem)] lg:hidden"><div className="mx-auto max-w-lg"><div className="flex items-center justify-between rounded-2xl bg-gradient-to-br from-[#281b18] to-[#76551d] p-4 text-white"><div><p className="text-[9px] font-bold uppercase tracking-[0.16em] text-[#e9ca74]">Xgroup Business</p><h2 className="mt-1 text-lg font-semibold">Trung tâm điều hành</h2><p className="mt-1 text-[10px] text-white/70">{session?.displayName} · {session?.branchLabel}</p></div><button type="button" onClick={() => setMoreOpen(false)} className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10"><X size={18} /></button></div><div className="mt-3 grid grid-cols-2 gap-2">{NAV.map((item) => { const Icon = item.icon; return <Link key={item.href} href={item.href} onClick={() => setMoreOpen(false)} className="flex items-center gap-2 rounded-xl border border-[#f1e5dd] bg-white p-3"><span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#fbf2e7] text-[#76551d]"><Icon size={16} /></span><span className="text-[11px] font-semibold">{item.label}</span></Link>; })}</div><Link href="/bao-mat-quan-tri" className="mt-3 flex items-center gap-2 rounded-xl border border-[#f1e5dd] bg-white p-3 text-[11px] font-semibold"><KeyRound size={16} className="text-[#76551d]" /> Bảo mật hai lớp</Link><button type="button" onClick={() => void logout()} className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-[#b72b31] px-4 py-3 text-xs font-semibold text-white"><LogOut size={15} /> Đăng xuất an toàn</button></div></div> : null}
 
-      {noticesOpen ? <div className="fixed inset-0 z-50 overflow-y-auto bg-[#fbf2e7]"><header className="sticky top-0 z-10 border-b border-[#f1e5dd] bg-white/95 backdrop-blur"><div className="mx-auto flex h-14 max-w-2xl items-center justify-between px-4"><div className="flex items-center gap-2"><span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#fbf2e7] text-[#76551d]"><Bell size={17} /></span><div><strong className="block text-sm">Thông báo Xgroup</strong><small className="text-[9px] text-[#6d7f7a]">Business · tài chính · Quận · Affiliate</small></div></div><button type="button" onClick={() => setNoticesOpen(false)} className="flex h-9 w-9 items-center justify-center rounded-full bg-[#fbf2e7]"><X size={17} /></button></div></header><main className="mx-auto max-w-2xl p-4"><div className="mb-3 flex items-center justify-between rounded-2xl bg-[#4c191b] p-3 text-white"><div><p className="text-xs font-semibold">Trung tâm tín hiệu điều hành</p><p className="mt-0.5 text-[9px] text-white/65">{unread} thông báo chưa đọc</p></div><button type="button" onClick={() => void markRead()} disabled={!unread} className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-2 text-[10px] font-semibold disabled:opacity-40"><CheckCheck size={13} /> Đọc tất cả</button></div><div className="overflow-hidden rounded-2xl border border-[#f1e5dd] bg-white">{notices.map((notice) => <article key={notice.id} className={cn("border-b border-[#f1e5dd] p-4 last:border-0", !notice.readAt && "bg-[#fbf2e7]")}><Link href={notice.actionUrl?.startsWith("/xgroup") ? notice.actionUrl : "/xgroup"} onClick={() => { void markRead(notice.id); setNoticesOpen(false); }}><div className="flex items-start gap-2"><div className="min-w-0 flex-1"><strong className="block text-xs leading-5">{notice.title}</strong><p className="mt-1 text-[11px] leading-5 text-[#5c6c68]">{notice.body}</p><small className="mt-2 block text-[9px] text-[#899692]">{new Date(notice.createdAt).toLocaleString("vi-VN")}</small></div><ChevronRight size={14} className="mt-1 shrink-0 text-[#b58b2f]" /></div></Link></article>)}{!notices.length ? <p className="p-10 text-center text-xs text-[#667a73]">Chưa có thông báo mới.</p> : null}</div></main></div> : null}
+      {noticesOpen ? (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-[#fbf2e7]">
+          <header className="sticky top-0 z-10 border-b border-[#f1e5dd] bg-white/95 backdrop-blur">
+            <div className="mx-auto flex h-14 max-w-2xl items-center justify-between px-4">
+              <div className="flex items-center gap-2"><span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#fbf2e7] text-[#76551d]"><Bell size={17} /></span><div><strong className="block text-sm">Cập nhật kinh doanh</strong><small className="text-[9px] text-[#6d7f7a]">Doanh thu · thanh toán · địa bàn · đối tác</small></div></div>
+              <button type="button" onClick={() => setNoticesOpen(false)} className="flex h-9 w-9 items-center justify-center rounded-full bg-[#fbf2e7]" aria-label="Đóng"><X size={17} /></button>
+            </div>
+          </header>
+          <main className="mx-auto max-w-2xl p-4">
+            <div className="mb-3 flex items-center justify-between rounded-2xl bg-[#4c191b] p-3 text-white"><div><p className="text-xs font-semibold">Việc cần theo dõi</p><p className="mt-0.5 text-[9px] text-white/65">{unread} cập nhật mới</p></div><button type="button" onClick={() => void markRead()} disabled={!unread} className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-2 text-[10px] font-semibold disabled:opacity-40"><CheckCheck size={13} /> Đã xem tất cả</button></div>
+            <div className="space-y-2">
+              {notices.map((notice) => {
+                const presentation = presentNotification(notice.title, notice.body);
+                const tone = NOTIFICATION_TONE_STYLES[presentation.tone];
+                const NoticeIcon = notice.type === "FINANCE" || notice.type === "PAYMENT" ? CircleDollarSign : notice.type === "PROMOTION" ? BadgePercent : FileCheck2;
+                return (
+                  <article key={notice.id} className={cn("rounded-2xl border p-3", tone.card, notice.readAt && "bg-white/70 opacity-80")}>
+                    <Link href={notice.actionUrl?.startsWith("/xgroup") ? notice.actionUrl : "/xgroup"} onClick={() => { void markRead(notice.id); setNoticesOpen(false); }} className="flex items-start gap-3">
+                      <span className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-xl", tone.icon)}><NoticeIcon size={17} /></span>
+                      <span className="min-w-0 flex-1"><span className={cn("inline-flex rounded-full px-2 py-0.5 text-[9px] font-semibold", tone.badge)}>{presentation.label}</span><strong className="mt-1 block text-xs leading-5">{presentation.title}</strong><span className="mt-1 block text-[11px] leading-5 text-[#5c6c68]">{presentation.body}</span><small className="mt-2 block text-[9px] text-[#899692]">{new Date(notice.createdAt).toLocaleString("vi-VN")}</small></span>
+                      <ChevronRight size={14} className={cn("mt-3 shrink-0", tone.action)} />
+                    </Link>
+                  </article>
+                );
+              })}
+              {!notices.length ? <p className="rounded-2xl border border-dashed border-[#e7d6ca] bg-white p-10 text-center text-xs text-[#667a73]">Chưa có việc mới.</p> : null}
+            </div>
+          </main>
+        </div>
+      ) : null}
     </main>
   );
 }

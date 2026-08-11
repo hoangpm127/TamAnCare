@@ -8,6 +8,14 @@ import { AdminCustomerPinReset } from "@/components/admin-customer-pin-reset";
 
 export const dynamic = "force-dynamic";
 
+function formatBookingDate(value: Date) {
+  return value.toLocaleDateString("vi-VN", { weekday: "short", day: "2-digit", month: "2-digit", year: "numeric" });
+}
+
+function formatBookingTime(value: Date) {
+  return value.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" });
+}
+
 export default async function CustomerProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const session = await getAdminSession();
@@ -61,6 +69,9 @@ export default async function CustomerProfilePage({ params }: { params: Promise<
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <p className="font-semibold">{booking.service.name}</p>
+                  <p className="mt-1 text-sm font-medium text-[#3b2a24]">
+                    {formatBookingDate(booking.startTime)} · {formatBookingTime(booking.startTime)} - {formatBookingTime(booking.endTime)} · {booking.durationMin} phút
+                  </p>
                   <p className="text-sm text-[#68574f]">{booking.therapist?.fullName ?? "Cơ sở sắp xếp"} · {booking.branch.name} · {formatMoney(booking.totalAmount)}</p>
                 </div>
                 <span className="w-fit rounded-full bg-[#f8ebe5] px-3 py-1 text-xs font-semibold text-[#c64b32]">{bookingStatusLabel(booking.status)}</span>

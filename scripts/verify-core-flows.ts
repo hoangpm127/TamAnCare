@@ -3,6 +3,7 @@ import { addDays } from "date-fns";
 import { db } from "../lib/db";
 import { hashPassword } from "../lib/password";
 import { customerAudienceHeaders } from "../lib/request-audience";
+import { WELCOME_VOUCHER_VALIDITY_MS, welcomeVoucherExpiresAt } from "../lib/welcome-voucher";
 
 const BASE_URL = process.env.TEST_BASE_URL ?? "http://127.0.0.1:3000";
 const TEST_WEBHOOK_SECRET = process.env.TEST_SEPAY_WEBHOOK_SECRET ?? "local-e2e-webhook-secret";
@@ -12,7 +13,7 @@ const testIp = `198.18.${Number(String(Date.now()).slice(-4, -2)) % 250 + 1}.${N
 const customerPhone = `09${String(Date.now()).slice(-8)}`;
 const guestPhone = `08${String(Date.now() + 1).slice(-8)}`;
 const voucherPhone = `07${String(Date.now() + 2).slice(-8)}`;
-const customerPin = customerPhone.endsWith("5826") ? "5827" : "5826";
+const customerPin = "1234";
 const voucherPin = voucherPhone.endsWith("7395") ? "7396" : "7395";
 const adminUsername = `owner_${marker.toLowerCase()}`;
 const adminPassword = `Owner!${marker}`;
@@ -295,19 +296,6 @@ async function main() {
   });
   assert(missingConsentResponse.status === 400, "API đăng ký chưa từ chối yêu cầu thiếu đồng ý bắt buộc.");
 
-  const weakPinResponse = await fetch(`${BASE_URL}/api/customer-auth/register`, {
-    method: "POST",
-    headers: { Origin: BASE_URL, "Content-Type": "application/json" },
-    body: JSON.stringify({
-      fullName: `Khách ${marker}`,
-      phone: customerPhone,
-      pin: "1234",
-      acceptTerms: true,
-      acceptPrivacy: true,
-    }),
-  });
-  assert(weakPinResponse.status === 400, "API đăng ký chưa từ chối Mã PIN quá dễ đoán.");
-
   const registration = await jsonRequest<{ account: { customerId: string } }>("/api/customer-auth/register", {
     jar: customerJar,
     body: {
@@ -498,6 +486,11 @@ async function main() {
   );
   let account = await db.customerAccount.findUniqueOrThrow({ where: { customerId: voucherCustomerId } });
   let voucherUsage = await db.voucherUsage.findFirstOrThrow({ where: { booking: { group: { referenceCode: voucherReference } } } });
+  assert(
+    account.welcomeCreditGrantedAt
+      && welcomeVoucherExpiresAt(account.welcomeCreditGrantedAt)!.getTime() - account.welcomeCreditGrantedAt.getTime() === WELCOME_VOUCHER_VALIDITY_MS,
+    "WELCOME150 chưa được cấp đúng hạn 7 ngày kể từ lúc khách nhận.",
+  );
   assert(account.creditBalance === 150_000 && voucherUsage.status === "RESERVED", "Voucher đã bị trừ trước khi đối soát cọc.");
   createdPaymentIds.push(voucherBooking.depositPayment.id);
   await sendWebhook(voucherBooking.depositPayment.paymentCode, voucherBooking.depositPayment.amount, "WELCOME");

@@ -11,5 +11,10 @@ export default async function CustomerAccountPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const query = await searchParams;
-  return <CustomerAccountClient returnTo={safeCustomerReturnPath(first(query.returnTo))} />;
+  return (
+    <CustomerAccountClient
+      initialMode={first(query.mode) === "login" ? "login" : "register"}
+      returnTo={safeCustomerReturnPath(first(query.returnTo))}
+    />
+  );
 }

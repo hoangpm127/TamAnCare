@@ -15,7 +15,10 @@ export async function getVoucherInventory() {
     where: {
       isActive: true,
       OR: [{ startsAt: null }, { startsAt: { lte: now } }],
-      AND: [{ OR: [{ endsAt: null }, { endsAt: { gte: now } }] }],
+      AND: [
+        { OR: [{ endsAt: null }, { endsAt: { gte: now } }] },
+        { OR: [{ serviceId: null }, { service: { is: { isActive: true, isOnline: true } } }] },
+      ],
     },
     select: { id: true, code: true, maxUsage: true },
     orderBy: { createdAt: "asc" },

@@ -3,6 +3,7 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireXgroupSession } from "@/lib/server/xgroup-access";
 import { isSameOriginMutation } from "@/lib/server/request-security";
+import { repairLegacyVisibleText } from "@/lib/server/text-safety";
 
 const schema = z.object({ notificationId: z.string().trim().min(1).optional(), markAll: z.boolean().optional() }).refine((value) => value.notificationId || value.markAll);
 
@@ -12,7 +13,13 @@ export async function GET() {
   const notifications = await db.notification.findMany({ where: { userId: session.id }, orderBy: { createdAt: "desc" }, take: 100 });
   return NextResponse.json({
     unreadCount: notifications.filter((item) => !item.readAt).length,
-    notifications: notifications.map((item) => ({ ...item, createdAt: item.createdAt.toISOString(), readAt: item.readAt?.toISOString() ?? null })),
+    notifications: notifications.map((item) => ({
+      ...item,
+      title: repairLegacyVisibleText(item.title),
+      body: repairLegacyVisibleText(item.body),
+      createdAt: item.createdAt.toISOString(),
+      readAt: item.readAt?.toISOString() ?? null,
+    })),
   }, { headers: { "Cache-Control": "private, no-store" } });
 }
 

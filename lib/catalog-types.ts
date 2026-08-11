@@ -54,6 +54,7 @@ export type CatalogVoucher = {
 export type CatalogPackagePlan = {
   id: string;
   name: string;
+  description: string | null;
   paidSessions: number;
   bonusSessions: number;
   sessions: number;

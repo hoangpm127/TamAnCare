@@ -4,6 +4,7 @@ import { createHash, randomBytes } from "node:crypto";
 import { cookies } from "next/headers";
 import { db } from "@/lib/db";
 import { phoneVerificationRequired } from "@/lib/server/otp-delivery";
+import { hasActiveWelcomeVoucher, welcomeVoucherExpiresAt } from "@/lib/welcome-voucher";
 
 const COOKIE_NAME = "ta_customer_session_v2";
 const LEGACY_COOKIE_NAME = "ta_customer_session";
@@ -81,6 +82,7 @@ type CustomerAccountDtoInput = {
   pinHash?: string | null;
   phoneVerifiedAt: Date | null;
   creditBalance: number;
+  welcomeCreditGrantedAt: Date | null;
   freeConsultationEligible: boolean;
   freeConsultationDecision: "INTERESTED" | "DECLINED" | null;
   freeConsultationRespondedAt: Date | null;
@@ -92,6 +94,8 @@ type CustomerAccountDtoInput = {
 };
 
 export function customerAccountDto(account: CustomerAccountDtoInput) {
+  const welcomeCreditActive = hasActiveWelcomeVoucher(account);
+  const welcomeCreditExpiresAt = welcomeVoucherExpiresAt(account.welcomeCreditGrantedAt);
   return {
     customerId: account.customerId,
     fullName: account.customer.fullName,
@@ -99,8 +103,9 @@ export function customerAccountDto(account: CustomerAccountDtoInput) {
     pinConfigured: Boolean(account.pinHash),
     phoneVerified: Boolean(account.phoneVerifiedAt),
     totalVisits: account.customer.totalVisits,
-    creditBalance: account.creditBalance,
-    welcomeCreditAvailable: account.creditBalance > 0 && (Boolean(account.phoneVerifiedAt) || !phoneVerificationRequired()),
+    creditBalance: welcomeCreditActive ? account.creditBalance : 0,
+    welcomeCreditAvailable: welcomeCreditActive && (Boolean(account.phoneVerifiedAt) || !phoneVerificationRequired()),
+    welcomeCreditExpiresAt: welcomeCreditExpiresAt?.toISOString() ?? null,
     oauthProviders: account.customer.oauthIdentities?.map((identity) => identity.provider) ?? [],
     freeConsultationPrompt: {
       eligible: account.freeConsultationEligible && account.freeConsultationDecision === null,

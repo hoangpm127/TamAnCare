@@ -17,7 +17,7 @@ export async function PUT(request: Request) {
   if (!rateLimit.allowed) return NextResponse.json({ error: "Đã có quá nhiều lần đổi mã. Vui lòng thử lại sau." }, { status: 429, headers: { "Retry-After": String(rateLimit.retryAfterSeconds) } });
   const parsed = schema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: "Mã PIN phải gồm đúng 4 số." }, { status: 400 });
-  const pinError = customerPinError(parsed.data.pin, account.phone);
+  const pinError = customerPinError(parsed.data.pin);
   if (pinError) return NextResponse.json({ error: pinError }, { status: 400 });
   await db.customerAccount.update({ where: { customerId: account.customerId }, data: { pinHash: hashPassword(parsed.data.pin) } });
   return NextResponse.json({ ok: true });

@@ -98,7 +98,7 @@ export function TherapistServiceAlert() {
       });
       if ("speechSynthesis" in window) {
         window.speechSynthesis.cancel();
-        const message = new SpeechSynthesisUtterance(kind === "ended" ? "Ca phục vụ đã đủ thời lượng." : "Ca phục vụ còn ba phút.");
+        const message = new SpeechSynthesisUtterance(kind === "ended" ? "Đã đến giờ hoàn tất dịch vụ." : "Dịch vụ còn ba phút.");
         message.lang = "vi-VN";
         message.rate = 0.92;
         message.volume = 0.85;
@@ -106,7 +106,7 @@ export function TherapistServiceAlert() {
       }
     }
     if ("Notification" in window && Notification.permission === "granted") {
-      new Notification(kind === "ended" ? "Đã đủ thời lượng phục vụ" : "Ca còn 3 phút", {
+      new Notification(kind === "ended" ? "Đến giờ hoàn tất dịch vụ" : "Dịch vụ còn 3 phút", {
         body: `${service.customerName} · ${service.serviceName}`,
         tag: key,
       });
@@ -120,9 +120,9 @@ export function TherapistServiceAlert() {
 
   return (
     <>
-      <Link href={detailHref} className={`sticky top-14 z-30 mx-auto flex max-w-4xl items-center gap-2 px-3 py-2 text-white shadow-lg ${ended ? "bg-[#8b2b28]" : "bg-[#76551d]"}`}>
+      <Link href={detailHref} className={`sticky top-14 z-30 mx-auto flex max-w-4xl items-center gap-2 px-3 py-2 text-white shadow-lg ${ended ? "bg-amber-600" : "bg-sky-700"}`}>
         {ended ? <BellRing size={16} className="shrink-0 animate-pulse" /> : <Clock3 size={16} className="shrink-0" />}
-        <span className="min-w-0 flex-1"><strong className="block truncate text-[11px]">{ended ? "Đã đủ thời lượng phục vụ" : `Còn ${clock(remaining)} · chuẩn bị kết thúc ca`}</strong><small className="block truncate text-[9px] text-white/75">{service.customerName} · {service.serviceName}</small></span>
+        <span className="min-w-0 flex-1"><strong className="block truncate text-[11px]">{ended ? "Đến giờ hoàn tất dịch vụ" : `Còn ${clock(remaining)} · chuẩn bị hoàn tất dịch vụ`}</strong><small className="block truncate text-[9px] text-white/75">{service.customerName} · {service.serviceName}</small></span>
         <ChevronRight size={16} className="shrink-0" />
       </Link>
 
@@ -130,13 +130,13 @@ export function TherapistServiceAlert() {
         <div className="fixed inset-0 z-[85] flex items-end justify-center bg-black/55 sm:items-center sm:p-5">
           <section className="w-full max-w-lg rounded-t-[2rem] bg-[#fdf8f3] p-5 pb-[calc(env(safe-area-inset-bottom)+1.25rem)] text-center shadow-2xl sm:rounded-[2rem]">
             <button type="button" onClick={() => setDismissedEnd(service.bookingCode)} className="ml-auto flex h-8 w-8 items-center justify-center rounded-full bg-white text-[#826f66]" aria-label="Thu gọn thông báo"><X size={15} /></button>
-            <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#f8ebe5] text-[#c64b32]"><Volume2 size={25} /></span>
-            <BrandWordmark className="mx-auto mt-3 h-[15px] w-[112px] text-[#c64b32]" />
-            <h2 className="mt-1 text-xl font-semibold">Đã đủ thời lượng phục vụ</h2>
-            <p className="mt-2 text-sm leading-6 text-[#68574f]">Ca của <strong>{service.customerName}</strong> đã đủ {service.durationMin} phút. Mời KTV khéo léo kết thúc liệu trình, hỗ trợ khách chuẩn bị và hướng dẫn đối soát Bill tại quầy.</p>
-            <div className="mt-4 grid grid-cols-3 gap-2 rounded-2xl bg-white p-3 text-center text-[9px] text-[#826f66]"><span>Tổng Bill<strong className="mt-1 block text-xs text-[#281b18]">{formatMoney(service.totalAmount)}</strong></span><span>Đã cọc/thu<strong className="mt-1 block text-xs text-[#76551d]">{formatMoney(service.paidAmount)}</strong></span><span>Còn lại<strong className="mt-1 block text-xs text-[#c64b32]">{service.usedPackage ? "Lượt gói" : formatMoney(service.dueAmount)}</strong></span></div>
-            <Link href={detailHref} className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#c64b32] px-4 py-3 text-sm font-semibold text-white"><ReceiptText size={16} /> Mở ca & Bill cần đối soát</Link>
-            <p className="mt-3 text-[10px] leading-4 text-[#826f66]">Tip KTV được khách trao trực tiếp, tách riêng và không cộng vào Bill dịch vụ.</p>
+            <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-amber-100 text-amber-700"><Volume2 size={25} /></span>
+            <BrandWordmark className="mx-auto mt-3 h-[15px] w-[112px] text-amber-700" />
+            <h2 className="mt-1 text-xl font-semibold">Đến giờ hoàn tất dịch vụ</h2>
+            <p className="mt-2 text-sm leading-6 text-[#68574f]">Dịch vụ của <strong>{service.customerName}</strong> đã đủ {service.durationMin} phút. Hãy nhẹ nhàng kết thúc liệu trình, hỗ trợ khách và hướng dẫn khách xác nhận thanh toán tại quầy.</p>
+            <div className="mt-4 grid grid-cols-3 gap-2 rounded-2xl bg-white p-3 text-center text-[9px] text-[#826f66]"><span>Tổng hóa đơn<strong className="mt-1 block text-xs text-[#281b18]">{formatMoney(service.totalAmount)}</strong></span><span>Đã thanh toán<strong className="mt-1 block text-xs text-[#76551d]">{formatMoney(service.paidAmount)}</strong></span><span>Còn lại<strong className="mt-1 block text-xs text-[#c64b32]">{service.usedPackage ? "Lượt trong gói" : formatMoney(service.dueAmount)}</strong></span></div>
+            <Link href={detailHref} className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-amber-600 px-4 py-3 text-sm font-semibold text-white"><ReceiptText size={16} /> Mở ca và hoàn tất thanh toán</Link>
+            <p className="mt-3 text-[10px] leading-4 text-[#826f66]">Tip được khách trao trực tiếp cho kỹ thuật viên và không nằm trong hóa đơn dịch vụ.</p>
           </section>
         </div>
       ) : null}

@@ -52,6 +52,7 @@ export async function createCustomerMembership(tx: Prisma.TransactionClient, inp
       pinHash: input.pinHash ?? null,
       phoneVerifiedAt: input.phoneVerifiedAt,
       creditBalance: 150000,
+      welcomeCreditGrantedAt: new Date(),
       freeConsultationEligible: true,
     },
     include: { customer: { include: { oauthIdentities: true } } },
@@ -98,7 +99,7 @@ export async function createCustomerMembership(tx: Prisma.TransactionClient, inp
   await notifyCustomer(tx, customer.id, {
     type: "PROMOTION",
     title: "Bạn đã nhận ưu đãi 150K",
-    body: "WELCOME150 sẽ tự động được ưu tiên khi bạn đặt dịch vụ lần đầu.",
+    body: "WELCOME150 sẽ tự động được ưu tiên khi bạn đặt dịch vụ lần đầu. HSD 7 ngày kể từ ngày nhận.",
     actionUrl: "/booking",
   });
   await notifyOperations(tx, {

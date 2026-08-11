@@ -185,7 +185,7 @@ function OffersContent() {
               </span>
               <p className="line-clamp-2 min-h-8 text-[13px] font-semibold leading-4">{plan.name}</p>
               <p className="mt-1 line-clamp-2 min-h-7 text-[10px] leading-3.5 text-[#715943]">
-                Áp dụng: {planService?.name ?? "dịch vụ ghi trên thẻ"}
+                {plan.description || `Áp dụng: ${planService?.name ?? "dịch vụ ghi trên thẻ"}`}
               </p>
               <div className="mt-1 grid w-full grid-cols-2 gap-1 rounded-lg bg-white/80 px-1.5 py-1 text-[9px] text-[#715943] ring-1 ring-[#e7d6ca]/70">
                 <span>
@@ -225,6 +225,7 @@ function OffersContent() {
                 </p>
                 <p><strong className="text-[#4a2d16]">Sử dụng:</strong> {selectedPlan.shareable ? "Chủ thẻ có thể đặt nhóm trong cùng booking." : "Chỉ dùng cho chủ thẻ, không chuyển nhượng."}</p>
                 <p><strong className="text-[#4a2d16]">Hiệu lực:</strong> {selectedPlan.validityDays} ngày tính từ lúc ngân hàng xác nhận thanh toán.</p>
+                {selectedPlan.description ? <p><strong className="text-[#4a2d16]">Thông tin thêm:</strong> {selectedPlan.description}</p> : null}
               </div>
               <div className="mt-2.5 flex items-center justify-between rounded-lg bg-white px-3 py-2">
                 <span className="text-xs text-[#826f66]">Số tiền kích hoạt</span>

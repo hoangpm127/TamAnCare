@@ -681,6 +681,7 @@ model VoucherUsage {
 model PackagePlan {
   id            String            @id @default(cuid())
   name          String
+  description   String?
   serviceId     String?
   sessions      Int
   paidSessions  Int               @default(0)

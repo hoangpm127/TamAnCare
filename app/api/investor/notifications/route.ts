@@ -4,6 +4,7 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireAdminSession } from "@/lib/server/admin-session";
 import { isSameOriginMutation } from "@/lib/server/request-security";
+import { repairLegacyVisibleText } from "@/lib/server/text-safety";
 
 const updateSchema = z.object({
   id: z.string().optional(),
@@ -24,8 +25,8 @@ export async function GET() {
     notifications: notifications.map((item) => ({
       id: item.id,
       type: item.type,
-      title: item.title,
-      body: item.body,
+      title: repairLegacyVisibleText(item.title),
+      body: repairLegacyVisibleText(item.body),
       actionUrl: item.actionUrl,
       branchId: item.branchId,
       createdAt: item.createdAt.toISOString(),

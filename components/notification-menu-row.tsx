@@ -20,7 +20,7 @@ export function NotificationMenuRow() {
       </span>
       <span className="min-w-0 flex-1">
         <span className="block text-sm font-semibold text-[#281b18]">Thông báo</span>
-        <span className="block truncate text-xs text-[#826f66]">Lịch hẹn & ưu đãi mới</span>
+        <span className="block truncate text-xs text-[#826f66]">Lịch hẹn, thanh toán và ưu đãi</span>
       </span>
       <ChevronRight className="shrink-0 text-[#c9b6ac]" size={18} />
     </Link>

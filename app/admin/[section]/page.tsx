@@ -11,6 +11,8 @@ import { AdminCustomerTimeline } from "@/components/admin-customer-timeline";
 import { AdminRoomOperations } from "@/components/admin-room-operations";
 import { AdminTherapistOperations } from "@/components/admin-therapist-operations";
 import { AdminServiceOperations } from "@/components/admin-service-operations";
+import { AdminVoucherOperations } from "@/components/admin-voucher-operations";
+import { AdminPackageOperations } from "@/components/admin-package-operations";
 import { canAccessAdminSection, type AdminAccount } from "@/lib/admin-auth";
 import { getAdminSession } from "@/lib/server/admin-session";
 
@@ -201,6 +203,40 @@ export default async function AdminSectionPage({ params }: { params: Promise<{ s
       orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
     });
     return <AdminServiceOperations initialServices={services.map((service) => ({ ...service, updatedAt: service.updatedAt.toISOString() }))} />;
+  }
+  if (slug === "vouchers") {
+    const [vouchers, services, campaigns] = await Promise.all([
+      db.voucher.findMany({
+        include: { _count: { select: { usages: true, bookings: true } } },
+        orderBy: [{ isActive: "desc" }, { createdAt: "desc" }],
+      }),
+      db.service.findMany({ orderBy: [{ sortOrder: "asc" }, { name: "asc" }], select: { id: true, name: true, isActive: true, isOnline: true } }),
+      db.campaign.findMany({ orderBy: { createdAt: "desc" }, select: { id: true, name: true, code: true } }),
+    ]);
+    return <AdminVoucherOperations
+      initialVouchers={vouchers.map((voucher) => ({
+        ...voucher,
+        startsAt: voucher.startsAt?.toISOString() ?? null,
+        endsAt: voucher.endsAt?.toISOString() ?? null,
+        createdAt: voucher.createdAt.toISOString(),
+        updatedAt: voucher.updatedAt.toISOString(),
+      }))}
+      services={services.map((service) => ({ id: service.id, label: service.name, active: service.isActive && service.isOnline }))}
+      campaigns={campaigns.map((campaign) => ({ id: campaign.id, label: `${campaign.code} · ${campaign.name}` }))}
+    />;
+  }
+  if (slug === "packages") {
+    const [packages, services] = await Promise.all([
+      db.packagePlan.findMany({
+        include: { _count: { select: { customerPacks: true } } },
+        orderBy: [{ isActive: "desc" }, { price: "asc" }, { createdAt: "asc" }],
+      }),
+      db.service.findMany({ orderBy: [{ sortOrder: "asc" }, { name: "asc" }], select: { id: true, name: true, isActive: true, isOnline: true } }),
+    ]);
+    return <AdminPackageOperations
+      initialPackages={packages.map((plan) => ({ ...plan, createdAt: plan.createdAt.toISOString(), updatedAt: plan.updatedAt.toISOString() }))}
+      services={services.map((service) => ({ id: service.id, label: service.name, active: service.isActive && service.isOnline }))}
+    />;
   }
   if (slug === "settings") {
     if (!["OWNER", "BRANCH_MANAGER"].includes(session.role)) notFound();

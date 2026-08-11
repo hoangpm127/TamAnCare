@@ -7,6 +7,7 @@ import { getGuestSession } from "@/lib/server/guest-session";
 import { installedReferralForIdentity } from "@/lib/server/referral-installation";
 import { consumeRateLimit, isSameOriginMutation, requestIp } from "@/lib/server/request-security";
 import { calculateVoucherDiscount, voucherRuleError } from "@/lib/server/voucher-rules";
+import { hasActiveWelcomeVoucher, WELCOME_VOUCHER_CODE } from "@/lib/welcome-voucher";
 
 const schema = z.object({
   code: z.string().trim().min(1).max(40),
@@ -108,16 +109,16 @@ export async function POST(request: Request) {
     customer,
   });
   if (ruleError) return NextResponse.json({ valid: false, code, discountAmount: 0, message: ruleError });
-  if (code === "WELCOME150") {
+  if (code === WELCOME_VOUCHER_CODE) {
     if (!customerSession) return NextResponse.json({ valid: false, code, discountAmount: 0, message: "Hãy đăng nhập để dùng quyền lợi WELCOME150." });
     const account = await db.customerAccount.findUnique({ where: { customerId: customerSession.customerId } });
-    if (!account || account.creditBalance <= 0) {
-      return NextResponse.json({ valid: false, code, discountAmount: 0, message: "Quyền lợi WELCOME150 không còn khả dụng." });
+    if (!hasActiveWelcomeVoucher(account, now)) {
+      return NextResponse.json({ valid: false, code, discountAmount: 0, message: "WELCOME150 đã hết hạn hoặc không còn khả dụng." });
     }
   }
 
   const primaryDiscount = calculateVoucherDiscount(voucher, parsed.data.subtotal);
-  if (code === "WELCOME150" && customerSession && installedReferral) {
+  if (code === WELCOME_VOUCHER_CODE && customerSession && installedReferral) {
     const affiliateBonus = await db.voucher.findFirst({
       where: {
         code: "AFF50",

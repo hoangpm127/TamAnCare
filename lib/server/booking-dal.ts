@@ -17,6 +17,7 @@ import { phoneVerificationRequired } from "@/lib/server/otp-delivery";
 import { claimInstalledReferral } from "@/lib/server/referral-installation";
 import { bookingWindowError, calculateSlotResources, intervalsOverlapWithBuffer, timeToMinutes } from "@/lib/scheduling-policy";
 import { therapistWorksDuring } from "@/lib/server/therapist-schedule";
+import { hasActiveWelcomeVoucher, WELCOME_VOUCHER_CODE } from "@/lib/welcome-voucher";
 
 const BUSINESS_TIME_ZONE = "Asia/Ho_Chi_Minh";
 const BUSINESS_OFFSET = "+07:00";
@@ -367,10 +368,10 @@ export async function createBookingGroup(input: BookingGroupInput) {
       if (voucher?.serviceId && serviceIds.some((serviceId) => serviceId !== voucher.serviceId)) {
         throw new BookingConflictError("Ưu đãi này không áp dụng cho dịch vụ đã chọn.");
       }
-      const customerAccount = voucher && input.authenticatedCustomerId && (voucher.requiresVerifiedPhone || voucher.code === "WELCOME150")
+      const customerAccount = voucher && input.authenticatedCustomerId && (voucher.requiresVerifiedPhone || voucher.code === WELCOME_VOUCHER_CODE)
         ? await tx.customerAccount.findUnique({ where: { customerId: customer.id } })
         : null;
-      const affiliateBonusVoucher = campaign && voucher?.code === "WELCOME150" && customerAccount
+      const affiliateBonusVoucher = campaign && voucher?.code === WELCOME_VOUCHER_CODE && customerAccount
         ? await tx.voucher.findFirst({
             where: {
               code: "AFF50",
@@ -411,10 +412,10 @@ export async function createBookingGroup(input: BookingGroupInput) {
         }
       }
       if (
-        voucher?.code === "WELCOME150"
-        && (!input.authenticatedCustomerId || !customerAccount || customerAccount.creditBalance <= 0)
+        voucher?.code === WELCOME_VOUCHER_CODE
+        && (!input.authenticatedCustomerId || !hasActiveWelcomeVoucher(customerAccount, now))
       ) {
-        throw new BookingConflictError("Ưu đãi 150K chỉ dành cho tài khoản thành viên mới.");
+        throw new BookingConflictError("WELCOME150 đã hết hạn hoặc không còn khả dụng cho tài khoản này.");
       }
 
       const packageCandidates = !voucher && input.authenticatedCustomerId
@@ -654,7 +655,7 @@ export async function createBookingGroup(input: BookingGroupInput) {
             },
           });
         }
-        if (voucherConfirmedImmediately && voucher.code === "WELCOME150" && customerAccount) {
+        if (voucherConfirmedImmediately && voucher.code === WELCOME_VOUCHER_CODE && customerAccount) {
           await tx.customerAccount.update({
             where: { id: customerAccount.id },
             data: { creditBalance: Math.max(0, customerAccount.creditBalance - primaryVoucherDiscount) },

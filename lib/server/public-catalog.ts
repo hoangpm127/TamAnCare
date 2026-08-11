@@ -4,6 +4,7 @@ import { unstable_cache } from "next/cache";
 import { db } from "@/lib/db";
 import { BOOKING_POLICY } from "@/lib/business-policy";
 import type { PublicCatalog } from "@/lib/catalog-types";
+import { WELCOME_VOUCHER_CODE } from "@/lib/welcome-voucher";
 
 function dateLabel(value: Date | null) {
   if (!value) return "Không giới hạn";
@@ -31,12 +32,21 @@ async function loadPublicCatalog(): Promise<PublicCatalog> {
     where: {
       isActive: true,
       OR: [{ startsAt: null }, { startsAt: { lte: now } }],
-      AND: [{ OR: [{ endsAt: null }, { endsAt: { gte: now } }] }],
+      AND: [
+        { OR: [{ endsAt: null }, { endsAt: { gte: now } }] },
+        { OR: [{ serviceId: null }, { service: { is: { isActive: true, isOnline: true } } }] },
+      ],
     },
     orderBy: { createdAt: "asc" },
   });
   const packagePlans = await db.packagePlan.findMany({
-    where: { isActive: true },
+    where: {
+      isActive: true,
+      OR: [
+        { serviceId: null },
+        { service: { is: { isActive: true, isOnline: true } } },
+      ],
+    },
     orderBy: [{ price: "asc" }, { createdAt: "asc" }],
   });
 
@@ -85,7 +95,7 @@ async function loadPublicCatalog(): Promise<PublicCatalog> {
       type: item.discountType,
       value: item.discountValue,
       minSpend: item.minimumSpend,
-      expiresAt: dateLabel(item.endsAt),
+      expiresAt: item.code === WELCOME_VOUCHER_CODE ? "7 ngày kể từ ngày nhận" : dateLabel(item.endsAt),
       constraint: item.displayConstraint || item.description,
       accent: item.accentColor,
       active: item.isActive,
@@ -93,6 +103,7 @@ async function loadPublicCatalog(): Promise<PublicCatalog> {
     packagePlans: packagePlans.map((item) => ({
       id: item.id,
       name: item.name,
+      description: item.description,
       paidSessions: item.paidSessions,
       bonusSessions: item.bonusSessions,
       sessions: item.sessions,

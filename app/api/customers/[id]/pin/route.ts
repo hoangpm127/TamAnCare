@@ -31,7 +31,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     include: { account: true },
   });
   if (!customer?.account) return NextResponse.json({ error: "Khách hàng chưa có hồ sơ đăng nhập." }, { status: 404 });
-  const pinError = customerPinError(parsed.data.pin, customer.phone);
+  const pinError = customerPinError(parsed.data.pin);
   if (pinError) return NextResponse.json({ error: pinError }, { status: 400 });
   await db.$transaction([
     db.customerAccount.update({ where: { id: customer.account.id }, data: { pinHash: hashPassword(parsed.data.pin) } }),

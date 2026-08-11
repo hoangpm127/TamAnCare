@@ -6,6 +6,7 @@ import { format } from "date-fns";
 import { ArrowUpRight, Bell, Briefcase, Building2, CalendarClock, Check, CheckCheck, Gift, Info, Users, type LucideIcon } from "lucide-react";
 import { markAllNotificationsRead, markNotificationRead, useAllNotifications } from "@/lib/notification-store";
 import { notificationTypeLabel } from "@/lib/labels";
+import { NOTIFICATION_TONE_STYLES, presentNotification } from "@/lib/notification-presentation";
 import { cn } from "@/lib/utils";
 
 type Filter = "ALL" | "BOOKING" | "BRANCH" | "INVITE" | "PROMO";
@@ -26,16 +27,6 @@ const FILTERS: { value: Filter; label: string; icon: LucideIcon }[] = [
   { value: "INVITE", label: "Bạn bè mời", icon: Users },
   { value: "PROMO", label: "Khuyến mãi", icon: Gift },
 ];
-
-function workflowBadge(title: string, body: string) {
-  const text = `${title} ${body}`.toLocaleLowerCase("vi-VN");
-  if (text.includes("chưa thể xác nhận") || text.includes("điều chỉnh lịch") || text.includes("đã hủy")) return { label: "Cần chọn lịch khác", className: "bg-red-50 text-red-700" };
-  if (text.includes("đã được xác nhận") || text.includes("đã xác nhận lịch") || text.includes("ai xác nhận") || text.includes("được ai xác nhận")) return { label: "Lịch đã sẵn sàng", className: "bg-[#fff4e6] text-[#ad432f]" };
-  if (text.includes("check-in") || text.includes("đã có mặt")) return { label: "Đã tiếp nhận tại cơ sở", className: "bg-[#fff7df] text-[#76551d]" };
-  if (text.includes("đã bắt đầu") || text.includes("đang được phục vụ")) return { label: "Đang phục vụ", className: "bg-[#eef5ff] text-[#28669b]" };
-  if (text.includes("hoàn tất")) return { label: "Đã hoàn tất", className: "bg-[#fff4e6] text-[#ad432f]" };
-  return null;
-}
 
 export function NotificationsList() {
   const notifications = useAllNotifications();
@@ -73,13 +64,14 @@ export function NotificationsList() {
       <div className="overflow-hidden rounded-2xl border border-[#e7d6ca] bg-white shadow-sm">
         {filtered.map((item) => {
           const Icon = TYPE_ICON[item.type] ?? Info;
-          const badge = item.type === "BOOKING" ? workflowBadge(item.title, item.body) : null;
+          const presentation = presentNotification(item.title, item.body);
+          const tone = NOTIFICATION_TONE_STYLES[presentation.tone];
           const actionUrl = item.actionUrl?.startsWith("/check-in") ? "/don-cua-toi?tab=upcoming" : item.actionUrl;
           return (
-            <article key={item.id} className={cn("flex gap-3 border-b border-[#eee0d6] px-4 py-3 last:border-b-0", !item.read && "bg-gradient-to-r from-[#fff3ee] to-white")}>
-              <span className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-xl", item.type === "INVITE" ? "bg-[#fff7df] text-[#76551d]" : item.type === "PROMO" ? "bg-[#fff4e6] text-[#ad432f]" : "bg-[#f8ebe5] text-[#c64b32]")}><Icon size={17} /></span>
+            <article key={item.id} className={cn("flex gap-3 border-b border-l-4 px-4 py-3 last:border-b-0", tone.card, item.read && "bg-white/70")}>
+              <span className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-xl", tone.icon)}><Icon size={17} /></span>
               <div className="min-w-0 flex-1">
-                {actionUrl ? <Link href={actionUrl} onClick={() => markRead(item.id)} className="block"><div className="flex items-start gap-1.5"><p className="min-w-0 flex-1 text-sm font-semibold leading-5">{item.title}</p>{!item.read ? <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[#a93a36]" /> : null}</div>{badge ? <span className={cn("mt-1.5 inline-flex rounded-full px-2 py-1 text-[9px] font-semibold", badge.className)}>{badge.label}</span> : null}<p className="mt-1 text-xs leading-5 text-[#68574f]">{item.body}</p><span className="mt-2 inline-flex items-center gap-1 text-[10px] font-semibold text-[#c64b32]">Xem và xử lý <ArrowUpRight size={11} /></span></Link> : <><div className="flex items-start gap-1.5"><p className="min-w-0 flex-1 text-sm font-semibold leading-5">{item.title}</p>{!item.read ? <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[#a93a36]" /> : null}</div>{badge ? <span className={cn("mt-1.5 inline-flex rounded-full px-2 py-1 text-[9px] font-semibold", badge.className)}>{badge.label}</span> : null}<p className="mt-1 text-xs leading-5 text-[#68574f]">{item.body}</p></>}
+                {actionUrl ? <Link href={actionUrl} onClick={() => markRead(item.id)} className="block"><div className="flex items-start gap-1.5"><p className="min-w-0 flex-1 text-sm font-semibold leading-5">{presentation.title}</p>{!item.read ? <span className={cn("mt-1.5 h-2 w-2 shrink-0 rounded-full", tone.dot)} /> : null}</div><span className={cn("mt-1.5 inline-flex rounded-full px-2 py-1 text-[9px] font-semibold", tone.badge)}>{presentation.label}</span><p className="mt-1 text-xs leading-5 text-[#68574f]">{presentation.body}</p><span className={cn("mt-2 inline-flex items-center gap-1 text-[10px] font-semibold", tone.action)}>{presentation.actionLabel} <ArrowUpRight size={11} /></span></Link> : <><div className="flex items-start gap-1.5"><p className="min-w-0 flex-1 text-sm font-semibold leading-5">{presentation.title}</p>{!item.read ? <span className={cn("mt-1.5 h-2 w-2 shrink-0 rounded-full", tone.dot)} /> : null}</div><span className={cn("mt-1.5 inline-flex rounded-full px-2 py-1 text-[9px] font-semibold", tone.badge)}>{presentation.label}</span><p className="mt-1 text-xs leading-5 text-[#68574f]">{presentation.body}</p></>}
                 <div className="mt-2 flex items-center justify-between gap-2"><p className="text-[10px] text-[#826f66]">{notificationTypeLabel(item.type)} · {format(item.createdAt, "HH:mm dd/MM")}</p>{!item.read ? <button type="button" onClick={() => markRead(item.id)} className="inline-flex shrink-0 items-center gap-1 rounded-full border border-[#e7d6ca] px-2 py-1 text-[10px] font-semibold text-[#c64b32]"><Check size={11} /> Đánh dấu đã đọc</button> : <span className="inline-flex items-center gap-1 text-[10px] text-[#826f66]"><CheckCheck size={11} /> Đã đọc</span>}</div>
               </div>
             </article>

@@ -86,7 +86,7 @@ export function TherapistNav({ branchLabel }: Props) {
       {panel ? <div className="fixed inset-0 z-[70] flex items-end justify-center bg-black/45 p-0 backdrop-blur-[2px] sm:items-center sm:p-5" role="dialog" aria-modal="true">
         <button type="button" className="absolute inset-0" onClick={() => setPanel(null)} aria-label="Đóng" />
         <section className="relative max-h-[88dvh] w-full max-w-lg overflow-y-auto rounded-t-[1.75rem] bg-white p-4 shadow-2xl sm:rounded-[1.75rem] sm:p-5">
-          <div className="mb-3 flex items-center justify-between"><div><p className="text-[9px] font-bold uppercase tracking-[0.14em] text-[#c64b32]">Cổng KTV</p><h2 className="text-base font-semibold">Thông báo công việc</h2></div><button type="button" onClick={() => setPanel(null)} className="flex h-9 w-9 items-center justify-center rounded-full bg-[#f6efeb] text-[#756861]" aria-label="Đóng cửa sổ"><X size={17} /></button></div>
+          <div className="mb-3 flex items-center justify-between"><div><p className="text-[9px] font-bold uppercase tracking-[0.14em] text-[#c64b32]">Cổng KTV</p><h2 className="text-base font-semibold">Cập nhật ca làm</h2></div><button type="button" onClick={() => setPanel(null)} className="flex h-9 w-9 items-center justify-center rounded-full bg-[#f6efeb] text-[#756861]" aria-label="Đóng cửa sổ"><X size={17} /></button></div>
           {panel === "notifications" ? <TherapistNotificationList /> : null}
         </section>
       </div> : null}

@@ -11,6 +11,7 @@ export type CustomerAccountView = {
   totalVisits: number;
   creditBalance: number;
   welcomeCreditAvailable: boolean;
+  welcomeCreditExpiresAt: string | null;
   oauthProviders: Array<"GOOGLE" | "FACEBOOK">;
   freeConsultationPrompt: {
     eligible: boolean;
