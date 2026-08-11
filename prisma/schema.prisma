@@ -675,6 +675,7 @@ model VoucherUsage {
 
   @@unique([voucherId, bookingId])
   @@index([voucherId, status, expiresAt])
+  @@index([customerId, status, expiresAt])
 }
 
 model PackagePlan {

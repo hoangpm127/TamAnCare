@@ -15,7 +15,7 @@ import { affiliateCustomerId, affiliateOwnerEligible, normalizeAffiliateCode } f
 import { calculateVoucherDiscount, voucherRuleError } from "@/lib/server/voucher-rules";
 import { phoneVerificationRequired } from "@/lib/server/otp-delivery";
 import { claimInstalledReferral } from "@/lib/server/referral-installation";
-import { bookingWindowError, intervalsOverlapWithBuffer, timeToMinutes } from "@/lib/scheduling-policy";
+import { bookingWindowError, calculateSlotResources, intervalsOverlapWithBuffer, timeToMinutes } from "@/lib/scheduling-policy";
 import { therapistWorksDuring } from "@/lib/server/therapist-schedule";
 
 const BUSINESS_TIME_ZONE = "Asia/Ho_Chi_Minh";
@@ -175,20 +175,28 @@ async function findAvailability(
     const end = addMinutes(start, duration);
     if (start < addMinutes(now, BOOKING_POLICY.minimumLeadMinutes)) continue;
 
-    const availableTherapists = therapists
-      .filter((therapist) => therapistWorksDuring(therapist.weeklySchedules, start, end))
-      .filter((therapist) =>
-        !dayBookings.some((booking) => booking.therapistId === therapist.id && intervalsOverlapWithBuffer(start, end, booking.startTime, booking.endTime, branch.bufferMinutes)),
-      )
+    const workingTherapists = therapists
+      .filter((therapist) => therapistWorksDuring(therapist.weeklySchedules, start, end));
+    const resources = calculateSlotResources({
+      start,
+      end,
+      bufferMinutes: branch.bufferMinutes,
+      therapistIds: workingTherapists.map((therapist) => therapist.id),
+      roomIds: rooms.map((room) => room.id),
+      seatCapacity: branch.seatCapacity,
+      bookings: dayBookings,
+    });
+    const availableTherapistIds = new Set(resources.availableTherapistIds);
+    const availableRoomIds = new Set(resources.availableRoomIds);
+    const availableTherapists = workingTherapists
+      .filter((therapist) => availableTherapistIds.has(therapist.id))
       .map((therapist) => ({
         id: therapist.id,
         fullName: therapist.fullName,
         ratingAvg: therapist.ratingAvg,
       }));
-    const availableRooms = rooms.filter((room) =>
-      !dayBookings.some((booking) => booking.roomId === room.id && intervalsOverlapWithBuffer(start, end, booking.startTime, booking.endTime, branch.bufferMinutes)),
-    );
-    const remainingCapacity = Math.min(availableTherapists.length, availableRooms.length, branch.seatCapacity);
+    const availableRooms = rooms.filter((room) => availableRoomIds.has(room.id));
+    const remainingCapacity = resources.remainingCapacity;
     const isAvailable = remainingCapacity > 0;
     if (isAvailable || input.includeUnavailable) {
       slots.push({

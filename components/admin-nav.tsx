@@ -271,7 +271,7 @@ export function AdminNav() {
                 {!investorNotificationsLoading && filteredInvestorNotifications.map((item) => {
                   const Icon = item.type === "FINANCE" ? Rocket : item.type === "PROMOTION" ? Gem : Newspaper;
                   const source = item.type === "FINANCE" ? "Đội ngũ đầu tư" : item.type === "PROMOTION" ? "Investor Care" : "Admin Tâm An";
-                  return <div key={item.id} className={cn("flex items-start gap-2 rounded-2xl border p-2.5", item.read ? "border-white/7 bg-white/[0.025]" : "border-[#d6b45e]/22 bg-gradient-to-r from-[#d6b45e]/[0.09] to-white/[0.025]") }>
+                  return <div key={item.id} className={cn("flex items-start gap-2 rounded-2xl border p-2.5", item.read ? "border-white/7 bg-white/[0.025]" : "border-[#d6b45e]/22 bg-gradient-to-r from-[#d6b45e]/[0.09] to-white/[0.025]")}>
                     <button type="button" onClick={() => openInvestorNotification(item)} className="flex min-w-0 flex-1 items-start gap-2.5 text-left">
                       <span className={cn("mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl", item.type === "FINANCE" ? "bg-emerald-300/10 text-emerald-200" : item.type === "PROMOTION" ? "bg-[#d6b45e]/10 text-[#e7c878]" : "bg-sky-300/10 text-sky-200")}><Icon size={16} /></span>
                       <span className="min-w-0 flex-1"><span className="flex items-start gap-1"><strong className="min-w-0 flex-1 text-[11px] leading-4">{item.title}</strong>{!item.read ? <i className="mt-1 h-2 w-2 shrink-0 rounded-full bg-[#d6b45e]" /> : null}</span><span className="mt-1 block text-[10px] leading-4 text-white/48">{item.body}</span><span className="mt-1.5 block text-[9px] font-medium text-white/30">{source} · {notificationTime(item.createdAt)}</span></span>
@@ -347,7 +347,7 @@ export function AdminNav() {
 
           <div className="flex items-center gap-1.5">
             <AdminExpenseAction />
-            {canManageFinance ? <Link href="/admin/qr-management" className={cn("tap-feedback relative flex h-9 w-9 items-center justify-center rounded-full border", pathname.startsWith("/admin/qr-management") ? "border-[#76551d] bg-[#76551d] text-white" : "border-[#e7d6ca] text-[#76551d]")} aria-label="QR Tâm An Business" title="QR Business"><QrCode size={17} /><NavigationPendingIndicator /></Link> : null}
+
             {session.role === "OWNER" ? <Link href="/admin/investment-opportunities" className={cn("tap-feedback relative flex h-9 w-9 items-center justify-center rounded-full border", pathname.startsWith("/admin/investment-opportunities") ? "border-[#76551d] bg-[#76551d] text-white" : "border-[#e7d6ca] text-[#76551d]")} aria-label="Quản lý cơ hội đầu tư" title="Cơ hội đầu tư"><Rocket size={17} /><NavigationPendingIndicator /></Link> : null}
             {canManageFinance ? <Link href="/admin/finance" className={cn("tap-feedback relative flex h-9 w-9 items-center justify-center rounded-full border", pathname.startsWith("/admin/finance") ? "border-[#c64b32] bg-[#c64b32] text-white" : "border-[#e7d6ca] text-[#7a3e1d]")} aria-label="Trung tâm Bill và tài chính" title="Bill & tài chính">
               <CircleDollarSign size={18} />

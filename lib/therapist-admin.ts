@@ -33,6 +33,13 @@ export const therapistMutationSchema = z.object({
     }
     weekdays.add(schedule.weekday);
   }
+  if (value.status === "ACTIVE" && value.onlineBooking && !value.schedules.some((schedule) => schedule.isActive)) {
+    context.addIssue({
+      code: "custom",
+      message: "KTV nhận lịch online phải có ít nhất một ngày làm việc.",
+      path: ["schedules"],
+    });
+  }
 });
 
 export type TherapistMutationInput = z.infer<typeof therapistMutationSchema>;

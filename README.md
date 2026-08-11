@@ -1,6 +1,6 @@
 # Tâm An Center
 
-Web app/PWA quản lý xuyên suốt khách hàng, đặt lịch, check-in QR, vận hành cơ sở và tài chính Tâm An Center.
+Web app/PWA quản lý xuyên suốt khách hàng, đặt lịch, check-in, vận hành cơ sở và tài chính Tâm An Center.
 
 ## Môi trường triển khai Tâm An
 

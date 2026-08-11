@@ -28,7 +28,7 @@ import {
   Wallet,
   X,
 } from "lucide-react";
-import type { PublicCatalog } from "@/lib/catalog-types";
+import type { CatalogVoucher, PublicCatalog } from "@/lib/catalog-types";
 import { cn, formatMoney, makeBookingCode, stripDurationFromName } from "@/lib/utils";
 import { useReferralAttribution } from "@/lib/referral-attribution";
 import { TherapistAvatar } from "@/components/therapist-avatar";
@@ -47,6 +47,13 @@ type Slot = {
   availableRooms: { id: string; name: string; type: string }[];
   remainingCapacity: number;
   isAvailable: boolean;
+};
+
+type RecommendedVoucher = CatalogVoucher & {
+  eligible: boolean;
+  eligibilityReason: string | null;
+  recommendationReason: "TIME_WINDOW" | "NEW_CUSTOMER" | "RETURNING_CUSTOMER" | "GENERAL";
+  remaining: number | null;
 };
 
 type CartLine = {
@@ -72,6 +79,7 @@ type BookingUiDraft = {
 };
 
 const NEXT_DAYS = 10;
+const AVAILABILITY_REFRESH_MS = 15_000;
 
 export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
   const { branches, services, therapists, vouchers } = catalog;
@@ -86,18 +94,18 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
   const inviteMode = params.get("invite") === "boss" ? "boss" : params.get("invite") === "friend" ? "friend" : null;
   const inviteContext = inviteMode === "boss"
     ? {
-        relationship: "BOSS" as const,
-        title: "Đặt lịch đi cùng sếp / đối tác",
-        body: "Tâm An sẽ chuyển ghi chú tế nhị tới quản lý cơ sở để ưu tiên không gian lịch sự, yên tĩnh và giường gần nhau.",
-        note: "Mời sếp/đối tác đi cùng; ưu tiên không gian lịch sự, yên tĩnh và sắp xếp giường gần nhau để tiện trao đổi.",
-      }
+      relationship: "BOSS" as const,
+      title: "Đặt lịch đi cùng sếp / đối tác",
+      body: "Tâm An sẽ chuyển ghi chú tế nhị tới quản lý cơ sở để ưu tiên không gian lịch sự, yên tĩnh và giường gần nhau.",
+      note: "Mời sếp/đối tác đi cùng; ưu tiên không gian lịch sự, yên tĩnh và sắp xếp giường gần nhau để tiện trao đổi.",
+    }
     : inviteMode === "friend"
       ? {
-          relationship: "FRIEND" as const,
-          title: "Đặt lịch đi cùng bạn",
-          body: "Cơ sở sẽ chủ động xếp giường gần nhau để hai bạn cùng thư giãn và trò chuyện.",
-          note: "Mời bạn đi cùng; ưu tiên sắp xếp giường gần nhau.",
-        }
+        relationship: "FRIEND" as const,
+        title: "Đặt lịch đi cùng bạn",
+        body: "Cơ sở sẽ chủ động xếp giường gần nhau để hai bạn cùng thư giãn và trò chuyện.",
+        note: "Mời bạn đi cùng; ưu tiên sắp xếp giường gần nhau.",
+      }
       : null;
 
   const preselectedTherapist = therapists.find((item) => item.id === params.get("therapist"));
@@ -139,6 +147,13 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
   const [error, setError] = useState("");
   const [voucherChecking, setVoucherChecking] = useState(false);
   const [voucherPreview, setVoucherPreview] = useState({ valid: true, discountAmount: 0, message: "", stackedCodes: [] as string[] });
+  const [recommendedVouchers, setRecommendedVouchers] = useState<RecommendedVoucher[]>(() => vouchers.map((voucher) => ({
+    ...voucher,
+    eligible: true,
+    eligibilityReason: null,
+    recommendationReason: "GENERAL",
+    remaining: null,
+  })));
   const [acceptPolicies, setAcceptPolicies] = useState(false);
 
   const anchorServiceId = cart[0]?.serviceId ?? bookableServices[0].id;
@@ -155,7 +170,15 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
   const isGroupBooking = cart.length > 1 || totalPeople > 1;
   // Đặt nhóm luôn để hệ thống tự rải KTV — bỏ qua lựa chọn 1 KTV cụ thể còn sót lại từ lúc chỉ đặt 1 người.
   const effectiveTherapistId = isGroupBooking ? "" : therapistId;
-  const slot = slots.find((item) => item.startTime === selectedSlotStartTime && item.isAvailable) ?? null;
+  const selectedAvailabilitySlot = slots.find((item) => item.startTime === selectedSlotStartTime) ?? null;
+  const selectedTherapistIsAvailable = !effectiveTherapistId
+    || Boolean(selectedAvailabilitySlot?.availableTherapists.some((therapist) => therapist.id === effectiveTherapistId));
+  const slot = selectedAvailabilitySlot
+    && selectedAvailabilitySlot.isAvailable
+    && selectedAvailabilitySlot.remainingCapacity >= totalPeople
+    && selectedTherapistIsAvailable
+    ? selectedAvailabilitySlot
+    : null;
 
   const cartDetails = cart.map((line) => ({
     ...line,
@@ -193,6 +216,7 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
   const total = paymentBreakdown.totalAmount;
   const depositAmount = paymentBreakdown.depositAmount;
   const amountDueAtBranch = paymentBreakdown.balanceAmount;
+  const recommendationServiceKey = [...new Set(cart.map((item) => item.serviceId))].sort().join(",");
 
   useEffect(() => {
     function resetToFreshBooking() {
@@ -290,6 +314,33 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
   }, [acceptPolicies, bookingContextKey, branchId, cart, date, draftHydrated, nameInput, note, phoneInput, selectedSlotStartTime, showManualVoucher, therapistId, voucherCode, voucherOptOut]);
 
   useEffect(() => {
+    const controller = new AbortController();
+    const query = new URLSearchParams({ subtotal: String(subtotal) });
+    if (slot?.startTime) query.set("startTime", slot.startTime);
+    for (const serviceId of recommendationServiceKey.split(",").filter(Boolean)) {
+      query.append("serviceId", serviceId);
+    }
+    fetch(`/api/vouchers/ranked?${query.toString()}`, {
+      cache: "no-store",
+      signal: controller.signal,
+    })
+      .then(async (response) => {
+        if (!response.ok) throw new Error("voucher recommendations unavailable");
+        return response.json();
+      })
+      .then((payload) => {
+        if (!controller.signal.aborted && Array.isArray(payload.vouchers)) {
+          setRecommendedVouchers(payload.vouchers as RecommendedVoucher[]);
+        }
+      })
+      .catch((caught) => {
+        if (caught instanceof DOMException && caught.name === "AbortError") return;
+        console.warn("voucher_recommendations.load_failed", caught);
+      });
+    return () => controller.abort();
+  }, [account?.customerId, recommendationServiceKey, slot?.startTime, subtotal]);
+
+  useEffect(() => {
     if (!effectiveVoucherCode) {
       let active = true;
       queueMicrotask(() => {
@@ -348,47 +399,59 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
 
   useEffect(() => {
     let ignore = false;
+    let controller: AbortController | null = null;
 
     const query = new URLSearchParams({ serviceId: anchorServiceId, date, includeUnavailable: "true" });
-    if (effectiveTherapistId) {
-      query.set("therapistId", effectiveTherapistId);
-    }
     if (branchId) {
       query.set("branchId", branchId);
     }
 
-    queueMicrotask(() => {
-      if (!ignore) {
+    async function loadAvailability(showLoading: boolean) {
+      controller?.abort();
+      controller = new AbortController();
+      if (showLoading && !ignore) {
         setLoadingSlots(true);
         setError("");
       }
-    });
-
-    fetch(`/api/availability?${query.toString()}`)
-      .then((response) => response.json())
-      .then((data) => {
+      try {
+        const response = await fetch(`/api/availability?${query.toString()}`, {
+          cache: "no-store",
+          signal: controller.signal,
+        });
+        if (!response.ok) throw new Error("availability unavailable");
+        const data = await response.json();
         if (!ignore) {
           setSlots((data.slots ?? []).map((item: Slot) => ({
             ...item,
             isAvailable: item.isAvailable ?? item.remainingCapacity > 0,
           })));
         }
-      })
-      .catch(() => {
-        if (!ignore) {
+      } catch (caught) {
+        if (caught instanceof DOMException && caught.name === "AbortError") return;
+        if (!ignore && showLoading) {
           setError("Không tải được lịch trống. Thử lại sau ít phút.");
         }
-      })
-      .finally(() => {
-        if (!ignore) {
+      } finally {
+        if (!ignore && showLoading) {
           setLoadingSlots(false);
         }
-      });
+      }
+    }
+
+    void loadAvailability(true);
+    const refreshTimer = window.setInterval(() => {
+      if (document.visibilityState === "visible") void loadAvailability(false);
+    }, AVAILABILITY_REFRESH_MS);
+    const refreshOnFocus = () => void loadAvailability(false);
+    window.addEventListener("focus", refreshOnFocus);
 
     return () => {
       ignore = true;
+      controller?.abort();
+      window.clearInterval(refreshTimer);
+      window.removeEventListener("focus", refreshOnFocus);
     };
-  }, [anchorServiceId, date, effectiveTherapistId, branchId]);
+  }, [anchorServiceId, date, branchId]);
 
   function toggleService(serviceId: string) {
     setSelectedSlotStartTime("");
@@ -422,10 +485,6 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
     }
     if (!nickName.trim()) {
       setError("Hãy nhập tên khách đặt lịch.");
-      return;
-    }
-    if (!/^[0-9+ ]{8,15}$/.test(phone.trim())) {
-      setError("Hãy nhập số điện thoại hợp lệ để xác nhận lịch.");
       return;
     }
     if (voucherChecking) {
@@ -541,7 +600,7 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
           ) : null}
 
           {inviteContext ? (
-            <div className={cn("flex items-start gap-3 rounded-xl px-3.5 py-3 text-xs", inviteMode === "boss" ? "bg-gradient-to-r from-[#30201c] to-[#6b3423] text-white" : "bg-[#f8ebe5] text-[#6f211f]") }>
+            <div className={cn("flex items-start gap-3 rounded-xl px-3.5 py-3 text-xs", inviteMode === "boss" ? "bg-gradient-to-r from-[#30201c] to-[#6b3423] text-white" : "bg-[#f8ebe5] text-[#6f211f]")}>
               <span className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-full", inviteMode === "boss" ? "bg-white/10 text-[#e7c878]" : "bg-white text-[#c64b32]")}>
                 {inviteMode === "boss" ? <Handshake size={17} /> : <UserPlus size={17} />}
               </span>
@@ -697,29 +756,39 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
                         </span>
                         <span className="mt-2 block text-xs font-semibold">Ngẫu nhiên</span>
                       </button>
-                      {eligibleTherapists.map((therapist) => (
-                        <button
-                          key={therapist.id}
-                          type="button"
-                          onClick={() => {
-                            setTherapistId(therapist.id === therapistId ? "" : therapist.id);
-                            setSelectedSlotStartTime("");
-                            setShowTherapistPicker(false);
-                          }}
-                          className={cn(
-                            "w-24 shrink-0 snap-start rounded-xl border p-3 text-center transition",
-                            therapistId === therapist.id ? "border-[#c64b32] bg-[#f8ebe5]" : "border-[#e7d6ca] bg-white"
-                          )}
-                        >
-                          <TherapistAvatar id={therapist.id} size={36} className="mx-auto shrink-0 rounded-full" />
-                          <span className="mt-2 block truncate text-xs font-semibold">{therapist.fullName}</span>
-                          <span className="mt-0.5 flex items-center justify-center gap-0.5 text-[10px] text-[#826f66]">
-                            {therapist.servedCount > 0 ? (
-                              <><Star size={9} className="fill-[#c64b32] text-[#c64b32]" /> {therapist.ratingAvg.toFixed(1)}</>
-                            ) : <span className="font-semibold text-[#a85f29]">Mới</span>}
-                          </span>
-                        </button>
-                      ))}
+                      {eligibleTherapists.map((therapist) => {
+                        const availableAtSelectedTime = !selectedSlotStartTime
+                          || Boolean(selectedAvailabilitySlot?.availableTherapists.some((item) => item.id === therapist.id));
+                        return (
+                          <button
+                            key={therapist.id}
+                            type="button"
+                            disabled={!availableAtSelectedTime}
+                            onClick={() => {
+                              setTherapistId(therapist.id === therapistId ? "" : therapist.id);
+                              setShowTherapistPicker(false);
+                            }}
+                            className={cn(
+                              "w-24 shrink-0 snap-start rounded-xl border p-3 text-center transition",
+                              therapistId === therapist.id
+                                ? "border-[#c64b32] bg-[#f8ebe5]"
+                                : availableAtSelectedTime
+                                  ? "border-[#e7d6ca] bg-white"
+                                  : "cursor-not-allowed border-[#efb5b2] bg-[#fff0ef] opacity-60"
+                            )}
+                          >
+                            <TherapistAvatar id={therapist.id} size={36} className="mx-auto shrink-0 rounded-full" />
+                            <span className="mt-2 block truncate text-xs font-semibold">{therapist.fullName}</span>
+                            <span className="mt-0.5 flex items-center justify-center gap-0.5 text-[10px] text-[#826f66]">
+                              {!availableAtSelectedTime ? (
+                                <span className="font-semibold text-[#a93434]">Bận giờ này</span>
+                              ) : therapist.servedCount > 0 ? (
+                                <><Star size={9} className="fill-[#c64b32] text-[#c64b32]" /> {therapist.ratingAvg.toFixed(1)}</>
+                              ) : <span className="font-semibold text-[#a85f29]">Mới</span>}
+                            </span>
+                          </button>
+                        );
+                      })}
                     </div>
                     {eligibleTherapists.length === 0 ? (
                       <p className="mt-2 text-[11px] text-[#826f66]">
@@ -780,7 +849,9 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
               ) : (
                 <div className="grid max-h-48 grid-cols-4 gap-1.5 overflow-y-auto pr-1 sm:grid-cols-5">
                   {slots.map((item) => {
-                    const canBook = item.isAvailable && item.remainingCapacity >= totalPeople;
+                    const requestedTherapistAvailable = !effectiveTherapistId
+                      || item.availableTherapists.some((therapist) => therapist.id === effectiveTherapistId);
+                    const canBook = item.isAvailable && item.remainingCapacity >= totalPeople && requestedTherapistAvailable;
                     const active = selectedSlotStartTime === item.startTime && canBook;
                     return (
                       <button
@@ -819,7 +890,7 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
             </h2>
             <div className="grid gap-3 sm:grid-cols-2">
               <label className="block">
-                <span className="text-xs font-semibold">Tên hiển thị (Nick name)</span>
+                <span className="text-xs font-semibold">Tên hiển thị (hoặc biệt danh) <span className="text-[#c64b32]">*</span></span>
                 <input
                   value={nickName}
                   onChange={(event) => setNameInput(event.target.value)}
@@ -829,30 +900,34 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
               </label>
               <label className="block">
                 <span className="text-xs font-semibold">
-                  Số điện thoại
+                  Số điện thoại <span className="font-normal text-[#826f66]">(không bắt buộc)</span>
                 </span>
                 <input
                   value={phone}
                   onChange={(event) => setPhoneInput(event.target.value)}
                   inputMode="tel"
+                  placeholder="Nhập số điện thoại..."
                   className="mt-1.5 w-full rounded-lg border border-[#e7d6ca] px-3 py-2.5 text-sm"
                 />
               </label>
             </div>
-            <p className="mt-1.5 text-[11px] leading-4 text-[#826f66]">Thông tin được lấy từ phần Cài đặt và dùng để xác nhận, nhắc lịch.</p>
+            <p className="mt-1.5 text-[11px] leading-4 text-[#826f66]">Thông tin chỉ dùng để xác nhận đặt lịch. Tâm An cam kết không làm phiền quý khách qua sđt!</p>
 
             <div className="mt-2.5 border-t border-[#eee0d6] pt-2.5">
               <p className="mb-2 flex items-center gap-2 text-sm font-semibold">
                 <Ticket size={16} className="text-[#c64b32]" /> Sổ voucher
               </p>
               <div className="scrollbar-hide flex gap-2 overflow-x-auto pb-1">
-                {vouchers
-                  .filter((item) => item.active && item.code !== "AFF50" && ((account?.totalVisits ?? 0) === 0 || item.code !== "FIRST60"))
+                {recommendedVouchers
+                  .filter((item) => item.active
+                    && item.code !== "AFF50"
+                    && ((account?.totalVisits ?? 0) === 0 || item.code !== "FIRST60")
+                    && !(item.code === "WELCOME150" && account && (!account.welcomeCreditAvailable || account.totalVisits > 0)))
                   .map((item) => {
                     const selected = effectiveVoucherCode === item.code;
                     const inventoryItem = voucherInventory[item.code];
-                    const remaining = inventoryItem?.remaining;
-                    const soldOut = remaining !== null && (remaining ?? 0) <= 0;
+                    const remaining = inventoryItem?.remaining ?? item.remaining;
+                    const soldOut = remaining !== null && remaining <= 0;
                     const VIcon = item.type === "PERCENT" ? Percent : Tag;
                     return (
                       <button
