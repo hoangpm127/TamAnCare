@@ -215,25 +215,6 @@ export default function ReferralPage() {
               <p className="mt-0.5 text-[11px] text-white/70">Tỷ lệ chốt</p>
             </div>
           </div>
-
-          <div className="mt-5 border-t border-white/15 pt-4">
-            <p className="flex items-center gap-1.5 text-xs font-semibold text-white/80">
-              <TrendingUp size={13} /> Thu nhập theo tháng
-            </p>
-            <div className="mt-3 flex items-end justify-between gap-2">
-              {referral.monthlyEarnings.map((item) => (
-                <div key={item.month} className="flex flex-1 flex-col items-center gap-1.5">
-                  <div className="flex h-16 w-full items-end">
-                    <div
-                      className="w-full rounded-t-md bg-gradient-to-t from-[#c59a3d] to-[#f4dba0]"
-                      style={{ height: `${Math.max(6, Math.round((item.amount / maxMonthly) * 100))}%` }}
-                    />
-                  </div>
-                  <p className="text-[10px] text-white/70">{item.month}</p>
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
       </section>
 
