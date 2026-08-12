@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, Gift, Loader2, ShieldCheck } from "lucide-react";
+import { useCustomerLanguage } from "@/components/customer-language-provider";
 import { PwaInstallPrompt } from "@/components/pwa-install-prompt";
+import { translateCustomerText, type CustomerLanguage } from "@/lib/customer-i18n";
 import { captureReferralAttribution } from "@/lib/referral-attribution";
 
 type ReferralOffer = {
@@ -14,8 +16,25 @@ type ReferralOffer = {
   displayConstraint: string;
 } | null;
 
-export function ReferralLandingClient({ code, offer }: { code: string; offer: ReferralOffer }) {
+export function ReferralLandingClient({
+  code,
+  offer,
+  targetLanguage,
+}: {
+  code: string;
+  offer: ReferralOffer;
+  targetLanguage: CustomerLanguage;
+}) {
+  const { language, setLanguage } = useCustomerLanguage();
   const [captureState, setCaptureState] = useState<"saving" | "saved" | "error">("saving");
+  const appliedTargetLanguage = useRef<CustomerLanguage | null>(null);
+  const t = (source: string) => translateCustomerText(source, targetLanguage);
+
+  useEffect(() => {
+    if (appliedTargetLanguage.current === targetLanguage) return;
+    appliedTargetLanguage.current = targetLanguage;
+    if (language !== targetLanguage) setLanguage(targetLanguage);
+  }, [language, setLanguage, targetLanguage]);
 
   useEffect(() => {
     let active = true;
@@ -38,9 +57,9 @@ export function ReferralLandingClient({ code, offer }: { code: string; offer: Re
           <span className="relative mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15 shadow-inner ring-1 ring-white/20">
             <Gift size={23} />
           </span>
-          <p className="relative mt-3 text-[10px] font-bold uppercase tracking-[0.16em] text-[#ffe3a8]">Một người bạn đã gửi tặng bạn</p>
-          <h1 className="relative mt-1 text-[1.75rem] font-bold leading-tight tracking-tight">Bạn nhận 200.000đ</h1>
-          <p className="relative mt-2 text-xs leading-5 text-white/85">150.000đ quà thành viên mới + 50.000đ từ lời mời.</p>
+          <p className="relative mt-3 text-[10px] font-bold uppercase tracking-[0.16em] text-[#ffe3a8]">{t("Một người bạn đã gửi tặng bạn")}</p>
+          <h1 className="relative mt-1 text-[1.75rem] font-bold leading-tight tracking-tight">{t("Bạn nhận 200.000đ")}</h1>
+          <p className="relative mt-2 text-xs leading-5 text-white/85">{t("150.000đ quà thành viên mới + 50.000đ từ lời mời.")}</p>
         </div>
 
         <div className="space-y-3 p-4">
@@ -48,22 +67,22 @@ export function ReferralLandingClient({ code, offer }: { code: string; offer: Re
             {captureState === "saving" ? <Loader2 size={17} className="mt-0.5 shrink-0 animate-spin" /> : captureState === "saved" ? <CheckCircle2 size={17} className="mt-0.5 shrink-0" /> : <ShieldCheck size={17} className="mt-0.5 shrink-0" />}
             <span>
               {captureState === "saving"
-                ? "Đang lưu lời mời…"
+                ? t("Đang lưu lời mời…")
                 : captureState === "saved"
-                  ? "Đã lưu lời mời trong 30 ngày. Thoát ra hoặc cài app cũng không mất quà."
-                  : "Chưa lưu được lời mời. Hãy mở lại link này khi có mạng."}
+                  ? t("Đã lưu lời mời trong 30 ngày. Thoát ra hoặc cài app cũng không mất quà.")
+                  : t("Chưa lưu được lời mời. Hãy mở lại link này khi có mạng.")}
             </span>
           </div>
 
           <PwaInstallPrompt compact />
 
           <Link href="/tai-khoan?returnTo=%2Fbooking" className="flex w-full items-center justify-center gap-2 rounded-full bg-[#c64b32] px-5 py-3.5 text-sm font-semibold text-white shadow-md shadow-[#c64b32]/20">
-            Đã cài? Tạo hồ sơ và đặt lịch <ArrowRight size={16} />
+            {t("Đã cài? Tạo hồ sơ và đặt lịch")} <ArrowRight size={16} />
           </Link>
 
           <div className="space-y-1 text-center text-[11px] leading-5 text-[#74645c]">
-            <p>Chỉ cần họ tên, số điện thoại và Mã PIN Tâm An 4 số.</p>
-            {offer ? <p>Ưu đãi được áp dụng cho lần trải nghiệm đầu tiên đủ điều kiện.</p> : null}
+            <p>{t("Chỉ cần họ tên, số điện thoại và Mã PIN Tâm An 4 số.")}</p>
+            {offer ? <p>{t("Ưu đãi được áp dụng cho lần trải nghiệm đầu tiên đủ điều kiện.")}</p> : null}
           </div>
         </div>
       </section>

@@ -9,9 +9,13 @@ export function isCustomerLanguage(value: string | null | undefined): value is C
 }
 
 export const CUSTOMER_LANGUAGE_STORAGE_KEY = "tam-an-customer-language";
-export const CUSTOMER_LANGUAGE_COOKIE_KEY = "tam_customer_language";
+export const CUSTOMER_LANGUAGE_COOKIE_KEY = "tam-an-customer-language";
+export const LEGACY_CUSTOMER_LANGUAGE_COOKIE_KEY = "tam_customer_language";
 
 const EXACT_KOREAN: Record<string, string> = {
+  "Qua Safari": "Safari 사용",
+  "Qua Chrome": "Chrome 사용",
+  "Mã PIN dùng để đăng nhập, sử dụng voucher, affiliate,... Nếu quý khách quên mã PIN, xin vui lòng đến quầy lễ tân để cấp lại mã PIN!": "PIN은 로그인, 바우처 사용 및 Affiliate 기능에 사용됩니다. PIN을 잊으셨다면 리셉션을 방문해 재설정해 주세요!",
   "Dành cho khách hàng mới": "신규 고객을 위한 안내",
   "Lời mời Affiliate đã được ghi nhận": "Affiliate 초대가 저장되었습니다",
   "Bạn mới đến TÂM AN CENTER?": "TÂM AN CENTER가 처음이신가요?",
@@ -1539,6 +1543,9 @@ const KOREAN_REPLACEMENTS: Array<[string, string]> = [
 ];
 
 const EXACT_ENGLISH_OVERRIDES: Record<string, string> = {
+  "Qua Safari": "Via Safari",
+  "Qua Chrome": "Via Chrome",
+  "Mã PIN dùng để đăng nhập, sử dụng voucher, affiliate,... Nếu quý khách quên mã PIN, xin vui lòng đến quầy lễ tân để cấp lại mã PIN!": "Use your PIN to sign in and access vouchers and Affiliate features. If you forget it, please visit reception to have it reset.",
   "Chạm sóc toàn diện, nâng niu từng cảm giác": "Complete care, thoughtfully tending to every sensation",
   "Tạo tài khoản nhận ưu đãi 150K": "Create an account and receive a 150K voucher",
   "Tạo tài khoản, nhận ngay 150K": "Create an account and receive 150K now",
@@ -1685,6 +1692,9 @@ const EXACT_ENGLISH_OVERRIDES: Record<string, string> = {
 };
 
 const EXACT_CHINESE_OVERRIDES: Record<string, string> = {
+  "Qua Safari": "通过 Safari",
+  "Qua Chrome": "通过 Chrome",
+  "Mã PIN dùng để đăng nhập, sử dụng voucher, affiliate,... Nếu quý khách quên mã PIN, xin vui lòng đến quầy lễ tân để cấp lại mã PIN!": "PIN码用于登录、使用优惠券及推广功能。如果忘记PIN码，请前往前台办理重置。",
   "Chạm sóc toàn diện, nâng niu từng cảm giác": "全方位呵护，细致照顾每一处感受",
   "Tạo tài khoản nhận ưu đãi 150K": "创建账户即享150K优惠券",
   "Tạo tài khoản, nhận ngay 150K": "创建账户，立即领取150K",

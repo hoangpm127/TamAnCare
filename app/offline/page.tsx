@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { CustomerLanguageProvider } from "@/components/customer-language-provider";
-import { CUSTOMER_LANGUAGE_COOKIE_KEY, isCustomerLanguage, type CustomerLanguage } from "@/lib/customer-i18n";
+import { CUSTOMER_LANGUAGE_COOKIE_KEY, isCustomerLanguage, LEGACY_CUSTOMER_LANGUAGE_COOKIE_KEY, type CustomerLanguage } from "@/lib/customer-i18n";
 import { RefreshCw, WifiOff } from "lucide-react";
 
 export const metadata = {
@@ -10,7 +10,8 @@ export const metadata = {
 
 export default async function OfflinePage() {
   const cookieStore = await cookies();
-  const storedLanguage = cookieStore.get(CUSTOMER_LANGUAGE_COOKIE_KEY)?.value;
+  const storedLanguage = cookieStore.get(CUSTOMER_LANGUAGE_COOKIE_KEY)?.value
+    ?? cookieStore.get(LEGACY_CUSTOMER_LANGUAGE_COOKIE_KEY)?.value;
   const initialLanguage: CustomerLanguage = isCustomerLanguage(storedLanguage) ? storedLanguage : "vi";
 
   return <CustomerLanguageProvider initialLanguage={initialLanguage}>{(

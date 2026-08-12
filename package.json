@@ -23,6 +23,7 @@
     "test:affiliate": "tsx scripts/verify-affiliate-policy.ts",
     "test:affiliate-admin": "tsx scripts/verify-admin-affiliate-reconciliation.ts",
     "test:affiliate-admin-migration": "tsx scripts/verify-admin-affiliate-migration.ts",
+    "test:affiliate-language": "tsx scripts/verify-affiliate-language-inheritance.ts",
     "test:affiliate-e2e": "tsx scripts/verify-affiliate-e2e.ts",
     "test:scheduling": "tsx scripts/verify-scheduling-policy.ts",
     "test:allocation": "tsx scripts/verify-resource-allocation.ts",

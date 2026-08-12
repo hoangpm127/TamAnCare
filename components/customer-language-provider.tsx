@@ -4,6 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useLayoutEffect, use
 import {
   CUSTOMER_LANGUAGE_COOKIE_KEY,
   CUSTOMER_LANGUAGE_STORAGE_KEY,
+  LEGACY_CUSTOMER_LANGUAGE_COOKIE_KEY,
   isCustomerLanguage,
   translateCustomerText,
   type CustomerLanguage,
@@ -33,6 +34,7 @@ function storedLanguage(fallback: CustomerLanguage): CustomerLanguage {
 function writeLanguageCookie(language: CustomerLanguage) {
   const secure = window.location.protocol === "https:" ? "; Secure" : "";
   document.cookie = `${CUSTOMER_LANGUAGE_COOKIE_KEY}=${language}; Max-Age=31536000; Path=/; SameSite=Lax${secure}`;
+  document.cookie = `${LEGACY_CUSTOMER_LANGUAGE_COOKIE_KEY}=; Max-Age=0; Path=/; SameSite=Lax${secure}`;
 }
 
 function shouldSkip(node: Node) {
@@ -133,6 +135,21 @@ export function CustomerLanguageProvider({
     const timer = window.setTimeout(() => setLanguageState(stored), 0);
     return () => window.clearTimeout(timer);
   }, [initialLanguage]);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(CUSTOMER_LANGUAGE_STORAGE_KEY, language);
+    } catch {
+      // The cookie below remains the persistence fallback.
+    }
+    writeLanguageCookie(language);
+    void fetch("/api/customer-language", {
+      method: "PATCH",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ language }),
+      keepalive: true,
+    }).catch(() => undefined);
+  }, [language]);
 
   const apply = useCallback(() => {
     // Portals (booking, authentication and payment dialogs) are mounted directly

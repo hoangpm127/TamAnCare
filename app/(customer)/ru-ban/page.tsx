@@ -3,11 +3,12 @@
 import Link from "next/link";
 import { useState } from "react";
 import QRCode from "qrcode";
-import { BadgePercent, Check, ChevronDown, Copy, Download, Gift, Link2, Loader2, QrCode as QrCodeIcon, Save, Share2, ShieldCheck, Sparkles, TrendingUp, UserCheck } from "lucide-react";
+import { BadgePercent, Check, ChevronDown, Copy, Download, Gift, Link2, Loader2, QrCode as QrCodeIcon, Save, Share2, ShieldCheck, Sparkles, UserCheck } from "lucide-react";
 import { referralTiers } from "@/lib/demo-data";
 import { useReferralSummary } from "@/lib/referral-store";
 import { translateCustomerText } from "@/lib/customer-i18n";
 import { useCustomerLanguage } from "@/components/customer-language-provider";
+import { referralPathForLanguage } from "@/lib/referral-language";
 import { cn, formatMoney } from "@/lib/utils";
 
 const STATUS_LABEL: Record<string, string> = {
@@ -46,7 +47,7 @@ export default function ReferralPage() {
     affiliateBankHolder: "",
   };
 
-  const referralPath = `/r/${referral.code}`;
+  const referralPath = referralPathForLanguage(referral.code, language);
   const shareText = translateCustomerText(
     "Mình gửi bạn lời mời Tâm An Center: cài webapp để nhận thêm 50K và cộng cùng quyền lợi thành viên mới 150K cho lần trải nghiệm đầu tiên đủ điều kiện.",
     language,
@@ -60,8 +61,6 @@ export default function ReferralPage() {
   const tierIndex = referralTiers.indexOf(tier);
   const nextTier = referralTiers[tierIndex + 1];
   const tierProgress = nextTier ? Math.min(100, Math.round((referral.totalEarned / nextTier.threshold) * 100)) : 100;
-  const maxMonthly = Math.max(...referral.monthlyEarnings.map((item) => item.amount), 1);
-
   if (!referral.ready) {
     return <main className="flex min-h-[60vh] items-center justify-center bg-[#fdf8f3]"><Loader2 className="animate-spin text-[#c64b32]" /></main>;
   }

@@ -1,13 +1,20 @@
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import { affiliateCustomerId, affiliateOwnerEligible, normalizeAffiliateCode } from "@/lib/referral-policy";
+import { resolveReferralLanguage } from "@/lib/referral-language";
 import { phoneVerificationRequired } from "@/lib/server/otp-delivery";
 import { ReferralLandingClient } from "./referral-landing-client";
 
 export const dynamic = "force-dynamic";
 
-export default async function ReferralLandingPage({ params }: { params: Promise<{ code: string }> }) {
-  const { code } = await params;
+export default async function ReferralLandingPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ code: string }>;
+  searchParams: Promise<{ lang?: string | string[] }>;
+}) {
+  const [{ code }, query] = await Promise.all([params, searchParams]);
   const normalizedCode = normalizeAffiliateCode(code);
   if (!normalizedCode) notFound();
   const now = new Date();
@@ -26,8 +33,12 @@ export default async function ReferralLandingPage({ params }: { params: Promise<
   if (!campaign) notFound();
   const ownerCustomerId = affiliateCustomerId(campaign.source);
   const owner = ownerCustomerId
-    ? await db.customerAccount.findUnique({ where: { customerId: ownerCustomerId }, select: { phoneVerifiedAt: true } })
+    ? await db.customerAccount.findUnique({
+        where: { customerId: ownerCustomerId },
+        select: { phoneVerifiedAt: true, preferredLanguage: true },
+      })
     : null;
   if (!affiliateOwnerEligible(owner, phoneVerificationRequired())) notFound();
-  return <ReferralLandingClient code={campaign.code} offer={voucher} />;
+  const targetLanguage = resolveReferralLanguage(query.lang, owner?.preferredLanguage);
+  return <ReferralLandingClient code={campaign.code} offer={voucher} targetLanguage={targetLanguage} />;
 }

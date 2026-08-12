@@ -3,6 +3,11 @@ import "server-only";
 import { createHash, randomBytes } from "node:crypto";
 import { cookies } from "next/headers";
 import { db } from "@/lib/db";
+import {
+  CUSTOMER_LANGUAGE_COOKIE_KEY,
+  isCustomerLanguage,
+  LEGACY_CUSTOMER_LANGUAGE_COOKIE_KEY,
+} from "@/lib/customer-i18n";
 import { phoneVerificationRequired } from "@/lib/server/otp-delivery";
 import { hasActiveWelcomeVoucher, welcomeVoucherExpiresAt } from "@/lib/welcome-voucher";
 
@@ -34,11 +39,19 @@ export async function createCustomerSession(customerId: string) {
   const now = new Date();
   const token = randomBytes(32).toString("base64url");
   const expiresAt = new Date(now.getTime() + SESSION_DAYS * 24 * 60 * 60 * 1000);
-  await db.$transaction([
-    db.customerSession.deleteMany({ where: { expiresAt: { lte: now } } }),
-    db.customerSession.create({ data: { customerId, tokenHash: tokenHash(token), expiresAt } }),
-  ]);
   const cookieStore = await cookies();
+  const storedLanguage = cookieStore.get(CUSTOMER_LANGUAGE_COOKIE_KEY)?.value
+    ?? cookieStore.get(LEGACY_CUSTOMER_LANGUAGE_COOKIE_KEY)?.value;
+  await db.$transaction(async (tx) => {
+    await tx.customerSession.deleteMany({ where: { expiresAt: { lte: now } } });
+    await tx.customerSession.create({ data: { customerId, tokenHash: tokenHash(token), expiresAt } });
+    if (isCustomerLanguage(storedLanguage)) {
+      await tx.customerAccount.update({
+        where: { customerId },
+        data: { preferredLanguage: storedLanguage },
+      });
+    }
+  });
   cookieStore.set(COOKIE_NAME, token, cookieOptions(expiresAt));
   cookieStore.delete(LEGACY_COOKIE_NAME);
 }

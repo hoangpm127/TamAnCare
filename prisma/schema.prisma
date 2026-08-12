@@ -1225,6 +1225,7 @@ model CustomerAccount {
   affiliateBankName             String?
   affiliateBankAccount          String?
   affiliateBankHolder           String?
+  preferredLanguage             String                    @default("vi")
   createdAt                     DateTime                  @default(now())
   updatedAt                     DateTime                  @updatedAt
   customer                      Customer                  @relation(fields: [customerId], references: [id])
