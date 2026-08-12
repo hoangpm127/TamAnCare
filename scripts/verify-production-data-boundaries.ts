@@ -67,6 +67,12 @@ assert.ok(
   operationsSummary.includes('requireAdminSession(["OWNER", "BRANCH_MANAGER", "RECEPTIONIST"])'),
   "API tổng hợp vận hành chỉ được mở cho Chủ hệ thống, Quản lý cơ sở và Lễ tân.",
 );
+
+const checkoutPaymentFlow = source("app/(customer)/thanh-toan/[bookingCode]/checkout-payment-flow.tsx");
+assert.ok(checkoutPaymentFlow.includes('fetch("/api/payments/checkout-intents"'), "Thanh toán phần còn lại phải tạo mã đối soát riêng cho từng Bill.");
+assert.ok(checkoutPaymentFlow.includes("Thanh toán tại QR cố định ở quầy"), "Thanh toán phần còn lại phải hướng khách tới QR vật lý duy nhất tại quầy.");
+assert.ok(checkoutPaymentFlow.includes("<BankAppLauncher"), "Thanh toán tại quầy phải cho khách mở nhanh ứng dụng ngân hàng để quét QR vật lý.");
+assert.ok(!checkoutPaymentFlow.includes("BankTransferDetails"), "Thanh toán phần còn lại không được hiển thị thêm QR động trong ứng dụng.");
 assert.ok(
   operationsSummary.includes('session.role !== "OWNER" && !session.branchId'),
   "API tổng hợp vận hành phải fail-closed khi tài khoản theo cơ sở chưa được gán cơ sở.",
