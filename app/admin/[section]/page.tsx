@@ -13,6 +13,7 @@ import { AdminTherapistOperations } from "@/components/admin-therapist-operation
 import { AdminServiceOperations } from "@/components/admin-service-operations";
 import { AdminVoucherOperations } from "@/components/admin-voucher-operations";
 import { AdminPackageOperations } from "@/components/admin-package-operations";
+import { AdminAffiliateCenter } from "@/components/admin-affiliate-center";
 import { canAccessAdminSection, type AdminAccount } from "@/lib/admin-auth";
 import { getAdminSession } from "@/lib/server/admin-session";
 
@@ -27,6 +28,8 @@ export function generateStaticParams() {
 async function rowsFor(section: SectionSlug, session: AdminAccount): Promise<AdminTableRow[]> {
   const branchId = session.role === "OWNER" ? undefined : session.branchId ?? "__none__";
   switch (section) {
+    case "affiliates":
+      return [];
     case "bookings":
     case "calendar": {
       const bookings = await db.booking.findMany({
@@ -194,6 +197,7 @@ export default async function AdminSectionPage({ params }: { params: Promise<{ s
   if (!session || session.mustChangePassword || session.role === "THERAPIST" || !canAccessAdminSection(session, slug)) notFound();
   if (slug === "bookings") return <AdminBookingOperations />;
   if (slug === "calendar") return <AdminCalendarOperations />;
+  if (slug === "affiliates") return <AdminAffiliateCenter />;
   if (slug === "customers") return <AdminCustomerTimeline />;
   if (slug === "rooms") return <AdminRoomOperations />;
   if (slug === "therapists") return <AdminTherapistOperations />;

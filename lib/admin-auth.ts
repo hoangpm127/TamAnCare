@@ -24,6 +24,7 @@ export type AdminAccount = {
 const OWNER_PERMISSIONS: AdminSectionSlug[] = [
   "bookings",
   "calendar",
+  "affiliates",
   "capacity",
   "customers",
   "therapists",

@@ -1,5 +1,6 @@
 import type { LucideIcon } from "lucide-react";
 import {
+  BadgePercent,
   BadgeCheck,
   BedDouble,
   BellRing,
@@ -27,6 +28,7 @@ export type AdminSectionMeta = {
 export const ADMIN_SECTION_META: Record<AdminSectionSlug, AdminSectionMeta> = {
   bookings: { label: "Đặt lịch", shortDescription: "Đơn & trạng thái", description: "Theo dõi đặt cọc, check-in, phục vụ và thanh toán của từng booking.", icon: CalendarCheck },
   calendar: { label: "Lịch vận hành", shortDescription: "Theo ngày & giờ", description: "Sắp xếp lịch phục vụ theo thời gian, cơ sở và nguồn lực đang có.", icon: CalendarDays },
+  affiliates: { label: "Affiliates", shortDescription: "Hoa hồng & đối soát", description: "Theo dõi người giới thiệu, khách được mời, hoa hồng phải chi và lịch sử chuyển khoản.", icon: BadgePercent },
   capacity: { label: "Công suất", shortDescription: "Tải vận hành", description: "Kiểm soát khả năng tiếp nhận theo phòng, giường và khung giờ.", icon: Gauge },
   customers: { label: "Khách hàng", shortDescription: "Hồ sơ & chi tiêu", description: "Quản lý hồ sơ, lịch sử sử dụng, phân nhóm và tổng chi tiêu của khách.", icon: UsersRound },
   therapists: { label: "Kỹ thuật viên", shortDescription: "Lịch & đánh giá", description: "Theo dõi chuyên môn, số lượt phục vụ, khách đặt lại và điểm đánh giá.", icon: BadgeCheck },
@@ -42,7 +44,7 @@ export const ADMIN_SECTION_META: Record<AdminSectionSlug, AdminSectionMeta> = {
 };
 
 export const ADMIN_SECTION_GROUPS: Array<{ label: string; sections: AdminSectionSlug[] }> = [
-  { label: "Vận hành", sections: ["bookings", "calendar", "capacity", "rooms"] },
+  { label: "Vận hành", sections: ["bookings", "calendar", "affiliates", "capacity", "rooms"] },
   { label: "Khách hàng & đội ngũ", sections: ["customers", "therapists", "services", "reminders"] },
   { label: "Ưu đãi & tăng trưởng", sections: ["vouchers", "packages", "campaigns", "office-events"] },
   { label: "Kiểm soát hệ thống", sections: ["reports", "settings"] },

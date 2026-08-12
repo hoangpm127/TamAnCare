@@ -556,7 +556,7 @@ export async function PATCH(request: Request, context: { params: Promise<{ booki
                       occurredAt: now,
                     },
                   });
-                  await tx.ledgerEntry.create({
+                  const commissionLedgerEntry = await tx.ledgerEntry.create({
                     data: {
                       branchId,
                       customerId: affiliate.id,
@@ -568,6 +568,14 @@ export async function PATCH(request: Request, context: { params: Promise<{ booki
                       amount: commissionAmount,
                       description: commissionExpense.description,
                       occurredAt: now,
+                    },
+                  });
+                  await tx.affiliatePayout.create({
+                    data: {
+                      commissionLedgerEntryId: commissionLedgerEntry.id,
+                      affiliateCustomerId: affiliate.id,
+                      branchId,
+                      dueAt: new Date(now.getTime() + AFFILIATE_RECONCILIATION_DAYS * 24 * 60 * 60_000),
                     },
                   });
                   await notifyCustomer(tx, affiliate.id, {
@@ -583,7 +591,7 @@ export async function PATCH(request: Request, context: { params: Promise<{ booki
                     type: "FINANCE",
                     title: `Phát sinh hoa hồng Affiliate · ${affiliate.fullName}`,
                     body: `${affiliateCampaign.code} · ${referenceCode} · khách ưu đãi ${money(financials.invitedCustomerBenefitAmount)} · thực trả ${money(financials.customerPaymentAmount)} · người mời ${money(commissionAmount)} · Tâm An còn ${money(financials.centerNetAmount)} trước chi phí khác.`,
-                    actionUrl: "/admin/finance",
+                    actionUrl: "/admin/affiliates",
                   });
                 }
               }

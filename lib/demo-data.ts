@@ -1481,6 +1481,7 @@ export const dashboard = {
 export const adminSections = {
   bookings: "Đặt lịch",
   calendar: "Lịch vận hành",
+  affiliates: "Affiliates",
   capacity: "Công suất",
   customers: "Khách hàng",
   therapists: "Kỹ thuật viên",

@@ -223,6 +223,11 @@ enum LedgerDataOrigin {
   DEMO
 }
 
+enum AffiliatePayoutStatus {
+  PENDING
+  PAID
+}
+
 enum ExpenseCategory {
   FACILITIES
   DEPRECIATION
@@ -347,6 +352,7 @@ model Branch {
   investorAllocations  InvestorAllocation[]
   auditLogs            AdminAuditLog[]
   refundRequests       RefundRequest[]
+  affiliatePayouts     AffiliatePayout[]
 }
 
 model User {
@@ -382,6 +388,7 @@ model User {
   refundRequestsApproved         RefundRequest[]         @relation("RefundApprovedBy")
   refundRequestsCompleted        RefundRequest[]         @relation("RefundCompletedBy")
   investmentOpportunitiesCreated InvestmentOpportunity[]
+  affiliatePayoutsPaid           AffiliatePayout[]       @relation("AffiliatePayoutPaidBy")
   managedBusinessDistrict        BusinessDistrict?       @relation("BusinessDistrictManager")
   attendanceRecords              TherapistAttendance[]   @relation("TherapistAttendanceRecorder")
 
@@ -696,6 +703,7 @@ model Customer {
   oauthIdentities       CustomerOAuthIdentity[]
   refundRequests        RefundRequest[]
   claimedGuestReferrals GuestSession[]          @relation("GuestReferralCustomer")
+  affiliatePayouts      AffiliatePayout[]
   favoriteTherapist     Therapist?              @relation("FavoriteTherapist", fields: [favoriteTherapistId], references: [id])
 }
 
@@ -1054,11 +1062,38 @@ model LedgerEntry {
   officeEvent          OfficeEvent?         @relation(fields: [officeEventId], references: [id])
   paymentTransaction   PaymentTransaction?  @relation(fields: [paymentTransactionId], references: [id])
   expense              Expense?             @relation(fields: [expenseId], references: [id])
+  affiliatePayout      AffiliatePayout?
 
   @@index([branchId, occurredAt])
   @@index([category, occurredAt])
   @@index([dataOrigin, occurredAt])
   @@index([officeEventId, occurredAt])
+}
+
+model AffiliatePayout {
+  id                      String                @id @default(cuid())
+  commissionLedgerEntryId String                @unique
+  affiliateCustomerId     String
+  branchId                String
+  status                  AffiliatePayoutStatus @default(PENDING)
+  dueAt                   DateTime
+  paidAt                  DateTime?
+  paidByUserId            String?
+  bankNameSnapshot        String?
+  bankAccountSnapshot     String?
+  bankHolderSnapshot      String?
+  transferReference       String?
+  note                    String?
+  createdAt               DateTime              @default(now())
+  updatedAt               DateTime              @updatedAt
+  commissionLedgerEntry   LedgerEntry           @relation(fields: [commissionLedgerEntryId], references: [id])
+  affiliateCustomer       Customer              @relation(fields: [affiliateCustomerId], references: [id])
+  branch                  Branch                @relation(fields: [branchId], references: [id])
+  paidBy                  User?                 @relation("AffiliatePayoutPaidBy", fields: [paidByUserId], references: [id], onDelete: SetNull)
+
+  @@index([status, dueAt])
+  @@index([affiliateCustomerId, status, dueAt])
+  @@index([branchId, status, dueAt])
 }
 
 model PackageLedgerEntry {
