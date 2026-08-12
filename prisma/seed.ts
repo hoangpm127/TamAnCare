@@ -127,7 +127,10 @@ async function clearDatabase() {
     prisma.voucher.deleteMany(),
     prisma.campaign.deleteMany(),
     prisma.customer.deleteMany(),
+    prisma.therapistAttendance.deleteMany(),
     prisma.room.deleteMany(),
+    prisma.facilityRoom.deleteMany(),
+    prisma.facilityFloor.deleteMany(),
     prisma.therapist.deleteMany(),
     prisma.service.deleteMany(),
     prisma.user.deleteMany(),
@@ -322,6 +325,25 @@ async function seedCatalog() {
   }
 
   for (const branchItem of branchConfig) {
+    const floor = await prisma.facilityFloor.create({
+      data: {
+        id: `${branchItem.id}-floor-1`,
+        branchId: branchItem.id,
+        name: "Tầng 1",
+        status: "ACTIVE",
+        sortOrder: 0,
+      },
+    });
+    const facilityRoom = await prisma.facilityRoom.create({
+      data: {
+        id: `${branchItem.id}-room-main`,
+        floorId: floor.id,
+        name: "Khu hiện có",
+        status: "ACTIVE",
+        sortOrder: 0,
+        note: "Hãy đổi tên và sắp xếp theo mặt bằng thực tế của cơ sở.",
+      },
+    });
     const namedTherapists = therapists.filter((item) => item.branchId === branchItem.id).slice(0, 8);
     for (let index = 0; index < 8; index += 1) {
       const demo = namedTherapists[index];
@@ -348,15 +370,17 @@ async function seedCatalog() {
       });
     }
 
-    for (const room of facilityRoomsForBranch(branchItem.id)) {
+    for (const [sortOrder, room] of facilityRoomsForBranch(branchItem.id).entries()) {
       await prisma.room.create({
         data: {
           id: room.id,
           branchId: branchItem.id,
+          facilityRoomId: facilityRoom.id,
           name: room.name,
           type: room.type,
           status: "ACTIVE",
           suitableCategories: room.suitableCategories,
+          sortOrder,
         },
       });
     }

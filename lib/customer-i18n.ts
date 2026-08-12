@@ -12,6 +12,22 @@ export const CUSTOMER_LANGUAGE_STORAGE_KEY = "tam-an-customer-language";
 export const CUSTOMER_LANGUAGE_COOKIE_KEY = "tam_customer_language";
 
 const EXACT_KOREAN: Record<string, string> = {
+  "Dành cho khách hàng mới": "신규 고객을 위한 안내",
+  "Lời mời Affiliate đã được ghi nhận": "Affiliate 초대가 저장되었습니다",
+  "Bạn mới đến TÂM AN CENTER?": "TÂM AN CENTER가 처음이신가요?",
+  "Đăng ký hoặc đăng nhập ngay để gắn quyền lợi người mới và lời mời Affiliate vào tài khoản, tránh mất voucher khi đóng rồi mở lại app.": "신규 고객 혜택과 Affiliate 초대를 계정에 연결하려면 지금 가입하거나 로그인하세요. 앱을 닫았다 다시 열어도 바우처가 유지됩니다.",
+  "Đăng ký bằng tên, số điện thoại và Mã PIN 4 số để giữ ưu đãi thành viên, xem lại lịch hẹn và sử dụng voucher thuận tiện hơn.": "이름, 전화번호와 4자리 PIN으로 가입하면 회원 혜택을 보관하고 예약 내역과 바우처를 더 편리하게 이용할 수 있습니다.",
+  "Giữ ưu đãi 150K": "150K 혜택 보관",
+  "Giữ quyền lợi Affiliate": "Affiliate 혜택 보관",
+  "Xem lại lịch hẹn": "예약 내역 확인",
+  "Đăng ký / Đăng nhập": "가입 / 로그인",
+  "Đặt nhanh không cần tài khoản": "계정 없이 빠른 예약",
+  "Không cần voucher? Bạn có thể bỏ qua đăng nhập và đặt lịch trực tiếp theo giá thường.": "바우처가 필요하지 않다면 로그인을 건너뛰고 일반 가격으로 바로 예약할 수 있습니다.",
+  "Đủ chỗ cho nhóm": "그룹 예약 가능",
+  "Không đủ chỗ cho nhóm": "그룹 예약 인원 부족",
+  "Khung giờ này có đủ KTV và giường phù hợp; hệ thống đang ưu tiên xếp cả nhóm chung một phòng.": "이 시간대에는 적합한 테라피스트와 침대가 충분하며, 시스템이 그룹 전체를 같은 방에 우선 배정합니다.",
+  "Khung giờ này đủ KTV và giường phù hợp; do không còn một phòng đủ giường, lễ tân sẽ xếp các phòng gần nhau.": "이 시간대에는 적합한 테라피스트와 침대가 충분하지만 한 방에 침대가 부족하여 리셉션이 가까운 방으로 배정합니다.",
+  "KTV và giường được kiểm tra trong toàn bộ thời lượng dịch vụ và thời gian chuẩn bị, nên chỉ hiện những khung giờ có thể phục vụ trọn vẹn.": "테라피스트와 침대는 서비스 전체 시간과 준비 시간까지 확인하므로 완전한 서비스를 제공할 수 있는 시간대만 표시됩니다.",
   "Bạn nhận 200.000đ": "총 200,000동 혜택",
   "150.000đ quà thành viên mới + 50.000đ từ lời mời.": "신규 회원 혜택 150,000동 + 초대 혜택 50,000동.",
   "Đang lưu lời mời…": "초대 정보를 저장하고 있습니다…",

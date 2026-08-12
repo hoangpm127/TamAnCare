@@ -27,6 +27,7 @@ import { TherapistAvatar } from "@/components/therapist-avatar";
 import { BookingHeroCta } from "@/components/booking-fab";
 import { BrandWordmark } from "@/components/brand-wordmark";
 import { GoogleMapEmbed } from "@/components/google-map-embed";
+import { HomeMemberOnboarding } from "@/components/home-member-onboarding";
 
 const QUICK_ACTIONS: { href: string; label: string; icon: LucideIcon; tone: string }[] = [
   { href: "/don-cua-toi?tab=upcoming", label: "Lịch đã đặt", icon: CalendarClock, tone: "bg-[#fae9e4] text-[#c64b32] ring-[#c64b32]/10" },
@@ -93,15 +94,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 pt-3 sm:px-6 lg:px-10">
-        <Link href="/tai-khoan" className="flex items-center justify-between gap-3 rounded-2xl border border-[#e8cf8a]/30 bg-gradient-to-r from-[#7c2927] via-[#a64032] to-[#c85a38] px-4 py-3.5 text-white shadow-[0_10px_24px_rgba(76,25,27,0.16)]">
-          <span className="flex min-w-0 items-center gap-3">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#e8cf8a] text-[#7c2927]"><Gift size={19} /></span>
-            <span className="min-w-0"><strong className="block text-sm">Tạo tài khoản nhận ưu đãi 150K</strong><small className="mt-0.5 block text-[11px] text-white/70">Đặt lịch không cần đăng nhập · đăng ký để giữ quyền lợi riêng</small></span>
-          </span>
-          <ArrowRight className="shrink-0 text-[#e7c878]" size={18} />
-        </Link>
-      </section>
+      {!account ? <HomeMemberOnboarding /> : null}
 
       <section className="mx-auto max-w-7xl px-4 pt-3 sm:px-6 lg:px-10">
         <div className="grid grid-cols-4 gap-2 rounded-xl border border-[#e7d6ca] bg-white p-3 shadow-sm sm:gap-4 sm:p-4">

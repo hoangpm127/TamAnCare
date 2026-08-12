@@ -13,6 +13,7 @@ import { bookingWindowError } from "@/lib/scheduling-policy";
 import { therapistWorksDuring } from "@/lib/server/therapist-schedule";
 import { isCustomerAudienceRequest } from "@/lib/request-audience";
 import { BOOKING_POLICY } from "@/lib/business-policy";
+import { activeBedWhere } from "@/lib/server/facility-operations";
 
 const schema = z.object({
   newStartTime: z.string().min(16),
@@ -129,7 +130,7 @@ export async function POST(request: Request, context: { params: Promise<{ bookin
           orderBy: { ratingAvg: "desc" },
           include: { weeklySchedules: { where: { isActive: true }, select: { weekday: true, startMinute: true, endMinute: true, isActive: true } } },
         });
-        const rooms = await tx.room.findMany({ where: { branchId, status: "ACTIVE", suitableCategories: { has: booking.service.category } }, orderBy: { name: "asc" } });
+        const rooms = await tx.room.findMany({ where: { branchId, AND: [activeBedWhere()], suitableCategories: { has: booking.service.category } }, orderBy: { name: "asc" } });
         const conflicts = await tx.booking.findMany({
           where: {
             branchId,

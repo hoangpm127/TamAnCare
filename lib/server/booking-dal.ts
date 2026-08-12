@@ -3,8 +3,9 @@ import "server-only";
 import { BOOKING_POLICY } from "@/lib/business-policy";
 
 import { addMinutes } from "date-fns";
-import { Prisma, type ServiceCategory } from "@/app/generated/prisma/client";
+import { Prisma } from "@/app/generated/prisma/client";
 import { db } from "@/lib/db";
+import { allocateBookingResources, type AllocationUnit } from "@/lib/resource-allocation";
 import { maybeAutoConfirmBookingGroup } from "@/lib/server/booking-automation";
 import { legalDocumentEvidence } from "@/lib/server/legal-documents";
 import { money, notifyCustomer, notifyOperations, notifyTherapist } from "@/lib/server/notification-service";
@@ -16,8 +17,9 @@ import { affiliateCustomerId, affiliateOwnerEligible, normalizeAffiliateCode } f
 import { calculateVoucherDiscount, voucherRuleError } from "@/lib/server/voucher-rules";
 import { phoneVerificationRequired } from "@/lib/server/otp-delivery";
 import { claimInstalledReferral } from "@/lib/server/referral-installation";
-import { bookingWindowError, calculateSlotResources, intervalsOverlapWithBuffer, timeToMinutes } from "@/lib/scheduling-policy";
+import { bookingWindowError, intervalsOverlapWithBuffer, timeToMinutes } from "@/lib/scheduling-policy";
 import { therapistWorksDuring } from "@/lib/server/therapist-schedule";
+import { activeBedWhere, vietnamWorkDate } from "@/lib/server/facility-operations";
 import { hasActiveWelcomeVoucher, WELCOME_VOUCHER_CODE } from "@/lib/welcome-voucher";
 
 const BUSINESS_TIME_ZONE = "Asia/Ho_Chi_Minh";
@@ -33,7 +35,8 @@ export class BookingConflictError extends Error {
 }
 
 export type AvailabilityInput = {
-  serviceId: string;
+  serviceId?: string;
+  units?: Array<{ serviceId: string; people: number }>;
   date: string;
   durationMinutes?: number;
   therapistId?: string;
@@ -119,35 +122,52 @@ async function findAvailability(
   input: AvailabilityInput,
 ) {
   const branch = await client.branch.findUnique({ where: { id: input.branchId ?? "cs1" } });
-  const service = await client.service.findUnique({ where: { id: input.serviceId } });
-  if (!branch || !service || !service.isActive || !service.isOnline) return [];
+  const requestedLines = input.units?.length
+    ? input.units
+    : input.serviceId
+      ? [{ serviceId: input.serviceId, people: 1 }]
+      : [];
+  const totalPeople = requestedLines.reduce((sum, line) => sum + line.people, 0);
+  if (!branch || !requestedLines.length || totalPeople < 1 || totalPeople > BOOKING_POLICY.maximumGroupSize) return [];
 
-  const duration = input.durationMinutes ?? service.durationMin;
+  const serviceIds = [...new Set(requestedLines.map((line) => line.serviceId))];
+  const services = await client.service.findMany({
+    where: { id: { in: serviceIds }, isActive: true, isOnline: true },
+  });
+  if (services.length !== serviceIds.length) return [];
+  const serviceById = new Map(services.map((service) => [service.id, service]));
   const day = businessDayRange(input.date);
+  const workDate = vietnamWorkDate(day.start);
+  const categories = [...new Set(services.map((service) => service.category))];
   const [therapists, rooms, dayBookings] = await Promise.all([
     client.therapist.findMany({
       where: {
         branchId: branch.id,
         status: "ACTIVE",
         onlineBooking: true,
-        ...(input.therapistId ? { id: input.therapistId } : {}),
-        services: { some: { id: service.id } },
+        services: { some: { id: { in: serviceIds } } },
       },
       select: {
         id: true,
         fullName: true,
         ratingAvg: true,
+        services: { where: { id: { in: serviceIds } }, select: { id: true } },
         weeklySchedules: {
           where: { isActive: true },
           select: { weekday: true, startMinute: true, endMinute: true, isActive: true },
         },
+        attendanceRecords: {
+          where: { workDate },
+          take: 1,
+          select: { status: true, checkOutAt: true },
+        },
       },
-      orderBy: [{ ratingAvg: "desc" }, { fullName: "asc" }],
+      orderBy: [{ servedCount: "asc" }, { ratingAvg: "desc" }, { fullName: "asc" }],
     }),
     client.room.findMany({
-      where: { branchId: branch.id, status: "ACTIVE", suitableCategories: { has: service.category } },
-      select: { id: true, name: true, type: true },
-      orderBy: { name: "asc" },
+      where: { branchId: branch.id, AND: [activeBedWhere()], suitableCategories: { hasSome: categories } },
+      select: { id: true, name: true, type: true, facilityRoomId: true, suitableCategories: true },
+      orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
     }),
     client.booking.findMany({
       where: {
@@ -165,41 +185,99 @@ async function findAvailability(
   const now = new Date();
   const slots = [];
 
+  const therapistCanWork = (therapist: (typeof therapists)[number], serviceId: string, start: Date, end: Date) => {
+    if (!therapist.services.some((service) => service.id === serviceId)) return false;
+    if (!therapistWorksDuring(therapist.weeklySchedules, start, end)) return false;
+    const attendance = therapist.attendanceRecords[0];
+    if (attendance && ["ABSENT", "LEAVE", "OFF"].includes(attendance.status)) return false;
+    if (attendance?.checkOutAt && start >= attendance.checkOutAt) return false;
+    return true;
+  };
+
+  const buildUnits = (lines: Array<{ serviceId: string; people: number }>, start: Date) => {
+    const result: AllocationUnit[] = [];
+    lines.forEach((line, lineIndex) => {
+      const service = serviceById.get(line.serviceId)!;
+      const duration = requestedLines.length === 1 && input.durationMinutes
+        ? input.durationMinutes
+        : service.durationMin;
+      for (let personIndex = 0; personIndex < line.people; personIndex += 1) {
+        const end = addMinutes(start, duration);
+        result.push({
+          key: `${lineIndex}:${personIndex}:${line.serviceId}`,
+          start,
+          end,
+          therapistCandidateIds: therapists
+            .filter((therapist) => (!input.therapistId || totalPeople > 1 || therapist.id === input.therapistId)
+              && therapistCanWork(therapist, line.serviceId, start, end))
+            .map((therapist) => therapist.id),
+          bedCandidateIds: rooms
+            .filter((room) => room.suitableCategories.includes(service.category))
+            .map((room) => room.id),
+        });
+      }
+    });
+    return result;
+  };
+
+  const allocate = (units: AllocationUnit[]) => allocateBookingResources({
+    units,
+    beds: rooms.map((room) => ({ id: room.id, facilityRoomId: room.facilityRoomId })),
+    bookings: dayBookings,
+    seatCapacity: Math.min(branch.seatCapacity, rooms.length),
+    bufferMinutes: branch.bufferMinutes,
+  });
+
   for (let minute = openMinute; minute <= lastBookingMinute; minute += BOOKING_POLICY.slotMinutes) {
-    if (bookingWindowError({
-      startMinute: minute,
-      durationMinutes: duration,
-      openTime: branch.openTime,
-      closeTime: branch.closeTime,
-      lastBookingTime: branch.lastBookingTime,
-    })) continue;
     const start = addMinutes(day.start, minute);
-    const end = addMinutes(start, duration);
     if (start < addMinutes(now, BOOKING_POLICY.minimumLeadMinutes)) continue;
 
-    const workingTherapists = therapists
-      .filter((therapist) => therapistWorksDuring(therapist.weeklySchedules, start, end));
-    const resources = calculateSlotResources({
-      start,
-      end,
-      bufferMinutes: branch.bufferMinutes,
-      therapistIds: workingTherapists.map((therapist) => therapist.id),
-      roomIds: rooms.map((room) => room.id),
-      seatCapacity: branch.seatCapacity,
-      bookings: dayBookings,
-    });
-    const availableTherapistIds = new Set(resources.availableTherapistIds);
-    const availableRoomIds = new Set(resources.availableRoomIds);
-    const availableTherapists = workingTherapists
-      .filter((therapist) => availableTherapistIds.has(therapist.id))
-      .map((therapist) => ({
-        id: therapist.id,
-        fullName: therapist.fullName,
-        ratingAvg: therapist.ratingAvg,
+    const invalidWindow = requestedLines.some((line) => {
+      const service = serviceById.get(line.serviceId)!;
+      const duration = requestedLines.length === 1 && input.durationMinutes ? input.durationMinutes : service.durationMin;
+      return Boolean(bookingWindowError({
+        startMinute: minute,
+        durationMinutes: duration,
+        openTime: branch.openTime,
+        closeTime: branch.closeTime,
+        lastBookingTime: branch.lastBookingTime,
       }));
-    const availableRooms = rooms.filter((room) => availableRoomIds.has(room.id));
-    const remainingCapacity = resources.remainingCapacity;
-    const isAvailable = remainingCapacity > 0;
+    });
+    if (invalidWindow) continue;
+
+    const requestedUnits = buildUnits(requestedLines, start);
+    const requestedAllocation = allocate(requestedUnits);
+    const assignedTherapistIds = new Set(requestedAllocation?.assignments.map((item) => item.therapistId) ?? []);
+    const assignedBedIds = new Set(requestedAllocation?.assignments.map((item) => item.bedId) ?? []);
+    const singleUnit = requestedUnits.length === 1 ? requestedUnits[0] : null;
+    const availableTherapistIds = singleUnit
+      ? new Set(singleUnit.therapistCandidateIds.filter((id) => !dayBookings.some((booking) => booking.therapistId === id
+        && intervalsOverlapWithBuffer(singleUnit.start, singleUnit.end, booking.startTime, booking.endTime, branch.bufferMinutes))))
+      : assignedTherapistIds;
+    const availableBedIds = singleUnit
+      ? new Set(singleUnit.bedCandidateIds.filter((id) => !dayBookings.some((booking) => booking.roomId === id
+        && intervalsOverlapWithBuffer(singleUnit.start, singleUnit.end, booking.startTime, booking.endTime, branch.bufferMinutes))))
+      : assignedBedIds;
+    const availableTherapists = therapists
+      .filter((therapist) => availableTherapistIds.has(therapist.id))
+      .map((therapist) => ({ id: therapist.id, fullName: therapist.fullName, ratingAvg: therapist.ratingAvg }));
+    const availableRooms = rooms
+      .filter((room) => availableBedIds.has(room.id))
+      .map(({ id, name, type }) => ({ id, name, type }));
+
+    let remainingCapacity = requestedAllocation ? totalPeople : 0;
+    if (requestedLines.length === 1 && !input.therapistId) {
+      const serviceId = requestedLines[0].serviceId;
+      const maximum = Math.min(BOOKING_POLICY.maximumGroupSize, branch.seatCapacity, rooms.length, therapists.length);
+      for (let people = maximum; people >= 1; people -= 1) {
+        if (allocate(buildUnits([{ serviceId, people }], start))) {
+          remainingCapacity = people;
+          break;
+        }
+      }
+    }
+    const isAvailable = Boolean(requestedAllocation);
+    const end = requestedUnits.reduce((latest, unit) => unit.end > latest ? unit.end : latest, requestedUnits[0].end);
     if (isAvailable || input.includeUnavailable) {
       slots.push({
         startTime: toBusinessIso(start),
@@ -208,6 +286,14 @@ async function findAvailability(
         availableRooms,
         remainingCapacity,
         isAvailable,
+        allocationMode: requestedUnits.length === 1
+          ? "SINGLE"
+          : requestedAllocation?.sameRoom
+            ? "SAME_ROOM"
+            : requestedAllocation
+              ? "SPLIT_ROOMS"
+              : "UNAVAILABLE",
+        roomCount: requestedAllocation?.roomCount ?? 0,
       });
     }
   }
@@ -510,17 +596,11 @@ export async function createBookingGroup(input: BookingGroupInput) {
         });
       }
 
-      const reserved: { therapistId: string; roomId: string; start: Date; end: Date }[] = [];
-      const bookingRecords = [];
-      let allocatedDiscount = discountAmount;
-      let allocatedDeposit = 0;
-
-      for (const [index, unit] of input.units.entries()) {
+      const preparedUnits = input.units.map((unit) => {
         const service = serviceRecords.find((item) => item.id === unit.serviceId)!;
         const start = parseBusinessDateTime(unit.startTime);
         const end = addMinutes(start, service.durationMin);
-        const startParts = businessParts(start);
-        const startMinute = startParts.minuteOfDay;
+        const startMinute = businessParts(start).minuteOfDay;
         if (start < addMinutes(new Date(), BOOKING_POLICY.minimumLeadMinutes)) {
           throw new BookingConflictError(`Vui lòng đặt trước ít nhất ${BOOKING_POLICY.minimumLeadMinutes} phút.`);
         }
@@ -532,49 +612,86 @@ export async function createBookingGroup(input: BookingGroupInput) {
           lastBookingTime: branch.lastBookingTime,
         });
         if (scheduleError) throw new BookingConflictError(scheduleError);
-
-        const therapistCandidates = await tx.therapist.findMany({
+        return { unit, service, start, end, workDate: vietnamWorkDate(start) };
+      });
+      const workDates = [...new Map(preparedUnits.map((item) => [item.workDate.toISOString(), item.workDate])).values()];
+      const earliestStart = preparedUnits.reduce((value, item) => item.start < value ? item.start : value, preparedUnits[0].start);
+      const latestEnd = preparedUnits.reduce((value, item) => item.end > value ? item.end : value, preparedUnits[0].end);
+      const categories = [...new Set(serviceRecords.map((service) => service.category))];
+      const [therapistCandidates, bedCandidates, resourceConflicts] = await Promise.all([
+        tx.therapist.findMany({
           where: {
             branchId: branch.id,
             status: "ACTIVE",
             onlineBooking: true,
-            ...(unit.therapistId ? { id: unit.therapistId } : {}),
-            services: { some: { id: service.id } },
+            services: { some: { id: { in: serviceIds } } },
           },
-          orderBy: unit.therapistId
-            ? [{ ratingAvg: "desc" }, { fullName: "asc" }]
-            : [{ servedCount: "asc" }, { ratingAvg: "desc" }, { fullName: "asc" }],
+          orderBy: [{ servedCount: "asc" }, { ratingAvg: "desc" }, { fullName: "asc" }],
           include: {
+            services: { where: { id: { in: serviceIds } }, select: { id: true } },
             weeklySchedules: {
               where: { isActive: true },
               select: { weekday: true, startMinute: true, endMinute: true, isActive: true },
             },
+            attendanceRecords: {
+              where: { workDate: { in: workDates } },
+              select: { workDate: true, status: true, checkOutAt: true },
+            },
           },
-        });
-        const roomCandidates = await tx.room.findMany({
-          where: { branchId: branch.id, status: "ACTIVE", suitableCategories: { has: service.category as ServiceCategory } },
-          orderBy: { name: "asc" },
-        });
-        const conflicts = await tx.booking.findMany({
+        }),
+        tx.room.findMany({
+          where: { branchId: branch.id, AND: [activeBedWhere()], suitableCategories: { hasSome: categories } },
+          orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
+        }),
+        tx.booking.findMany({
           where: {
             branchId: branch.id,
             status: { in: [...BLOCKING_STATUSES] },
-            startTime: { lt: addMinutes(end, branch.bufferMinutes) },
-            endTime: { gt: addMinutes(start, -branch.bufferMinutes) },
+            startTime: { lt: addMinutes(latestEnd, branch.bufferMinutes) },
+            endTime: { gt: addMinutes(earliestStart, -branch.bufferMinutes) },
           },
           select: { therapistId: true, roomId: true, startTime: true, endTime: true },
-        });
+        }),
+      ]);
 
-        const therapist = therapistCandidates.find((candidate) =>
-          therapistWorksDuring(candidate.weeklySchedules, start, end) &&
-          !conflicts.some((booking) => booking.therapistId === candidate.id) &&
-          !reserved.some((item) => item.therapistId === candidate.id && intervalsOverlapWithBuffer(start, end, item.start, item.end, branch.bufferMinutes)),
-        );
-        const room = roomCandidates.find((candidate) =>
-          !conflicts.some((booking) => booking.roomId === candidate.id) &&
-          !reserved.some((item) => item.roomId === candidate.id && intervalsOverlapWithBuffer(start, end, item.start, item.end, branch.bufferMinutes)),
-        );
-        if (!therapist || !room) throw new BookingConflictError("Khung giờ vừa hết chỗ. Vui lòng chọn giờ gần nhất.");
+      const allocationUnits: AllocationUnit[] = preparedUnits.map(({ unit, service, start, end, workDate }) => ({
+        key: unit.bookingCode,
+        start,
+        end,
+        therapistCandidateIds: therapistCandidates.filter((therapist) => {
+          if (unit.therapistId && therapist.id !== unit.therapistId) return false;
+          if (!therapist.services.some((candidateService) => candidateService.id === service.id)) return false;
+          if (!therapistWorksDuring(therapist.weeklySchedules, start, end)) return false;
+          const attendance = therapist.attendanceRecords.find((item) => item.workDate.getTime() === workDate.getTime());
+          if (attendance && ["ABSENT", "LEAVE", "OFF"].includes(attendance.status)) return false;
+          if (attendance?.checkOutAt && start >= attendance.checkOutAt) return false;
+          return true;
+        }).map((therapist) => therapist.id),
+        bedCandidateIds: bedCandidates
+          .filter((bed) => bed.suitableCategories.includes(service.category))
+          .map((bed) => bed.id),
+      }));
+      const resourceAllocation = allocateBookingResources({
+        units: allocationUnits,
+        beds: bedCandidates.map((bed) => ({ id: bed.id, facilityRoomId: bed.facilityRoomId })),
+        bookings: resourceConflicts,
+        seatCapacity: Math.min(branch.seatCapacity, bedCandidates.length),
+        bufferMinutes: branch.bufferMinutes,
+      });
+      if (!resourceAllocation) {
+        throw new BookingConflictError("Khung giờ vừa hết chỗ hoặc không còn đủ KTV và giường phù hợp cho cả nhóm. Vui lòng chọn giờ gần nhất.");
+      }
+      const assignmentByUnit = new Map(resourceAllocation.assignments.map((assignment) => [assignment.unitKey, assignment]));
+      const bookingRecords = [];
+      let allocatedDiscount = discountAmount;
+      let allocatedDeposit = 0;
+
+      for (const [index, unit] of input.units.entries()) {
+        const service = serviceRecords.find((item) => item.id === unit.serviceId)!;
+        const start = parseBusinessDateTime(unit.startTime);
+        const end = addMinutes(start, service.durationMin);
+        const assignment = assignmentByUnit.get(unit.bookingCode);
+        if (!assignment) throw new BookingConflictError("Không thể hoàn tất phương án xếp KTV và giường cho lịch này.");
 
         const unitSubtotal = service.basePrice + service.therapistFee;
         const unitDiscount = activePackage ? unitSubtotal : Math.min(allocatedDiscount, unitSubtotal);
@@ -597,8 +714,8 @@ export async function createBookingGroup(input: BookingGroupInput) {
             branchId: branch.id,
             customerId: customer.id,
             serviceId: service.id,
-            therapistId: therapist.id,
-            roomId: room.id,
+            therapistId: assignment.therapistId,
+            roomId: assignment.bedId,
             voucherId: index === 0 ? voucher?.id : undefined,
             campaignId: affiliateBonusVoucher ? campaign?.id : undefined,
             customerPackageId: activePackage?.id,
@@ -618,7 +735,6 @@ export async function createBookingGroup(input: BookingGroupInput) {
           },
         });
         bookingRecords.push(booking);
-        reserved.push({ therapistId: therapist.id, roomId: room.id, start, end });
       }
 
       if (activePackage) {

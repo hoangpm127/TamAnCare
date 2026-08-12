@@ -16,6 +16,7 @@ import {
   AFFILIATE_RECONCILIATION_DAYS,
 } from "@/lib/referral-policy";
 import { phoneVerificationRequired } from "@/lib/server/otp-delivery";
+import { attendanceCheckInSnapshot, vietnamWorkDate } from "@/lib/server/facility-operations";
 
 const ALLOWED_TRANSITIONS: Record<BookingStatus, BookingStatus[]> = {
   PENDING: ["CONFIRMED", "CANCELLED"],
@@ -60,7 +61,15 @@ export async function PATCH(request: Request, context: { params: Promise<{ booki
       async (tx) => {
         const directBooking = await tx.booking.findUnique({
           where: { bookingCode },
-          include: { group: true, customer: true, service: true, therapist: true, campaign: true, voucherUsages: { include: { voucher: { select: { code: true } } } } },
+          include: {
+            group: true,
+            customer: true,
+            service: true,
+            therapist: { include: { weeklySchedules: { where: { isActive: true } } } },
+            room: { include: { facilityRoom: { include: { floor: true } } } },
+            campaign: true,
+            voucherUsages: { include: { voucher: { select: { code: true } } } },
+          },
         });
         const directGroup = directBooking
           ? null
@@ -68,7 +77,17 @@ export async function PATCH(request: Request, context: { params: Promise<{ booki
         const groupId = directBooking?.groupId ?? directGroup?.id;
         const group = directBooking?.group ?? directGroup;
         const bookings = groupId
-          ? await tx.booking.findMany({ where: { groupId }, include: { service: true, therapist: true, campaign: true, voucherUsages: { include: { voucher: { select: { code: true } } } } }, orderBy: { startTime: "asc" } })
+          ? await tx.booking.findMany({
+            where: { groupId },
+            include: {
+              service: true,
+              therapist: { include: { weeklySchedules: { where: { isActive: true } } } },
+              room: { include: { facilityRoom: { include: { floor: true } } } },
+              campaign: true,
+              voucherUsages: { include: { voucher: { select: { code: true } } } },
+            },
+            orderBy: { startTime: "asc" },
+          })
           : directBooking
             ? [directBooking]
             : [];
@@ -135,6 +154,69 @@ export async function PATCH(request: Request, context: { params: Promise<{ booki
           const serviceStartedAt = nextStatus === "IN_SERVICE"
             ? now
             : null;
+          if (nextStatus === "IN_SERVICE") {
+            const workDate = vietnamWorkDate(now);
+            for (const booking of bookings) {
+              if (!booking.room || !booking.therapist) {
+                throw new StatusError("Hãy xếp đủ giường/ghế và KTV trước khi bắt đầu ca.", 409);
+              }
+              const hierarchyActive = booking.room.facilityRoom
+                ? booking.room.facilityRoom.status === "ACTIVE" && booking.room.facilityRoom.floor.status === "ACTIVE"
+                : true;
+              if (booking.room.status !== "ACTIVE" || !hierarchyActive) {
+                throw new StatusError(`${booking.room.name} đang bảo trì hoặc ngừng sử dụng.`, 409);
+              }
+              const currentAttendance = await tx.therapistAttendance.findUnique({
+                where: { therapistId_workDate: { therapistId: booking.therapist.id, workDate } },
+              });
+              if (!currentAttendance?.checkInAt || currentAttendance.checkOutAt) {
+                const snapshot = attendanceCheckInSnapshot(booking.therapist.weeklySchedules, now);
+                const returningToShift = Boolean(currentAttendance?.checkInAt && currentAttendance.checkOutAt);
+                const automaticNote = returningToShift
+                  ? "Tự động trở lại ca khi lễ tân xác nhận bắt đầu dịch vụ."
+                  : currentAttendance
+                    ? `Tự động vào ca khi bắt đầu dịch vụ; thay trạng thái ${currentAttendance.status}.`
+                    : "Tự động vào ca khi lễ tân xác nhận bắt đầu dịch vụ.";
+                const attendance = await tx.therapistAttendance.upsert({
+                  where: { therapistId_workDate: { therapistId: booking.therapist.id, workDate } },
+                  create: {
+                    therapistId: booking.therapist.id,
+                    branchId,
+                    workDate,
+                    status: snapshot.status,
+                    scheduledStartMinute: snapshot.scheduledStartMinute,
+                    scheduledEndMinute: snapshot.scheduledEndMinute,
+                    checkInAt: now,
+                    lateMinutes: snapshot.lateMinutes,
+                    note: "Tự động vào ca khi lễ tân xác nhận bắt đầu dịch vụ.",
+                    recordedByUserId: activeAdmin.id,
+                  },
+                  update: {
+                    status: returningToShift ? currentAttendance!.status : snapshot.status,
+                    scheduledStartMinute: returningToShift ? currentAttendance!.scheduledStartMinute : snapshot.scheduledStartMinute,
+                    scheduledEndMinute: returningToShift ? currentAttendance!.scheduledEndMinute : snapshot.scheduledEndMinute,
+                    checkInAt: currentAttendance?.checkInAt ?? now,
+                    checkOutAt: null,
+                    lateMinutes: returningToShift ? currentAttendance!.lateMinutes : snapshot.lateMinutes,
+                    note: automaticNote,
+                    recordedByUserId: activeAdmin.id,
+                  },
+                });
+                await tx.adminAuditLog.create({
+                  data: {
+                    actorUserId: activeAdmin.id,
+                    branchId,
+                    action: "THERAPIST_ATTENDANCE_AUTO_CHECK_IN",
+                    entityType: "TherapistAttendance",
+                    entityId: attendance.id,
+                    before: currentAttendance ?? undefined,
+                    after: attendance,
+                    ipHash: privateIdentifierDigest(requestIp(request)),
+                  },
+                });
+              }
+            }
+          }
           await tx.booking.updateMany({
             where: { id: { in: bookings.map((item) => item.id) } },
             data: {
