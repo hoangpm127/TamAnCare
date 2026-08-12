@@ -193,7 +193,7 @@ const investorViewPresentation: Record<InvestorView, {
   overview: {
     eyebrow: "Tài sản đã đầu tư",
     title: "Danh mục đang vận hành",
-    description: "Cơ sở 1 và Cơ sở 2 đã được giải ngân, đang tạo doanh thu và được tính trong báo cáo hiện tại.",
+    description: "Các cơ sở đã được phân bổ vốn sẽ xuất hiện tại đây cùng doanh thu và hiệu quả vận hành thực tế.",
     icon: Landmark,
     pageClass: "bg-[#160f0e]",
     glowClass: "bg-[radial-gradient(circle_at_85%_0%,rgba(232,198,101,0.18),transparent_30%),radial-gradient(circle_at_5%_35%,rgba(132,36,37,0.22),transparent_30%)]",
@@ -213,7 +213,7 @@ const investorViewPresentation: Record<InvestorView, {
   opportunities: {
     eyebrow: "Pipeline mở rộng",
     title: "Cơ hội đầu tư mới",
-    description: "Các địa điểm đang khảo sát hoặc thẩm định; chưa thuộc danh mục, chưa giải ngân và không cộng vào báo cáo Cơ sở 1–2.",
+    description: "Các địa điểm đang khảo sát hoặc thẩm định; chưa thuộc danh mục, chưa giải ngân và không cộng vào báo cáo đang vận hành.",
     icon: Rocket,
     pageClass: "bg-[#0e1420]",
     glowClass: "bg-[radial-gradient(circle_at_82%_0%,rgba(96,165,250,0.2),transparent_32%),radial-gradient(circle_at_0%_42%,rgba(36,78,127,0.26),transparent_34%)]",
@@ -537,7 +537,7 @@ export function InvestorDashboardClient() {
         {activeView === "performance" ? <section className="mt-3 rounded-[24px] border border-emerald-300/14 bg-[#281b18]/85 p-4 text-center sm:p-5">
           <Building2 size={19} className="mx-auto text-emerald-300" />
           <h2 className="mt-2 text-base font-semibold">Đối chiếu Cơ sở đang vận hành</h2>
-          <p className="mt-1 text-[9px] text-white/35">Chỉ gồm Cơ sở 1 và Cơ sở 2 đã được giải ngân · bấm Card để xem cấu thành</p>
+          <p className="mt-1 text-[9px] text-white/35">Chỉ gồm các cơ sở đã được phân bổ vốn · bấm Card để xem cấu thành</p>
           <div className="mt-4 grid gap-2.5 md:grid-cols-2">
             {data.branches.map((branch) => (
               <button key={branch.branchId} type="button" onClick={() => setSelectedBranch(branch)} className="group rounded-2xl border border-white/7 bg-black/15 p-3.5 text-center transition hover:border-[#d6b45e]/25 hover:bg-[#d6b45e]/[0.035]">
@@ -564,7 +564,7 @@ export function InvestorDashboardClient() {
             <h2 className="mt-2 text-lg font-semibold">Pipeline cơ hội mở rộng</h2>
             <p className="mx-auto mt-1 max-w-xl text-[10px] leading-5 text-white/46">Đây là địa điểm tiềm năng hoàn toàn mới. Nhà đầu tư mới chỉ đăng ký quan tâm; chưa phát sinh góp vốn, quyền sở hữu, doanh thu hay lợi nhuận.</p>
           </div>
-          <div className="mt-3 flex items-start gap-2 rounded-2xl border border-sky-300/14 bg-sky-300/[0.055] p-3 text-left"><LockKeyhole size={16} className="mt-0.5 shrink-0 text-sky-300" /><div><p className="text-[10px] font-semibold text-sky-100">Không phải Cơ sở đang hoạt động</p><p className="mt-0.5 text-[9px] leading-4 text-white/42">Cơ sở 1 và Cơ sở 2 nằm ở Tổng quan/Hiệu quả. Các hồ sơ dưới đây chỉ xuất hiện trong pipeline cho đến khi hoàn tất thẩm định và được duyệt đầu tư.</p></div></div>
+          <div className="mt-3 flex items-start gap-2 rounded-2xl border border-sky-300/14 bg-sky-300/[0.055] p-3 text-left"><LockKeyhole size={16} className="mt-0.5 shrink-0 text-sky-300" /><div><p className="text-[10px] font-semibold text-sky-100">Không phải Cơ sở đang hoạt động</p><p className="mt-0.5 text-[9px] leading-4 text-white/42">Các cơ sở đã phân bổ vốn nằm ở Tổng quan/Hiệu quả. Các hồ sơ dưới đây chỉ xuất hiện trong pipeline cho đến khi hoàn tất thẩm định và được duyệt đầu tư.</p></div></div>
           <div className="mt-4 grid grid-cols-3 gap-2 text-center">
             <div className="rounded-2xl border border-sky-300/10 bg-black/15 p-3"><p className="text-[9px] text-white/38">Hồ sơ pipeline</p><p className="mt-1 text-lg font-semibold text-sky-200">{data.briefing.pipelineOpportunities}</p></div>
             <div className="rounded-2xl border border-sky-300/10 bg-black/15 p-3"><p className="text-[9px] text-white/38">Vốn dự kiến còn mở</p><p className="mt-1 text-sm font-semibold text-sky-200">{compactMoney(data.briefing.remainingOpportunityCapital)}</p></div>

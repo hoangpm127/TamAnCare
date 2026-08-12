@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { getAdminSession } from "@/lib/server/admin-session";
+import { requireAdminSession } from "@/lib/server/admin-session";
 import { activeBedWhere } from "@/lib/server/facility-operations";
 
 function dateAt(value: string | null, end = false) {
@@ -17,13 +17,18 @@ function inDayPart(value: Date, dayPart: string) {
 }
 
 export async function GET(request: Request) {
-  const session = await getAdminSession();
-  if (!session || session.mustChangePassword || session.role === "INVESTOR" || session.role === "THERAPIST") return NextResponse.json({ error: "Bạn không có quyền xem vận hành." }, { status: 403 });
+  const session = await requireAdminSession(["OWNER", "BRANCH_MANAGER", "RECEPTIONIST"]);
+  if (!session) return NextResponse.json({ error: "Bạn không có quyền xem vận hành." }, { status: 403 });
+  if (session.role !== "OWNER" && !session.branchId) {
+    return NextResponse.json({ error: "Tài khoản chưa được gán cơ sở vận hành." }, { status: 403 });
+  }
   const url = new URL(request.url);
   const start = dateAt(url.searchParams.get("from")) ?? new Date(Date.now() - 7 * 86_400_000);
   const end = dateAt(url.searchParams.get("to"), true) ?? new Date();
   const requestedBranch = url.searchParams.get("branchId");
-  const branchId = session.role === "OWNER" ? (requestedBranch && requestedBranch !== "all" ? requestedBranch : undefined) : session.branchId ?? undefined;
+  const branchId = session.role === "OWNER"
+    ? (requestedBranch && requestedBranch !== "all" ? requestedBranch : undefined)
+    : session.branchId!;
   const dayPart = url.searchParams.get("dayPart") ?? "all";
 
   const [branchRecords, rawBookings, therapists, rooms] = await Promise.all([
