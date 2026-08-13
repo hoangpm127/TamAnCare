@@ -2,9 +2,10 @@
 
 import { useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { Building2, CheckCircle2, ChevronDown, FileCheck2, Handshake, ImagePlus, Loader2, MapPin, Phone, Plus, ReceiptText, ScanLine, Sparkles, UserPlus, UserRound, X } from "lucide-react";
+import { Building2, CheckCircle2, ChevronDown, FileCheck2, Handshake, ImagePlus, KeyRound, Loader2, MapPin, Phone, Plus, ReceiptText, ScanLine, ShieldCheck, Sparkles, UserPlus, UserRound, X } from "lucide-react";
 import { usePublicCatalog } from "@/lib/catalog-store";
 import { useAdminSession } from "@/components/admin-session-provider";
+import { customerPinError, normalizeCustomerPin } from "@/lib/customer-pin";
 import { formatMoney } from "@/lib/utils";
 
 const EXPENSE_CATEGORIES = [
@@ -292,6 +293,11 @@ export function AdminCustomerFab() {
   const [note, setNote] = useState("");
   const [relationship, setRelationship] = useState<"WALK_IN" | "FRIEND" | "BOSS" | "PARTNER">("WALK_IN");
   const [branchId, setBranchId] = useState(session?.branchId ?? branches[0].id);
+  const [createAccount, setCreateAccount] = useState(false);
+  const [pin, setPin] = useState("");
+  const [confirmPin, setConfirmPin] = useState("");
+  const [acceptRequired, setAcceptRequired] = useState(false);
+  const [marketingOptIn, setMarketingOptIn] = useState(false);
   const [saving, setSaving] = useState(false);
   const [submitError, setSubmitError] = useState("");
 
@@ -326,19 +332,50 @@ export function AdminCustomerFab() {
   async function submit(event: React.FormEvent) {
     event.preventDefault();
     if (!fullName.trim() || !phone.trim()) return;
+    if (createAccount) {
+      const pinError = customerPinError(pin);
+      if (pinError) {
+        setSubmitError(pinError);
+        return;
+      }
+      if (pin !== confirmPin) {
+        setSubmitError("Hai lần nhập Mã PIN chưa trùng nhau.");
+        return;
+      }
+      if (!acceptRequired) {
+        setSubmitError("Khách cần xác nhận điều khoản sử dụng và chính sách bảo vệ dữ liệu.");
+        return;
+      }
+    }
     setSaving(true);
     setSubmitError("");
     try {
       const response = await fetch("/api/customers", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ fullName: fullName.trim(), phone: phone.trim(), branchId, relationship, note: note.trim() || undefined }),
+        body: JSON.stringify({
+          fullName: fullName.trim(),
+          phone: phone.trim(),
+          branchId,
+          relationship,
+          note: note.trim() || undefined,
+          createAccount,
+          pin: createAccount ? pin : undefined,
+          acceptTerms: createAccount ? acceptRequired : undefined,
+          acceptPrivacy: createAccount ? acceptRequired : undefined,
+          marketingOptIn: createAccount ? marketingOptIn : undefined,
+        }),
       });
       const data = await response.json();
       if (!response.ok || !data.persisted) throw new Error(data.error ?? "Không thể tạo hồ sơ khách.");
       setFullName("");
       setPhone("");
       setNote("");
+      setCreateAccount(false);
+      setPin("");
+      setConfirmPin("");
+      setAcceptRequired(false);
+      setMarketingOptIn(false);
       setOpen(false);
     } catch (error) {
       setSubmitError(error instanceof Error ? error.message : "Không thể tạo hồ sơ khách.");
@@ -374,11 +411,22 @@ export function AdminCustomerFab() {
               <label className="text-xs font-semibold">Số điện thoại<div className="relative mt-1.5"><Phone size={15} className="pointer-events-none absolute left-3 top-3 text-[#9f7428]" /><input required inputMode="tel" value={phone} onChange={(event) => setPhone(event.target.value)} placeholder="09..." className="w-full rounded-xl border border-[#e7d6ca] py-2.5 pl-9 pr-3 text-sm font-normal" /></div></label>
               <CompactPicker label="Quan hệ / nguồn khách" value={relationship} onChange={(value) => setRelationship(value as typeof relationship)} options={[{ value: "WALK_IN", label: "Khách đến trực tiếp" }, { value: "FRIEND", label: "Bạn của khách giới thiệu" }, { value: "BOSS", label: "Sếp / đồng nghiệp" }, { value: "PARTNER", label: "Đối tác / Affiliate" }]} />
               <CompactPicker label="Cơ sở tiếp nhận" disabled={session.role !== "OWNER"} value={branchId} onChange={setBranchId} options={branches.filter((branch) => session.role === "OWNER" || branch.id === session.branchId).map((branch) => ({ value: branch.id, label: branch.label }))} />
+              <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-[#d2ad5d]/65 bg-[#fffaf0] p-3 sm:col-span-2">
+                <input type="checkbox" checked={createAccount} onChange={(event) => { setCreateAccount(event.target.checked); setSubmitError(""); }} className="mt-0.5 h-4 w-4 accent-[#a72d29]" />
+                <span className="min-w-0"><strong className="flex items-center gap-1.5 text-xs text-[#6f211f]"><KeyRound size={14} /> Tạo tài khoản thành viên hộ khách</strong><small className="mt-1 block text-[10px] font-normal leading-4 text-[#715943]">Chỉ bật khi khách muốn dùng app, lưu voucher, mua gói hoặc xem lại lịch. Khách vãng lai có thể bỏ qua.</small></span>
+              </label>
+              {createAccount ? <>
+                <label className="text-xs font-semibold">Mã PIN 4 số<div className="relative mt-1.5"><KeyRound size={15} className="pointer-events-none absolute left-3 top-3 text-[#9f7428]" /><input required autoComplete="new-password" inputMode="numeric" type="password" maxLength={4} value={pin} onChange={(event) => setPin(normalizeCustomerPin(event.target.value))} placeholder="••••" className="w-full rounded-xl border border-[#e7d6ca] py-2.5 pl-9 pr-3 text-sm font-normal tracking-[0.35em]" /></div></label>
+                <label className="text-xs font-semibold">Nhập lại Mã PIN<div className="relative mt-1.5"><ShieldCheck size={15} className="pointer-events-none absolute left-3 top-3 text-[#9f7428]" /><input required autoComplete="new-password" inputMode="numeric" type="password" maxLength={4} value={confirmPin} onChange={(event) => setConfirmPin(normalizeCustomerPin(event.target.value))} placeholder="••••" className="w-full rounded-xl border border-[#e7d6ca] py-2.5 pl-9 pr-3 text-sm font-normal tracking-[0.35em]" /></div></label>
+                <p className="rounded-xl bg-[#f6efeb] px-3 py-2.5 text-[10px] leading-4 text-[#68574f] sm:col-span-2">Đưa điện thoại cho khách tự nhập nếu có thể. Không đọc to, ghi giấy hoặc lưu Mã PIN của khách.</p>
+                <label className="flex items-start gap-2 text-[10px] leading-4 text-[#51423b] sm:col-span-2"><input required type="checkbox" checked={acceptRequired} onChange={(event) => setAcceptRequired(event.target.checked)} className="mt-0.5 h-4 w-4 shrink-0 accent-[#a72d29]" /><span>Khách xác nhận đã được giải thích và đồng ý Điều khoản sử dụng cùng Chính sách bảo vệ dữ liệu.</span></label>
+                <label className="flex items-start gap-2 text-[10px] leading-4 text-[#68574f] sm:col-span-2"><input type="checkbox" checked={marketingOptIn} onChange={(event) => setMarketingOptIn(event.target.checked)} className="mt-0.5 h-4 w-4 shrink-0 accent-[#a72d29]" /><span>Khách đồng ý nhận tin ưu đãi và chăm sóc. Không bắt buộc.</span></label>
+              </> : null}
               <label className="text-xs font-semibold sm:col-span-2">Ghi chú xếp phòng / chăm sóc<textarea value={note} onChange={(event) => setNote(event.target.value)} rows={3} placeholder="Ví dụ: đi cùng anh Minh, ưu tiên giường gần nhau để tiện trao đổi" className="mt-1.5 w-full resize-none rounded-xl border border-[#e7d6ca] px-3 py-2.5 text-sm font-normal" /></label>
               <div className="flex items-start gap-2 rounded-xl border border-[#efd6a1] bg-[#fff8e8] p-3 text-[11px] leading-5 text-[#715943] sm:col-span-2"><Building2 size={14} className="mt-0.5 shrink-0 text-[#8a5a12]" /><span><strong>{relationship === "WALK_IN" ? "Khách trực tiếp" : relationship === "FRIEND" ? "Khách được bạn giới thiệu" : relationship === "BOSS" ? "Quan hệ sếp / đồng nghiệp" : "Đối tác / Affiliate"}</strong> · quản lý sẽ dùng thông tin này để chăm sóc và bố trí phòng/giường phù hợp.</span></div>
             </div>
             {submitError ? <p className="mx-4 mb-2 rounded-xl bg-red-50 px-3 py-2 text-xs font-medium text-red-700">{submitError}</p> : null}
-            <div className="grid shrink-0 grid-cols-[0.72fr_1.28fr] gap-2 border-t border-[#e7d6ca] bg-white p-4"><button type="button" onClick={() => setOpen(false)} className="rounded-full bg-[#f4eeea] py-2.5 text-sm font-semibold text-[#68574f]">Hủy</button><button type="submit" disabled={saving} className="rounded-full bg-gradient-to-r from-[#8b2b28] to-[#b92a2f] py-2.5 text-sm font-semibold text-white shadow-sm disabled:opacity-60">{saving ? "Đang lưu..." : "Tạo hồ sơ khách"}</button></div>
+            <div className="grid shrink-0 grid-cols-[0.72fr_1.28fr] gap-2 border-t border-[#e7d6ca] bg-white p-4"><button type="button" onClick={() => setOpen(false)} className="rounded-full bg-[#f4eeea] py-2.5 text-sm font-semibold text-[#68574f]">Hủy</button><button type="submit" disabled={saving} className="rounded-full bg-gradient-to-r from-[#8b2b28] to-[#b92a2f] py-2.5 text-sm font-semibold text-white shadow-sm disabled:opacity-60">{saving ? "Đang lưu..." : createAccount ? "Tạo tài khoản thành viên" : "Tạo hồ sơ vãng lai"}</button></div>
           </form>
         </div>
       ), document.body) : null}

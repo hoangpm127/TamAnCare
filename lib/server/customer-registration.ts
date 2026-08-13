@@ -16,7 +16,11 @@ type RegistrationInput = {
   subjectHash: string;
   ipHash: string;
   userAgentHash?: string;
-  firstSource: "CUSTOMER_SIGNUP" | "CUSTOMER_SOCIAL_SIGNUP" | "VENUE_DIRECT";
+  firstSource:
+    | "CUSTOMER_SIGNUP"
+    | "CUSTOMER_SOCIAL_SIGNUP"
+    | "VENUE_DIRECT"
+    | `CRM_${"WALK_IN" | "FRIEND" | "BOSS" | "PARTNER"}:${string}`;
 };
 
 function affiliateCode(fullName: string, phone: string) {

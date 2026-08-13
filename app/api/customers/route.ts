@@ -6,6 +6,9 @@ import { db } from "@/lib/db";
 import { getAdminSession } from "@/lib/server/admin-session";
 import { notifyCustomer, notifyOperations } from "@/lib/server/notification-service";
 import { isSameOriginMutation, privateIdentifierDigest, requestIp } from "@/lib/server/request-security";
+import { customerPinError } from "@/lib/customer-pin";
+import { hashPassword } from "@/lib/password";
+import { createCustomerMembership } from "@/lib/server/customer-registration";
 
 const createSchema = z.object({
   fullName: z.string().trim().min(2).max(100),
@@ -13,6 +16,22 @@ const createSchema = z.object({
   branchId: z.string().min(1),
   relationship: z.enum(["WALK_IN", "FRIEND", "BOSS", "PARTNER"]),
   note: z.string().trim().max(1000).optional(),
+  createAccount: z.boolean().optional().default(false),
+  pin: z.string().optional(),
+  acceptTerms: z.boolean().optional().default(false),
+  acceptPrivacy: z.boolean().optional().default(false),
+  marketingOptIn: z.boolean().optional().default(false),
+}).superRefine((value, context) => {
+  if (!value.createAccount) return;
+  if (!value.pin || !/^\d{4}$/.test(value.pin)) {
+    context.addIssue({ code: "custom", path: ["pin"], message: "Mã PIN phải gồm đúng 4 số." });
+  }
+  if (!value.acceptTerms) {
+    context.addIssue({ code: "custom", path: ["acceptTerms"], message: "Khách cần đồng ý điều khoản sử dụng." });
+  }
+  if (!value.acceptPrivacy) {
+    context.addIssue({ code: "custom", path: ["acceptPrivacy"], message: "Khách cần đồng ý chính sách bảo vệ dữ liệu." });
+  }
 });
 
 const customerGroups = new Set(["ALL", "NEW", "RETURNING", "VIP", "LONG_TERM", "BUSINESS", "AFFILIATE"]);
@@ -192,52 +211,93 @@ export async function POST(request: Request) {
   const branch = await db.branch.findUnique({ where: { id: input.branchId } });
   if (!branch) return NextResponse.json({ error: "Không tìm thấy cơ sở tiếp nhận." }, { status: 404 });
 
-  const customer = await db.$transaction(async (tx) => {
-    const created = await tx.customer.upsert({
-      where: { phone: input.phone.replace(/\s+/g, "") },
-      create: {
+  const normalizedPhone = input.phone.replace(/\s+/g, "");
+  if (input.createAccount) {
+    const pinError = customerPinError(input.pin ?? "");
+    if (pinError) return NextResponse.json({ error: pinError }, { status: 400 });
+    const existingAccount = await db.customerAccount.findUnique({ where: { phone: normalizedPhone } });
+    if (existingAccount) {
+      return NextResponse.json({ error: "Số điện thoại này đã có tài khoản. Hãy mở hồ sơ khách để cấp lại Mã PIN khi cần." }, { status: 409 });
+    }
+  }
+
+  const consentAt = new Date();
+  const ipHash = privateIdentifierDigest(requestIp(request));
+  const userAgent = request.headers.get("user-agent")?.trim();
+  const userAgentHash = userAgent ? privateIdentifierDigest(userAgent) : undefined;
+  const firstSource = `CRM_${input.relationship}:${input.branchId}` as const;
+
+  const result = await db.$transaction(async (tx) => {
+    let created;
+    let createdAccountId: string | null = null;
+    if (input.createAccount) {
+      const membership = await createCustomerMembership(tx, {
         fullName: input.fullName,
-        phone: input.phone.replace(/\s+/g, ""),
-        firstSource: `CRM_${input.relationship}:${input.branchId}`,
-        internalNote: input.note,
-        commonIssues: [],
-      },
-      update: {
-        fullName: input.fullName,
-        firstSource: `CRM_${input.relationship}:${input.branchId}`,
-        internalNote: input.note || undefined,
-      },
-    });
-    await notifyCustomer(tx, created.id, {
-      branchId: input.branchId,
-      type: "SYSTEM",
-      title: `${branch.name.replace(/^Tâm An Center · /, "")} đã tiếp nhận hồ sơ của bạn`,
-      body: input.note ? "Ghi chú chăm sóc đã được chuyển tới đội ngũ vận hành." : "Đội ngũ đã sẵn sàng hỗ trợ bạn đặt lịch phù hợp.",
-      actionUrl: "/booking",
-    });
+        phone: normalizedPhone,
+        passwordHash: null,
+        pinHash: hashPassword(input.pin ?? ""),
+        phoneVerifiedAt: null,
+        marketingOptIn: input.marketingOptIn,
+        consentAt,
+        subjectHash: privateIdentifierDigest(normalizedPhone),
+        ipHash,
+        userAgentHash,
+        firstSource,
+      });
+      createdAccountId = membership.id;
+      created = await tx.customer.update({
+        where: { id: membership.customerId },
+        data: { internalNote: input.note || undefined },
+      });
+    } else {
+      created = await tx.customer.upsert({
+        where: { phone: normalizedPhone },
+        create: {
+          fullName: input.fullName,
+          phone: normalizedPhone,
+          firstSource,
+          internalNote: input.note,
+          commonIssues: [],
+        },
+        update: {
+          fullName: input.fullName,
+          firstSource,
+          internalNote: input.note || undefined,
+        },
+      });
+      await notifyCustomer(tx, created.id, {
+        branchId: input.branchId,
+        type: "SYSTEM",
+        title: `${branch.name.replace(/^Tâm An Center · /, "")} đã tiếp nhận hồ sơ của bạn`,
+        body: input.note ? "Ghi chú chăm sóc đã được chuyển tới đội ngũ vận hành." : "Đội ngũ đã sẵn sàng hỗ trợ bạn đặt lịch phù hợp.",
+        actionUrl: "/booking",
+      });
+    }
     await notifyOperations(tx, {
       branchId: input.branchId,
       type: input.relationship === "PARTNER" ? "INVITATION" : "SYSTEM",
-      title: `CRM mới · ${created.fullName}`,
-      body: `${created.phone} · ${input.relationship === "WALK_IN" ? "Khách đến trực tiếp" : input.relationship === "FRIEND" ? "Bạn giới thiệu" : input.relationship === "BOSS" ? "Mời sếp/đồng nghiệp" : "Đối tác/Affiliate"}.`,
+      title: `${input.createAccount ? "Thành viên tại quầy" : "CRM mới"} · ${created.fullName}`,
+      body: `${created.phone} · ${input.relationship === "WALK_IN" ? "Khách đến trực tiếp" : input.relationship === "FRIEND" ? "Bạn giới thiệu" : input.relationship === "BOSS" ? "Mời sếp/đồng nghiệp" : "Đối tác/Affiliate"}${input.createAccount ? " · Đã tạo Mã PIN cùng Lễ tân." : "."}`,
       actionUrl: "/admin/customers",
     });
     await tx.adminAuditLog.create({
       data: {
         actorUserId: session.id,
         branchId: input.branchId,
-        action: "CRM_CUSTOMER_UPSERT",
-        entityType: "Customer",
-        entityId: created.id,
+        action: input.createAccount ? "CRM_CUSTOMER_ACCOUNT_CREATED" : "CRM_CUSTOMER_UPSERT",
+        entityType: input.createAccount ? "CustomerAccount" : "Customer",
+        entityId: createdAccountId ?? created.id,
         after: {
           fullName: created.fullName,
           phoneMasked: `${created.phone.slice(0, 3)}***${created.phone.slice(-3)}`,
           relationship: input.relationship,
+          accountCreated: input.createAccount,
+          requiredConsentGranted: input.createAccount ? true : undefined,
         },
-        ipHash: privateIdentifierDigest(requestIp(request)),
+        ipHash,
       },
     });
-    return created;
+    return { customer: created, accountCreated: input.createAccount };
   });
-  return NextResponse.json({ persisted: true, customer }, { status: 201 });
+  return NextResponse.json({ persisted: true, ...result }, { status: 201 });
 }
