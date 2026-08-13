@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { addDays, format } from "date-fns";
@@ -33,6 +33,7 @@ function OffersContent() {
   const [catalog, setCatalog] = useState<PublicCatalog | null>(null);
   const [catalogError, setCatalogError] = useState("");
   const [firstVisitEligible, setFirstVisitEligible] = useState(true);
+  const detailCardRef = useRef<HTMLDivElement | null>(null);
   const [selectedPlanId, setSelectedPlanId] = useState(() => params.get("plan") ?? "");
   const [step, setStep] = useState<PurchaseStep>("select");
   const [paymentError, setPaymentError] = useState("");
@@ -79,6 +80,11 @@ function OffersContent() {
     setSelectedPlanId(next);
     setStep("select");
     setPendingPayment(null);
+    if (next) {
+      setTimeout(() => {
+        detailCardRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 50);
+    }
   }
 
   const activateConfirmedPackage = useCallback(() => {
@@ -228,7 +234,7 @@ function OffersContent() {
       </div>
 
       {selectedPlan ? (
-        <div className="mt-3 overflow-hidden rounded-xl border border-[#c59a3d] bg-[#fbf2e7]">
+        <div ref={detailCardRef} className="scroll-mt-16 mt-3 overflow-hidden rounded-xl border border-[#c59a3d] bg-[#fbf2e7]">
           {step === "select" ? (
             <div className="p-4">
               <p className="flex items-center gap-2 text-sm font-semibold text-[#5c3a1e]">
