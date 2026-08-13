@@ -125,6 +125,6 @@ async function loadPublicCatalog(): Promise<PublicCatalog> {
 // roundtrips from the main customer routes without making operational data stale.
 export const getPublicCatalog = unstable_cache(
   loadPublicCatalog,
-  ["public-catalog-v6"],
+  ["public-catalog-v7"],
   { revalidate: 30, tags: ["public-catalog"] },
 );

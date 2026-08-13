@@ -42,7 +42,20 @@ function OffersContent() {
   const vouchers = catalog?.vouchers ?? EMPTY_VOUCHERS;
   const selectedPlan = packagePlans.find((plan) => plan.id === selectedPlanId);
   const selectedPlanService = catalog?.services.find((service) => service.id === selectedPlan?.serviceId);
-  const recommendedPlans = useMemo(() => [...packagePlans].sort((a, b) => a.price - b.price), [packagePlans]);
+  const packageGroups = useMemo(() => {
+    const durationByService = new Map(catalog?.services.map((service) => [service.id, service.durationMin]) ?? []);
+    const grouped = new Map<number | null, typeof packagePlans>();
+    for (const plan of packagePlans) {
+      const duration = plan.serviceId ? durationByService.get(plan.serviceId) ?? null : null;
+      grouped.set(duration, [...(grouped.get(duration) ?? []), plan]);
+    }
+    return [...grouped.entries()]
+      .sort(([durationA], [durationB]) => (durationA ?? Number.MAX_SAFE_INTEGER) - (durationB ?? Number.MAX_SAFE_INTEGER))
+      .map(([duration, plans]) => ({
+        duration,
+        plans: [...plans].sort((a, b) => a.sessions - b.sessions || a.price - b.price),
+      }));
+  }, [catalog?.services, packagePlans]);
 
   useEffect(() => {
     let active = true;
@@ -162,48 +175,56 @@ function OffersContent() {
       <p className="mb-3 text-xs leading-5 text-[#826f66]">
         Thanh toán một lần qua VietQR; thẻ chỉ kích hoạt sau khi SePay xác nhận. Mỗi lượt áp dụng đúng dịch vụ ghi trên gói và không cộng thêm voucher.
       </p>
-      <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
-        {recommendedPlans.map((plan) => {
-          const totalSessions = plan.paidSessions + plan.bonusSessions;
-          const pricePerSession = Math.round(plan.price / totalSessions);
-          const planService = catalog?.services.find((service) => service.id === plan.serviceId);
-          const selected = selectedPlanId === plan.id;
-          return (
-            <button
-              key={plan.id}
-              type="button"
-              onClick={() => choosePlan(plan.id)}
-              className={cn(
-                "relative flex min-h-[196px] flex-col items-center justify-center overflow-hidden rounded-xl border p-2.5 text-center transition",
-                selected
-                  ? "border-[#c64b32] bg-[#f8ebe5]"
-                  : plan.highlight
-                    ? "border-[#c59a3d] bg-gradient-to-br from-[#fbf2e7] to-white"
-                    : "border-[#e7d6ca] bg-white"
-              )}
-            >
-              <span className="mx-auto mb-1 block max-w-full truncate rounded-full bg-[#5c3a1e] px-2 py-0.5 text-[8px] font-semibold leading-4 text-[#c59a3d]">
-                {plan.badge ?? "Gói linh hoạt"}
-              </span>
-              <p className="line-clamp-2 min-h-8 text-[13px] font-semibold leading-4">{plan.name}</p>
-              <p className="mt-1 line-clamp-2 min-h-7 text-[10px] leading-3.5 text-[#715943]">
-                {plan.description || `Áp dụng: ${planService?.name ?? "dịch vụ ghi trên thẻ"}`}
+      <div className="space-y-3">
+        {packageGroups.map((group) => (
+          <section key={group.duration ?? "other"} className="rounded-xl border border-[#eadbd1] bg-[#fffaf6] p-2.5">
+            <div className="mb-2 flex items-center justify-between px-0.5">
+              <p className="text-xs font-semibold text-[#5c3a1e]">
+                {group.duration ? `Massage Body ${group.duration} phút` : "Gói liệu trình khác"}
               </p>
-              <div className="mt-1 grid w-full grid-cols-2 gap-1 rounded-lg bg-white/80 px-1.5 py-1 text-[9px] text-[#715943] ring-1 ring-[#e7d6ca]/70">
-                <span>
-                  <strong className="block text-xs text-[#4a2d16]">{plan.bonusSessions > 0 ? `${plan.paidSessions}+${plan.bonusSessions}` : plan.sessions}</strong>
-                  {plan.bonusSessions > 0 ? "Mua + tặng" : "Lượt sử dụng"}
-                </span>
-                <span><strong className="block text-xs text-[#4a2d16]">{plan.validityDays}</strong> Ngày hiệu lực</span>
-              </div>
-              <div className="mt-1.5">
-                <p className="text-sm font-bold text-[#c64b32]">{formatMoney(plan.price)}</p>
-                <p className="text-[9px] text-[#826f66]">~{formatMoney(pricePerSession)}/buổi</p>
-                <p className="mt-0.5 text-[9px] font-medium text-[#7c2927]">{plan.shareable ? "Dùng được cho nhóm" : "Dành cho chủ thẻ"}</p>
-              </div>
-            </button>
-          );
-        })}
+              <span className="text-[10px] text-[#8a756b]">5 · 10 · 15 buổi</span>
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              {group.plans.map((plan) => {
+                const totalSessions = plan.paidSessions + plan.bonusSessions;
+                const pricePerSession = Math.round(plan.price / totalSessions);
+                const selected = selectedPlanId === plan.id;
+                return (
+                  <button
+                    key={plan.id}
+                    type="button"
+                    onClick={() => choosePlan(plan.id)}
+                    className={cn(
+                      "relative flex min-h-[178px] flex-col items-center justify-center overflow-hidden rounded-xl border px-1.5 py-2 text-center transition",
+                      selected
+                        ? "border-[#c64b32] bg-[#f8ebe5] shadow-sm"
+                        : plan.highlight
+                          ? "border-[#c59a3d] bg-gradient-to-br from-[#fbf2e7] to-white"
+                          : "border-[#e7d6ca] bg-white"
+                    )}
+                  >
+                    <span className="mx-auto mb-1 block max-w-full truncate rounded-full bg-[#5c3a1e] px-1.5 py-0.5 text-[8px] font-semibold leading-4 text-[#c59a3d]">
+                      {plan.badge ?? "Gói linh hoạt"}
+                    </span>
+                    <p className="line-clamp-2 min-h-8 text-[12px] font-semibold leading-4">{plan.name}</p>
+                    <div className="mt-1 grid w-full grid-cols-2 gap-0.5 rounded-lg bg-white/80 px-1 py-1 text-[8px] text-[#715943] ring-1 ring-[#e7d6ca]/70">
+                      <span>
+                        <strong className="block text-xs text-[#4a2d16]">{plan.bonusSessions > 0 ? `${plan.paidSessions}+${plan.bonusSessions}` : plan.sessions}</strong>
+                        Lượt dùng
+                      </span>
+                      <span><strong className="block text-xs text-[#4a2d16]">{plan.validityDays}</strong> Ngày</span>
+                    </div>
+                    <div className="mt-1.5">
+                      <p className="text-[13px] font-bold text-[#c64b32]">{formatMoney(plan.price)}</p>
+                      <p className="text-[8px] text-[#826f66]">~{formatMoney(pricePerSession)}/buổi</p>
+                      <p className="mt-0.5 text-[8px] font-medium text-[#7c2927]">{plan.shareable ? "Dùng cho nhóm" : "Dành cho chủ thẻ"}</p>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+        ))}
       </div>
 
       {selectedPlan ? (

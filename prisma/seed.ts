@@ -449,6 +449,7 @@ async function seedCatalog() {
       data: {
         id: plan.id,
         name: plan.name,
+        description: plan.description,
         serviceId: plan.serviceId,
         sessions: plan.sessions,
         paidSessions: plan.paidSessions,

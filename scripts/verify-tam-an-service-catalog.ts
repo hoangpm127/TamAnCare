@@ -21,11 +21,17 @@ const expectedServices = new Map<string, { price: number; tip: number }>([
 
 const retiredServiceIds = ["svc-back-60", "svc-hot-stone", "svc-mugwort-mud", "svc-hot-herbal", "svc-belly-45"];
 const expectedPackages = new Map([
-  ["pkg-3", { serviceId: "svc-body-60", sessions: 3, paidSessions: 3, bonusSessions: 0, price: 1200000 }],
-  ["pkg-5", { serviceId: "svc-body-60", sessions: 5, paidSessions: 5, bonusSessions: 0, price: 1900000 }],
-  ["pkg-9", { serviceId: "svc-body-60", sessions: 10, paidSessions: 10, bonusSessions: 0, price: 3500000 }],
+  ["pkg-5", { serviceId: "svc-body-60", sessions: 5, paidSessions: 5, bonusSessions: 0, validityDays: 60, price: 1950000 }],
+  ["pkg-9", { serviceId: "svc-body-60", sessions: 10, paidSessions: 10, bonusSessions: 0, validityDays: 90, price: 3500000 }],
+  ["pkg-body-60-15", { serviceId: "svc-body-60", sessions: 15, paidSessions: 15, bonusSessions: 0, validityDays: 90, price: 4800000 }],
+  ["pkg-body-90-5", { serviceId: "svc-body-90", sessions: 5, paidSessions: 5, bonusSessions: 0, validityDays: 60, price: 2750000 }],
+  ["pkg-body-90-10", { serviceId: "svc-body-90", sessions: 10, paidSessions: 10, bonusSessions: 0, validityDays: 90, price: 5000000 }],
+  ["pkg-body-90-15", { serviceId: "svc-body-90", sessions: 15, paidSessions: 15, bonusSessions: 0, validityDays: 90, price: 6750000 }],
+  ["pkg-body-120-5", { serviceId: "svc-body-120", sessions: 5, paidSessions: 5, bonusSessions: 0, validityDays: 90, price: 3450000 }],
+  ["pkg-body-120-10", { serviceId: "svc-body-120", sessions: 10, paidSessions: 10, bonusSessions: 0, validityDays: 90, price: 6500000 }],
+  ["pkg-body-120-15", { serviceId: "svc-body-120", sessions: 15, paidSessions: 15, bonusSessions: 0, validityDays: 90, price: 9000000 }],
 ]);
-const retiredPackageIds = ["pkg-19", "pkg-29", "pkg-49", "pkg-foot-5", "pkg-body-9", "pkg-body-15"];
+const retiredPackageIds = ["pkg-3", "pkg-19", "pkg-29", "pkg-49", "pkg-foot-5", "pkg-body-9", "pkg-body-15"];
 
 async function main() {
   // PGlite, used for isolated migration tests, shares one database socket.
@@ -40,7 +46,7 @@ async function main() {
   });
   const activePackages = await db.packagePlan.findMany({
     where: { isActive: true },
-    select: { id: true, serviceId: true, sessions: true, paidSessions: true, bonusSessions: true, price: true },
+    select: { id: true, serviceId: true, sessions: true, paidSessions: true, bonusSessions: true, validityDays: true, price: true },
   });
   const retiredPackages = await db.packagePlan.findMany({
     where: { id: { in: retiredPackageIds } },
@@ -61,7 +67,7 @@ async function main() {
     activePackages.every((plan) => !plan.serviceId || expectedServices.has(plan.serviceId)),
     "Gói liệu trình đang trỏ tới dịch vụ đã ngừng bán.",
   );
-  assert.equal(activePackages.length, expectedPackages.size, "Danh mục phải có đúng 3 gói dài hạn đang bán.");
+  assert.equal(activePackages.length, expectedPackages.size, "Danh mục phải có đúng 9 gói dài hạn đang bán.");
   for (const plan of activePackages) {
     assert.deepEqual(
       {
@@ -69,6 +75,7 @@ async function main() {
         sessions: plan.sessions,
         paidSessions: plan.paidSessions,
         bonusSessions: plan.bonusSessions,
+        validityDays: plan.validityDays,
         price: plan.price,
       },
       expectedPackages.get(plan.id),
@@ -78,7 +85,7 @@ async function main() {
   assert.equal(retiredPackages.length, retiredPackageIds.length, "Thiếu gói cũ cần lưu lịch sử.");
   assert.ok(retiredPackages.every((plan) => !plan.isActive), "Gói giá cao cũ vẫn còn được bán.");
 
-  console.log("✓ Danh mục Tâm An Center có đúng 15 dịch vụ và 3 gói dài hạn; Tip nằm ngoài Bill và dữ liệu cũ chỉ còn lưu lịch sử.");
+  console.log("✓ Danh mục Tâm An Center có đúng 15 dịch vụ và 9 gói dài hạn; Tip nằm ngoài Bill và dữ liệu cũ chỉ còn lưu lịch sử.");
 }
 
 main()
