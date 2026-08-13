@@ -16,7 +16,7 @@ type RegistrationInput = {
   subjectHash: string;
   ipHash: string;
   userAgentHash?: string;
-  firstSource: "CUSTOMER_SIGNUP" | "CUSTOMER_SOCIAL_SIGNUP";
+  firstSource: "CUSTOMER_SIGNUP" | "CUSTOMER_SOCIAL_SIGNUP" | "VENUE_DIRECT";
 };
 
 function affiliateCode(fullName: string, phone: string) {

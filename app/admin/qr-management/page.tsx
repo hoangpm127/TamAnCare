@@ -24,10 +24,23 @@ export default async function AdminQrManagementPage() {
   const protocol = requestHeaders.get("x-forwarded-proto") ?? (host?.includes("localhost") || host?.startsWith("127.0.0.1") ? "http" : "https");
   const origin = host ? `${protocol}://${host}` : undefined;
 
+  const directLink = new URL("/tai-co-so", origin ?? "https://tamancare-production.up.railway.app").toString();
+  const directItem = {
+    id: "venue-direct",
+    targetType: "DIRECT" as const,
+    title: "Khách trực tiếp tại cơ sở",
+    subtitle: "Một mã dùng chung · Không qua Affiliate",
+    branchLabel: "Toàn bộ TÂM AN CENTER",
+    version: null,
+    link: directLink,
+    dataUrl: await QRCode.toDataURL(directLink, qrOptions("#8b2424")),
+    status: "Nguồn: khách trực tiếp",
+  };
+
   const businessItems = await Promise.all(businessEvents.map(async (event) => {
     const link = event.leadTherapist ? businessScanUrl(createBusinessQrToken({ eventCode: event.eventCode, leadTherapistId: event.leadTherapist.id, version: event.qrVersion }), origin) : null;
     return { id: event.id, targetType: "BUSINESS" as const, title: event.companyName, subtitle: `${event.eventCode} · ${event.location}`, branchLabel: event.branch.name.replace(/^Tâm An Center · /, ""), version: event.qrVersion, link, dataUrl: link ? await QRCode.toDataURL(link, qrOptions("#2452b8")) : null, status: event.leadTherapist ? `KTV trưởng: ${event.leadTherapist.fullName}` : "Chờ phân công KTV trưởng" };
   }));
 
-  return <AdminQrManagement items={businessItems} role={session.role as "OWNER" | "BRANCH_MANAGER"} />;
+  return <AdminQrManagement items={[directItem, ...businessItems]} role={session.role as "OWNER" | "BRANCH_MANAGER"} />;
 }

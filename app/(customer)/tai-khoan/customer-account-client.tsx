@@ -20,9 +20,11 @@ function welcomeExpiryLabel(value: string) {
 export function CustomerAccountClient({
   initialMode = "register",
   returnTo = "/tai-khoan",
+  signupSource,
 }: {
   initialMode?: "register" | "login";
   returnTo?: string;
+  signupSource?: "VENUE_DIRECT";
 }) {
   const [mode, setMode] = useState<"register" | "login">(initialMode);
   const [account, setAccount] = useState<CustomerAccountView | null>(null);
@@ -96,7 +98,7 @@ export function CustomerAccountClient({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(mode === "register"
-          ? { fullName, phone, pin, acceptTerms: acceptRequired, acceptPrivacy: acceptRequired, marketingOptIn }
+          ? { fullName, phone, pin, acceptTerms: acceptRequired, acceptPrivacy: acceptRequired, marketingOptIn, source: signupSource }
           : { phone, pin }),
       });
       const data = await response.json();

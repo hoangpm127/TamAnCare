@@ -9,6 +9,7 @@ import { getGuestSession } from "@/lib/server/guest-session";
 import { isVietnamMobilePhone, normalizeVietnamPhone } from "@/lib/server/phone-otp";
 import { bindCapturedReferralToCustomer } from "@/lib/server/referral-installation";
 import { consumeRateLimit, isSameOriginMutation, privateIdentifierDigest, requestIp } from "@/lib/server/request-security";
+import { VENUE_DIRECT_SOURCE } from "@/lib/customer-source";
 
 const schema = z.object({
   fullName: z.string().trim().min(2).max(100),
@@ -17,6 +18,7 @@ const schema = z.object({
   acceptTerms: z.literal(true),
   acceptPrivacy: z.literal(true),
   marketingOptIn: z.boolean().optional().default(false),
+  source: z.literal(VENUE_DIRECT_SOURCE).optional(),
 });
 
 export async function POST(request: Request) {
@@ -58,7 +60,7 @@ export async function POST(request: Request) {
         subjectHash,
         ipHash,
         userAgentHash,
-        firstSource: "CUSTOMER_SIGNUP",
+        firstSource: parsed.data.source ?? "CUSTOMER_SIGNUP",
       });
     });
   await createCustomerSession(account.customerId);

@@ -1,4 +1,5 @@
 import { CustomerAccountClient } from "./customer-account-client";
+import { isVenueDirectSource } from "@/lib/customer-source";
 import { safeCustomerReturnPath } from "@/lib/safe-return-path";
 
 function first(value: string | string[] | undefined) {
@@ -15,6 +16,7 @@ export default async function CustomerAccountPage({
     <CustomerAccountClient
       initialMode={first(query.mode) === "login" ? "login" : "register"}
       returnTo={safeCustomerReturnPath(first(query.returnTo))}
+      signupSource={isVenueDirectSource(first(query.source)) ? "VENUE_DIRECT" : undefined}
     />
   );
 }

@@ -8,11 +8,11 @@ import { cn } from "@/lib/utils";
 
 type QrItem = {
   id: string;
-  targetType: "BUSINESS";
+  targetType: "DIRECT" | "BUSINESS";
   title: string;
   subtitle: string;
   branchLabel: string;
-  version: number;
+  version: number | null;
   dataUrl: string | null;
   link: string | null;
   status: string;
@@ -48,7 +48,7 @@ export function AdminQrManagement({ items, role }: { items: QrItem[]; role: "OWN
   }
 
   async function reissue() {
-    if (!confirmItem) return;
+    if (!confirmItem || confirmItem.targetType !== "BUSINESS") return;
     setBusyId(confirmItem.id);
     setMessage("");
     try {
@@ -68,21 +68,21 @@ export function AdminQrManagement({ items, role }: { items: QrItem[]; role: "OWN
   return <main className="mx-auto max-w-7xl px-3 py-3 sm:px-6 sm:py-5 lg:px-10">
     <header className="overflow-hidden rounded-2xl bg-gradient-to-r from-[#4c191b] via-[#76551d] to-[#a85f29] p-4 text-center text-white shadow-xl">
       <span className="mx-auto flex h-10 w-10 items-center justify-center rounded-2xl bg-white/10 text-[#f1e5dd] ring-1 ring-white/15"><QrCode size={21} /></span>
-      <h1 className="mt-2 text-xl font-semibold">QR triển khai Tâm An Business</h1>
-      <p className="mx-auto mt-1 max-w-2xl text-[10px] leading-4 text-white/70">QR này chỉ dùng cho các chương trình Business tại doanh nghiệp. Khách đến cơ sở Tâm An Center không cần quét QR.</p>
+      <h1 className="mt-2 text-xl font-semibold">QR khách trực tiếp & Tâm An Business</h1>
+      <p className="mx-auto mt-1 max-w-2xl text-[10px] leading-4 text-white/70">Mã khách trực tiếp dùng chung tại cơ sở để mở nền tảng, không phải QR check-in và không tạo Affiliate. QR Business vẫn dành riêng cho từng chương trình tại doanh nghiệp.</p>
       <div className="mx-auto mt-3 flex max-w-md items-center justify-center gap-2 text-[9px] font-semibold"><span className="rounded-full bg-white/10 px-2.5 py-1"><ShieldCheck size={11} className="mr-1 inline" />{role === "OWNER" ? "Toàn hệ thống" : "Cơ sở phụ trách"}</span><span className="rounded-full bg-white/10 px-2.5 py-1">{items.length} mã đang quản lý</span></div>
     </header>
 
     <section className="mt-3 rounded-2xl border border-[#d2ad5d]/55 bg-white p-2.5 shadow-sm">
-      <label className="flex items-center gap-2 rounded-xl border border-[#e7d6ca] px-3 py-2"><Search size={14} className="text-[#826f66]" /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Tìm chương trình hoặc doanh nghiệp..." className="min-w-0 flex-1 bg-transparent text-xs outline-none" /></label>
+      <label className="flex items-center gap-2 rounded-xl border border-[#e7d6ca] px-3 py-2"><Search size={14} className="text-[#826f66]" /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Tìm QR khách trực tiếp hoặc chương trình..." className="min-w-0 flex-1 bg-transparent text-xs outline-none" /></label>
     </section>
 
     {message ? <p className={cn("mt-3 rounded-xl p-3 text-center text-xs", message.startsWith("Đã") ? "bg-[#fbf2e7] text-[#76551d]" : "bg-red-50 text-red-700")}>{message}</p> : null}
     <div className="mt-3 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">{filtered.map((item) => <article key={`${item.targetType}-${item.id}`} className="overflow-hidden rounded-2xl border border-[#d2ad5d]/45 bg-white shadow-sm">
-      <div className="flex items-start justify-between gap-3 border-b border-[#f0e6df] bg-[#fdf8f3] p-3"><div className="min-w-0"><p className="truncate text-sm font-semibold">{item.title}</p><p className="mt-0.5 truncate text-[9px] text-[#826f66]">{item.subtitle}</p></div><span className="shrink-0 rounded-full bg-[#fbf2e7] px-2 py-1 text-[8px] font-bold text-[#76551d]">Phiên {item.version}</span></div>
+      <div className="flex items-start justify-between gap-3 border-b border-[#f0e6df] bg-[#fdf8f3] p-3"><div className="min-w-0"><p className="truncate text-sm font-semibold">{item.title}</p><p className="mt-0.5 truncate text-[9px] text-[#826f66]">{item.subtitle}</p></div><span className="shrink-0 rounded-full bg-[#fbf2e7] px-2 py-1 text-[8px] font-bold text-[#76551d]">{item.targetType === "DIRECT" ? "Dùng chung" : `Phiên ${item.version}`}</span></div>
       <div className="p-3 text-center">{item.dataUrl ? <><div className="mx-auto w-fit rounded-2xl border border-[#f1e5dd] bg-white p-2 shadow-sm"><Image unoptimized width={160} height={160} src={item.dataUrl} alt={`QR ${item.title}`} className="h-40 w-40" /></div><p className="mt-2 text-[9px] font-semibold text-[#76551d]">{item.status} · {item.branchLabel}</p></> : <div className="rounded-2xl border border-dashed border-[#d9c8bc] p-8 text-xs text-[#826f66]">Chưa có QR vì chưa phân công KTV Business trưởng.</div>}
-        {item.dataUrl && item.link ? <div className="mt-3 grid grid-cols-3 gap-1.5"><a href={item.dataUrl} download={`taman-qr-${item.targetType.toLocaleLowerCase()}-${item.id}.png`} className="flex items-center justify-center gap-1 rounded-xl bg-[#fbf2e7] px-2 py-2.5 text-[9px] font-semibold text-[#76551d]"><Download size={12} /> Tải</a><button type="button" onClick={() => void copy(item)} className="flex items-center justify-center gap-1 rounded-xl bg-[#fbf2e7] px-2 py-2.5 text-[9px] font-semibold text-[#76551d]"><Copy size={12} /> Link</button><button type="button" onClick={() => void share(item)} className="flex items-center justify-center gap-1 rounded-xl bg-[#eef5ff] px-2 py-2.5 text-[9px] font-semibold text-[#2452b8]"><Send size={12} /> Gửi</button></div> : null}
-        {item.dataUrl ? <button type="button" onClick={() => setConfirmItem(item)} className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-xl border border-[#e7d6ca] py-2.5 text-[9px] font-semibold text-[#c64b32]"><RefreshCw size={12} /> Cấp lại QR & vô hiệu mã cũ</button> : null}
+        {item.dataUrl && item.link ? <div className="mt-3 grid grid-cols-3 gap-1.5"><a href={item.dataUrl} download={item.targetType === "DIRECT" ? "tam-an-center-qr-khach-truc-tiep.png" : `taman-qr-business-${item.id}.png`} className="flex items-center justify-center gap-1 rounded-xl bg-[#fbf2e7] px-2 py-2.5 text-[9px] font-semibold text-[#76551d]"><Download size={12} /> Tải</a><button type="button" onClick={() => void copy(item)} className="flex items-center justify-center gap-1 rounded-xl bg-[#fbf2e7] px-2 py-2.5 text-[9px] font-semibold text-[#76551d]"><Copy size={12} /> Link</button><button type="button" onClick={() => void share(item)} className="flex items-center justify-center gap-1 rounded-xl bg-[#eef5ff] px-2 py-2.5 text-[9px] font-semibold text-[#2452b8]"><Send size={12} /> Gửi</button></div> : null}
+        {item.dataUrl && item.targetType === "BUSINESS" ? <button type="button" onClick={() => setConfirmItem(item)} className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-xl border border-[#e7d6ca] py-2.5 text-[9px] font-semibold text-[#c64b32]"><RefreshCw size={12} /> Cấp lại QR & vô hiệu mã cũ</button> : null}
       </div>
     </article>)}{filtered.length === 0 ? <p className="col-span-full rounded-2xl border border-dashed border-[#d9c8bc] bg-white p-8 text-center text-xs text-[#826f66]">Không có QR phù hợp bộ lọc.</p> : null}</div>
 
