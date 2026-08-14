@@ -71,7 +71,7 @@ function rangeBounds(range: RangeKey, profileStart: Date, url: URL) {
   return { start, end, now, today };
 }
 
-function sum(entries: FinancialEntry[], category: "SERVICE_REVENUE" | "OPERATING_EXPENSE" | "REFUND") {
+function sum(entries: FinancialEntry[], category: "SERVICE_REVENUE" | "PACKAGE_REVENUE" | "OPERATING_EXPENSE" | "REFUND") {
   return entries.filter((item) => item.category === category).reduce((total, item) => total + item.amount, 0);
 }
 
@@ -113,7 +113,7 @@ function buildSeries(entries: FinancialEntry[], start: Date, end: Date, mode: "d
   for (const entry of entries) {
     const key = bucketKey(entry.occurredAt, mode);
     const row = buckets.get(key) ?? { grossRevenue: 0, refunds: 0, expenses: 0 };
-    if (entry.category === "SERVICE_REVENUE") row.grossRevenue += entry.amount;
+    if (entry.category === "SERVICE_REVENUE" || entry.category === "PACKAGE_REVENUE") row.grossRevenue += entry.amount;
     if (entry.category === "REFUND") row.refunds += entry.amount;
     if (entry.category === "OPERATING_EXPENSE") row.expenses += entry.amount;
     buckets.set(key, row);
@@ -138,7 +138,7 @@ function buildSeries(entries: FinancialEntry[], start: Date, end: Date, mode: "d
   });
 }
 
-function groupedDescriptions(entries: FinancialEntry[], category: "SERVICE_REVENUE" | "OPERATING_EXPENSE" | "REFUND") {
+function groupedDescriptions(entries: FinancialEntry[], category: "SERVICE_REVENUE" | "PACKAGE_REVENUE" | "OPERATING_EXPENSE" | "REFUND") {
   const grouped = new Map<string, number>();
   for (const entry of entries.filter((item) => item.category === category)) {
     grouped.set(entry.description, (grouped.get(entry.description) ?? 0) + entry.amount);
@@ -179,7 +179,7 @@ export async function GET(request: Request) {
       where: {
         ...ledgerReportWhere(),
         branchId: { in: selectedBranchIds },
-        category: { in: ["SERVICE_REVENUE", "OPERATING_EXPENSE", "REFUND"] },
+        category: { in: ["SERVICE_REVENUE", "PACKAGE_REVENUE", "OPERATING_EXPENSE", "REFUND"] },
         occurredAt: { gte: periodStart, lte: periodEnd },
       },
       orderBy: { occurredAt: "asc" },
@@ -188,7 +188,7 @@ export async function GET(request: Request) {
       where: {
         ...ledgerReportWhere(),
         branchId: { in: allBranchIds },
-        category: { in: ["SERVICE_REVENUE", "OPERATING_EXPENSE", "REFUND"] },
+        category: { in: ["SERVICE_REVENUE", "PACKAGE_REVENUE", "OPERATING_EXPENSE", "REFUND"] },
         occurredAt: { gte: profile.startDate, lte: now },
       },
       orderBy: { occurredAt: "asc" },
@@ -204,7 +204,7 @@ export async function GET(request: Request) {
     }),
   ]);
 
-  const grossRevenue = sum(periodEntries, "SERVICE_REVENUE");
+  const grossRevenue = sum(periodEntries, "SERVICE_REVENUE") + sum(periodEntries, "PACKAGE_REVENUE");
   const dataQuality = summarizeLedgerOrigins(periodEntries);
   const refunds = sum(periodEntries, "REFUND");
   const revenue = grossRevenue - refunds;
@@ -219,7 +219,7 @@ export async function GET(request: Request) {
   for (const entry of allEntries) {
     const key = bucketKey(entry.occurredAt, "month");
     const row = historicalMap.get(key) ?? { grossRevenue: 0, refunds: 0, expenses: 0 };
-    if (entry.category === "SERVICE_REVENUE") row.grossRevenue += entry.amount;
+    if (entry.category === "SERVICE_REVENUE" || entry.category === "PACKAGE_REVENUE") row.grossRevenue += entry.amount;
     if (entry.category === "REFUND") row.refunds += entry.amount;
     if (entry.category === "OPERATING_EXPENSE") row.expenses += entry.amount;
     historicalMap.set(key, row);
@@ -259,7 +259,7 @@ export async function GET(request: Request) {
 
   const branches = selectedAllocations.map((allocation) => {
     const scopedEntries = periodEntries.filter((item) => item.branchId === allocation.branchId);
-    const branchGrossRevenue = sum(scopedEntries, "SERVICE_REVENUE");
+    const branchGrossRevenue = sum(scopedEntries, "SERVICE_REVENUE") + sum(scopedEntries, "PACKAGE_REVENUE");
     const branchRefunds = sum(scopedEntries, "REFUND");
     const branchRevenue = branchGrossRevenue - branchRefunds;
     const branchExpenses = sum(scopedEntries, "OPERATING_EXPENSE");
@@ -279,7 +279,7 @@ export async function GET(request: Request) {
       revenueContributionPercent: revenue > 0 ? branchRevenue / revenue * 100 : 0,
       expenseRatioPercent: branchRevenue > 0 ? branchExpenses / branchRevenue * 100 : 0,
       series: buildSeries(scopedEntries, periodStart, periodEnd, mode, profile.profitSharePercent),
-      revenueSources: groupedDescriptions(scopedEntries, "SERVICE_REVENUE"),
+      revenueSources: [...groupedDescriptions(scopedEntries, "SERVICE_REVENUE"), ...groupedDescriptions(scopedEntries, "PACKAGE_REVENUE")].sort((left, right) => right.amount - left.amount).slice(0, 6),
       refundSources: groupedDescriptions(scopedEntries, "REFUND"),
       expenseSources: groupedDescriptions(scopedEntries, "OPERATING_EXPENSE"),
     };

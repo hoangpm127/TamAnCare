@@ -17,6 +17,9 @@ export type AdminBookingRequest = {
   depositAmount: number;
   paidAmount: number;
   paymentStatus: string;
+  usedPackage?: boolean;
+  customerPackageId?: string | null;
+  packageName?: string | null;
   relationship?: "SELF" | "FRIEND" | "BOSS";
   careNote?: string;
   status: "NEW" | "CONFIRMED" | "REJECTED";
@@ -70,6 +73,9 @@ type ServerBooking = {
   depositAmount: number;
   paidAmount: number;
   paymentStatus: string;
+  usedPackage?: boolean;
+  customerPackageId?: string | null;
+  packageName?: string | null;
   relationship?: string;
   careNote?: string;
   status: string;
@@ -94,6 +100,9 @@ function serverRequest(item: ServerBooking): AdminBookingRequest | null {
     depositAmount: item.depositAmount,
     paidAmount: item.paidAmount,
     paymentStatus: item.paymentStatus,
+    usedPackage: item.usedPackage,
+    customerPackageId: item.customerPackageId,
+    packageName: item.packageName,
     relationship: item.relationship === "FRIEND" || item.relationship === "BOSS" ? item.relationship : "SELF",
     careNote: item.careNote,
     status,

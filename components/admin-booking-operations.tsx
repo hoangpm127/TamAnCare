@@ -379,10 +379,13 @@ export function AdminBookingOperations() {
       <div className="mt-3 space-y-3">
         {selectedRegular.map((request) => {
           const status = statusMeta(request.status, request.rawStatus);
-          const isDeposited = ["DEPOSITED", "PAID"].includes(request.paymentStatus);
+          const isPackage = Boolean(request.usedPackage && request.customerPackageId);
+          const isDeposited = isPackage || ["DEPOSITED", "PAID"].includes(request.paymentStatus);
           const remaining = Math.max(0, request.totalAmount - request.paidAmount);
           const depositTone = request.status === "REJECTED" ? "bg-[#fff7df] text-[#76551d]" : isDeposited ? "bg-[#fbf2e7] text-[#76551d]" : "bg-[#fff7df] text-[#76551d]";
-          const depositText = request.status === "REJECTED"
+          const depositText = isPackage
+            ? `Dùng ${request.packageName ?? "Gói dài hạn"} · Không thu thêm tiền`
+            : request.status === "REJECTED"
             ? isDeposited ? "Đã nhận cọc · Chờ chuyển lịch hoặc hoàn cọc" : "Chưa nhận cọc · Không giữ chỗ"
             : isDeposited ? "Khoản cọc đã được đối soát" : `Chờ đối soát cọc ${formatMoney(request.depositAmount)}`;
           return (

@@ -207,6 +207,7 @@ enum TransactionStatus {
 enum LedgerCategory {
   CUSTOMER_DEPOSIT
   SERVICE_REVENUE
+  PACKAGE_REVENUE
   PLATFORM_FEE
   TIP_PAYABLE
   TIP_PAID

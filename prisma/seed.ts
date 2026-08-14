@@ -366,6 +366,14 @@ async function seedCatalog() {
           services: {
             connect: services.map((service) => ({ id: service.id })),
           },
+          weeklySchedules: {
+            create: Array.from({ length: 7 }, (_, weekday) => ({
+              weekday,
+              startMinute: 9 * 60,
+              endMinute: 24 * 60,
+              isActive: true,
+            })),
+          },
         },
       });
     }

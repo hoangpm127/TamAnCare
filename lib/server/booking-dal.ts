@@ -66,6 +66,7 @@ export type BookingGroupInput = {
   careNote?: string;
   source?: string;
   bankCode?: string;
+  customerPackageId?: string;
   guestSessionId?: string;
   authenticatedCustomerId?: string;
   installedReferralCampaignId?: string;
@@ -398,6 +399,36 @@ export async function createBookingGroup(input: BookingGroupInput) {
       }, 0);
 
       const now = new Date();
+      let activePackage: Prisma.CustomerPackageGetPayload<{ include: { packagePlan: true } }> | null = null;
+      if (input.customerPackageId) {
+        if (!input.authenticatedCustomerId) {
+          throw new BookingConflictError("Bạn cần đăng nhập để sử dụng Gói dài hạn.");
+        }
+        if (input.voucherCode?.trim()) {
+          throw new BookingConflictError("Gói dài hạn không dùng chung với voucher hoặc ưu đãi khác.");
+        }
+        activePackage = await tx.customerPackage.findFirst({
+          where: {
+            id: input.customerPackageId,
+            customerId: customer.id,
+            status: "ACTIVE",
+            sessionsRemaining: { gte: input.units.length },
+            expiresAt: { gte: now },
+          },
+          include: { packagePlan: true },
+        });
+        if (!activePackage) {
+          throw new BookingConflictError("Gói dài hạn không còn đủ lượt hoặc đã hết hiệu lực.");
+        }
+        const packageServiceId = activePackage.serviceIdSnapshot ?? activePackage.packagePlan.serviceId;
+        const packageShareable = activePackage.shareableSnapshot ?? activePackage.packagePlan.shareable;
+        if (packageServiceId && serviceIds.some((serviceId) => serviceId !== packageServiceId)) {
+          throw new BookingConflictError("Gói dài hạn không áp dụng cho dịch vụ đã chọn.");
+        }
+        if (input.units.length > 1 && !packageShareable) {
+          throw new BookingConflictError("Gói này chỉ dùng cho một khách trong mỗi lần đặt lịch.");
+        }
+      }
       const requestedVoucherCode = input.voucherCode?.trim().toUpperCase();
       const requestedVoucherParts = requestedVoucherCode?.split("+").map((code) => code.trim()).filter(Boolean) ?? [];
       // Backward compatibility for installed PWAs that cached v1.8.11: the
@@ -419,7 +450,7 @@ export async function createBookingGroup(input: BookingGroupInput) {
           })
         : null;
       const normalizedCampaignCode = normalizeAffiliateCode(input.campaignCode);
-      const campaign = normalizedCampaignCode && input.installedReferralCampaignId
+      const campaign = !activePackage && normalizedCampaignCode && input.installedReferralCampaignId
         ? await tx.campaign.findFirst({
             where: {
               id: input.installedReferralCampaignId,
@@ -428,7 +459,7 @@ export async function createBookingGroup(input: BookingGroupInput) {
             },
           })
         : null;
-      if (input.campaignCode && !campaign) {
+      if (!activePackage && input.campaignCode && !campaign) {
         throw new BookingConflictError("Hãy cài và mở Tâm An Center từ biểu tượng app trước khi dùng quyền lợi Affiliate.");
       }
       const affiliateOwnerCustomerId = affiliateCustomerId(campaign?.source);
@@ -504,27 +535,6 @@ export async function createBookingGroup(input: BookingGroupInput) {
       ) {
         throw new BookingConflictError("WELCOME150 đã hết hạn hoặc không còn khả dụng cho tài khoản này.");
       }
-
-      const packageCandidates = !voucher && input.authenticatedCustomerId
-        ? await tx.customerPackage.findMany({
-            where: {
-              customerId: customer.id,
-              status: "ACTIVE",
-              sessionsRemaining: { gte: input.units.length },
-              expiresAt: { gte: now },
-            },
-            include: { packagePlan: true },
-            orderBy: [{ expiresAt: "asc" }, { createdAt: "asc" }],
-            take: 20,
-          })
-        : [];
-      const activePackage = packageCandidates.find((item) => {
-        const packageServiceId = item.serviceIdSnapshot ?? item.packagePlan.serviceId;
-        const packageShareable = item.shareableSnapshot ?? item.packagePlan.shareable;
-        const serviceEligible = !packageServiceId || serviceIds.every((serviceId) => serviceId === packageServiceId);
-        const groupEligible = input.units.length === 1 || packageShareable;
-        return serviceEligible && groupEligible;
-      }) ?? null;
 
       const primaryVoucherDiscount = activePackage ? 0 : calculateVoucherDiscount(voucher, subtotalAmount);
       const affiliateBonusDiscount = activePackage

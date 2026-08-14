@@ -46,6 +46,7 @@ export const bookingGroupSchema = z.object({
   careNote: z.string().trim().max(1000).optional(),
   source: z.string().trim().max(100).optional(),
   bankCode: z.string().trim().max(30).optional(),
+  customerPackageId: z.string().trim().min(1).optional(),
   acceptTerms: z.literal(true),
   acceptPrivacy: z.literal(true),
   acceptBookingPolicy: z.literal(true),

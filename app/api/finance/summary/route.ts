@@ -77,8 +77,10 @@ export async function GET(request: Request) {
 
   const sumCategory = (category: string) => entries.filter((item) => item.category === category).reduce((sum, item) => sum + item.amount, 0);
   const serviceRevenue = sumCategory("SERVICE_REVENUE");
+  const packageRevenue = sumCategory("PACKAGE_REVENUE");
   const refunds = sumCategory("REFUND");
   const netServiceRevenue = serviceRevenue - refunds;
+  const totalRevenue = netServiceRevenue + packageRevenue;
   const operatingExpenses = sumCategory("OPERATING_EXPENSE");
   const platformFees = sumCategory("PLATFORM_FEE");
   const totalExpenses = operatingExpenses + platformFees;
@@ -89,14 +91,16 @@ export async function GET(request: Request) {
 
   const branchBreakdown = branchRecords.map((branch) => {
     const scoped = entries.filter((item) => item.branchId === branch.id);
-    const revenue = scoped.filter((item) => item.category === "SERVICE_REVENUE").reduce((sum, item) => sum + item.amount, 0);
+    const serviceRevenue = scoped.filter((item) => item.category === "SERVICE_REVENUE").reduce((sum, item) => sum + item.amount, 0);
+    const packageRevenue = scoped.filter((item) => item.category === "PACKAGE_REVENUE").reduce((sum, item) => sum + item.amount, 0);
     const branchRefunds = scoped.filter((item) => item.category === "REFUND").reduce((sum, item) => sum + item.amount, 0);
-    const netRevenue = revenue - branchRefunds;
+    const netServiceRevenue = serviceRevenue - branchRefunds;
+    const netRevenue = netServiceRevenue + packageRevenue;
     const branchOperatingExpenses = scoped.filter((item) => item.category === "OPERATING_EXPENSE").reduce((sum, item) => sum + item.amount, 0);
     const branchPlatformFees = scoped.filter((item) => item.category === "PLATFORM_FEE").reduce((sum, item) => sum + item.amount, 0);
     const branchExpenses = branchOperatingExpenses + branchPlatformFees;
     const branchTips = scoped.filter((item) => item.category === "TIP_PAYABLE").reduce((sum, item) => sum + item.amount, 0);
-    return { branchId: branch.id, label: branch.name.replace(/^Tâm An Center · /, ""), grossRevenue: revenue, refunds: branchRefunds, revenue: netRevenue, partnerRevenue: Math.max(0, netRevenue - branchPlatformFees), operatingExpenses: branchOperatingExpenses, platformFees: branchPlatformFees, expenses: branchExpenses, tips: branchTips, profit: netRevenue - branchExpenses };
+    return { branchId: branch.id, label: branch.name.replace(/^Tâm An Center · /, ""), grossRevenue: serviceRevenue + packageRevenue, serviceRevenue: netServiceRevenue, packageRevenue, refunds: branchRefunds, revenue: netRevenue, partnerRevenue: Math.max(0, netRevenue - branchPlatformFees), operatingExpenses: branchOperatingExpenses, platformFees: branchPlatformFees, expenses: branchExpenses, tips: branchTips, profit: netRevenue - branchExpenses };
   });
 
   const platformFeeItems = entries
@@ -116,6 +120,8 @@ export async function GET(request: Request) {
     period: { start: start.toISOString(), end: end.toISOString() },
     dataQuality,
     grossServiceRevenue: serviceRevenue,
+    packageRevenue,
+    totalRevenue,
     refunds,
     serviceRevenue: netServiceRevenue,
     cashIn,
@@ -127,7 +133,7 @@ export async function GET(request: Request) {
     platformFees,
     expenses: totalExpenses,
     tips: tipAmount,
-    profit: netServiceRevenue - totalExpenses,
+    profit: totalRevenue - totalExpenses,
     branchBreakdown,
     bills: [...groups.map(bookingGroupToDto), ...directBookings.map(bookingToDto)].sort((a, b) => new Date(b.timeIso).getTime() - new Date(a.timeIso).getTime()),
     expenseItems: [...expenses, ...platformFeeItems].sort((a, b) => new Date(b.occurredAt).getTime() - new Date(a.occurredAt).getTime()),

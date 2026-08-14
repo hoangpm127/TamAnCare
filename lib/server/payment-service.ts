@@ -322,7 +322,7 @@ export async function confirmIncomingPayment(
       });
     }
     const revenue = await tx.ledgerEntry.findFirst({
-      where: { paymentTransactionId: payment.id, category: "SERVICE_REVENUE" },
+      where: { paymentTransactionId: payment.id, category: "PACKAGE_REVENUE" },
       select: { id: true },
     });
     if (!revenue) {
@@ -331,7 +331,7 @@ export async function confirmIncomingPayment(
           branchId: payment.branchId,
           customerId,
           paymentTransactionId: payment.id,
-          category: "SERVICE_REVENUE",
+          category: "PACKAGE_REVENUE",
           direction: "IN",
           amount: payment.amount,
           description: `Gói thành viên · ${packageName}`,
@@ -447,7 +447,7 @@ export async function confirmIncomingPayment(
         where: { bookingId: booking.id, category: "SERVICE_REVENUE" },
         select: { id: true },
       });
-      if (!revenueExists && booking.totalAmount > 0) {
+      if (!revenueExists && !booking.customerPackageId && booking.totalAmount > 0) {
         await tx.ledgerEntry.create({
           data: {
             branchId: booking.branchId,

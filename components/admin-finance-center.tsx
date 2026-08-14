@@ -37,6 +37,8 @@ type ServerFinanceSummary = {
     origins: Record<"LIVE" | "IMPORTED" | "DEMO", { count: number; amount: number }>;
   };
   grossServiceRevenue: number;
+  packageRevenue: number;
+  totalRevenue: number;
   refunds: number;
   serviceRevenue: number;
   cashIn: number;
@@ -49,7 +51,7 @@ type ServerFinanceSummary = {
   expenses: number;
   tips: number;
   profit: number;
-  branchBreakdown: { branchId: string; label: string; grossRevenue: number; refunds: number; revenue: number; partnerRevenue: number; operatingExpenses: number; platformFees: number; expenses: number; tips: number; profit: number }[];
+  branchBreakdown: { branchId: string; label: string; grossRevenue: number; serviceRevenue: number; packageRevenue: number; refunds: number; revenue: number; partnerRevenue: number; operatingExpenses: number; platformFees: number; expenses: number; tips: number; profit: number }[];
   bills: Array<{
     referenceCode: string;
     customerName: string;
@@ -193,7 +195,8 @@ export function AdminFinanceCenter() {
   const detailedServiceRevenue = filteredBills.reduce((sum, bill) => sum + Math.min(bill.total, bill.collected), 0);
   const detailedTips = filteredBills.reduce((sum, bill) => sum + bill.tip, 0);
   const detailedExpenses = filteredExpenses.reduce((sum, entry) => sum + entry.amount, 0);
-  const collected = customerQuery ? detailedServiceRevenue : serverFinance?.serviceRevenue ?? 0;
+  const collected = customerQuery ? detailedServiceRevenue : serverFinance?.totalRevenue ?? 0;
+  const packageRevenue = customerQuery ? 0 : serverFinance?.packageRevenue ?? 0;
   const refunds = customerQuery ? 0 : serverFinance?.refunds ?? 0;
   const tips = customerQuery ? detailedTips : serverFinance?.tips ?? 0;
   const expenses = customerQuery ? detailedExpenses : serverFinance?.expenses ?? 0;
@@ -260,9 +263,10 @@ export function AdminFinanceCenter() {
 
       {serverFinance?.dataQuality.includesDemoData ? <section className="mt-2 rounded-xl border border-amber-300/60 bg-amber-50 px-3 py-2 text-center text-[10px] font-medium leading-4 text-amber-900">UAT đang gồm {serverFinance.dataQuality.origins.DEMO.count} bút toán mẫu. Dữ liệu mới vẫn được ghi riêng là LIVE; khi chuyển production, toàn bộ số DEMO tự động bị loại khỏi Thu–Chi và báo cáo Nhà đầu tư.</section> : null}
 
-      <section className="mt-3 grid min-w-0 grid-cols-2 gap-2 sm:gap-2.5 lg:grid-cols-4">
+      <section className="mt-3 grid min-w-0 grid-cols-2 gap-2 sm:gap-2.5 lg:grid-cols-5">
         {[
-          { label: refunds > 0 ? "Doanh thu thuần" : "Doanh thu dịch vụ", value: collected, icon: WalletCards, tone: "text-[#76551d] bg-[#fbf2e7]", mode: "income" as DrilldownMode },
+          { label: refunds > 0 ? "Tổng doanh thu thuần" : "Tổng doanh thu", value: collected, icon: WalletCards, tone: "text-[#76551d] bg-[#fbf2e7]", mode: "income" as DrilldownMode },
+          { label: "Doanh thu gói dài hạn", value: packageRevenue, icon: Landmark, tone: "text-[#76551d] bg-[#fff7df]", mode: "income" as DrilldownMode },
           { label: "Tip KTV ngoài bill", value: tips, icon: CircleDollarSign, tone: "text-[#76551d] bg-[#fff7df]", mode: "tip" as DrilldownMode },
           { label: "Tổng chi", value: expenses, icon: TrendingDown, tone: "text-[#c64b32] bg-[#f8ebe5]", mode: "expense" as DrilldownMode },
           { label: "Lãi tạm tính", value: profit, icon: TrendingUp, tone: profit >= 0 ? "text-[#76551d] bg-[#fbf2e7]" : "text-[#c64b32] bg-[#f8ebe5]", mode: "summary" as DrilldownMode },
@@ -271,14 +275,14 @@ export function AdminFinanceCenter() {
 
       {session.role === "OWNER" ? <section className="mt-3 overflow-hidden rounded-2xl border border-[#d2ad5d]/60 bg-gradient-to-br from-[#211514] to-[#4a2616] p-3.5 text-white shadow-lg">
         <div className="flex items-center justify-between gap-3"><div><p className="text-[9px] font-bold uppercase tracking-[0.15em] text-[#e7c878]">Đối soát Xgroup & đối tác</p><h2 className="mt-0.5 text-sm font-semibold">Phân bổ doanh thu nền tảng</h2></div><Landmark size={18} className="text-[#e7c878]" /></div>
-        <div className="mt-3 grid min-w-0 grid-cols-3 gap-1.5 text-center sm:gap-2"><span className="min-w-0 rounded-xl bg-white/[0.08] p-1.5 text-[9px] leading-3 text-white/60 sm:p-2">Doanh thu Bill<strong className="mt-1 block overflow-hidden text-ellipsis whitespace-nowrap text-[10px] text-white sm:text-xs">{formatMoney(serverFinance?.serviceRevenue ?? 0)}</strong></span><span className="min-w-0 rounded-xl bg-[#e7c878]/10 p-1.5 text-[9px] leading-3 text-[#e7c878]/75 sm:p-2">Doanh thu nền tảng<strong className="mt-1 block overflow-hidden text-ellipsis whitespace-nowrap text-[10px] text-[#e7c878] sm:text-xs">{formatMoney(serverFinance?.platformRevenue ?? 0)}</strong></span><span className="min-w-0 rounded-xl bg-emerald-300/10 p-1.5 text-[9px] leading-3 text-emerald-100/70 sm:p-2">Doanh thu đối tác<strong className="mt-1 block overflow-hidden text-ellipsis whitespace-nowrap text-[10px] text-emerald-200 sm:text-xs">{formatMoney(serverFinance?.partnerRevenue ?? 0)}</strong></span></div>
+        <div className="mt-3 grid min-w-0 grid-cols-3 gap-1.5 text-center sm:gap-2"><span className="min-w-0 rounded-xl bg-white/[0.08] p-1.5 text-[9px] leading-3 text-white/60 sm:p-2">Tổng doanh thu<strong className="mt-1 block overflow-hidden text-ellipsis whitespace-nowrap text-[10px] text-white sm:text-xs">{formatMoney(serverFinance?.totalRevenue ?? 0)}</strong></span><span className="min-w-0 rounded-xl bg-[#e7c878]/10 p-1.5 text-[9px] leading-3 text-[#e7c878]/75 sm:p-2">Doanh thu nền tảng<strong className="mt-1 block overflow-hidden text-ellipsis whitespace-nowrap text-[10px] text-[#e7c878] sm:text-xs">{formatMoney(serverFinance?.platformRevenue ?? 0)}</strong></span><span className="min-w-0 rounded-xl bg-emerald-300/10 p-1.5 text-[9px] leading-3 text-emerald-100/70 sm:p-2">Doanh thu đối tác<strong className="mt-1 block overflow-hidden text-ellipsis whitespace-nowrap text-[10px] text-emerald-200 sm:text-xs">{formatMoney(serverFinance?.partnerRevenue ?? 0)}</strong></span></div>
         <p className="mt-2 text-center text-[9px] leading-4 text-white/55">Phí nền tảng được ghi nhận theo khoản cọc 10% giá sau ưu đãi; phần đối tác là doanh thu Bill sau phí nền tảng, trước các chi phí vận hành khác.</p>
       </section> : null}
 
       <section className="mt-3 grid min-w-0 gap-3 lg:grid-cols-[minmax(0,0.72fr)_minmax(0,1.28fr)]">
         <div className="min-w-0 space-y-3">
           <div className="rounded-xl border border-[#d2ad5d]/55 bg-white p-3 shadow-sm">
-            <div className="flex items-center justify-between"><div><h2 className="text-sm font-semibold">Lãi/lỗ theo cơ sở</h2><p className="mt-0.5 text-[10px] text-[#826f66]">Doanh thu dịch vụ trừ chi phí; Tip KTV theo dõi riêng.</p></div><BarChart3 size={18} className="text-[#c64b32]" /></div>
+            <div className="flex items-center justify-between"><div><h2 className="text-sm font-semibold">Lãi/lỗ theo cơ sở</h2><p className="mt-0.5 text-[10px] text-[#826f66]">Doanh thu dịch vụ và gói dài hạn trừ chi phí; Tip KTV theo dõi riêng.</p></div><BarChart3 size={18} className="text-[#c64b32]" /></div>
             <div className="mt-3 space-y-3">{branchReports.map((item) => (
               <div key={item.branch.id} className="rounded-xl border border-[#e7d6ca] bg-[#fdf8f3] p-3">
                 <button type="button" onClick={() => setDrilldown({ branchId: item.branch.id, mode: "summary" })} className="flex w-full min-w-0 items-center justify-between gap-2 text-left"><span className="min-w-0 flex-1"><strong className="block truncate text-xs">{item.branch.label}</strong><small className="mt-0.5 flex items-center gap-1 text-[9px] font-medium text-[#c64b32]"><Eye size={10} /> Xem chi tiết Thu–Chi</small></span><span className="min-w-0 shrink text-right"><small className="block text-[9px] text-[#826f66]">Lãi tạm tính</small><strong className={cn("block overflow-hidden text-ellipsis whitespace-nowrap text-xs", item.profit >= 0 ? "text-[#76551d]" : "text-[#c64b32]")}>{formatMoney(item.profit)}</strong></span></button>

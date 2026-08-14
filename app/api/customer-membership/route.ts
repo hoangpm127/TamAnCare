@@ -23,7 +23,7 @@ function timeLabel(value: Date) {
 export async function GET() {
   const account = await getCustomerSession();
   if (!account) return NextResponse.json({ membership: null, authenticated: false });
-  const customerPackage = await db.customerPackage.findFirst({
+  const customerPackages = await db.customerPackage.findMany({
     where: {
       customerId: account.customerId,
       status: "ACTIVE",
@@ -38,12 +38,10 @@ export async function GET() {
         take: 50,
       },
     },
-    orderBy: { createdAt: "desc" },
+    orderBy: [{ expiresAt: "asc" }, { createdAt: "asc" }],
+    take: 20,
   });
-  if (!customerPackage) return NextResponse.json({ membership: null, authenticated: true });
-  return NextResponse.json({
-    authenticated: true,
-    membership: {
+  const memberships = customerPackages.map((customerPackage) => ({
       id: customerPackage.id,
       planId: customerPackage.packagePlanId,
       planName: customerPackage.planNameSnapshot ?? customerPackage.packagePlan.name,
@@ -65,6 +63,10 @@ export async function GET() {
           status: booking.status === "COMPLETED" ? "USED" : "RESERVED",
         };
       }),
-    },
+    }));
+  return NextResponse.json({
+    authenticated: true,
+    membership: memberships[0] ?? null,
+    memberships,
   });
 }

@@ -24,7 +24,9 @@ export type MembershipCard = {
 };
 
 const listeners = new Set<() => void>();
+const EMPTY_MEMBERSHIPS: MembershipCard[] = [];
 let snapshot: MembershipCard | null = null;
+let snapshots: MembershipCard[] = [];
 let loading: Promise<void> | null = null;
 let timer: number | null = null;
 
@@ -37,8 +39,9 @@ export function refreshMembership() {
   loading = fetch("/api/customer-membership", { cache: "no-store" })
     .then(async (response) => {
       if (!response.ok) throw new Error("Không thể tải gói thành viên.");
-      const payload = await response.json() as { membership?: MembershipCard | null };
+      const payload = await response.json() as { membership?: MembershipCard | null; memberships?: MembershipCard[] };
       snapshot = payload.membership ?? null;
+      snapshots = payload.memberships ?? (snapshot ? [snapshot] : []);
       emit();
     })
     .catch(() => {
@@ -65,6 +68,10 @@ function subscribe(listener: () => void) {
 
 export function useMembership() {
   return useSyncExternalStore(subscribe, () => snapshot, () => null);
+}
+
+export function useMemberships() {
+  return useSyncExternalStore(subscribe, () => snapshots, () => EMPTY_MEMBERSHIPS);
 }
 
 export function activateMembership(...args: unknown[]) {

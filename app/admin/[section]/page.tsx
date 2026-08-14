@@ -13,6 +13,7 @@ import { AdminTherapistOperations } from "@/components/admin-therapist-operation
 import { AdminServiceOperations } from "@/components/admin-service-operations";
 import { AdminVoucherOperations } from "@/components/admin-voucher-operations";
 import { AdminPackageOperations } from "@/components/admin-package-operations";
+import { CustomerPackageManager } from "@/components/customer-package-manager";
 import { AdminAffiliateCenter } from "@/components/admin-affiliate-center";
 import { canAccessAdminSection, type AdminAccount } from "@/lib/admin-auth";
 import { getAdminSession } from "@/lib/server/admin-session";
@@ -230,17 +231,24 @@ export default async function AdminSectionPage({ params }: { params: Promise<{ s
     />;
   }
   if (slug === "packages") {
-    const [packages, services] = await Promise.all([
+    const [packages, services, branches] = await Promise.all([
       db.packagePlan.findMany({
         include: { _count: { select: { customerPacks: true } } },
         orderBy: [{ isActive: "desc" }, { price: "asc" }, { createdAt: "asc" }],
       }),
       db.service.findMany({ orderBy: [{ sortOrder: "asc" }, { name: "asc" }], select: { id: true, name: true, isActive: true, isOnline: true } }),
+      db.branch.findMany({ orderBy: [{ createdAt: "asc" }, { id: "asc" }], select: { id: true, name: true } }),
     ]);
-    return <AdminPackageOperations
-      initialPackages={packages.map((plan) => ({ ...plan, createdAt: plan.createdAt.toISOString(), updatedAt: plan.updatedAt.toISOString() }))}
-      services={services.map((service) => ({ id: service.id, label: service.name, active: service.isActive && service.isOnline }))}
-    />;
+    const planOptions = packages.map((plan) => ({ id: plan.id, name: plan.name, price: plan.price, sessions: plan.sessions, serviceId: plan.serviceId, validityDays: plan.validityDays }));
+    const serviceOptions = services.map((service) => ({ id: service.id, label: service.name, active: service.isActive }));
+    const branchOptions = branches.map((branch) => ({ id: branch.id, label: branch.name.replace(/^Tâm An Center · /, "") }));
+    return <>
+      <CustomerPackageManager plans={planOptions} services={serviceOptions} branches={branchOptions} role={session.role} defaultBranchId={session.branchId} />
+      {session.role === "OWNER" ? <AdminPackageOperations
+        initialPackages={packages.map((plan) => ({ ...plan, createdAt: plan.createdAt.toISOString(), updatedAt: plan.updatedAt.toISOString() }))}
+        services={services.map((service) => ({ id: service.id, label: service.name, active: service.isActive && service.isOnline }))}
+      /> : null}
+    </>;
   }
   if (slug === "settings") {
     if (!["OWNER", "BRANCH_MANAGER"].includes(session.role)) notFound();

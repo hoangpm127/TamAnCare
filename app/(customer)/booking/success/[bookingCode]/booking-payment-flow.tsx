@@ -186,6 +186,7 @@ export function BookingPaymentFlow({ referenceCode }: { referenceCode: string })
         relationship: draft.summary.relationship,
         careNote: draft.summary.careNote,
         source: draft.requestPayloads[0]?.source,
+        customerPackageId: draft.summary.customerPackageId,
         acceptTerms: true,
         acceptPrivacy: true,
         acceptBookingPolicy: true,

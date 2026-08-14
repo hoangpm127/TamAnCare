@@ -47,6 +47,7 @@ const BRANCH_MANAGER_PERMISSIONS: AdminSectionSlug[] = [
   "therapists",
   "services",
   "rooms",
+  "packages",
   "reminders",
   "office-events",
   "reports",
@@ -58,6 +59,7 @@ const RECEPTIONIST_PERMISSIONS: AdminSectionSlug[] = [
   "calendar",
   "customers",
   "rooms",
+  "packages",
   "reminders",
 ];
 

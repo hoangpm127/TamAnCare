@@ -37,7 +37,7 @@ import { calculatePaymentBreakdown } from "@/lib/payment-policy";
 import { useCustomerProfile } from "@/lib/customer-profile-store";
 import { useVoucherInventory } from "@/lib/voucher-inventory";
 import { useCustomerAccount } from "@/lib/customer-account";
-import { useMembership } from "@/lib/membership";
+import { useMemberships } from "@/lib/membership";
 import { BOOKING_UI_DRAFT_KEY, BOOKING_UI_RESET_EVENT } from "@/lib/booking-ui-draft";
 
 type Slot = {
@@ -76,6 +76,7 @@ type BookingUiDraft = {
   note: string;
   voucherCode: string;
   voucherOptOut?: boolean;
+  customerPackageId?: string;
   showManualVoucher: boolean;
   acceptPolicies: boolean;
 };
@@ -89,7 +90,7 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
   const router = useRouter();
   const customerProfile = useCustomerProfile();
   const { account } = useCustomerAccount();
-  const membership = useMembership();
+  const memberships = useMemberships();
   const voucherInventory = useVoucherInventory();
   const bookableServices = useMemo(() => services.filter((item) => item.category !== "OFFICE"), [services]);
   const bookingContextKey = params.toString();
@@ -141,6 +142,7 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
   const [note, setNote] = useState(defaultNote);
   const [voucherCode, setVoucherCode] = useState("");
   const [voucherOptOut, setVoucherOptOut] = useState(false);
+  const [selectedPackageId, setSelectedPackageId] = useState("");
   const autofilledAccountRef = useRef("");
   const [showManualVoucher, setShowManualVoucher] = useState(false);
   const source = params.get("utm_source") ?? params.get("source") ?? "Direct/QR";
@@ -200,12 +202,13 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
   const depositActive = true;
   const selectedVoucherStock = effectiveVoucherCode ? voucherInventory[effectiveVoucherCode] : undefined;
   const voucherInStock = !selectedVoucherStock || selectedVoucherStock.remaining === null || selectedVoucherStock.remaining > 0;
+  const selectedPackage = memberships.find((item) => item.id === selectedPackageId) ?? null;
   const packageEligible = Boolean(
-    !effectiveVoucherCode
-    && membership
-    && membership.availableSessions >= totalPeople
-    && (totalPeople === 1 || membership.shareable)
-    && (!membership.serviceId || cart.every((item) => item.serviceId === membership.serviceId)),
+    selectedPackage
+    && !effectiveVoucherCode
+    && selectedPackage.availableSessions >= totalPeople
+    && (totalPeople === 1 || selectedPackage.shareable)
+    && (!selectedPackage.serviceId || cart.every((item) => item.serviceId === selectedPackage.serviceId)),
   );
   const voucherDiscount = !packageEligible && effectiveVoucherCode && voucherPreview.valid && voucherInStock ? voucherPreview.discountAmount : 0;
   const paymentBreakdown = calculatePaymentBreakdown({
@@ -235,6 +238,7 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
       setNameInput(null);
       setNote(defaultNote);
       setVoucherCode("");
+      setSelectedPackageId("");
       setVoucherOptOut(false);
       setShowManualVoucher(false);
       setAcceptPolicies(false);
@@ -259,6 +263,7 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
           setNote(saved.note);
           setVoucherCode(saved.voucherCode);
           setVoucherOptOut(Boolean(saved.voucherOptOut));
+          setSelectedPackageId(saved.customerPackageId ?? "");
           setShowManualVoucher(saved.showManualVoucher);
           setAcceptPolicies(saved.acceptPolicies);
         }
@@ -277,7 +282,7 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
   }, [bookingContextKey, defaultBranchId, defaultNote, defaultPeople, defaultServiceId, defaultTherapistId]);
 
   useEffect(() => {
-    if (!draftHydrated || !account || autofilledAccountRef.current === account.customerId) return;
+    if (!draftHydrated || !account || selectedPackageId || autofilledAccountRef.current === account.customerId) return;
     let active = true;
     queueMicrotask(() => {
       if (!active || autofilledAccountRef.current === account.customerId) return;
@@ -293,7 +298,7 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
       }
     });
     return () => { active = false; };
-  }, [account, draftHydrated, voucherCode]);
+  }, [account, draftHydrated, selectedPackageId, voucherCode]);
 
   useEffect(() => {
     if (!draftHydrated) return;
@@ -309,11 +314,12 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
       note,
       voucherCode,
       voucherOptOut,
+      customerPackageId: selectedPackageId || undefined,
       showManualVoucher,
       acceptPolicies,
     };
     window.sessionStorage.setItem(BOOKING_UI_DRAFT_KEY, JSON.stringify(saved));
-  }, [acceptPolicies, bookingContextKey, branchId, cart, date, draftHydrated, nameInput, note, phoneInput, selectedSlotStartTime, showManualVoucher, therapistId, voucherCode, voucherOptOut]);
+  }, [acceptPolicies, bookingContextKey, branchId, cart, date, draftHydrated, nameInput, note, phoneInput, selectedPackageId, selectedSlotStartTime, showManualVoucher, therapistId, voucherCode, voucherOptOut]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -577,8 +583,8 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
         branchId,
         relationship: inviteContext?.relationship ?? "SELF",
         careNote: inviteContext ? note : undefined,
-        packageName: packageEligible ? membership?.planName : undefined,
-        customerPackageId: packageEligible ? membership?.id : undefined,
+        packageName: packageEligible ? selectedPackage?.planName : undefined,
+        customerPackageId: packageEligible ? selectedPackage?.id : undefined,
         policyAcceptedAt: new Date().toISOString(),
       },
     });
@@ -925,6 +931,61 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
             </div>
             <p className="mt-1.5 text-[11px] leading-4 text-[#826f66]">Thông tin chỉ dùng để xác nhận đặt lịch. Tâm An cam kết không làm phiền quý khách qua sđt!</p>
 
+            {memberships.length ? (
+              <div className="mt-2.5 border-t border-[#eee0d6] pt-2.5">
+                <p className="mb-2 flex items-center gap-2 text-sm font-semibold">
+                  <Wallet size={16} className="text-[#76551d]" /> Dùng Gói dài hạn
+                </p>
+                <div className="grid gap-2 sm:grid-cols-2">
+                  {memberships.map((item) => {
+                    const serviceEligible = !item.serviceId || cart.every((line) => line.serviceId === item.serviceId);
+                    const groupEligible = totalPeople === 1 || item.shareable;
+                    const enoughSessions = item.availableSessions >= totalPeople;
+                    const eligible = serviceEligible && groupEligible && enoughSessions;
+                    const selected = selectedPackageId === item.id;
+                    const reason = !serviceEligible
+                      ? "Không áp dụng cho dịch vụ đã chọn"
+                      : !groupEligible
+                        ? "Gói chỉ dùng cho một khách"
+                        : !enoughSessions
+                          ? `Chỉ còn ${item.availableSessions} lượt khả dụng`
+                          : `Còn ${item.availableSessions} lượt · HSD ${item.expiresAt}`;
+                    return (
+                      <button
+                        key={item.id}
+                        type="button"
+                        role="checkbox"
+                        aria-checked={selected}
+                        disabled={!eligible && !selected}
+                        onClick={() => {
+                          setSelectedPackageId(selected ? "" : item.id);
+                          if (!selected) {
+                            setVoucherCode("");
+                            setVoucherOptOut(true);
+                            setShowManualVoucher(false);
+                          }
+                          setError("");
+                        }}
+                        className={cn(
+                          "flex items-start gap-2.5 rounded-xl border p-3 text-left transition disabled:cursor-not-allowed disabled:opacity-50",
+                          selected ? "border-[#9f7428] bg-[#fff7df]" : "border-[#e7d6ca] bg-white hover:border-[#c7a296]",
+                        )}
+                      >
+                        <span className={cn("mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md border", selected ? "border-[#9f7428] bg-[#9f7428] text-white" : "border-[#cdbdaf] bg-white")}>
+                          {selected ? <Check size={14} /> : null}
+                        </span>
+                        <span className="min-w-0">
+                          <strong className="block text-xs">{item.planName}</strong>
+                          <span className="mt-1 block text-[10px] leading-4 text-[#826f66]">{reason}</span>
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+                {packageEligible ? <p className="mt-2 rounded-lg bg-emerald-50 px-3 py-2 text-[11px] font-medium text-emerald-800">Lịch này sẽ giữ {totalPeople} lượt từ gói. Không áp dụng voucher, ưu đãi Affiliate và không phát sinh thanh toán thêm.</p> : null}
+              </div>
+            ) : null}
+
             <div className="mt-2.5 border-t border-[#eee0d6] pt-2.5">
               <p className="mb-2 flex items-center gap-2 text-sm font-semibold">
                 <Ticket size={16} className="text-[#c64b32]" /> Sổ voucher
@@ -946,6 +1007,7 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
                         key={item.code}
                         type="button"
                         onClick={() => {
+                          setSelectedPackageId("");
                           setVoucherOptOut(selected);
                           setVoucherCode(selected ? "" : item.code);
                         }}
@@ -984,6 +1046,7 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
                 <input
                   value={voucherCode}
                   onChange={(event) => {
+                    setSelectedPackageId("");
                     setVoucherOptOut(false);
                     setVoucherCode(event.target.value.toUpperCase());
                   }}
@@ -1035,18 +1098,23 @@ export function BookingClient({ catalog }: { catalog: PublicCatalog }) {
           {/* Step 5: Deposit */}
           <div className="rounded-xl border border-[#e7d6ca] bg-white p-3">
             <h2 className="mb-1 flex items-center gap-2 text-sm font-semibold tracking-tight">
-              <Wallet size={16} /> 5. Đặt cọc giữ chỗ <span className="text-[11px] font-normal text-[#826f66]">(bắt buộc)</span>
+              <Wallet size={16} /> 5. {packageEligible ? "Xác nhận dùng gói" : "Đặt cọc giữ chỗ"} {!packageEligible ? <span className="text-[11px] font-normal text-[#826f66]">(bắt buộc)</span> : null}
             </h2>
-            <div className="mt-2.5 flex items-start gap-2.5 rounded-lg border border-[#c64b32] bg-[#f8ebe5] p-3">
-              <ShieldCheck size={18} className="mt-0.5 shrink-0 text-[#c64b32]" />
+            <div className={cn("mt-2.5 flex items-start gap-2.5 rounded-lg border p-3", packageEligible ? "border-[#9f7428] bg-[#fff7df]" : "border-[#c64b32] bg-[#f8ebe5]")}>
+              <ShieldCheck size={18} className={cn("mt-0.5 shrink-0", packageEligible ? "text-[#76551d]" : "text-[#c64b32]")} />
               <span className="min-w-0">
-                <span className="block text-sm font-semibold">Đặt cọc xác nhận giữ chỗ</span>
-                <span className="mt-0.5 block text-base font-bold text-[#c64b32]">
-                  {formatMoney(depositAmount)} <span className="text-xs font-normal text-[#826f66]">({catalog.depositPercent}% giá sau ưu đãi)</span>
-                </span>
-                <span className="mt-1 block text-xs text-[#826f66]">
-                  Chuyển vào tài khoản nền tảng để giữ chỗ. Phần còn lại {formatMoney(amountDueAtBranch)} = giá cuối sau ưu đãi trừ tiền cọc, thanh toán riêng cho cơ sở sau dịch vụ.
-                </span>
+                <span className="block text-sm font-semibold">{packageEligible ? selectedPackage?.planName : "Đặt cọc xác nhận giữ chỗ"}</span>
+                {packageEligible ? <>
+                  <span className="mt-0.5 block text-base font-bold text-[#76551d]">{totalPeople} lượt · Thanh toán thêm 0đ</span>
+                  <span className="mt-1 block text-xs text-[#826f66]">Lượt được giữ khi bạn xác nhận lịch và chỉ trừ chính thức sau khi lễ tân hoàn tất dịch vụ.</span>
+                </> : <>
+                  <span className="mt-0.5 block text-base font-bold text-[#c64b32]">
+                    {formatMoney(depositAmount)} <span className="text-xs font-normal text-[#826f66]">({catalog.depositPercent}% giá sau ưu đãi)</span>
+                  </span>
+                  <span className="mt-1 block text-xs text-[#826f66]">
+                    Chuyển vào tài khoản nền tảng để giữ chỗ. Phần còn lại {formatMoney(amountDueAtBranch)} = giá cuối sau ưu đãi trừ tiền cọc, thanh toán riêng cho cơ sở sau dịch vụ.
+                  </span>
+                </>}
               </span>
             </div>
           </div>

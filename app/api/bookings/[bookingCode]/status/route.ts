@@ -122,6 +122,37 @@ export async function PATCH(request: Request, context: { params: Promise<{ booki
           if (depositAmount > 0 && !["DEPOSITED", "PAID"].includes(currentPaymentStatus)) {
             throw new StatusError("Khoản cọc chưa được ngân hàng hoặc quản lý đối soát.", 409);
           }
+          if (currentStatus === "NO_SHOW") {
+            const packageCounts = new Map<string, number>();
+            for (const booking of bookings) {
+              if (booking.customerPackageId) packageCounts.set(booking.customerPackageId, (packageCounts.get(booking.customerPackageId) ?? 0) + 1);
+            }
+            for (const [customerPackageId, count] of packageCounts) {
+              const customerPackage = await tx.customerPackage.findUnique({ where: { id: customerPackageId } });
+              if (!customerPackage) throw new StatusError("Không tìm thấy Gói dài hạn đã dùng cho lịch.", 409);
+              const reserved = await tx.customerPackage.updateMany({
+                where: { id: customerPackage.id, status: "ACTIVE", expiresAt: { gte: now }, sessionsRemaining: { gte: count } },
+                data: { sessionsRemaining: { decrement: count }, sessionsReserved: { increment: count } },
+              });
+              if (reserved.count !== 1) throw new StatusError("Gói dài hạn không còn đủ lượt để khôi phục lịch.", 409);
+              const packageBooking = bookings.find((item) => item.customerPackageId === customerPackage.id);
+              await recordPackageLedger(tx, {
+                customerPackageId: customerPackage.id,
+                packagePlanId: customerPackage.packagePlanId,
+                customerId: customerPackage.customerId,
+                branchId,
+                bookingId: packageBooking?.id,
+                bookingGroupId: groupId,
+                event: "SESSION_RESERVED",
+                availableDelta: -count,
+                reservedDelta: count,
+                description: `Giữ lại ${count} lượt khi khôi phục lịch · ${referenceCode}`,
+                metadata: { bookingIds: bookings.filter((item) => item.customerPackageId === customerPackage.id).map((item) => item.id) },
+                idempotencyKey: `package:restore:${customerPackage.id}:${crypto.randomUUID()}`,
+                occurredAt: now,
+              });
+            }
+          }
           await tx.booking.updateMany({ where: { id: { in: bookings.map((item) => item.id) } }, data: { status: "CONFIRMED" } });
           if (groupId) await tx.bookingGroup.update({ where: { id: groupId }, data: { status: "CONFIRMED" } });
           await notifyCustomer(tx, customerId, {
@@ -352,6 +383,40 @@ export async function PATCH(request: Request, context: { params: Promise<{ booki
         }
 
         if (nextStatus === "NO_SHOW") {
+          const packageCounts = new Map<string, number>();
+          for (const booking of bookings) {
+            if (booking.customerPackageId) packageCounts.set(booking.customerPackageId, (packageCounts.get(booking.customerPackageId) ?? 0) + 1);
+          }
+          for (const [customerPackageId, count] of packageCounts) {
+            const customerPackage = await tx.customerPackage.findUnique({ where: { id: customerPackageId } });
+            if (!customerPackage) continue;
+            const released = Math.min(count, customerPackage.sessionsReserved);
+            if (released < 1) continue;
+            await tx.customerPackage.update({
+              where: { id: customerPackage.id },
+              data: {
+                sessionsRemaining: { increment: released },
+                sessionsReserved: { decrement: released },
+                status: customerPackage.expiresAt > now ? "ACTIVE" : "EXPIRED",
+              },
+            });
+            const packageBooking = bookings.find((item) => item.customerPackageId === customerPackage.id);
+            await recordPackageLedger(tx, {
+              customerPackageId: customerPackage.id,
+              packagePlanId: customerPackage.packagePlanId,
+              customerId: customerPackage.customerId,
+              branchId,
+              bookingId: packageBooking?.id,
+              bookingGroupId: groupId,
+              event: "SESSION_RELEASED",
+              availableDelta: released,
+              reservedDelta: -released,
+              description: `Hoàn ${released} lượt do khách không đến · ${referenceCode}`,
+              metadata: { bookingIds: bookings.filter((item) => item.customerPackageId === customerPackage.id).map((item) => item.id) },
+              idempotencyKey: `package:no-show-release:${customerPackage.id}:${groupId ?? bookings[0].id}`,
+              occurredAt: now,
+            });
+          }
           const key = monthKey(now);
           const policy = await tx.customerMonthlyPolicy.upsert({
             where: { customerId_monthKey: { customerId, monthKey: key } },
@@ -424,7 +489,7 @@ export async function PATCH(request: Request, context: { params: Promise<{ booki
           const packageCounts = new Map<string, number>();
           for (const [index, booking] of bookings.entries()) {
             const revenueExists = await tx.ledgerEntry.findFirst({ where: { bookingId: booking.id, category: "SERVICE_REVENUE" } });
-            if (!revenueExists && booking.totalAmount > 0) {
+            if (!revenueExists && !booking.customerPackageId && booking.totalAmount > 0) {
               await tx.ledgerEntry.create({
                 data: {
                   branchId,

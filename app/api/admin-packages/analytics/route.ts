@@ -101,7 +101,7 @@ export async function GET(request: Request) {
     }),
     db.ledgerEntry.aggregate({
       where: {
-        category: "SERVICE_REVENUE",
+        category: "PACKAGE_REVENUE",
         paymentTransaction: { is: { customerPackage: { is: where } } },
       },
       _sum: { amount: true },
