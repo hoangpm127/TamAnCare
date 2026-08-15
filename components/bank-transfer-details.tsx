@@ -16,7 +16,7 @@ import {
   TimerReset,
   X,
 } from "lucide-react";
-import { publicPaymentConfig as bankAccount } from "@/lib/public-payment-config";
+import { getPublicPaymentConfig, type PaymentPurpose } from "@/lib/public-payment-config";
 import {
   buildVietQrBankAppUrl,
   buildVietQrImageUrl,
@@ -55,15 +55,18 @@ export function BankTransferDetails({
   amount,
   transferContent,
   onConfirm,
+  purpose = "general",
   helperText = "Hệ thống tự động đối soát đúng số tiền và nội dung chuyển khoản.",
 }: {
   amount: number;
   transferContent: string;
+  purpose?: PaymentPurpose;
   sourceBankName?: string;
   onConfirm?: () => void;
   confirmLabel?: string;
   helperText?: string;
 }) {
+  const bankAccount = getPublicPaymentConfig(purpose);
   const [secondsLeft, setSecondsLeft] = useState(PAYMENT_WINDOW_SECONDS);
   const [showBankApps, setShowBankApps] = useState(false);
   const [bankApps, setBankApps] = useState<VietQrBankApp[]>(FALLBACK_BANK_APPS);
@@ -99,10 +102,11 @@ export function BankTransferDetails({
 
   const minutes = Math.floor(secondsLeft / 60);
   const seconds = secondsLeft % 60;
-  const qrUrl = buildVietQrImageUrl(amount, transferContent);
+  const qrUrl = buildVietQrImageUrl(amount, transferContent, purpose);
   const qrDownloadUrl = `/api/public/vietqr?${new URLSearchParams({
     amount: String(Math.round(amount)),
     content: transferContent,
+    purpose,
   }).toString()}`;
   const apple = isAppleDevice();
   const visibleApps = useMemo(() => {
@@ -157,6 +161,7 @@ export function BankTransferDetails({
       amount,
       transferContent,
       returnUrl: window.location.href,
+      purpose,
     }));
   }
 

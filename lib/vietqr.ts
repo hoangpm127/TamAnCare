@@ -1,4 +1,4 @@
-import { publicPaymentConfig as bankAccount } from "@/lib/public-payment-config";
+import { getPublicPaymentConfig, type PaymentPurpose } from "@/lib/public-payment-config";
 
 export type VietQrBankApp = {
   appId: string;
@@ -9,7 +9,8 @@ export type VietQrBankApp = {
   autofill?: number;
 };
 
-export function buildVietQrImageUrl(amount: number, transferContent: string) {
+export function buildVietQrImageUrl(amount: number, transferContent: string, purpose: PaymentPurpose = "general") {
+  const bankAccount = getPublicPaymentConfig(purpose);
   const path = `${bankAccount.bankId}-${bankAccount.accountNumber}-compact2.png`;
   const params = new URLSearchParams({
     amount: String(Math.round(amount)),
@@ -25,12 +26,15 @@ export function buildVietQrBankAppUrl({
   amount,
   transferContent,
   returnUrl,
+  purpose = "general",
 }: {
   app: Pick<VietQrBankApp, "deeplink">;
   amount: number;
   transferContent: string;
   returnUrl: string;
+  purpose?: PaymentPurpose;
 }) {
+  const bankAccount = getPublicPaymentConfig(purpose);
   const url = new URL(app.deeplink);
   url.searchParams.set("ba", `${bankAccount.accountNumber}@${bankAccount.bankId.toLowerCase()}`);
   url.searchParams.set("am", String(Math.round(amount)));

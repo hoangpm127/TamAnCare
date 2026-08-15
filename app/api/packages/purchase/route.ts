@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { Prisma } from "@/app/generated/prisma/client";
 import { z } from "zod";
 import { db } from "@/lib/db";
+import { packagePaymentConfig } from "@/lib/public-payment-config";
 import { getCustomerSession } from "@/lib/server/customer-session";
 import { notifyCustomer } from "@/lib/server/notification-service";
 import { PackageReferralError, recordPackageLedger, resolvePackageReferrer } from "@/lib/server/package-ledger";
@@ -11,7 +12,7 @@ import { consumeRateLimit, isSameOriginMutation } from "@/lib/server/request-sec
 
 const schema = z.object({
   planId: z.string().min(1),
-  bankCode: z.string().min(2).max(30).optional(),
+  purpose: z.literal("package"),
   paymentCode: z.string().min(8).max(80),
   referrer: z.string().trim().max(120).optional(),
 });
@@ -86,7 +87,7 @@ export async function POST(request: Request) {
         status: "PENDING",
         amount: plan.price,
         method: "BANK_TRANSFER_SEPAY",
-        bankCode: parsed.data.bankCode,
+        bankCode: packagePaymentConfig.bankId,
         paymentCode: buildPaymentCode(parsed.data.paymentCode, "SERVICE_PAYMENT"),
         idempotencyKey,
         note: `Mua gói thành viên · ${plan.name} · chờ ngân hàng đối soát`,
@@ -167,6 +168,7 @@ export async function POST(request: Request) {
         amount: result.payment.amount,
         receivedAmount: result.payment.receivedAmount,
         paymentCode: result.payment.paymentCode,
+        purpose: "package",
       },
     }, { status: result.idempotent ? 200 : 201 });
   } catch (error) {

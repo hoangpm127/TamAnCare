@@ -19,6 +19,7 @@ import { activateMembership, useMembership } from "@/lib/membership";
 import { refreshWalletLedger } from "@/lib/wallet-ledger";
 import { BankTransferDetails } from "@/components/bank-transfer-details";
 import { VoucherCard } from "@/components/voucher-card";
+import { packagePaymentConfig } from "@/lib/public-payment-config";
 import { cn, formatMoney, makeBookingCode } from "@/lib/utils";
 
 type PurchaseStep = "select" | "bank" | "bill" | "confirming" | "done";
@@ -126,7 +127,12 @@ function OffersContent() {
       const response = await fetch("/api/packages/purchase", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ planId: selectedPlan.id, paymentCode, referrer: referrer.trim() || undefined }),
+        body: JSON.stringify({
+          planId: selectedPlan.id,
+          paymentCode,
+          purpose: "package",
+          referrer: referrer.trim() || undefined,
+        }),
       });
       const data = await response.json();
       if (response.status === 401) {
@@ -180,6 +186,10 @@ function OffersContent() {
       </p>
       <p className="mb-3 text-xs leading-5 text-[#826f66]">
         Thanh toán một lần qua VietQR; thẻ chỉ kích hoạt sau khi SePay xác nhận. Mỗi lượt áp dụng đúng dịch vụ ghi trên gói và không cộng thêm voucher.
+      </p>
+      <p className="mb-3 rounded-lg border border-[#eadbd1] bg-white px-3 py-2 text-xs text-[#68574f]">
+        Tài khoản nhận thanh toán gói: <strong>{packagePaymentConfig.bankName}</strong> ·{" "}
+        <strong>{packagePaymentConfig.accountNumber}</strong> · {packagePaymentConfig.accountHolder}
       </p>
       <div className="space-y-3">
         {packageGroups.map((group) => (
@@ -301,6 +311,7 @@ function OffersContent() {
               <BankTransferDetails
                 amount={selectedPlan.price}
                 transferContent={pendingPayment?.paymentCode ?? ""}
+                purpose="package"
                 onConfirm={confirmPayment}
                 helperText="SePay sẽ tự động xác nhận và kích hoạt thẻ sau khi nhận giao dịch."
               />

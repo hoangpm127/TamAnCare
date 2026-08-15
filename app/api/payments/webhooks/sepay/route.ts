@@ -3,13 +3,16 @@ import { NextResponse } from "next/server";
 import { Prisma } from "@/app/generated/prisma/client";
 import { z } from "zod";
 import { db } from "@/lib/db";
-import { publicPaymentConfig } from "@/lib/public-payment-config";
 import { money, notifyOperations } from "@/lib/server/notification-service";
 import {
   confirmIncomingPayment,
   normalizeTransferCode,
   PaymentReconciliationError,
 } from "@/lib/server/payment-service";
+import {
+  accountPurposeMatchesPayment,
+  classifySepayAccount,
+} from "@/lib/server/sepay-payment-routing";
 
 export const dynamic = "force-dynamic";
 
@@ -41,14 +44,6 @@ function verifySignature(rawBody: string, timestamp: string | null, signatureHea
   const expected = createHmac("sha256", secret).update(`${timestamp}.${rawBody}`).digest();
   const provided = Buffer.from(providedHex, "hex");
   return provided.length === expected.length && timingSafeEqual(provided, expected);
-}
-
-function configuredAccountMatches(accountNumber: string) {
-  const configuredAccounts = (process.env.SEPAY_ACCOUNT_NUMBERS ?? publicPaymentConfig.accountNumber)
-    .split(",")
-    .map((value) => value.replace(/\D/g, ""))
-    .filter(Boolean);
-  return configuredAccounts.includes(accountNumber.replace(/\D/g, ""));
 }
 
 function sepayPaidAt(value: string) {
@@ -114,7 +109,8 @@ export async function POST(request: Request) {
         return;
       }
 
-      if (!configuredAccountMatches(payload.accountNumber)) {
+      const accountPurpose = classifySepayAccount(payload.accountNumber);
+      if (accountPurpose === "REVIEW") {
         await tx.paymentWebhookEvent.update({
           where: { id: event.id },
           data: {
@@ -149,6 +145,7 @@ export async function POST(request: Request) {
         },
         orderBy: { createdAt: "desc" },
         take: 500,
+        include: { customerPackage: { select: { id: true } } },
       });
       const payment = candidates.find((candidate) =>
         candidate.paymentCode && searchable.includes(normalizeTransferCode(candidate.paymentCode)),
@@ -169,6 +166,30 @@ export async function POST(request: Request) {
           type: "FINANCE",
           title: "Giao dịch ngân hàng chưa khớp booking",
           body: `SePay ${externalEventId} · ${money(payload.transferAmount)} · cần đối soát thủ công nội dung chuyển khoản.`,
+          actionUrl: "/admin/finance",
+        });
+        return;
+      }
+
+      if (!accountPurposeMatchesPayment(accountPurpose, Boolean(payment.customerPackage))) {
+        await tx.paymentWebhookEvent.update({
+          where: { id: event.id },
+          data: {
+            status: "REVIEW",
+            paymentTransactionId: payment.id,
+            errorCode: "PAYMENT_ACCOUNT_PURPOSE_MISMATCH",
+            errorMessage: payment.customerPackage
+              ? "Thanh toán mua gói dài hạn đã đi vào tài khoản nhận tiền thông thường."
+              : "Thanh toán thông thường đã đi vào tài khoản chỉ dành cho gói dài hạn.",
+            processedAt: new Date(),
+          },
+        });
+        await notifyOperations(tx, {
+          branchId: payment.branchId,
+          audience: "MANAGEMENT",
+          type: "FINANCE",
+          title: "Giao dịch vào sai tài khoản theo mục đích thanh toán",
+          body: `${payment.paymentCode} · ${money(payload.transferAmount)} chưa được xác nhận và cần đối soát thủ công.`,
           actionUrl: "/admin/finance",
         });
         return;
