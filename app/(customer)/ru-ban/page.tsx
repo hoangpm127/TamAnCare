@@ -8,6 +8,7 @@ import { referralTiers } from "@/lib/demo-data";
 import { useReferralSummary } from "@/lib/referral-store";
 import { translateCustomerText } from "@/lib/customer-i18n";
 import { useCustomerLanguage } from "@/components/customer-language-provider";
+import { absoluteAffiliateLink } from "@/lib/affiliate-link";
 import { referralPathForLanguage } from "@/lib/referral-language";
 import { cn, formatMoney } from "@/lib/utils";
 
@@ -110,7 +111,7 @@ export default function ReferralPage() {
   }
 
   async function share() {
-    const link = referralLink || `${window.location.origin}${referralPath}`;
+    const link = referralLink || absoluteAffiliateLink(referralPath);
     const message = `${shareText}\n${link}`;
     if (navigator.share) {
       try {
@@ -131,7 +132,7 @@ export default function ReferralPage() {
     const nextOpen = !shareKitOpen;
     setShareKitOpen(nextOpen);
     if (!nextOpen) return;
-    const link = `${window.location.origin}${referralPath}`;
+    const link = absoluteAffiliateLink(referralPath);
     setReferralLink(link);
     if (!qrDataUrl) {
       setQrLoading(true);
@@ -145,7 +146,7 @@ export default function ReferralPage() {
   }
 
   async function copyReferralLink() {
-    const link = referralLink || `${window.location.origin}${referralPath}`;
+    const link = referralLink || absoluteAffiliateLink(referralPath);
     await navigator.clipboard.writeText(link);
     setCopiedTarget("link");
     setTimeout(() => setCopiedTarget(null), 1500);

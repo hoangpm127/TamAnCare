@@ -1,6 +1,7 @@
 import "server-only";
 
 import { differenceInCalendarDays } from "date-fns";
+import { absoluteAffiliateLink } from "@/lib/affiliate-link";
 import { db } from "@/lib/db";
 import { BUSINESS_DISTRIBUTION_LABELS, BUSINESS_DISTRIBUTION_RATES, calculateBusinessDistribution } from "@/lib/business-distribution";
 import { reportsIncludeDemoLedger } from "@/lib/server/ledger-reporting";
@@ -212,7 +213,7 @@ export async function getXgroupDashboard(session: XgroupSession, input: { from?:
       affiliateName: asset.affiliate?.displayName ?? "Nguồn Xgroup",
       destinationPath: asset.destinationPath,
       videoUrl: asset.videoUrl,
-      trackingPath: `/xg-ref/${encodeURIComponent(asset.code)}`,
+      trackingPath: absoluteAffiliateLink(`/xg-ref/${encodeURIComponent(asset.code)}`),
       clickCount: asset.clickCount,
       leadCount: asset.leadCount,
       completedCount: completed.length,

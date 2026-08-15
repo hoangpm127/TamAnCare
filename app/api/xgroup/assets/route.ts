@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { absoluteAffiliateLink } from "@/lib/affiliate-link";
 import { db } from "@/lib/db";
 import { canManageXgroupDistrict, requireXgroupSession } from "@/lib/server/xgroup-access";
 import { isSameOriginMutation } from "@/lib/server/request-security";
@@ -38,7 +39,7 @@ export async function POST(request: Request) {
   }
   const asset = await db.businessMediaAsset.create({ data: { ...parsed.data, districtId: resolved.districtId, affiliateId: parsed.data.affiliateId || null, videoUrl: parsed.data.videoUrl || null, createdByUserId: session.id } });
   await db.adminAuditLog.create({ data: { actorUserId: session.id, action: "XGROUP_ASSET_CREATE", entityType: "BusinessMediaAsset", entityId: asset.id, after: { code: asset.code, type: asset.type, districtId: asset.districtId, affiliateId: asset.affiliateId, status: asset.status } } });
-  return NextResponse.json({ asset, trackingPath: `/xg-ref/${encodeURIComponent(asset.code)}` }, { status: 201 });
+  return NextResponse.json({ asset, trackingPath: absoluteAffiliateLink(`/xg-ref/${encodeURIComponent(asset.code)}`) }, { status: 201 });
 }
 
 export async function PATCH(request: Request) {
@@ -61,5 +62,5 @@ export async function PATCH(request: Request) {
   const { id, ...data } = parsed.data;
   const asset = await db.businessMediaAsset.update({ where: { id }, data: { ...data, districtId: resolved.districtId, affiliateId: data.affiliateId === undefined ? undefined : data.affiliateId || null, videoUrl: data.videoUrl === undefined ? undefined : data.videoUrl || null } });
   await db.adminAuditLog.create({ data: { actorUserId: session.id, action: "XGROUP_ASSET_UPDATE", entityType: "BusinessMediaAsset", entityId: id, before: { status: before.status, districtId: before.districtId }, after: { status: asset.status, districtId: asset.districtId, qrVersion: asset.qrVersion } } });
-  return NextResponse.json({ asset, trackingPath: `/xg-ref/${encodeURIComponent(asset.code)}` });
+  return NextResponse.json({ asset, trackingPath: absoluteAffiliateLink(`/xg-ref/${encodeURIComponent(asset.code)}`) });
 }
