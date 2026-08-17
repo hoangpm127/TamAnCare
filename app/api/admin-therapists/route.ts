@@ -3,6 +3,11 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getAdminSession } from "@/lib/server/admin-session";
 import { privateIdentifierDigest, isSameOriginMutation, requestIp } from "@/lib/server/request-security";
+import {
+  ensureTherapistLoginAvailable,
+  provisionTherapistAccount,
+  TherapistAccountConflict,
+} from "@/lib/server/therapist-account";
 import { scheduleShiftLabel, therapistMutationSchema } from "@/lib/therapist-admin";
 
 function canManage(role: string) {
@@ -29,13 +34,21 @@ export async function POST(request: Request) {
   if (!branch || serviceCount !== new Set(input.serviceIds).size) {
     return NextResponse.json({ error: "Cơ sở hoặc dịch vụ đã chọn không còn hợp lệ." }, { status: 400 });
   }
+  try {
+    await ensureTherapistLoginAvailable(db, input.phone);
+  } catch (error) {
+    if (error instanceof TherapistAccountConflict) {
+      return NextResponse.json({ error: error.message }, { status: 409 });
+    }
+    throw error;
+  }
 
-  const therapist = await db.$transaction(async (tx) => {
+  const result = await db.$transaction(async (tx) => {
     const created = await tx.therapist.create({
       data: {
         branchId: input.branchId,
         fullName: input.fullName,
-        phone: input.phone || null,
+        phone: input.phone,
         avatarUrl: input.avatarUrl || null,
         publicBio: input.publicBio || null,
         publicStrengths: input.publicStrengths,
@@ -59,6 +72,14 @@ export async function POST(request: Request) {
       },
       include: { weeklySchedules: true, services: { select: { id: true } } },
     });
+    const provisioned = await provisionTherapistAccount(tx, {
+      therapistId: created.id,
+      fullName: created.fullName,
+      phone: input.phone,
+      branchId: created.branchId,
+      isActive: created.status === "ACTIVE",
+      resetPasswordToPhone: true,
+    });
     await tx.adminAuditLog.create({
       data: {
         actorUserId: session.id,
@@ -70,8 +91,32 @@ export async function POST(request: Request) {
         ipHash: privateIdentifierDigest(requestIp(request)),
       },
     });
-    return created;
+    await tx.adminAuditLog.create({
+      data: {
+        actorUserId: session.id,
+        branchId: created.branchId,
+        action: "THERAPIST_ACCOUNT_CREATE",
+        entityType: "User",
+        entityId: provisioned.account.id,
+        after: {
+          therapistId: created.id,
+          username: provisioned.account.username,
+          role: "THERAPIST",
+          isActive: provisioned.account.isActive,
+          temporaryPasswordIssued: true,
+        },
+        ipHash: privateIdentifierDigest(requestIp(request)),
+      },
+    });
+    return { therapist: created, provisioned };
   });
   revalidateTag("public-catalog", { expire: 0 });
-  return NextResponse.json({ therapist }, { status: 201 });
+  return NextResponse.json({
+    therapist: result.therapist,
+    credentials: {
+      username: result.provisioned.account.username,
+      temporaryPassword: result.provisioned.temporaryPassword,
+      mustChangePassword: true,
+    },
+  }, { status: 201 });
 }

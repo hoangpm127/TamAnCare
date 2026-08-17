@@ -3,6 +3,11 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getAdminSession } from "@/lib/server/admin-session";
 import { privateIdentifierDigest, isSameOriginMutation, requestIp } from "@/lib/server/request-security";
+import {
+  ensureTherapistLoginAvailable,
+  provisionTherapistAccount,
+  TherapistAccountConflict,
+} from "@/lib/server/therapist-account";
 import { scheduleShiftLabel, therapistMutationSchema } from "@/lib/therapist-admin";
 
 function canManage(role: string) {
@@ -12,7 +17,11 @@ function canManage(role: string) {
 async function scopedTherapist(id: string, session: NonNullable<Awaited<ReturnType<typeof getAdminSession>>>) {
   return db.therapist.findFirst({
     where: { id, ...(session.role === "OWNER" ? {} : { branchId: session.branchId ?? "__none__" }) },
-    include: { weeklySchedules: true, services: { select: { id: true } } },
+    include: {
+      weeklySchedules: true,
+      services: { select: { id: true } },
+      users: { select: { id: true, username: true, isActive: true, passwordChangedAt: true, branchId: true } },
+    },
   });
 }
 
@@ -38,15 +47,23 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   if (!branch || serviceCount !== new Set(input.serviceIds).size) {
     return NextResponse.json({ error: "Cơ sở hoặc dịch vụ đã chọn không còn hợp lệ." }, { status: 400 });
   }
+  try {
+    await ensureTherapistLoginAvailable(db, input.phone, id);
+  } catch (error) {
+    if (error instanceof TherapistAccountConflict) {
+      return NextResponse.json({ error: error.message }, { status: 409 });
+    }
+    throw error;
+  }
 
-  const therapist = await db.$transaction(async (tx) => {
+  const result = await db.$transaction(async (tx) => {
     await tx.therapistWeeklySchedule.deleteMany({ where: { therapistId: id } });
     const updated = await tx.therapist.update({
       where: { id },
       data: {
         branchId: input.branchId,
         fullName: input.fullName,
-        phone: input.phone || null,
+        phone: input.phone,
         avatarUrl: input.avatarUrl || null,
         publicBio: input.publicBio || null,
         publicStrengths: input.publicStrengths,
@@ -70,6 +87,13 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
       },
       include: { weeklySchedules: true, services: { select: { id: true } } },
     });
+    const provisioned = await provisionTherapistAccount(tx, {
+      therapistId: updated.id,
+      fullName: updated.fullName,
+      phone: input.phone,
+      branchId: updated.branchId,
+      isActive: updated.status === "ACTIVE",
+    });
     await tx.adminAuditLog.create({
       data: {
         actorUserId: session.id,
@@ -82,10 +106,36 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
         ipHash: privateIdentifierDigest(requestIp(request)),
       },
     });
-    return updated;
+    await tx.adminAuditLog.create({
+      data: {
+        actorUserId: session.id,
+        branchId: updated.branchId,
+        action: current.users.length ? "THERAPIST_ACCOUNT_SYNC" : "THERAPIST_ACCOUNT_CREATE",
+        entityType: "User",
+        entityId: provisioned.account.id,
+        after: {
+          therapistId: updated.id,
+          username: provisioned.account.username,
+          role: "THERAPIST",
+          isActive: provisioned.account.isActive,
+          temporaryPasswordIssued: !current.users.length,
+        },
+        ipHash: privateIdentifierDigest(requestIp(request)),
+      },
+    });
+    return { therapist: updated, provisioned };
   });
   revalidateTag("public-catalog", { expire: 0 });
-  return NextResponse.json({ therapist });
+  return NextResponse.json({
+    therapist: result.therapist,
+    credentials: result.provisioned.temporaryPassword
+      ? {
+        username: result.provisioned.account.username,
+        temporaryPassword: result.provisioned.temporaryPassword,
+        mustChangePassword: result.provisioned.account.passwordChangedAt === null,
+      }
+      : null,
+  });
 }
 
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -101,6 +151,7 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
   await db.$transaction(async (tx) => {
     const hidden = await tx.therapist.update({ where: { id }, data: { status: "HIDDEN", onlineBooking: false } });
     await tx.user.updateMany({ where: { therapistId: id }, data: { isActive: false } });
+    await tx.adminSession.deleteMany({ where: { userId: { in: current.users.map((user) => user.id) } } });
     await tx.adminAuditLog.create({
       data: {
         actorUserId: session.id,

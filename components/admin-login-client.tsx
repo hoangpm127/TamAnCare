@@ -79,7 +79,7 @@ export function AdminLoginClient() {
 
             <div className="p-5 lg:p-7">
               <div className="flex items-start justify-between gap-4">
-                <div><p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#c64b32]">Xác thực nội bộ</p><h2 className="mt-1 text-xl font-semibold">Đăng nhập quản trị</h2><p className="mt-1 text-xs leading-5 text-[#826f66]">Vận hành hằng ngày tập trung vào Admin và Lễ tân. Các vai trò quản lý, Xgroup và Nhà đầu tư chỉ dùng khi được cấp quyền.</p></div>
+                <div><p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#c64b32]">Xác thực nội bộ</p><h2 className="mt-1 text-xl font-semibold">Đăng nhập vận hành</h2><p className="mt-1 text-xs leading-5 text-[#826f66]">Admin, Lễ tân và KTV đăng nhập bằng tài khoản được cấp. KTV dùng số điện thoại làm tên đăng nhập.</p></div>
                 <ShieldCheck className="shrink-0 text-[#c64b32]" size={30} />
               </div>
 
@@ -98,10 +98,10 @@ export function AdminLoginClient() {
                 ) : (
                   <>
                 <label className="block">
-                  <span className="text-[11px] font-semibold">Tài khoản</span>
+                  <span className="text-[11px] font-semibold">Tài khoản hoặc số điện thoại</span>
                   <span className="mt-1.5 flex items-center gap-2 rounded-xl border border-[#e7d6ca] bg-white px-3 focus-within:border-[#c64b32]">
                     <UserRound size={16} className="shrink-0 text-[#826f66]" />
-                    <input required value={username} onChange={(event) => setUsername(event.target.value)} autoComplete="username" inputMode="text" maxLength={100} className="min-w-0 flex-1 bg-transparent py-3 text-sm outline-none" placeholder="Nhập tài khoản được cấp" />
+                    <input required value={username} onChange={(event) => setUsername(event.target.value)} autoComplete="username" inputMode="text" maxLength={100} className="min-w-0 flex-1 bg-transparent py-3 text-sm outline-none" placeholder="Tên tài khoản hoặc số điện thoại" />
                   </span>
                 </label>
                 <label className="block">
