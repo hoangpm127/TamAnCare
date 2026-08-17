@@ -8,10 +8,10 @@ loadEnvConfig(process.cwd());
 const BASE_URL = process.env.TEST_BASE_URL ?? "http://127.0.0.1:3000";
 const marker = `SEC${Date.now().toString(36).toUpperCase()}`;
 const customerPhone = `05${String(Date.now()).slice(-8)}`;
+const therapistPhone = `03${String(Date.now()).slice(-8)}`;
 const customerPin = "2580";
 const customerNewPin = "3690";
 const ownerPassword = `Owner!${marker}Secure`;
-const retiredTherapistPassword = `Therapist!${marker}Secure`;
 const requestIp = `10.250.${Number(String(Date.now()).slice(-4, -2))}.${Number(String(Date.now()).slice(-2)) || 1}`;
 const customerJar = new Map<string, string>();
 const ownerJar = new Map<string, string>();
@@ -85,7 +85,7 @@ function rateKey(scope: string, identifier: string) {
 
 async function cleanup() {
   const owner = await db.user.findUnique({ where: { username: `owner_${marker.toLowerCase()}` }, select: { id: true } });
-  const retiredTherapist = await db.user.findUnique({ where: { username: `therapist_${marker.toLowerCase()}` }, select: { id: true } });
+  const therapistUser = await db.user.findUnique({ where: { username: therapistPhone }, select: { id: true, therapistId: true } });
   const customer = await db.customer.findUnique({ where: { phone: customerPhone }, select: { id: true } });
   await db.$transaction(async (tx) => {
     if (owner) {
@@ -95,9 +95,10 @@ async function cleanup() {
       await tx.mfaRecoveryCode.deleteMany({ where: { userId: owner.id } });
       await tx.user.delete({ where: { id: owner.id } });
     }
-    if (retiredTherapist) {
-      await tx.adminSession.deleteMany({ where: { userId: retiredTherapist.id } });
-      await tx.user.delete({ where: { id: retiredTherapist.id } });
+    if (therapistUser) {
+      await tx.adminSession.deleteMany({ where: { userId: therapistUser.id } });
+      await tx.user.delete({ where: { id: therapistUser.id } });
+      if (therapistUser.therapistId) await tx.therapist.deleteMany({ where: { id: therapistUser.therapistId } });
     }
     if (customer) {
       await tx.notification.deleteMany({ where: { customerId: customer.id } });
@@ -113,6 +114,7 @@ async function cleanup() {
       rateKey("admin-login-ip", requestIp),
       ...accountIdentifiers.map((identifier) => rateKey("customer-login-account", identifier)),
       rateKey("admin-login-account", `${requestIp}:owner_${marker.toLowerCase()}`),
+      rateKey("admin-login-account", `${requestIp}:${therapistPhone}`),
       rateKey("admin-mfa-setup", `${requestIp}:${ownerId}`),
       rateKey("admin-mfa-confirm", `${requestIp}:${ownerId}`),
       rateKey("admin-mfa-disable", `${requestIp}:${ownerId}`),
@@ -129,15 +131,29 @@ async function main() {
   const owner = await db.user.create({
     data: { name: `Owner bảo mật ${marker}`, username: `owner_${marker.toLowerCase()}`, email: `${marker.toLowerCase()}@security.tests`, role: "OWNER", passwordHash: hashPassword(ownerPassword), passwordChangedAt: now },
   });
+  const branch = await db.branch.findFirstOrThrow({ orderBy: { createdAt: "asc" } });
+  const therapist = await db.therapist.create({
+    data: {
+      branchId: branch.id,
+      fullName: `KTV bảo mật ${marker}`,
+      phone: therapistPhone,
+      skills: ["Kiểm thử"],
+      status: "ACTIVE",
+      onlineBooking: true,
+      profileApprovalStatus: "APPROVED",
+    },
+  });
   await db.user.create({
     data: {
-      name: `KTV không đăng nhập ${marker}`,
-      username: `therapist_${marker.toLowerCase()}`,
+      name: therapist.fullName,
+      username: therapistPhone,
       email: `therapist-${marker.toLowerCase()}@security.tests`,
       role: "THERAPIST",
-      passwordHash: hashPassword(retiredTherapistPassword),
-      passwordChangedAt: now,
+      passwordHash: hashPassword(therapistPhone),
+      passwordChangedAt: null,
       isActive: true,
+      branchId: branch.id,
+      therapistId: therapist.id,
     },
   });
 
@@ -150,8 +166,9 @@ async function main() {
 
     const ownerLogin = await request<{ account?: { id: string } }>("/api/admin-auth/login", { jar: ownerJar, body: { username: owner.username, password: ownerPassword } });
     assert(ownerLogin.response.ok && ownerLogin.payload.account?.id === owner.id, "Chủ kiểm thử không đăng nhập được.");
-    const retiredTherapistLogin = await request("/api/admin-auth/login", { body: { username: `therapist_${marker.toLowerCase()}`, password: retiredTherapistPassword } });
-    assert(retiredTherapistLogin.response.status === 401, "Tài khoản KTV vẫn đăng nhập được vào hệ thống CNTT.");
+    const therapistLogin = await request<{ account?: { role?: string; mustChangePassword?: boolean } }>("/api/admin-auth/login", { body: { username: therapistPhone, password: therapistPhone } });
+    assert(therapistLogin.response.ok && therapistLogin.payload.account?.role === "THERAPIST", "Tài khoản KTV không đăng nhập được bằng số điện thoại.");
+    assert(therapistLogin.payload.account?.mustChangePassword === true, "KTV chưa bị yêu cầu đổi mật khẩu tạm thời ở lần đăng nhập đầu.");
     const pinReset = await request<{ sessionsRevoked?: boolean }>(`/api/customers/${customer.id}/pin`, { method: "PUT", jar: ownerJar, body: { pin: customerNewPin } });
     assert(pinReset.response.ok && pinReset.payload.sessionsRevoked, "Lễ tân/Quản lý không cấp lại được Mã PIN.");
     assert(await db.customerSession.count({ where: { customerId: customer.id } }) === 0, "Cấp lại PIN chưa thu hồi tất cả phiên khách cũ.");
@@ -189,7 +206,7 @@ async function main() {
     console.log("✓ Cấp lại PIN tại quầy thu hồi phiên cũ và vô hiệu hóa PIN cũ");
     console.log("✓ TOTP được mã hóa, chống phát lại và bắt buộc ở lần đăng nhập sau");
     console.log("✓ Mã khôi phục chỉ dùng một lần, không lưu bản rõ trong CSDL");
-    console.log("✓ KTV chỉ là hồ sơ nhân sự, tài khoản THERAPIST bị từ chối đăng nhập");
+    console.log("✓ KTV đăng nhập bằng số điện thoại và phải đổi mật khẩu tạm thời");
   } finally {
     await cleanup();
   }

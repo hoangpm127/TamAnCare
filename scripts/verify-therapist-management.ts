@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { db } from "../lib/db";
-import { hashPassword } from "../lib/password";
+import { hashPassword, verifyPassword } from "../lib/password";
 
 const BASE_URL = process.env.TEST_BASE_URL ?? "http://127.0.0.1:3000";
 const marker = `KTVE2E${Date.now().toString(36).toUpperCase()}`;
@@ -91,9 +91,22 @@ async function main() {
   assert(created.response.status === 201, `Thêm KTV thất bại: ${created.response.status} ${JSON.stringify(created.payload)}`);
   therapistId = String(created.payload.therapist?.id ?? "");
   assert(therapistId, "API thêm KTV không trả về ID.");
+  assert(created.payload.credentials?.username === basePayload.phone, "API chưa xuất tài khoản KTV bằng số điện thoại.");
+  assert(created.payload.credentials?.temporaryPassword === basePayload.phone, "Mật khẩu tạm thời KTV chưa bằng số điện thoại.");
 
   const persisted = await db.therapist.findUnique({ where: { id: therapistId }, include: { weeklySchedules: true, services: true } });
   assert(persisted?.weeklySchedules.length === 1 && persisted.services.some((item) => item.id === service.id), "KTV chưa lưu ca tuần hoặc dịch vụ thật.");
+  const therapistUser = await db.user.findFirst({ where: { therapistId } });
+  assert(therapistUser?.role === "THERAPIST" && therapistUser.username === basePayload.phone && therapistUser.branchId === branch.id, "Tài khoản KTV chưa gắn đúng hồ sơ, SĐT hoặc cơ sở.");
+  assert(Boolean(therapistUser?.passwordHash && verifyPassword(basePayload.phone, therapistUser.passwordHash)), "Mật khẩu tạm thời KTV chưa được băm đúng.");
+
+  const therapistLogin = await json("/api/admin-auth/login", {
+    method: "POST",
+    headers: { Origin: BASE_URL, "Content-Type": "application/json" },
+    body: JSON.stringify({ username: basePayload.phone, password: basePayload.phone }),
+  });
+  assert(therapistLogin.response.ok && therapistLogin.payload.account?.role === "THERAPIST", "KTV không đăng nhập được bằng số điện thoại.");
+  assert(therapistLogin.payload.account?.mustChangePassword === true, "KTV chưa bị yêu cầu đổi mật khẩu tạm thời.");
 
   const catalog = await json("/api/catalog", { headers: { Cookie: cookie }, cache: "no-store" });
   assert(catalog.response.ok && catalog.payload.therapists?.some((item: { id: string }) => item.id === therapistId), "KTV mới chưa đồng bộ sang danh sách khách hàng.");
@@ -114,6 +127,18 @@ async function main() {
   });
   assert(updated.response.ok, `Sửa KTV thất bại: ${updated.response.status}`);
   assert((await db.therapist.findUnique({ where: { id: therapistId } }))?.fullName === updatedName, "Tên KTV sửa chưa được lưu.");
+  assert((await db.user.findFirst({ where: { therapistId } }))?.name === updatedName, "Tên tài khoản KTV chưa đồng bộ theo hồ sơ.");
+
+  const customPassword = `Ktv!${marker}Secure`;
+  const credentials = await json(`/api/admin-therapists/${therapistId}/credentials`, {
+    method: "PATCH",
+    headers: { Origin: BASE_URL, Cookie: cookie, "Content-Type": "application/json" },
+    body: JSON.stringify({ phone: basePayload.phone, password: customPassword }),
+  });
+  assert(credentials.response.ok && credentials.payload.temporaryPassword === customPassword, "Admin không đặt lại được mật khẩu KTV.");
+  const resetUser = await db.user.findFirstOrThrow({ where: { therapistId } });
+  assert(resetUser.passwordChangedAt && resetUser.passwordHash && verifyPassword(customPassword, resetUser.passwordHash), "Mật khẩu KTV sau đặt lại chưa được lưu an toàn.");
+  assert(await db.adminSession.count({ where: { userId: resetUser.id } }) === 0, "Đặt lại mật khẩu KTV chưa thu hồi phiên cũ.");
 
   const removed = await json(`/api/admin-therapists/${therapistId}`, {
     method: "DELETE",
@@ -122,6 +147,7 @@ async function main() {
   assert(removed.response.ok, `Ngừng KTV thất bại: ${removed.response.status}`);
   const hidden = await db.therapist.findUniqueOrThrow({ where: { id: therapistId } });
   assert(hidden.status === "HIDDEN" && !hidden.onlineBooking, "Ngừng KTV chưa ẩn khỏi đặt lịch nhưng vẫn giữ dữ liệu lịch sử.");
+  assert((await db.user.findFirstOrThrow({ where: { therapistId } })).isActive === false, "Ngừng KTV chưa khóa tài khoản đăng nhập.");
 
   const sessionToken = cookie.match(/tt_admin_session_v2=([^;]+)/)?.[1];
   if (sessionToken) {
@@ -131,15 +157,23 @@ async function main() {
 
   console.log(JSON.stringify({ success: true, checks: [
     "admin_session_cookie_persists",
+    "therapist_phone_account_and_temporary_password",
     "therapist_create_and_public_catalog_sync",
     "weekly_schedule_limits_customer_availability",
     "therapist_update",
+    "therapist_password_reset_revokes_sessions",
     "therapist_soft_delete_preserves_history",
   ] }, null, 2));
 }
 
 async function cleanup() {
-  if (therapistId) await db.therapist.deleteMany({ where: { id: therapistId } });
+  if (therapistId) {
+    const therapistUsers = await db.user.findMany({ where: { therapistId }, select: { id: true } });
+    const therapistUserIds = therapistUsers.map((item) => item.id);
+    await db.adminSession.deleteMany({ where: { userId: { in: therapistUserIds } } });
+    await db.user.deleteMany({ where: { id: { in: therapistUserIds } } });
+    await db.therapist.deleteMany({ where: { id: therapistId } });
+  }
   if (userId) {
     await db.adminSession.deleteMany({ where: { userId } });
     await db.adminAuditLog.deleteMany({ where: { actorUserId: userId } });

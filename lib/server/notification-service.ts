@@ -66,11 +66,34 @@ export async function notifyTherapist(
   client: NotificationClient,
   input: NotificationPayload & { therapistName?: string | null },
 ) {
-  // KTV là dữ liệu nhân sự do Lễ tân/Admin điều phối, không còn tài khoản CNTT.
-  // Giữ hàm no-op để các luồng nghiệp vụ cũ không phải tạo thông báo mồ côi.
-  void client;
-  void input;
-  return null;
+  if (!input.therapistName || !input.branchId) return null;
+  const therapist = await client.therapist.findFirst({
+    where: { branchId: input.branchId, fullName: input.therapistName },
+    select: { id: true },
+  });
+  const therapistUser = await client.user.findFirst({
+    where: {
+      role: "THERAPIST",
+      branchId: input.branchId,
+      isActive: true,
+      OR: [
+        ...(therapist ? [{ therapistId: therapist.id }] : []),
+        { name: input.therapistName },
+      ],
+    },
+    select: { id: true },
+  });
+  if (!therapistUser) return null;
+  return client.notification.create({
+    data: {
+      userId: therapistUser.id,
+      branchId: input.branchId,
+      type: input.type,
+      title: input.title,
+      body: input.body,
+      actionUrl: input.actionUrl,
+    },
+  });
 }
 
 export function money(value: number) {

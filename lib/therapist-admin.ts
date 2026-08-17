@@ -1,4 +1,25 @@
 import { z } from "zod";
+import { isTherapistLoginPhone, normalizeTherapistPhone } from "@/lib/server/therapist-account";
+
+export const therapistPhoneSchema = z.string().trim()
+  .transform(normalizeTherapistPhone)
+  .refine(isTherapistLoginPhone, "Số điện thoại KTV phải gồm 10 chữ số và bắt đầu bằng 0.");
+
+export const therapistPasswordSchema = z.string().min(8, "Mật khẩu phải có ít nhất 8 ký tự.").max(200);
+
+export const therapistCredentialMutationSchema = z.object({
+  phone: therapistPhoneSchema,
+  password: therapistPasswordSchema.optional(),
+  resetPasswordToPhone: z.boolean().default(false),
+}).superRefine((value, context) => {
+  if (value.password && value.resetPasswordToPhone) {
+    context.addIssue({
+      code: "custom",
+      message: "Chỉ chọn một cách đặt lại mật khẩu.",
+      path: ["password"],
+    });
+  }
+});
 
 export const therapistWeeklyScheduleSchema = z.object({
   weekday: z.number().int().min(1).max(7),
@@ -13,7 +34,7 @@ export const therapistWeeklyScheduleSchema = z.object({
 export const therapistMutationSchema = z.object({
   branchId: z.string().trim().min(1).max(100),
   fullName: z.string().trim().min(2).max(120),
-  phone: z.string().trim().max(30).optional().nullable(),
+  phone: therapistPhoneSchema,
   avatarUrl: z.string().trim().max(500).optional().nullable(),
   publicBio: z.string().trim().max(1000).optional().nullable(),
   publicStrengths: z.array(z.string().trim().min(1).max(100)).max(12).default([]),

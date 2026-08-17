@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { CalendarDays, Loader2, Save, Trash2, X } from "lucide-react";
+import { CalendarDays, Check, Copy, KeyRound, Loader2, Save, Trash2, X } from "lucide-react";
 
 export type TherapistScheduleView = {
   weekday: number;
@@ -73,6 +73,8 @@ export function AdminTherapistEditor({ therapist, branches, services, fixedBranc
   const [schedules, setSchedules] = useState<TherapistScheduleView[]>(initialSchedules);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [issuedCredentials, setIssuedCredentials] = useState<null | { username: string; temporaryPassword: string; mustChangePassword: boolean }>(null);
+  const [copied, setCopied] = useState(false);
 
   function updateSchedule(weekday: number, patch: Partial<TherapistScheduleView>) {
     setSchedules((current) => {
@@ -111,6 +113,10 @@ export function AdminTherapistEditor({ therapist, branches, services, fixedBranc
       const data = await response.json();
       if (!response.ok) throw new Error(data.error ?? "Không thể lưu KTV.");
       await onSaved();
+      if (data.credentials?.username && data.credentials?.temporaryPassword) {
+        setIssuedCredentials(data.credentials);
+        return;
+      }
       onClose();
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : "Không thể lưu KTV.");
@@ -136,6 +142,38 @@ export function AdminTherapistEditor({ therapist, branches, services, fixedBranc
     }
   }
 
+  async function copyCredentials() {
+    if (!issuedCredentials) return;
+    await navigator.clipboard.writeText(`Tài khoản: ${issuedCredentials.username}\nMật khẩu: ${issuedCredentials.temporaryPassword}`);
+    setCopied(true);
+    window.setTimeout(() => setCopied(false), 1_500);
+  }
+
+  if (issuedCredentials) {
+    return (
+      <div className="fixed inset-0 z-[100] overflow-y-auto bg-[#231514]/70 p-3 backdrop-blur-sm sm:p-6">
+        <section className="mx-auto max-w-lg overflow-hidden rounded-3xl bg-[#fdf8f3] shadow-2xl">
+          <header className="flex items-start justify-between gap-3 border-b border-[#e7d6ca] bg-white px-4 py-3 sm:px-5">
+            <div><p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#c64b32]">Đã tạo KTV & tài khoản</p><h2 className="mt-0.5 text-lg font-semibold">Bàn giao thông tin đăng nhập</h2></div>
+            <button type="button" onClick={onClose} className="flex h-9 w-9 items-center justify-center rounded-full bg-[#fbf2e7]" aria-label="Đóng"><X size={17} /></button>
+          </header>
+          <div className="p-4 sm:p-5">
+            <div className="rounded-2xl border border-[#d2ad5d] bg-gradient-to-br from-[#fffaf0] to-white p-4">
+              <span className="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-[#fbf2e7] text-[#a85f29]"><KeyRound size={20} /></span>
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                <div className="rounded-xl bg-white p-3 ring-1 ring-[#e7d6ca]"><p className="text-[9px] font-bold uppercase tracking-[0.12em] text-[#826f66]">Tài khoản</p><p className="mt-1 font-mono text-base font-semibold">{issuedCredentials.username}</p></div>
+                <div className="rounded-xl bg-white p-3 ring-1 ring-[#e7d6ca]"><p className="text-[9px] font-bold uppercase tracking-[0.12em] text-[#826f66]">Mật khẩu tạm thời</p><p className="mt-1 font-mono text-base font-semibold">{issuedCredentials.temporaryPassword}</p></div>
+              </div>
+              <p className="mt-3 text-[11px] leading-5 text-[#68574f]">KTV đăng nhập bằng số điện thoại và phải đổi mật khẩu tạm thời ở lần đăng nhập đầu. Mật khẩu mới chỉ được lưu dưới dạng hash nên Admin không thể đọc lại.</p>
+              <button type="button" onClick={() => void copyCredentials()} className="mt-3 inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-[#76551d] px-4 py-2.5 text-xs font-semibold text-white">{copied ? <Check size={14} /> : <Copy size={14} />}{copied ? "Đã sao chép" : "Sao chép tài khoản"}</button>
+            </div>
+          </div>
+          <footer className="flex justify-end border-t border-[#e7d6ca] bg-white px-4 py-3 sm:px-5"><button type="button" onClick={onClose} className="rounded-full bg-[#c64b32] px-5 py-2.5 text-xs font-semibold text-white">Đã bàn giao</button></footer>
+        </section>
+      </div>
+    );
+  }
+
   return (
     <div className="fixed inset-0 z-[100] overflow-y-auto bg-[#231514]/70 p-3 backdrop-blur-sm sm:p-6">
       <form onSubmit={submit} className="mx-auto max-w-3xl overflow-hidden rounded-3xl bg-[#fdf8f3] shadow-2xl">
@@ -147,7 +185,7 @@ export function AdminTherapistEditor({ therapist, branches, services, fixedBranc
         <div className="grid gap-4 p-4 sm:grid-cols-2 sm:p-5">
           <label className="text-xs font-semibold">Họ tên KTV<input required value={fullName} onChange={(event) => setFullName(event.target.value)} className="mt-1.5 w-full rounded-xl border border-[#dfd1c8] bg-white px-3 py-2.5 font-normal outline-none focus:border-[#c64b32]" /></label>
           <label className="text-xs font-semibold">Cơ sở<select value={branchId} onChange={(event) => setBranchId(event.target.value)} disabled={Boolean(fixedBranchId)} className="mt-1.5 w-full rounded-xl border border-[#dfd1c8] bg-white px-3 py-2.5 font-normal disabled:opacity-60">{branches.map((branch) => <option key={branch.id} value={branch.id}>{branch.label}</option>)}</select></label>
-          <label className="text-xs font-semibold">Số điện thoại<input value={phone} onChange={(event) => setPhone(event.target.value)} inputMode="tel" className="mt-1.5 w-full rounded-xl border border-[#dfd1c8] bg-white px-3 py-2.5 font-normal outline-none focus:border-[#c64b32]" /></label>
+          <label className="text-xs font-semibold">Số điện thoại / tài khoản đăng nhập<input required value={phone} onChange={(event) => setPhone(event.target.value)} inputMode="tel" autoComplete="off" className="mt-1.5 w-full rounded-xl border border-[#dfd1c8] bg-white px-3 py-2.5 font-normal outline-none focus:border-[#c64b32]" /><span className="mt-1 block text-[9px] font-normal leading-4 text-[#826f66]">Khi thêm mới, mật khẩu tạm thời cũng là số điện thoại này.</span></label>
           <label className="text-xs font-semibold">Giới tính<input value={gender} onChange={(event) => setGender(event.target.value)} className="mt-1.5 w-full rounded-xl border border-[#dfd1c8] bg-white px-3 py-2.5 font-normal outline-none focus:border-[#c64b32]" /></label>
           <label className="text-xs font-semibold sm:col-span-2">Ảnh đại diện (URL)<input value={avatarUrl} onChange={(event) => setAvatarUrl(event.target.value)} inputMode="url" className="mt-1.5 w-full rounded-xl border border-[#dfd1c8] bg-white px-3 py-2.5 font-normal outline-none focus:border-[#c64b32]" placeholder="https://..." /></label>
           <label className="text-xs font-semibold sm:col-span-2">Kỹ năng nội bộ, cách nhau bằng dấu phẩy<input required value={skills} onChange={(event) => setSkills(event.target.value)} className="mt-1.5 w-full rounded-xl border border-[#dfd1c8] bg-white px-3 py-2.5 font-normal outline-none focus:border-[#c64b32]" placeholder="Cổ vai gáy, Body, Chân" /></label>

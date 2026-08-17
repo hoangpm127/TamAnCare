@@ -203,7 +203,7 @@ async function databaseChecks() {
   }
 
   try {
-    const [migrationRows, branches, serviceCount, roleCounts, activeUatUsers] = await Promise.all([
+    const [migrationRows, branches, serviceCount, roleCounts, activeUatUsers, therapistAccounts] = await Promise.all([
       prisma.$queryRaw<Array<{ count: bigint }>>`SELECT COUNT(*)::bigint AS count FROM "_prisma_migrations" WHERE "finished_at" IS NOT NULL AND "rolled_back_at" IS NULL`,
       prisma.branch.findMany({
         include: {
@@ -215,6 +215,15 @@ async function databaseChecks() {
       prisma.service.count({ where: { isActive: true, isOnline: true } }),
       prisma.user.groupBy({ by: ["role"], where: { isActive: true }, _count: { _all: true } }),
       prisma.user.count({ where: { isActive: true, username: { startsWith: "uat." } } }),
+      prisma.user.findMany({
+        where: { isActive: true, role: "THERAPIST" },
+        select: {
+          username: true,
+          branchId: true,
+          therapistId: true,
+          therapist: { select: { branchId: true, phone: true, status: true } },
+        },
+      }),
     ]);
 
     const migrationCount = Number(migrationRows[0]?.count ?? 0);
@@ -263,9 +272,8 @@ async function databaseChecks() {
     }
 
     const countFor = (role: string) => roleCounts.find((item) => item.role === role)?._count._all ?? 0;
-    // Giai đoạn vận hành ban đầu chỉ có hai tài khoản nội bộ bắt buộc:
-    // Admin (OWNER) và Lễ tân. Khách hàng dùng CustomerAccount riêng; các vai
-    // trò mở rộng được giữ trong kiến trúc nhưng không chặn phát hành.
+    // Admin (OWNER) và Lễ tân là hai vai trò nội bộ tối thiểu. Tài khoản KTV
+    // được cấp cùng hồ sơ nhân sự và được kiểm tra liên kết riêng bên dưới.
     for (const [role, minimum] of [["OWNER", 1], ["RECEPTIONIST", 1]] as const) {
       const count = countFor(role);
       add("Phân quyền", role, count >= minimum ? "PASS" : "FAIL", `${count} tài khoản hoạt động; yêu cầu tối thiểu ${minimum}`);
@@ -280,11 +288,24 @@ async function databaseChecks() {
       );
     }
     const activeTherapistUsers = countFor("THERAPIST");
+    const invalidTherapistAccounts = therapistAccounts.filter((account) => (
+      !account.therapistId
+      || !account.therapist
+      || account.therapist.status !== "ACTIVE"
+      || account.branchId !== account.therapist.branchId
+      || account.username !== account.therapist.phone
+    )).length;
     add(
       "Phân quyền",
-      "KTV không đăng nhập hệ thống",
-      activeTherapistUsers === 0 ? "PASS" : "FAIL",
-      activeTherapistUsers === 0 ? "KTV chỉ còn là hồ sơ nhân sự để phân công" : `${activeTherapistUsers} tài khoản KTV vẫn đang hoạt động`,
+      "Tài khoản KTV",
+      activeTherapistUsers > 0 ? "PASS" : "WARN",
+      activeTherapistUsers > 0 ? `${activeTherapistUsers} tài khoản KTV đang hoạt động` : "Chưa có tài khoản KTV được cấp",
+    );
+    add(
+      "Phân quyền",
+      "Tài khoản KTV gắn đúng hồ sơ và cơ sở",
+      invalidTherapistAccounts === 0 ? "PASS" : "FAIL",
+      invalidTherapistAccounts === 0 ? "Mọi tài khoản KTV đều dùng đúng SĐT và phạm vi cơ sở" : `${invalidTherapistAccounts} tài khoản KTV sai liên kết hoặc phạm vi`,
     );
     add(
       "Phân quyền",
@@ -326,9 +347,9 @@ async function databaseChecks() {
       prisma.user.findMany({
         where: {
           isActive: true,
-          role: { in: ["OWNER", "MANAGER", "RECEPTIONIST", "INVESTOR", "XGROUP_SUPER_ADMIN", "DISTRICT_SALES_MANAGER"] },
+          role: { in: ["OWNER", "MANAGER", "RECEPTIONIST", "THERAPIST", "INVESTOR", "XGROUP_SUPER_ADMIN", "DISTRICT_SALES_MANAGER"] },
         },
-        select: { passwordHash: true, passwordChangedAt: true },
+        select: { role: true, passwordHash: true, passwordChangedAt: true },
       }),
     ]);
     add(
@@ -426,7 +447,8 @@ async function databaseChecks() {
     const passwordGroups = new Map<string, number>();
     for (const user of activeUsers) if (user.passwordHash) passwordGroups.set(user.passwordHash, (passwordGroups.get(user.passwordHash) ?? 0) + 1);
     const largestSharedPasswordGroup = Math.max(0, ...passwordGroups.values());
-    const mustChangePassword = activeUsers.filter((user) => !user.passwordChangedAt).length;
+    const mustChangePassword = activeUsers.filter((user) => user.role !== "THERAPIST" && !user.passwordChangedAt).length;
+    const therapistTemporaryPasswords = activeUsers.filter((user) => user.role === "THERAPIST" && !user.passwordChangedAt).length;
     add(
       "Bảo mật",
       "Mật khẩu nhân sự không dùng chung",
@@ -438,6 +460,12 @@ async function databaseChecks() {
       "Nhân sự đã đổi mật khẩu lần đầu",
       mustChangePassword === 0 ? "PASS" : mode === "production" ? "FAIL" : "WARN",
       `${mustChangePassword} tài khoản còn phải đổi mật khẩu`,
+    );
+    add(
+      "Bảo mật",
+      "Mật khẩu tạm thời KTV",
+      therapistTemporaryPasswords === 0 ? "PASS" : "WARN",
+      `${therapistTemporaryPasswords} KTV chưa đăng nhập để đổi mật khẩu tạm thời`,
     );
   } catch (error) {
     add("CSDL", "Kiểm kê dữ liệu", "FAIL", error instanceof Error ? error.message : "Lỗi không xác định");

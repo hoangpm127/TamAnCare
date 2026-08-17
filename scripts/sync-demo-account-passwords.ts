@@ -54,16 +54,7 @@ async function main() {
   }
 
   const userIds = accounts.map((account) => account.id);
-  const retiredTherapistUsers = await prisma.user.findMany({
-    where: { role: "THERAPIST", isActive: true },
-    select: { id: true },
-  });
-  const retiredTherapistUserIds = retiredTherapistUsers.map((user) => user.id);
-  await prisma.$transaction([
-    prisma.adminSession.deleteMany({ where: { userId: { in: userIds } } }),
-    prisma.adminSession.deleteMany({ where: { userId: { in: retiredTherapistUserIds } } }),
-    prisma.user.updateMany({ where: { id: { in: retiredTherapistUserIds } }, data: { isActive: false } }),
-  ]);
+  await prisma.adminSession.deleteMany({ where: { userId: { in: userIds } } });
 
   const investor = accounts.find((account) => account.username === "nhadaututaman");
   if (!investor) throw new Error("Không đồng bộ được tài khoản nhà đầu tư.");

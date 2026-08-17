@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { getAdminSession } from "@/lib/server/admin-session";
 import { resourceStatusLabel } from "@/lib/labels";
 import { canAccessAdminSection } from "@/lib/admin-auth";
+import { AdminTherapistCredentials } from "@/components/admin-therapist-credentials";
 
 export const dynamic = "force-dynamic";
 
@@ -13,7 +14,16 @@ export default async function TherapistProfilePage({ params }: { params: Promise
   if (!session || session.mustChangePassword || !canAccessAdminSection(session, "therapists")) notFound();
   const therapist = await db.therapist.findFirst({
     where: { id, ...(session.role === "OWNER" ? {} : { branchId: session.branchId ?? "__none__" }) },
-    include: { branch: true, reviews: { include: { booking: { include: { customer: true } } }, orderBy: { createdAt: "desc" }, take: 30 } },
+    include: {
+      branch: true,
+      users: {
+        where: { role: "THERAPIST" },
+        orderBy: { createdAt: "asc" },
+        take: 1,
+        select: { username: true, isActive: true, passwordChangedAt: true },
+      },
+      reviews: { include: { booking: { include: { customer: true } } }, orderBy: { createdAt: "desc" }, take: 30 },
+    },
   });
   if (!therapist) notFound();
   const businessDate = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Ho_Chi_Minh", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
@@ -37,6 +47,18 @@ export default async function TherapistProfilePage({ params }: { params: Promise
           <Metric label="Trạng thái" value={resourceStatusLabel(therapist.status)} />
         </div>
       </section>
+
+      {session.role === "OWNER" || session.role === "BRANCH_MANAGER" ? (
+        <AdminTherapistCredentials
+          therapistId={therapist.id}
+          initialPhone={therapist.phone ?? ""}
+          initialAccount={therapist.users[0] ? {
+            username: therapist.users[0].username,
+            isActive: therapist.users[0].isActive,
+            passwordChangedAt: therapist.users[0].passwordChangedAt?.toISOString() ?? null,
+          } : null}
+        />
+      ) : null}
 
       <section className="mt-4 rounded-xl border border-[#e7d6ca] bg-white p-4 shadow-sm sm:p-5">
         <div className="flex items-center justify-between gap-3">

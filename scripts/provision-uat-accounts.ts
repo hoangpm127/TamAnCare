@@ -172,16 +172,6 @@ async function provision() {
   const affiliatePhone = requiredPhone("UAT_AFFILIATE_CUSTOMER_PHONE");
   if (newCustomerPhone === affiliatePhone) throw new Error("Hai số điện thoại UAT phải khác nhau.");
 
-  const retiredTherapistUsers = await prisma.user.findMany({
-    where: { OR: [{ role: "THERAPIST" }, { username: { in: [...LEGACY_THERAPIST_USERNAMES] } }] },
-    select: { id: true },
-  });
-  const retiredTherapistUserIds = retiredTherapistUsers.map((user) => user.id);
-  await prisma.$transaction([
-    prisma.adminSession.deleteMany({ where: { userId: { in: retiredTherapistUserIds } } }),
-    prisma.user.updateMany({ where: { id: { in: retiredTherapistUserIds } }, data: { isActive: false } }),
-  ]);
-
   const credentials: Credential[] = [];
   const internal = [
     { username: "uat.owner", name: "Chủ Tâm An · UAT", role: "OWNER", scope: "Toàn hệ thống", branchId: undefined },
